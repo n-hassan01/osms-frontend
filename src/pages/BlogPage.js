@@ -55,7 +55,7 @@ export default function BlogPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Blog | CB </title>
+        <title> Dashboard: Blog | OSMS </title>
       </Helmet>
 
       <Container>

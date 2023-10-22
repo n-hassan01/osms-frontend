@@ -41,7 +41,7 @@ export default function LoginPage() {
         <Container maxWidth="sm" style={{backgroundColor: 'white'}}>
           <StyledContent>
             <Typography variant="h4" gutterBottom style={{textAlign: 'center'}}>
-              Welcome to Chowdhury's Blog
+              Welcome to Remark OSMS
             </Typography>
 
             <SignupForm />

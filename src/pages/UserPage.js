@@ -228,7 +228,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> User | CB </title>
+        <title> User | OSMS </title>
       </Helmet>
 
       <Container>
