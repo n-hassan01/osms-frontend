@@ -1,11 +1,21 @@
 import axios from 'axios';
 import getCookieService from "./GetCookieService";
 
-const usersUrl = 'http://localhost:4000/';
+const usersUrl = 'http://localhost:3000/';
 
 export const signup = async (user) => {
   try {
     return await axios.post(`${usersUrl}signup/`, user);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const sendOtp = async (body) => {
+  try {
+    return await axios.post(`${usersUrl}send-otp/`, body);
   } catch (err) {
     console.log(err.message);
 
