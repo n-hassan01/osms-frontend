@@ -11,7 +11,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { sendOtp, signup } from '../../../Services/ApiServices';
+import { compareOtp, sendOtp, signup } from '../../../Services/ApiServices';
 // components
 import Iconify from '../../../components/iconify';
 // external css
@@ -25,6 +25,7 @@ export default function SignupForm() {
     password: '',
   };
   const [user, setUser] = useState(initialUser);
+
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -43,8 +44,20 @@ export default function SignupForm() {
     setOpen(true);
   };
 
-  const onVerify = () => {
-    console.log(otp);
+  const onVerify = async () => {
+    const verifyUser = {
+      verificationCode: otp,
+      id: user.id,
+      password: user.password,
+    };
+    const response = await compareOtp(verifyUser);
+
+    if (response.status === 200) {
+      navigate('/login', { replace: true });
+    } else {
+      alert('Otp Invalid!');
+      window.location.reload();
+    }
   };
 
   const validatePassword = (password) => password.length >= 6;
@@ -73,7 +86,7 @@ export default function SignupForm() {
         const newUser = {
           id: user.id,
           password: user.password,
-        }
+        };
         const response = await signup(newUser);
         console.log(response.data);
 
