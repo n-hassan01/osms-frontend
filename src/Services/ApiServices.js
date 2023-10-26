@@ -1,7 +1,7 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://localhost:3000/';
+const usersUrl = 'http://localhost:5001/';
 
 export const signup = async (user) => {
   try {
