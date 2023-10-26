@@ -51,7 +51,7 @@ export default function SignupForm() {
       password: user.password,
     };
     const response = await compareOtp(verifyUser);
-
+    handleClose();
     if (response.status === 200) {
       navigate('/login', { replace: true });
     } else {
