@@ -51,14 +51,14 @@ export default function SignupForm() {
       password: user.password,
     };
     const response = await compareOtp(verifyUser);
-    
+
     if (response.status === 200) {
       alert('Signup completed!');
       navigate('/login', { replace: true });
     } else {
       alert('Otp Invalid!');
     }
-    
+
     handleClose();
   };
 
@@ -108,13 +108,12 @@ export default function SignupForm() {
             }
           } else {
             alert('Plese contact with HR for your signup approval!');
+            navigate('/login', { replace: true });
           }
         } else {
           console.log(response);
           alert('Signup failed! Try again later');
         }
-
-        // navigate('/login', { replace: true });
       } catch (err) {
         alert('Signup failed! Try again later');
       }
