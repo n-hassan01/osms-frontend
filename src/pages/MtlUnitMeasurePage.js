@@ -36,7 +36,8 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { getUomDetails, updateUomDetails } from '../Services/ApiServices';
 import AddUomDialog from '../sections/@dashboard/uom/AddUomDialog';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import UomListToolbar from '../sections/@dashboard/uom/UomListToolbar';
+import { UserListHead } from '../sections/@dashboard/user';
 
 // ----------------------------------------------------------------------
 
@@ -308,7 +309,7 @@ export default function UserPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <UomListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}

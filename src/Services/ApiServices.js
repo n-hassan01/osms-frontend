@@ -301,3 +301,13 @@ export const updateUomDetails = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const disableUomDetails = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}disable-unit-measure`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
