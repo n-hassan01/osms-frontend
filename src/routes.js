@@ -38,7 +38,7 @@ export default function Router() {
       element: <LoginPage />,
     },
     {
-      path: 'unit',
+      path: 'uom',
       element: <MtlUnitMeasurePage />,
     },
     {
