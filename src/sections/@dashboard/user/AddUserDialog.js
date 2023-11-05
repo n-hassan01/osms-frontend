@@ -103,7 +103,7 @@ export default function ResponsiveDialog() {
   return (
     <div>
       <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        New User
+        Add UOM
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
         <DialogTitle id="responsive-dialog-title">{'Add New Users'}</DialogTitle>
