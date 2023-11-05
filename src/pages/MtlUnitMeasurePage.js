@@ -153,6 +153,7 @@ export default function UserPage() {
     setOpen(false);
   };
 
+  const isDisable = true;
   const validateUom = (password) => password.length <= 25;
   const validateUomCode = (password) => password.length <= 3;
   const validateUomClass = (password) => password.length <= 10;
@@ -217,7 +218,7 @@ export default function UserPage() {
         }
 
         handleClose();
-        navigate('/unit', { replace: true });
+        navigate('/uom', { replace: true });
         window.location.reload();
         console.log(uomBody);
       } catch (err) {
@@ -394,6 +395,7 @@ export default function UserPage() {
                           autoComplete="given-name"
                           value={rowData.unit_of_measure}
                           onChange={(e) => onValueChange(e)}
+                          disabled={isDisable}
                           error={!!errors.unitOfMeasure}
                           helperText={errors.unitOfMeasure}
                         />
