@@ -100,7 +100,7 @@ export default function ResponsiveDialog() {
         }
 
         handleClose();
-        navigate('/unit', { replace: true });
+        navigate('/uom', { replace: true });
         window.location.reload();
       } catch (err) {
         console.log(err.message);
