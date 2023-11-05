@@ -270,3 +270,44 @@ export const getLikeCount = async (blogId) => {
     return err.message;
   }
 };
+
+// admin panel
+export const getUomDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-unit-measure/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addUomDetails = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-unit-measure`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateUomDetails = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}update-unit-measure`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const disableUomDetails = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}disable-unit-measure`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
