@@ -51,13 +51,15 @@ export default function SignupForm() {
       password: user.password,
     };
     const response = await compareOtp(verifyUser);
-    handleClose();
+
     if (response.status === 200) {
+      alert('Signup completed!');
       navigate('/login', { replace: true });
     } else {
       alert('Otp Invalid!');
-      window.location.reload();
     }
+
+    handleClose();
   };
 
   const validatePassword = (password) => password.length >= 6;
@@ -67,7 +69,7 @@ export default function SignupForm() {
   };
 
   const handleClick = async () => {
-    const { password, confirmPassword } = user;
+    const { id, password, confirmPassword } = user;
     const newErrors = {};
 
     // Validate password
@@ -88,34 +90,30 @@ export default function SignupForm() {
           password: user.password,
         };
         const response = await signup(newUser);
-        console.log(response.data);
 
         if (response.status === 200 || response.status === 204) {
           if (response.data.authenticationMethod.flag === 'email') {
             const reqBody = {
               email: response.data.authenticationMethod.value,
+              userId: id,
             };
 
             const sendOtpService = await sendOtp(reqBody);
-            console.log(sendOtpService.data);
 
             if (sendOtpService.status === 200) {
               handleOpen();
-              // console.log('success');
             } else {
-              alert('Signup faild! Try again');
+              alert('Signup failed! Try again');
               window.location.reload();
             }
           } else {
             alert('Plese contact with HR for your signup approval!');
+            navigate('/login', { replace: true });
           }
-          alert('Signup successful!');
         } else {
           console.log(response);
           alert('Signup failed! Try again later');
         }
-
-        // navigate('/login', { replace: true });
       } catch (err) {
         alert('Signup failed! Try again later');
       }

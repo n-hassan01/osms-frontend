@@ -4,7 +4,7 @@ import { IconButton, InputAdornment, OutlinedInput, Toolbar, Tooltip, Typography
 import { alpha, styled } from '@mui/material/styles';
 // component
 import Iconify from '../../../components/iconify';
-import { deleteUser } from '../../../Services/ApiServices';
+import { disableUomDetails } from '../../../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
@@ -44,8 +44,14 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const deleteSelectedUser = async () => {
     const result = selectedUsers.map(async (element) => {
       try {
-        console.log(element);
-        const response = await deleteUser(element);
+        const date = new Date().toJSON();
+
+        const requestBody = {
+          unitOfMeasure: element,
+          disableDate: date,
+        };
+
+        const response = await disableUomDetails(requestBody);
 
         const alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
         alert(alertMessage);
