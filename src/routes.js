@@ -6,11 +6,13 @@ import SimpleLayout from './layouts/simple';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import ImageGallary from './pages/ImageGallary';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import PortfolioPage from './pages/PortfolioPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import ShowLocationsAll from './pages/ShowLocationsAll';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
 
@@ -35,6 +37,14 @@ export default function Router() {
     {
       path: 'login',
       element: <LoginPage />,
+    },
+    {
+      path: 'showlocationsall',
+      element: <ShowLocationsAll />,
+    },
+    {
+      path: 'imagegallary',
+      element: <ImageGallary />,
     },
     {
       path: 'signup',

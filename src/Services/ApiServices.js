@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
@@ -264,6 +265,47 @@ export const getLikeCount = async (blogId) => {
         Authorization: `Bearer ${cookie}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getHrLocationsDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hr-locations-all/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getPerHrLocationsDetails = async ( { location_id } ) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const addHrLocationsDetails = async (location) => {
+  console.log('location for api ', location);
+  try {
+    return await axios.post(`${usersUrl}add-hr-locations-all/`, location);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+// eslint-disable-next-line camelcase
+export const updateHrLocationsDetails = async ( locationsDetails ) => {
+  console.log('location for api ', locationsDetails.location_id );
+  try {
+    // eslint-disable-next-line camelcase
+    return await axios.put(`${usersUrl}update-hr-locations-all/${locationsDetails.location_id}`,locationsDetails);
   } catch (err) {
     console.log(err.message);
 
