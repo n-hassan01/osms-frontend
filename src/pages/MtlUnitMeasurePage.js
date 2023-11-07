@@ -296,7 +296,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> UOM | OSMS </title>
+        <title> OSMS | UOM </title>
       </Helmet>
 
       <Container>

@@ -8,6 +8,7 @@ import ContactPage from './pages/ContactPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import ImageGallary from './pages/ImageGallary';
 import LoginPage from './pages/LoginPage';
+import MtlSystemItemPage from './pages/MtlSystemItemPage';
 import MtlUnitMeasurePage from './pages/MtlUnitMeasurePage';
 import Page404 from './pages/Page404';
 import PortfolioPage from './pages/PortfolioPage';
@@ -42,6 +43,10 @@ export default function Router() {
     {
       path: 'uom',
       element: <MtlUnitMeasurePage />,
+    },
+    {
+      path: 'items',
+      element: <MtlSystemItemPage />,
     },
     {
       path: 'showlocationsall',
