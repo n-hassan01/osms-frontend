@@ -27,26 +27,19 @@ import Scrollbar from '../components/scrollbar';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import AddHrLocations from '../sections/@dashboard/user/AddHrLocations';
-import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
-import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
+import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrganizationUnits';
+import AddHrOrganizationUnits from '../sections/@dashboard/user/AddHrOrganizationUnits';
+import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
+import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'organization_id', label: 'Organization ID', alignRight: false },
+  { id: 'business_group_id', label: 'Business Group ID', alignRight: false },
   { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'location_code', label: 'Location Code', alignRight: false },
-
-  { id: 'description', label: 'Description', alignRight: false },
-
-  { id: 'inactive_date', label: 'Inactive Date', alignRight: false },
-  { id: 'address_line_1', label: 'Address Line1', alignRight: false },
-  { id: 'address_line_2', label: 'Address Line2', alignRight: false },
-  { id: 'address_line_3', label: 'Address Line3', alignRight: false },
-  { id: 'town_or_city', label: 'Town Or City', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'Postal Code', alignRight: false },
-  { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
+  { id: 'date_from', label: 'Date Form', alignRight: false },
+  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'date_to', label: 'Date To', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -85,7 +78,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowLocationsAll() {
+export default function ShowHrAllOrganizationUnits() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -111,8 +104,8 @@ export default function ShowLocationsAll() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
+        const usersDetails = await getHrAllOrganizationUnitsService();
+        console.log('Hola', usersDetails.data[0].organization_id);
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -153,7 +146,6 @@ export default function ShowLocationsAll() {
 
   const handleCloseMenu = () => {
     setOpen(null);
-    window.location.reload();
   };
 
   const approveUser = async () => {
@@ -247,10 +239,10 @@ export default function ShowLocationsAll() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Locations
+            Organization Units
           </Typography>
           <div>
-            <AddHrLocations />
+            <AddHrOrganizationUnits />
           </div>
         </Stack>
 
@@ -276,27 +268,13 @@ export default function ShowLocationsAll() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      location_id,
-                      location_code,
-
-                      description,
-
-                      inactive_date,
-                      address_line_1,
-                      address_line_2,
-                      address_line_3,
-                      town_or_city,
-                      country,
-                      postal_code,
-                      telephone_number_1,
-                    } = row;
-                    const selectedUser = selected.indexOf(location_code) !== -1;
+                    const { organization_id, business_group_id, location_id, date_from, name, date_to } = row;
+                    const selectedUser = selected.indexOf(organization_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_code} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={organization_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, organization_id)} />
                         </TableCell>
                         {/* <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
@@ -306,19 +284,14 @@ export default function ShowLocationsAll() {
                             </Typography>
                           </Stack>
                         </TableCell> */}
+                        <TableCell align="left">{organization_id}</TableCell>
+                        <TableCell align="left">{business_group_id}</TableCell>
+
                         <TableCell align="left">{location_id}</TableCell>
-                        <TableCell align="left">{location_code}</TableCell>
 
-                        <TableCell align="left">{description}</TableCell>
-
-                        <TableCell align="left">{inactive_date}</TableCell>
-                        <TableCell align="left">{address_line_1}</TableCell>
-                        <TableCell align="left">{address_line_2}</TableCell>
-                        <TableCell align="left">{address_line_3}</TableCell>
-                        <TableCell align="left">{town_or_city}</TableCell>
-                        <TableCell align="left">{country}</TableCell>
-                        <TableCell align="left">{postal_code}</TableCell>
-                        <TableCell align="left">{telephone_number_1}</TableCell>
+                        <TableCell align="left">{date_from}</TableCell>
+                        <TableCell align="left">{name}</TableCell>
+                        <TableCell align="left">{date_to}</TableCell>
 
                         {/* <TableCell align="left">
                           <Label
@@ -329,10 +302,10 @@ export default function ShowLocationsAll() {
                         </TableCell> */}
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrLocations location_id={location_id} />
+                          <UpdateHrOrganizationUnits organization_id={organization_id} />
                         </div>
                         <TableCell align="right">
-                          <DeleteHrLocations location_id={location_id} />
+                        <DeleteHrOrganizationUnits organization_id={organization_id} />
                         </TableCell>
 
                         <Popover

@@ -9,10 +9,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addHrLocationsDetailsService } from '../../../Services/Admin/AddHrLocations';
+import { addHrOrganizationUnits } from '../../../Services/Admin/AddHrOrganizationUnits';
 import Iconify from '../../../components/iconify';
 
-export default function ResponsiveDialog() {
+export default function AddHrOrganizationUnits() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -22,28 +22,19 @@ export default function ResponsiveDialog() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const locationsDetails = {
+  const organizationDetails = {
+    organizationId: '',
+    businessGroupId: '',
     locationId: '',
-    locationCode: '',
-    businessGroupId: '5',
-    description: '',
-    shipToLocationId: '3',
-    inventoryOrganizationId: '4',
-    addressLine1: '',
-    addressLine2: '',
-    addressLine3: '',
-    townOrCity: '',
-    country: '',
-    postalCode: '',
-    telephoneNumber1: '',
-    telephoneNumber2: '01533581070 ',
-    telephoneNumber3: '01533581070',
-    lastUpdateDate: '08-08-2023',
+    dateFrom: '',
+    name: '',
+    dateTo: '',
+    lastUpdateDate: '08-28-2022',
     lastUpdatedBy: '1',
     createdBy: '2',
-    creationDate: '07-08-2023',
+    creationDate: '08-28-2022',
   };
-  const [location, setLocation] = useState(locationsDetails);
+  const [organization, setOrganization] = useState(organizationDetails);
 
   const options = [
     { value: 1, label: 'Admin' },
@@ -59,7 +50,7 @@ export default function ResponsiveDialog() {
   const validatePassword = (password) => password.length >= 6;
 
   const onValueChange = (e) => {
-    setLocation({ ...location, [e.target.name]: e.target.value });
+    setOrganization({ ...organization, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
@@ -68,11 +59,11 @@ export default function ResponsiveDialog() {
 
   const handleClick = async () => {
     try {
-      console.log(location);
-      const response = await addHrLocationsDetailsService(location);
+      console.log(organization);
+      const response = await addHrOrganizationUnits(organization);
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showlocationsall');
+      navigate('/showorganizationunits');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
@@ -127,23 +118,23 @@ export default function ResponsiveDialog() {
   return (
     <div>
       <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        New Location
+        New Organization
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{'Add New Organization'}</DialogTitle>
         <DialogContent>
           <Stack spacing={3}>
             <TextField
               required
-              name="locationId"
-              label="Location ID"
+              name="organizationId"
+              label="Organization Id"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
             <TextField
               required
-              name="locationCode"
-              label="Location Code"
+              name="businessGroupId"
+              label="Business Group Id"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
               error={!!errors.email}
@@ -151,59 +142,23 @@ export default function ResponsiveDialog() {
             />
             <TextField
               required
-              name="description"
-              label="Description"
+              name="locationId"
+              label="Location Id"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
 
             <TextField
               required
-              name="addressLine1"
-              label="Address Line1"
+              name="dateFrom"
+              label="Date From"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
-            <TextField
-              name="addressLine2"
-              label="Address Line2"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              name="addressLine3"
-              label="Address Line3"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              required
-              name="townOrCity"
-              label="Town Or City"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              required
-              name="country"
-              label="Country"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              required
-              name="postalCode"
-              label="Postal Code"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              required
-              name="telephoneNumber1"
-              label="Telephone Number1"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
+
+           
+            <TextField name="name" label="Name" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+            <TextField name="dateTo" label="Date To" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
 
             {/* <TextField
               autoComplete="new-password"

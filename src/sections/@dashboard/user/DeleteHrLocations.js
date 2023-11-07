@@ -15,9 +15,9 @@ import { useNavigate } from 'react-router-dom';
 import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
 import Iconify from '../../../components/iconify';
 
-export default function UpdateHrLocations({ location_id }) {
+export default function DeleteHrLocations({ location_id }) {
   const navigate = useNavigate();
-  console.log('update page ', location_id);
+  console.log('delete page ', location_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -25,48 +25,11 @@ export default function UpdateHrLocations({ location_id }) {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // const locationsDetails = {
-  //   locationId: '',
-  //   locationCode: '',
-  //   businessGroupId: '5',
-  //   description: '',
-  //   shipToLocationId: '3',
-  //   inventoryOrganizationId: '4',
-  //   addressLine1: '',
-  //   addressLine2: '',
-  //   addressLine3: '',
-  //   townOrCity: '',
-  //   country: '',
-  //   postalCode: '',
-  //   telephoneNumber1: '',
-  //   telephoneNumber2: '01533581070 ',
-  //   telephoneNumber3: '01533581070',
-  //   lastUpdateDate: '08-08-2023',
-  //   lastUpdatedBy: '1',
-  //   createdBy: '2',
-  //   creationDate: '07-08-2023',
-  // };
+ 
 
   const [location, setLocation] = useState({
     locationId: '',
-    locationCode: '',
-    businessGroupId: '5',
-    description: '',
-    shipToLocationId: '3',
-    inventoryOrganizationId: '4',
-    addressLine1: '',
-    addressLine2: '',
-    addressLine3: '',
-    townOrCity: '',
-    country: '',
-    postalCode: '',
-    telephoneNumber1: '',
-    telephoneNumber2: '01533581070 ',
-    telephoneNumber3: '01533581070',
-    lastUpdateDate: '08-08-2023',
-    lastUpdatedBy: '1',
-    createdBy: '2',
-    creationDate: '07-08-2023',
+
   });
 
   const onValueChange = (e) => {
@@ -81,25 +44,11 @@ export default function UpdateHrLocations({ location_id }) {
     console.log('with brackets', { location_id });
     console.log('without', location_id);
     const result = await getPerHrLocationsDetailsService({ location_id });
-    console.log(
-      'Eiii',
-      result.data[0].location_id,
-      result.data[0].location_code,
-      result.data[0].description,
-      result.data[0].postal_code
-    );
+   
     setLocation({
       ...location,
       locationId: result.data[0].location_id,
-      locationCode: result.data[0].location_code,
-      description: result.data[0].description,
-      addressLine1: result.data[0].address_line_1,
-      addressLine2: result.data[0].address_line_2,
-      addressLine3: result.data[0].address_line_3,
-      townOrCity: result.data[0].town_or_city,
-      country: result.data[0].country,
-      postalCode: result.data[0].postal_code,
-      telephoneNumber1: result.data[0].telephone_number_1,
+      
     });
 
     console.log('location Details', location);
@@ -109,8 +58,7 @@ export default function UpdateHrLocations({ location_id }) {
     try {
       console.log('loc', location);
       const response = await axios.put(
-        `http://localhost:5001/update-hr-locations-all/${location.locationId}`,
-        location
+        `http://localhost:5001/delete-hr-locations-all/${location.locationId}`
       );
 
       console.log('Pass to home after request ');
@@ -169,11 +117,11 @@ export default function UpdateHrLocations({ location_id }) {
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        Update
+      <Button variant="contained" style={{backgroundColor:"red"}} startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
+        Delete
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{'Delete Locations'}</DialogTitle>
         <DialogContent>
           <Stack spacing={3}>
             <TextField
@@ -181,10 +129,10 @@ export default function UpdateHrLocations({ location_id }) {
               name="locationId"
               label="Location ID"
               value={location.locationId}
-              onChange={(e) => onValueChange(e)}
+            //   onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
             />
-            <TextField
+            {/* <TextField
               type={'text'}
               name="locationCode"
               label="Location Code"
@@ -255,7 +203,7 @@ export default function UpdateHrLocations({ location_id }) {
               value={location.telephoneNumber1}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, telephoneNumber1: e.target.value })}
-            />
+            /> */}
 
             {/* <TextField
               autoComplete="new-password"
@@ -306,7 +254,7 @@ export default function UpdateHrLocations({ location_id }) {
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClick}>
-            Submit
+            Delete
           </Button>
           <Button onClick={handleClose} autoFocus>
             Cancel

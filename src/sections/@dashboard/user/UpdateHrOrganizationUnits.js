@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
 import { Stack, TextField } from '@mui/material';
@@ -12,12 +13,13 @@ import axios from 'axios';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
+
+import { getPerHrOrganizationUnitsService } from '../../../Services/Admin/GetPerHrOrganizationUnits';
 import Iconify from '../../../components/iconify';
 
-export default function UpdateHrLocations({ location_id }) {
+export default function UpdateHrOrganizationUnits({ organization_id }) {
   const navigate = useNavigate();
-  console.log('update page ', location_id);
+  console.log('update page ', organization_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -25,44 +27,15 @@ export default function UpdateHrLocations({ location_id }) {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // const locationsDetails = {
-  //   locationId: '',
-  //   locationCode: '',
-  //   businessGroupId: '5',
-  //   description: '',
-  //   shipToLocationId: '3',
-  //   inventoryOrganizationId: '4',
-  //   addressLine1: '',
-  //   addressLine2: '',
-  //   addressLine3: '',
-  //   townOrCity: '',
-  //   country: '',
-  //   postalCode: '',
-  //   telephoneNumber1: '',
-  //   telephoneNumber2: '01533581070 ',
-  //   telephoneNumber3: '01533581070',
-  //   lastUpdateDate: '08-08-2023',
-  //   lastUpdatedBy: '1',
-  //   createdBy: '2',
-  //   creationDate: '07-08-2023',
-  // };
-
-  const [location, setLocation] = useState({
+  const [organization, setOrganization] = useState({
+    organizationId: '',
+    businessGroupId: '',
     locationId: '',
-    locationCode: '',
-    businessGroupId: '5',
-    description: '',
-    shipToLocationId: '3',
-    inventoryOrganizationId: '4',
-    addressLine1: '',
-    addressLine2: '',
-    addressLine3: '',
-    townOrCity: '',
-    country: '',
-    postalCode: '',
-    telephoneNumber1: '',
-    telephoneNumber2: '01533581070 ',
-    telephoneNumber3: '01533581070',
+
+    dateFrom: '',
+    name: '',
+    dateTo: '',
+
     lastUpdateDate: '08-08-2023',
     lastUpdatedBy: '1',
     createdBy: '2',
@@ -70,7 +43,7 @@ export default function UpdateHrLocations({ location_id }) {
   });
 
   const onValueChange = (e) => {
-    setLocation({ ...location, [e.target.name]: e.target.value });
+    setOrganization({ ...organization, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
@@ -78,44 +51,40 @@ export default function UpdateHrLocations({ location_id }) {
     loadUser();
   };
   const loadUser = async () => {
-    console.log('with brackets', { location_id });
-    console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService({ location_id });
-    console.log(
-      'Eiii',
-      result.data[0].location_id,
-      result.data[0].location_code,
-      result.data[0].description,
-      result.data[0].postal_code
-    );
-    setLocation({
-      ...location,
+    console.log('with brackets', { organization_id });
+    console.log('without', organization_id);
+    const result = await getPerHrOrganizationUnitsService(organization_id);
+    const dateTimeString1 = result.data[0].date_from;
+    const datefrom = dateTimeString1.split('T')[0];
+    const dateTimeString2 = result.data[0].date_to;
+    const dateto = dateTimeString2.split('T')[0];
+    
+
+    setOrganization({
+      ...organization,
+      organizationId: result.data[0].organization_id,
+      businessGroupId: result.data[0].business_group_id,
       locationId: result.data[0].location_id,
-      locationCode: result.data[0].location_code,
-      description: result.data[0].description,
-      addressLine1: result.data[0].address_line_1,
-      addressLine2: result.data[0].address_line_2,
-      addressLine3: result.data[0].address_line_3,
-      townOrCity: result.data[0].town_or_city,
-      country: result.data[0].country,
-      postalCode: result.data[0].postal_code,
-      telephoneNumber1: result.data[0].telephone_number_1,
+
+      dateFrom: datefrom,
+      name: result.data[0].name,
+      dateTo: dateto,
     });
 
-    console.log('location Details', location);
+    console.log('location Details', organization);
   };
 
   const handleClick = async () => {
     try {
-      console.log('loc', location);
+      console.log('loc', organization);
       const response = await axios.put(
-        `http://localhost:5001/update-hr-locations-all/${location.locationId}`,
-        location
+        `http://localhost:5001/update-hr-organization-units/${organization.organizationId}`,
+        organization
       );
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showlocationsall');
+      navigate('/showorganizationunits');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
@@ -178,83 +147,53 @@ export default function UpdateHrLocations({ location_id }) {
           <Stack spacing={3}>
             <TextField
               type={'text'}
-              name="locationId"
-              label="Location ID"
-              value={location.locationId}
+              name="organizationId"
+              label="Organization ID"
+              value={organization.organizationId}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
             />
             <TextField
               type={'text'}
-              name="locationCode"
-              label="Location Code"
-              value={location.locationCode}
+              name="businessGroupId"
+              label="Business Group Id "
+              value={organization.businessGroupId}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, locationCode: e.target.value })}
             />
             <TextField
               type={'text'}
-              name="description"
-              label="Description"
-              value={location.description}
+              name="locationId"
+              label="Location ID"
+              value={organization.locationId}
+              onChange={(e) => onValueChange(e)}
+              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
+            />
+
+            <TextField
+              type={'text'}
+              name="dateFrom"
+              label="Date From"
+              value={organization.dateFrom}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, description: e.target.value })}
             />
 
             <TextField
               type={'text'}
-              name="addressLine1"
-              label="Address Line1"
-              value={location.addressLine1}
+              name="name"
+              label="Name"
+              value={organization.name}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, addressLine1: e.target.value })}
             />
             <TextField
               type={'text'}
-              name="addressLine2"
-              label="Address Line2"
-              value={location.addressLine2}
+              name="dateFrom"
+              label="Date From"
+              value={organization.dateFrom}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="addressLine3"
-              label="Address Line3"
-              value={location.addressLine3}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine3: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              required
-              name="townOrCity"
-              label="Town Or City"
-              value={location.townOrCity}
-              onChange={(e) => onValueChange(e)}
-
-              // onChange={(e) => setLocation({ ...location, townOrCity: e.target.value })}
-            />
-            <TextField
-              name="country"
-              label="Country"
-              value={location.country}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, country: e.target.value })}
-            />
-            <TextField
-              name="postalCode"
-              label="Postal Code"
-              value={location.postalCode}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, postalCode: e.target.value })}
-            />
-            <TextField
-              name="telephoneNumber1"
-              label="Telephone Number1"
-              value={location.telephoneNumber1}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, telephoneNumber1: e.target.value })}
             />
 
             {/* <TextField

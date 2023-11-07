@@ -2,7 +2,7 @@
 import { getPerHrLocationsDetails } from '../ApiServices';
 
 export const getPerHrLocationsDetailsService = async ({ location_id }) => {
-  console.log("getper",location_id);
+ 
   const response = await getPerHrLocationsDetails({ location_id });
 
   if(!response) return null;

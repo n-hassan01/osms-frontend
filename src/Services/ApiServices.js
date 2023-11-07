@@ -322,9 +322,28 @@ export const getHrLocationsDetails = async () => {
     return err.message;
   }
 };
+export const getHrAllOrganizationUnits = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hr-organization-units/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 export const getPerHrLocationsDetails = async ( { location_id } ) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPerHrOrganizationUnits = async ( { organization_id } ) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-hr-organization-units/${organization_id}`);
   } catch (err) {
     console.log(err.message);
 
@@ -335,6 +354,17 @@ export const addHrLocationsDetails = async (location) => {
   console.log('location for api ', location);
   try {
     return await axios.post(`${usersUrl}add-hr-locations-all/`, location);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const addHrOrganizationUnitsDetails = async (organization) => {
+  console.log('organization for api ', organization);
+  try {
+    console.log("Inside it ",organization)
+    return await axios.post(`${usersUrl}add-hr-organization-units/`, organization);
   } catch (err) {
     console.log(err.message);
 

@@ -13,10 +13,10 @@ import Page404 from './pages/Page404';
 import PortfolioPage from './pages/PortfolioPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
-
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -46,6 +46,10 @@ export default function Router() {
     {
       path: 'showlocationsall',
       element: <ShowLocationsAll />,
+    },
+    {
+      path: 'showorganizationunits',
+      element: <ShowHrAllOrganizationUnits />,
     },
     {
       path: 'imagegallary',

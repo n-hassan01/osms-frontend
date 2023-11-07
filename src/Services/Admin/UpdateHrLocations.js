@@ -3,9 +3,9 @@
 
 import { updateHrLocationsDetails } from '../ApiServices';
 
-export const updateHrLocationsService = async (locationsDetails) => {
-  console.log("location in ",locationsDetails.location_id);
-  const response = await updateHrLocationsDetails( locationsDetails);
+export const updateHrLocationsService = async (location) => {
+  console.log("location in ",location.location_id);
+  const response = await updateHrLocationsDetails( location);
 
   if(!response) return null;
 
