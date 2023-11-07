@@ -272,6 +272,7 @@ export const getLikeCount = async (blogId) => {
 };
 
 // admin panel
+// UOM
 export const getUomDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-unit-measure/`);
@@ -305,6 +306,47 @@ export const updateUomDetails = async (bodyInfo) => {
 export const disableUomDetails = async (bodyInfo) => {
   try {
     return await axios.put(`${usersUrl}disable-unit-measure`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// item master
+export const getSytemItems = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addSystemItemsDetails = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-item-master`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateSystemItems = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}update-item-master`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const disableSystemItems = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}delete-item-master`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 
