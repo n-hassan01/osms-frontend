@@ -331,7 +331,7 @@ export const getHrAllOrganizationUnits = async () => {
     return err.message;
   }
 };
-export const getPerHrLocationsDetails = async ( { location_id } ) => {
+export const getPerHrLocationsDetails = async (  location_id  ) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -341,7 +341,7 @@ export const getPerHrLocationsDetails = async ( { location_id } ) => {
   }
 };
 
-export const getPerHrOrganizationUnits = async ( { organization_id } ) => {
+export const getPerHrOrganizationUnits = async ( organization_id  ) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-organization-units/${organization_id}`);
   } catch (err) {

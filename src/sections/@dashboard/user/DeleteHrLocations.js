@@ -43,7 +43,7 @@ export default function DeleteHrLocations({ location_id }) {
   const loadUser = async () => {
     console.log('with brackets', { location_id });
     console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService({ location_id });
+    const result = await getPerHrLocationsDetailsService( location_id );
    
     setLocation({
       ...location,
