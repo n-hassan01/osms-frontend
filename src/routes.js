@@ -6,15 +6,18 @@ import SimpleLayout from './layouts/simple';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import ImageGallary from './pages/ImageGallary';
 import LoginPage from './pages/LoginPage';
+import MtlSystemItemPage from './pages/MtlSystemItemPage';
 import MtlUnitMeasurePage from './pages/MtlUnitMeasurePage';
 import Page404 from './pages/Page404';
 import PortfolioPage from './pages/PortfolioPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
+import ShowLocationsAll from './pages/ShowLocationsAll';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
-
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -40,6 +43,22 @@ export default function Router() {
     {
       path: 'uom',
       element: <MtlUnitMeasurePage />,
+    },
+    {
+      path: 'items',
+      element: <MtlSystemItemPage />,
+    },
+    {
+      path: 'showlocationsall',
+      element: <ShowLocationsAll />,
+    },
+    {
+      path: 'showorganizationunits',
+      element: <ShowHrAllOrganizationUnits />,
+    },
+    {
+      path: 'imagegallary',
+      element: <ImageGallary />,
     },
     {
       path: 'signup',
