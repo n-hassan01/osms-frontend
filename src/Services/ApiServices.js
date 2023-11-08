@@ -363,6 +363,7 @@ export const addHrLocationsDetails = async (location) => {
   }
 };
 export const addHrOrganizationUnitsDetails = async (organization) => {
+ 
   console.log('organization for api ', organization);
   try {
     console.log("Inside it ",organization)

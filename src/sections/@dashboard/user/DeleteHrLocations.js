@@ -1,19 +1,27 @@
-/* eslint-disable camelcase */
-/* eslint-disable no-undef */
-import { Stack, TextField } from '@mui/material';
+/* eslint-disable react/jsx-fragments */
+/* eslint-disable prefer-arrow-callback */
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import * as React from 'react';
+/* eslint-disable camelcase */
+/* eslint-disable no-undef */
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
 import Iconify from '../../../components/iconify';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 
 export default function DeleteHrLocations({ location_id }) {
   const navigate = useNavigate();
@@ -116,151 +124,28 @@ export default function DeleteHrLocations({ location_id }) {
   };
 
   return (
-    <div>
-      <Button variant="contained" style={{backgroundColor:"red"}} startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
-        Delete
+    <React.Fragment>
+      <Button variant="outlined" style={{backgroundColor:"red",color:"white"}} startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
+       Delete
       </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Delete Locations'}</DialogTitle>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>{"Are you sure you want to Delete ?"}</DialogTitle>
         <DialogContent>
-          <Stack spacing={3}>
-            <TextField
-              type={'text'}
-              name="locationId"
-              label="Location ID"
-              value={location.locationId}
-            //   onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
-            />
-            {/* <TextField
-              type={'text'}
-              name="locationCode"
-              label="Location Code"
-              value={location.locationCode}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationCode: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="description"
-              label="Description"
-              value={location.description}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, description: e.target.value })}
-            />
-
-            <TextField
-              type={'text'}
-              name="addressLine1"
-              label="Address Line1"
-              value={location.addressLine1}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine1: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="addressLine2"
-              label="Address Line2"
-              value={location.addressLine2}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="addressLine3"
-              label="Address Line3"
-              value={location.addressLine3}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine3: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              required
-              name="townOrCity"
-              label="Town Or City"
-              value={location.townOrCity}
-              onChange={(e) => onValueChange(e)}
-
-              // onChange={(e) => setLocation({ ...location, townOrCity: e.target.value })}
-            />
-            <TextField
-              name="country"
-              label="Country"
-              value={location.country}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, country: e.target.value })}
-            />
-            <TextField
-              name="postalCode"
-              label="Postal Code"
-              value={location.postalCode}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, postalCode: e.target.value })}
-            />
-            <TextField
-              name="telephoneNumber1"
-              label="Telephone Number1"
-              value={location.telephoneNumber1}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, telephoneNumber1: e.target.value })}
-            /> */}
-
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="description"
-              label="Description"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.password}
-              helperText={errors.password}
-            /> */}
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="confirmPassword"
-              label="Confirm Password"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-            /> */}
-            {/* <Select
-              name="role"
-              placeholder="User role"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              options={options}
-            /> */}
-          </Stack>
+          <DialogContentText id="alert-dialog-slide-description">
+            Location Id : <b> {location_id} </b> 
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClick}>
-            Delete
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
+          <Button onClick={handleClick}>Delete</Button>
+          <Button onClick={handleClose}>Cancel</Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </React.Fragment>
   );
 }

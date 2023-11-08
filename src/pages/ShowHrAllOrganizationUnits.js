@@ -31,6 +31,7 @@ import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrga
 import AddHrOrganizationUnits from '../sections/@dashboard/user/AddHrOrganizationUnits';
 import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
 import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -175,7 +176,7 @@ export default function ShowHrAllOrganizationUnits() {
     // alert(alertMessage);
 
     handleCloseMenu();
-    window.location.reload();
+  
   };
 
   const handleRequestSort = (event, property) => {

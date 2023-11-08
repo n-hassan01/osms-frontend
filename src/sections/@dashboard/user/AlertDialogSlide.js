@@ -23,7 +23,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function DeleteHrOrganizationUnits({ organization_id }) {
+export default function AlertDialogSlide({ organization_id }) {
   const navigate = useNavigate();
   console.log('delete page ', organization_id);
   const [open, setOpen] = useState(false);
@@ -146,10 +146,10 @@ export default function DeleteHrOrganizationUnits({ organization_id }) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Are you sure you want to Delete ?"}</DialogTitle>
+        <DialogTitle>{"Use Google's location service?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Organization Id : <b> {organization_id} </b> 
+           Are you sure you want to Delete Organization Id : <b> {organization_id} </b> 
           </DialogContentText>
         </DialogContent>
         <DialogActions>
