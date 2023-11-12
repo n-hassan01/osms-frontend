@@ -13,19 +13,19 @@ import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
+import { getPerAllMtlTransactionTypesService } from '../../../Services/Admin/GetPerAllMtlTransactionTypes';
 import Iconify from '../../../components/iconify';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-
-export default function DeleteHrLocations({ location_id }) {
+export default function DeleteMtlTransactionTypes({ transaction_type_id }) {
   const navigate = useNavigate();
-  console.log('delete page ', location_id);
+  console.log('delete page ', transaction_type_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -35,12 +35,13 @@ export default function DeleteHrLocations({ location_id }) {
 
  
 
-  const [location, setLocation] = useState({
-    locationId: '',
- 
+  const [transaction, setTransaction] = useState({
+    transactionTypeId:'',
+
   });
+
   const onValueChange = (e) => {
-    setLocation({ ...location, [e.target.name]: e.target.value });
+    setTransaction({ ...transaction, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
@@ -48,29 +49,29 @@ export default function DeleteHrLocations({ location_id }) {
     loadUser();
   };
   const loadUser = async () => {
-    console.log('with brackets', { location_id });
-    console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService( location_id );
+    console.log('with brackets', {transaction_type_id });
+    console.log('without', transaction_type_id);
+    const result = await getPerAllMtlTransactionTypesService(transaction_type_id);
    
-    setLocation({
-      ...location,
-      locationId: result.data[0].location_id,
+    setTransaction({
+      ...transaction,
+      transactionTypeId: result.data[0].transaction_type_id,
       
     });
 
-    console.log('location Details', location);
+    console.log('location Details', transaction);
   };
 
   const handleClick = async () => {
     try {
-      console.log('loc', location);
-      const response = await axios.put(
-        `http://localhost:5001/delete-hr-locations-all/${location.locationId}`
+      console.log('loc',transaction);
+      const response = await axios.delete(
+        `http://localhost:5001/delete-mtl-transaction-types/${transaction.transactionTypeId}`
       );
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showlocationsall');
+      navigate('/showmtltransactiontypes');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
@@ -122,6 +123,17 @@ export default function DeleteHrLocations({ location_id }) {
     setOpen(false);
   };
 
+
+  // const [open, setOpen] = React.useState(false);
+
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
   return (
     <React.Fragment>
       <Button variant="outlined" style={{backgroundColor:"red",color:"white"}} startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
@@ -137,7 +149,7 @@ export default function DeleteHrLocations({ location_id }) {
         <DialogTitle>{"Are you sure you want to Delete ?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Location Id : <b> {location_id} </b> 
+          Transaction Type Id Id : <b> {transaction_type_id} </b> 
           </DialogContentText>
         </DialogContent>
         <DialogActions>

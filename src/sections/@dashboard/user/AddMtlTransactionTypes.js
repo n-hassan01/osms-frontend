@@ -1,6 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable camelcase */
-/* eslint-disable no-undef */
 import { Stack, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -9,81 +6,78 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import axios from 'axios';
-
+import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { getPerHrOrganizationUnitsService } from '../../../Services/Admin/GetPerHrOrganizationUnits';
+import { addMtlTransactionTypes } from '../../../Services/Admin/AddMtlTransactionTypes';
 import Iconify from '../../../components/iconify';
 
-export default function UpdateHrOrganizationUnits({ organization_id }) {
+export default function AddMtlTransactionTypes() {
   const navigate = useNavigate();
-  console.log('update page ', organization_id);
+
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+const day = currentDate.getDate().toString().padStart(2, '0');
+const formattedDate = `${month}-${day}-${year}`;
+ 
+ 
+ 
+  const transactionDetails = {
+    
+    lastUpdateDate: '',
+    lastUpdatedBy: '',
+    creationDate: formattedDate,
+    createdBy: '',
+    transactionTypeName: '',
+    description: '',
+    transactionActionId: '',
+    transactionSourceTypeId: '',
+  };
+  const [transaction, setTransaction] = useState(transactionDetails);
 
-  const [organization, setOrganization] = useState({
-    organizationId: '',
-    businessGroupId: '',
-    locationId: '',
+  const options = [
+    { value: 1, label: 'Admin' },
+    { value: 2, label: 'Writer' },
+    { value: 3, label: 'Viewer' },
+  ];
 
-    dateFrom: '',
-    name: '',
-    dateTo: '',
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailRegex.test(email);
+  };
 
-    lastUpdateDate: '08-08-2023',
-    lastUpdatedBy: '1',
-    createdBy: '2',
-    creationDate: '07-08-2023',
-  });
+  const validatePassword = (password) => password.length >= 6;
 
   const onValueChange = (e) => {
-    setOrganization({ ...organization, [e.target.name]: e.target.value });
+    setTransaction({ ...transaction, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
     setOpen(true);
-    loadUser();
-  };
-  const loadUser = async () => {
-    console.log('with brackets', { organization_id });
-    console.log('without', organization_id);
-    const result = await getPerHrOrganizationUnitsService(organization_id);
-    const dateTimeString1 = result.data[0].date_from;
-    const datefrom = dateTimeString1.split('T')[0];
-    const dateTimeString2 = result.data[0].date_to;
-    const dateto = dateTimeString2.split('T')[0];
-
-    setOrganization({
-      ...organization,
-      organizationId: result.data[0].organization_id,
-      businessGroupId: result.data[0].business_group_id,
-      locationId: result.data[0].location_id,
-
-      dateFrom: datefrom,
-      name: result.data[0].name,
-      dateTo: dateto,
-    });
-
-    console.log('location Details', organization);
   };
 
   const handleClick = async () => {
     try {
-      console.log('loc', organization);
-      const response = await axios.put(
-        `http://localhost:5001/update-hr-organization-units/${organization.organizationId}`,
-        organization
-      );
-
+      
+    //   const dateTimeString1 = organization.dateFrom;
+    //   const datefrom = dateTimeString1.split('T')[0];
+    //   console.log('after set', datefrom);
+    //   const dateTimeString2 = organization.dateTo;
+    //   const dateto = dateTimeString2.split('T')[0];
+    //   console.log('after set', dateto);
+    //   setOrganization({ ...organization, dateFrom: datefrom, dateTo: dateto });
+    //   console.log('after set', organization);
+      const response = await addMtlTransactionTypes(transaction);
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showorganizationunits');
+      navigate('/showmtltransactiontypes');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
@@ -138,62 +132,108 @@ export default function UpdateHrOrganizationUnits({ organization_id }) {
   return (
     <div>
       <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        Update
+        New Transaction
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{'Add New Organization'}</DialogTitle>
         <DialogContent>
           <Stack spacing={3}>
-            <TextField
-              type={'text'}
-              name="organizationId"
-              label="Organization ID"
-              value={organization.organizationId}
+           
+                <TextField
+              type="date"
+              name="lastUpdateDate"
+              label={sentenceCase('Last Update Date')}
               onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
+              error={!!errors.lastUpdateDate}
+              helperText={errors.lastUpdateDate}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={transaction.lastUpdateDate}
             />
+            
             <TextField
-              type={'text'}
-              name="businessGroupId"
-              label="Business Group Id "
-              value={organization.businessGroupId}
+              required
+              name="lastUpdatedBy"
+              label="Last Updated By"
+              autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationCode: e.target.value })}
+              error={!!errors.lastUpdatedBy}
+              helperText={errors.lastUpdatedBy}
             />
-            <TextField
-              type={'text'}
-              name="locationId"
-              label="Location ID"
-              value={organization.locationId}
+
+          
+
+              <TextField
+              required
+              name="createdBy"
+              label="Created By"
+              autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
+              error={!!errors.createdBy}
+              helperText={errors.createdBy}
+            />
+           
+            <TextField
+              required
+              name="transactionTypeName"
+              label="Transaction Type Name"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
             />
 
             <TextField
-              type={'text'}
+              required
+              name="description"
+              label="Description"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+
+            
+<TextField
+              required
+              name="transactionActionId"
+              label="Transaction Action Id"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+            <TextField
+              required
+              name="transactionSourceTypeId"
+              label="Transaction Source Type Id"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+
+
+            {/* <TextField
+              type="date"
               name="dateFrom"
-              label="Date From"
-              value={organization.dateFrom}
+              label={sentenceCase('dateFrom')}
               onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, description: e.target.value })}
-            />
+              error={!!errors.dateFrom}
+              helperText={errors.dateFrom}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={transaction.dateFrom}
+            /> */}
 
-            <TextField
-              type={'text'}
-              name="name"
-              label="Name"
-              value={organization.name}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine1: e.target.value })}
-            />
-            <TextField
-              type={'text'}
+            {/* <TextField name="name" label="Name" autoComplete="given-name" onChange={(e) => onValueChange(e)} /> */}
+            {/* <TextField name="dateTo" label="Date To" autoComplete="given-name" onChange={(e) => onValueChange(e)} /> */}
+            {/* <TextField
+              type="date"
               name="dateTo"
-              label="Date To"
-              value={organization.dateTo}
+              label={sentenceCase('dateTo')}
               onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
+              error={!!errors.dateTo}
+              helperText={errors.dateTo}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={organization.dateTo}
+            /> */}
 
             {/* <TextField
               autoComplete="new-password"

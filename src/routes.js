@@ -16,8 +16,11 @@ import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
+import ShowMtlMaterialTransactions from './pages/ShowMtlMaterialTransactions';
+import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -51,6 +54,14 @@ export default function Router() {
     {
       path: 'showlocationsall',
       element: <ShowLocationsAll />,
+    },
+    {
+      path: 'showmtlmaterialtransactions',
+      element: <ShowMtlMaterialTransactions />,
+    },
+    {
+      path: 'showmtltransactiontypes',
+      element: <ShowMtlTransactionTypes />,
     },
     {
       path: 'showorganizationunits',
