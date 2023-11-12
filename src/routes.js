@@ -13,6 +13,7 @@ import MtlUnitMeasurePage from './pages/MtlUnitMeasurePage';
 import Page404 from './pages/Page404';
 import PortfolioPage from './pages/PortfolioPage';
 import ProfilePage from './pages/ProfilePage';
+import RequisitionFormPage from './pages/RequisitionFormPage';
 import SettingsPage from './pages/SettingsPage';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
@@ -47,6 +48,10 @@ export default function Router() {
     {
       path: 'items',
       element: <MtlSystemItemPage />,
+    },
+    {
+      path: 'requisition',
+      element: <RequisitionFormPage />,
     },
     {
       path: 'showlocationsall',
