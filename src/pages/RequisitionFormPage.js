@@ -1,29 +1,242 @@
-import { useState } from 'react';
+/* eslint-disable no-restricted-globals */
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
-import AddIcon from '@mui/icons-material/Add';
-import { Button, ButtonGroup, Container, Grid, Stack, TextField, TextareaAutosize, Typography } from '@mui/material';
-// components
-// import Iconify from '../components/iconify';
-
+import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
+import {
+  addTxnRequestHeader,
+  addTxnRequestLines,
+  deleteTxnRequestHeader,
+  deleteTxnRequestLines,
+  getInventoryItemIdList,
+  getOrganizationIdList,
+  getTransactionTypeList,
+  getUomCodeList,
+} from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
-  const [headerInfo, setHeaderInfo] = useState([{ expanded: false }]);
-  const [sections, setSections] = useState([{ expanded: false }]);
+  const [transactionTypeIds, setTransactionTypeIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getTransactionTypeList();
+        if (response) setTransactionTypeIds(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
 
-  const expandLines = (index) => {
-    console.log(index);
-    const updatedSections = [...sections];
-    console.log(updatedSections);
-    updatedSections[index] = { expanded: true };
-    console.log(updatedSections);
-    setSections(updatedSections);
-    console.log(sections);
+    fetchData();
+  }, []);
+
+  const [organizationIds, setOrganizationIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getOrganizationIdList();
+        if (response) setOrganizationIds(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const [uomCodes, setUomCodes] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getUomCodeList();
+        if (response) setUomCodes(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const [inventoryItemIds, setInventoryItemIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getInventoryItemIdList();
+        if (response) setInventoryItemIds(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const [headerInfo, setHeaderInfo] = useState({});
+  const onChangeHeader = (e) => {
+    setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
+  };
+  const [showLines, setShowLines] = useState(false);
+  // const [showHeaderDetails, setShowHeaderDetails] = useState(false);
+  const [headerDetails, setHeaderDetails] = useState({});
+
+  const saveHeader = async () => {
+    const response = await addTxnRequestHeader(headerInfo);
+    if (response.status === 200) {
+      // setShowHeaderDetails(true);
+      setIsReadOnly(true);
+      setHeaderDetails({
+        headerId: response.data.headerInfo[0].header_id,
+        organizationId: response.data.headerInfo[0].organization_id,
+        requestNumber: response.data.headerInfo[0].request_number,
+        status: response.data.headerInfo[0].header_status,
+        createdBy: response.data.headerInfo[0].created_by,
+      });
+    } else {
+      alert('Process failed! Try again');
+    }
   };
 
-  const onChange = () => {};
-  const saveHeader = () => {};
+  const [rows, setRows] = useState([
+    {
+      inventoryItemId: null,
+      fromSubinventoryCode: '',
+      uomCode: '',
+      requiredQuantity: null,
+      dateRequired: '',
+      lineId: null,
+    },
+  ]);
+
+  const handleAddRow = () => {
+    if (rows.length === 1) setShowLines(true);
+    if (showLines) {
+      setRows([
+        ...rows,
+        {
+          inventoryItemId: null,
+          fromSubinventoryCode: '',
+          uomCode: '',
+          requiredQuantity: null,
+          dateRequired: '',
+          lineId: null,
+        },
+      ]);
+    }
+    console.log(rows);
+  };
+
+  const handleInputChange = (index, name, value) => {
+    const updatedRows = [...rows];
+    updatedRows[index][name] = value;
+    setRows(updatedRows);
+  };
+
+  const [showApprovalButton, setShowApprovalButton] = useState(false);
+
+  const submitRequisition = () => {
+    if (confirm('Are you sure for this requisition?')) {
+      window.location.reload();
+    }
+  };
+
+  const saveLines = async () => {
+    const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
+
+    filteredArray.forEach(async (lineInfo, index) => {
+      const requestBody = {
+        headerId: headerDetails.headerId,
+        lineId: lineInfo.lineId,
+        organizationId: headerDetails.organizationId,
+        lineNumber: index + 1,
+        inventoryItemId: lineInfo.inventoryItemId,
+        uomCode: lineInfo.uomCode,
+        dateRequired: lineInfo.dateRequired,
+        requiredQuantity: lineInfo.requiredQuantity,
+      };
+
+      const response = await addTxnRequestLines(requestBody);
+
+      console.log(response.data.lineInfo.line_id);
+
+      if (response.status === 200) {
+        setShowApprovalButton(true);
+        handleInputChange(index, 'lineId', response.data.lineInfo.line_id);
+      } else {
+        setShowApprovalButton(false);
+      }
+    });
+  };
+
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedLines, setSelectedLines] = useState([]);
+  // const [rows, setRows] = useState(/* Your initial rows data here */);
+
+  // Function to handle row selection
+  const handleRowSelect = (index, row) => {
+    console.log(row);
+    const updatedSelectedLines = [...selectedLines];
+    const lineIndex = updatedSelectedLines.indexOf(row.lineId);
+
+    const updatedSelectedRows = [...selectedRows];
+    const rowIndex = updatedSelectedRows.indexOf(index);
+
+    if (rowIndex === -1) {
+      updatedSelectedRows.push(index);
+    } else {
+      updatedSelectedRows.splice(rowIndex, 1);
+    }
+
+    if (lineIndex === -1) {
+      updatedSelectedLines.push(row.lineId);
+    } else {
+      updatedSelectedLines.splice(lineIndex, 1);
+    }
+
+    setSelectedRows(updatedSelectedRows);
+    setSelectedLines(updatedSelectedLines);
+  };
+
+  const handleDeleteRows = () => {
+    const updatedRows = rows.filter((_, index) => !selectedRows.includes(index));
+    setRows(updatedRows);
+    setSelectedRows([]);
+  };
+
+  const handleDeleteLines = () => {
+    selectedLines.forEach(async (line) => {
+      console.log(line);
+      await deleteTxnRequestLines(line);
+    });
+    setSelectedLines([]);
+  };
+
+  const onClickDelete = async () => {
+    const isEmptyObject =
+      Object.values(rows[0]).every((value) => value === null || value === '') &&
+      !Object.values(headerDetails).every((value) => value === null || value === '');
+
+    if (
+      selectedLines.length === 0 &&
+      rows.length > 0 &&
+      !Object.values(rows[0]).every((value) => value === null || value === '')
+    ) {
+      alert('Please select lines to delete');
+    } else if ((selectedLines.length === 0 && rows.length === 0) || isEmptyObject) {
+      if (confirm('Are you sure to delete the requisition?')) {
+        await deleteTxnRequestHeader(headerDetails.headerId);
+        window.location.reload();
+      }
+    } else if (selectedLines.length > 0 && rows.length > 0) {
+      if (confirm('Are you sure to delete the lines?')) {
+        handleDeleteLines();
+        handleDeleteRows();
+      }
+    }
+  };
+
+  // const isReadOnly = true;
+  const [isReadOnly, setIsReadOnly] = useState(false);
 
   return (
     <>
@@ -37,271 +250,307 @@ export default function Page404() {
             Requisition Form
           </Typography>
         </Stack>
-        <Grid container spacing={2}>
-          {/* <Grid item xs={1.5}>
-            <TextField
-              required
-              name="requestNumber"
-              label="Request Number"
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.unitOfMeasure}
-              // helperText={errors.unitOfMeasure}
-            />
-          </Grid> */}
-          <Grid item xs={2}>
-            <TextField
-              type="number"
-              name="transactionTypeId"
-              label="Transaction Type ID"
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.uomCode}
-              // helperText={errors.uomCode}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <TextField
-              type="number"
-              name="moveOrderType"
-              label="Move Order Type"
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.uomClass}
-              // helperText={errors.uomClass}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <TextField
-              required
-              type="number"
-              name="organizationId"
-              label="Organization ID"
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.uomClass}
-              // helperText={errors.uomClass}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <TextField
-              name="fromSubinventoryCode"
-              label="From Subinventory Code"
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.uomClass}
-              // helperText={errors.uomClass}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <TextField
-              name="toSubinventoryCode"
-              label="To Subinventory Code"
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.uomClass}
-              // helperText={errors.uomClass}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={2}>
-            <TextField
-              type="date"
-              name="dateRequired"
-              label="Date Required"
-              //   onChange={(e) => onValueChange(e)}
-              //   error={!!errors.startDateActive}
-              //   helperText={errors.startDateActive}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <TextareaAutosize
-              name="description"
-              placeholder="Description.."
-              autoComplete="given-name"
-              // onChange={(e) => onValueChange(e)}
-              // error={!!errors.description}
-              // helperText={errors.description}
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-          </Grid>
-          <Grid item xs={3}>
-            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-              <Button onClick={() => saveHeader}>
-                Save
-              </Button>
-            </ButtonGroup>
-          </Grid>
-        </Grid>
-
-        {sections.map((section, index) => (
-          <div key={index}>
-            {section.expanded && (
-              <Grid container spacing={2} style={{ marginTop: '2px' }}>
-                <Grid item xs={2}>
-                  <TextField
-                    required
-                    type="number"
-                    name="headerId"
-                    label="Header ID"
-                    autoComplete="given-name"
-                    // onChange={(e) => onValueChange(e)}
-                    // error={!!errors.uomCode}
-                    // helperText={errors.uomCode}
-                  />
-                </Grid>
-                {/* <Grid item xs={2}>
-                  <TextField
-                    required
-                    type="number"
-                    name="headerId"
-                    label="Header ID"
-                    autoComplete="given-name"
-                    // onChange={(e) => onValueChange(e)}
-                    // error={!!errors.uomCode}
-                    // helperText={errors.uomCode}
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <TextField
-                    required
-                    type="number"
-                    name="lineNumber"
-                    label="Line Number"
-                    autoComplete="given-name"
-                    // onChange={(e) => onValueChange(e)}
-                    // error={!!errors.uomClass}
-                    // helperText={errors.uomClass}
-                  />
-                </Grid> */}
-                <Grid item xs={2}>
-                  <TextField
-                    required
-                    type="number"
-                    name="inventoryItemId"
-                    label="Inventory Item ID"
-                    autoComplete="given-name"
-                    // onChange={(e) => onValueChange(e)}
-                    // error={!!errors.uomClass}
-                    // helperText={errors.uomClass}
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <TextField
-                    name="fromSubinventoryCode"
-                    label="From Subinventory Code"
-                    //   onChange={(e) => onValueChange(e)}
-                    //   error={!!errors.startDateActive}
-                    //   helperText={errors.startDateActive}
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <TextField
-                    required
-                    name="uomCode"
-                    label="Uom Code"
-                    autoComplete="given-name"
-                    // onChange={(e) => onValueChange(e)}
-                    // error={!!errors.uomClass}
-                    // helperText={errors.uomClass}
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <TextField
-                    type="number"
-                    name="requiredQuantity"
-                    label="Required Quantity"
-                    autoComplete="given-name"
-                    // onChange={(e) => onValueChange(e)}
-                    // error={!!errors.uomClass}
-                    // helperText={errors.uomClass}
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <TextField
-                    required
-                    type="date"
-                    name="dateRequired"
-                    label="Date Required"
-                    //   onChange={(e) => onValueChange(e)}
-                    //   error={!!errors.startDateActive}
-                    //   helperText={errors.startDateActive}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            )}
+        <div className="row g-3 align-items-center">
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label htmlFor="requestNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+              Request Number
+              <input
+                type="number"
+                id="requestNumber"
+                className="form-control"
+                readOnly
+                value={headerDetails.requestNumber}
+              />
+            </label>
           </div>
-        ))}
-        <form className="form-horizontal" style={{marginTop: '20px'}}>
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label htmlFor="createdBy" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+              Create By
+              <input
+                type="number"
+                id="createdBy"
+                className="form-control"
+                style={{ marginLeft: '7px' }}
+                readOnly
+                value={headerDetails.createdBy}
+              />
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label htmlFor="status" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
+              Status
+              <input
+                type="text"
+                id="status"
+                className="form-control"
+                style={{ marginLeft: '7px' }}
+                readOnly
+                value={headerDetails.status}
+              />
+            </label>
+          </div>
+
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label htmlFor="transactionTypeId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+              Transaction Type ID
+              <select
+                name="transactionTypeId"
+                id="transactionTypeId"
+                style={{ backgroundColor: 'white' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              >
+                <option value="null" />
+                {transactionTypeIds.map((id, index) => (
+                  <option key={index} value={id.transaction_type_id}>
+                    {id.transaction_type_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label htmlFor="moveOrderType" className="col-form-label" style={{ display: 'flex', fontSize: '11px' }}>
+              Move Order Type
+              <input
+                type="number"
+                id="moveOrderType"
+                name="moveOrderType"
+                className="form-control"
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              />
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label htmlFor="organizationId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+              Organization ID
+              <select
+                name="organizationId"
+                id="organizationId"
+                style={{ backgroundColor: 'white' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              >
+                <option value="null" />
+                {organizationIds.map((id, index) => (
+                  <option key={index} value={parseInt(id.organization_id, 10)}>
+                    {id.name}
+                  </option>
+                ))}
+              </select>
+              <span style={{ color: 'red' }}>*</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label
+              htmlFor="fromSubinventoryCode"
+              className="col-form-label"
+              style={{ display: 'flex', fontSize: '11px' }}
+            >
+              From Subinventory Code
+              <input
+                type="text"
+                id="fromSubinventoryCode"
+                name="fromSubinventoryCode"
+                className="form-control"
+                style={{ marginLeft: '7px' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              />
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '180px' }}>
+            <label
+              htmlFor="toSubinventoryCode"
+              className="col-form-label"
+              style={{ display: 'flex', fontSize: '11px' }}
+            >
+              To Subinventory Code
+              <input
+                type="text"
+                id="toSubinventoryCode"
+                name="toSubinventoryCode"
+                className="form-control"
+                style={{ marginLeft: '7px' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              />
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '241px' }}>
+            <label htmlFor="dateRequired" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
+              Date Required
+              <input
+                type="date"
+                id="dateRequired"
+                name="dateRequired"
+                className="form-control"
+                style={{ marginLeft: '7px' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              />
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '241px' }}>
+            <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
+              Description
+              <textarea
+                id="description"
+                name="description"
+                className="form-control"
+                style={{ marginLeft: '7px', height: '30px' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
+                readOnly={isReadOnly}
+              />
+            </label>
+          </div>
+          <Grid container spacing={2}>
+            <Grid item xs={3}>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+                <Button style={{ marginRight: '10px' }} onClick={saveHeader}>
+                  Save
+                </Button>
+                <Button style={{ marginRight: '10px' }} onClick={onClickDelete}>
+                  Delete
+                </Button>
+                <Button onClick={handleAddRow}>Add Lines</Button>
+              </ButtonGroup>
+            </Grid>
+          </Grid>
+        </div>
+
+        <form className="form-horizontal" style={{ marginTop: '20px' }}>
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-highlight">
               <thead>
                 <tr>
-                  <th>Inventory Item ID</th>
+                  <th>
+                    <input
+                      type="checkbox"
+                      onChange={() => {
+                        // Select or deselect all rows
+                        const allRowsSelected = selectedRows.length === rows.length;
+                        const newSelectedRows = allRowsSelected ? [] : rows.map((_, index) => index);
+                        setSelectedRows(newSelectedRows);
+                      }}
+                      checked={selectedRows.length === rows.length && rows.length !== 0}
+                    />
+                  </th>
+                  <th>
+                    Inventory Item ID <span style={{ color: 'red' }}>*</span>
+                  </th>
                   <th>From Subinventory Code</th>
-                  <th>Uom Code</th>
-                  <th>Required Quantity</th>
-                  <th>Date Required</th>
-                  <th />
+                  <th>
+                    Uom Code <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Required Quantity <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Date Required <span style={{ color: 'red' }}>*</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <select className="form-control" name="inventoryItemId">
-                      <option>Monthly</option>
-                      <option>Yearly</option>
-                    </select>
-                  </td>
-                  <td>
-                    <input type="text" className="form-control" name="fromSubinventoryCode" />
-                  </td>
-                  <td>
-                    <select className="form-control" name="uomCode">
-                      <option>Monthly</option>
-                      <option>Yearly</option>
-                    </select>
-                  </td>
-                  <td>
-                    <input type="number" className="form-control" name="requiredQuantity" />
-                  </td>
-                  <td>
-                    <input type="date" className="form-control" name="dateRequired" />
-                  </td>
-                  <td>
-                    {/* <Iconify icon={'mdi:approve'} sx={{ mr: 3 }} /> */}
-                    {/* <input type="text" className="form-control"/> */}
-                    <Button>
-                      <AddIcon />
-                    </Button>
-                  </td>
-                </tr>
+                {showLines &&
+                  rows.map((row, index) => (
+                    <tr key={index}>
+                      <td>
+                        <input
+                          type="checkbox"
+                          onChange={() => handleRowSelect(index, row)}
+                          checked={selectedRows.includes(index)}
+                        />
+                      </td>
+                      <td>
+                        <select
+                          className="form-control"
+                          name="inventoryItemId"
+                          defaultValue={null}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        >
+                          <option />
+                          {inventoryItemIds.map((id, index) => (
+                            <option key={index} value={parseInt(id.inventory_item_id, 10)}>
+                              {id.inventory_item_code}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="fromSubinventoryCode"
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <select
+                          className="form-control"
+                          name="uomCode"
+                          defaultValue={''}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        >
+                          <option />
+                          {uomCodes.map((code, index) => (
+                            <option key={index} value={code.uom_code}>
+                              {code.unit_of_measure}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="requiredQuantity"
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="date"
+                          className="form-control"
+                          name="dateRequired"
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
         </form>
+        {showLines && (
+          <Grid item xs={3}>
+            <Button variant="contained" style={{ marginRight: '10px' }} onClick={saveLines}>
+              Save
+            </Button>
+            {showApprovalButton && (
+              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+                <Button style={{ display: { showApprovalButton } }} onClick={submitRequisition}>
+                  Approval
+                </Button>
+              </ButtonGroup>
+            )}
+          </Grid>
+        )}
       </Container>
     </>
   );
