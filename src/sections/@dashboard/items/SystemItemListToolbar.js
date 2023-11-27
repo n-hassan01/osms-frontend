@@ -4,7 +4,7 @@ import { IconButton, InputAdornment, OutlinedInput, Toolbar, Tooltip, Typography
 import { alpha, styled } from '@mui/material/styles';
 // component
 import Iconify from '../../../components/iconify';
-import { deleteUser } from '../../../Services/ApiServices';
+import { disableSystemItems } from '../../../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
@@ -41,11 +41,17 @@ UserListToolbar.propTypes = {
 };
 
 export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers }) {
+  console.log(selectedUsers);
+  console.log(filterName);
   const deleteSelectedUser = async () => {
     const result = selectedUsers.map(async (element) => {
       try {
-        console.log(element);
-        const response = await deleteUser(element);
+        const requestBody = {
+          inventoryItemId: element.itemId,
+          organizationId: element.orgId,
+        };
+
+        const response = await disableSystemItems(requestBody);
 
         const alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
         alert(alertMessage);
@@ -73,7 +79,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         <StyledSearch
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search..."
+          placeholder="Search items..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />

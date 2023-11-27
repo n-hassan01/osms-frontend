@@ -1,17 +1,18 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 // @mui
 import { Avatar, Box, Drawer, Link, Typography } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 // mock
 // hooks
-import useResponsive from '../../../hooks/useResponsive';
+// import useResponsive from '../../../hooks/useResponsive';
 // components
 import NavSection from '../../../components/nav-section';
 import Scrollbar from '../../../components/scrollbar';
 //
-import navConfig from './config';
+import { getLoggedInUserDetails, getUserMenuList } from '../../../Services/ApiServices';
+// import navConfig from './config';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
 
-  const isDesktop = useResponsive('up', 'lg');
+  // const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {
     if (openNav) {
@@ -43,6 +44,43 @@ export default function Nav({ openNav, onCloseNav }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  const [account, setAccount] = useState({});
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const accountDetails = await getLoggedInUserDetails();
+        if (accountDetails.status === 200) {
+          setAccount(accountDetails.data);
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  const userId = account.id;
+
+  const [userMenus, setUserMenus] = useState([]);
+  useEffect(() => {
+    const fetchUserMenus = async () => {
+      try {
+        // Make sure userId is available before making the second API call
+        if (userId) {
+          const response = await getUserMenuList(userId);
+          setUserMenus(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user menus:', error);
+      }
+    };
+
+    fetchUserMenus();
+  }, [userId]); // Add userId to the dependency array to trigger the effect when it changes
+
+  console.log(userMenus);
 
   const renderContent = (
     <Scrollbar
@@ -56,21 +94,21 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={'/favicon/logo.png'} alt="logo" />
+            <Avatar src={'https://us.remarkhb.com/wp-content/uploads/2022/01/remark-200x190.png'} alt="logo" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                Chowdhury's Blog
+                Remark OSMS
               </Typography>
             </Box>
           </StyledAccount>
         </Link>
       </Box>
 
-      <NavSection data={navConfig} />
+      {/* <NavSection data={navConfig} /> */}
+      <NavSection data={userMenus} />
 
       <Box sx={{ flexGrow: 1 }} />
-
     </Scrollbar>
   );
 
@@ -79,10 +117,10 @@ export default function Nav({ openNav, onCloseNav }) {
       component="nav"
       sx={{
         flexShrink: { lg: 0 },
-        width: { lg: NAV_WIDTH },
+        // width: { lg: NAV_WIDTH },
       }}
     >
-      {isDesktop ? (
+      {/* {isDesktop ? (
         <Drawer
           open
           variant="permanent"
@@ -96,20 +134,20 @@ export default function Nav({ openNav, onCloseNav }) {
         >
           {renderContent}
         </Drawer>
-      ) : (
-        <Drawer
-          open={openNav}
-          onClose={onCloseNav}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          PaperProps={{
-            sx: { width: NAV_WIDTH },
-          }}
-        >
-          {renderContent}
-        </Drawer>
-      )}
+      ) : ( */}
+      <Drawer
+        open={openNav}
+        onClose={onCloseNav}
+        ModalProps={{
+          keepMounted: true,
+        }}
+        PaperProps={{
+          sx: { width: NAV_WIDTH },
+        }}
+      >
+        {renderContent}
+      </Drawer>
+      {/* )} */}
     </Box>
   );
 }

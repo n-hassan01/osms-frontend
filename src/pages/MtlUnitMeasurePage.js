@@ -233,6 +233,7 @@ export default function UserPage() {
   // const TABLE_HEAD = Object.keys(USERLIST[0]).map((column => ({id: column, label: sentenceCase(column), alignRight: false})));
   // TABLE_HEAD.push({id: ''})
   const TABLE_HEAD = [
+    // { id: '' },
     { id: 'unit_of_measure', label: sentenceCase('unit_of_measure'), alignRight: false },
     { id: 'uom_code', label: sentenceCase('uom_code'), alignRight: false },
     { id: 'uom_class', label: sentenceCase('uom_class'), alignRight: false },
@@ -296,7 +297,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> UOM | OSMS </title>
+        <title> OSMS | UOM </title>
       </Helmet>
 
       <Container>

@@ -1,17 +1,14 @@
-import { sentenceCase } from 'change-case';
 import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import {
-  Avatar,
+  Button,
+  ButtonGroup,
   Card,
-  Checkbox,
   Container,
-  IconButton,
-  MenuItem,
+  Grid,
   Paper,
-  Popover,
   Stack,
   Table,
   TableBody,
@@ -19,17 +16,16 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  TextField,
+  Typography
 } from '@mui/material';
 // components
-import Iconify from '../components/iconify';
-import Label from '../components/label';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
-import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-import AddUserDialog from '../sections/@dashboard/user/AddUserDialog';
+// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
+// import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
+import { UserListHead } from '../sections/@dashboard/user';
+// import AddUserDialog from '../sections/@dashboard/user/AddUserDialog';
 
 // ----------------------------------------------------------------------
 
@@ -38,8 +34,8 @@ const TABLE_HEAD = [
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
   { id: 'address', label: 'Address', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
+  { id: 'age', label: 'Age', alignRight: false },
+  // { id: '' },
 ];
 const selectedUsers = [];
 
@@ -85,7 +81,7 @@ export default function UserPage() {
 
   const [orderBy, setOrderBy] = useState('name');
 
-  const [filterName, setFilterName] = useState('');
+  const [filterName, setFilterName] = useState({});
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -96,82 +92,6 @@ export default function UserPage() {
   const [isDisableBan, setIsDisableBan] = useState(false);
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const usersDetails = await getUsersDetailsService();
-        if (usersDetails) setUserList(usersDetails);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  const [loggedInUser, setLoggedInUser] = useState({});
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const usersDetails = await getLoggedInUserDetails();
-        if (usersDetails) setLoggedInUser(usersDetails.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  const displayAddUser = loggedInUser.role === 1 ? 'block' : 'none';
-
-  const handleOpenMenu = (event, status, email) => {
-    if (status === 'approved') setIsDisableApprove(true);
-    else setIsDisableApprove(false);
-
-    if (status === 'banned') setIsDisableBan(true);
-    else setIsDisableBan(false);
-
-    setSelectedUserEmail(email);
-
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
-  const approveUser = async () => {
-    const body = {
-      status: 'approved',
-      email: selectedUserEmail,
-    };
-
-    const response = await updateUserStatus(body);
-
-    const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    alert(alertMessage);
-
-    handleCloseMenu();
-    window.location.reload();
-  };
-
-  const banUser = async () => {
-    const body = {
-      status: 'banned',
-      email: selectedUserEmail,
-    };
-
-    const response = await updateUserStatus(body);
-
-    const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    alert(alertMessage);
-
-    handleCloseMenu();
-    window.location.reload();
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -188,23 +108,6 @@ export default function UserPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    selectedUsers.push(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-    console.log(typeof selectedUsers);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -219,9 +122,39 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [header, setHeader] = useState({});
+  const onChangeHeader = (e) => {
+    setHeader({ ...header, [e.target.name]: e.target.value });
+    // setHeader(...header, event.target.value);
+  };
+  const onSerch = () => {
+    console.log(header);
+    setFilterName(header);
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const users = [
+    {
+      name: 'abc', email: 'ttt', role: '1', address: 'somewhere', age: '33'
+    },
+    {
+      name: 'www', email: 'ppp', role: '2', address: 'somewhere', age: '25'
+    },
+  ]
+
+  function onFilter(order, orderBy) {
+    const filteredData = order.filter(item =>
+      Object.keys(orderBy).every(key =>
+        String(item[key]).toLowerCase().includes(String(orderBy[key]).toLowerCase())
+      )
+    );
+    console.log(filteredData);
+
+    return filteredData;
+  }
+
+  const filteredUsers = onFilter(users, filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -236,18 +169,69 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Users
           </Typography>
-          <div style={{ display: displayAddUser }}>
+          {/* <div style={{ display: displayAddUser }}>
             <AddUserDialog />
-          </div>
+          </div> */}
         </Stack>
 
+        <Grid container spacing={2} style={{marginBottom: '50px'}}>
+          <Grid item xs={2}>
+            <TextField
+              name="name"
+              label="Name"
+              autoComplete="given-name"
+              onChange={(e) => onChangeHeader(e)}
+              // error={!!errors.uomClass}
+              // helperText={errors.uomClass}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              fullWidth
+              name="role"
+              label="Role"
+              autoComplete="given-name"
+              onChange={(e) => onChangeHeader(e)}
+              // error={!!errors.uomClass}
+              // helperText={errors.uomClass}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              fullWidth
+              name="age"
+              label="Age"
+              autoComplete="given-name"
+              onChange={(e) => onChangeHeader(e)}
+              // error={!!errors.uomClass}
+              // helperText={errors.uomClass}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+              <Button onClick={onSerch}>
+                Search
+              </Button>
+            </ButtonGroup>
+          </Grid>
+        </Grid>
+
         <Card>
-          <UserListToolbar
+          {/* <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-          />
+          /> */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -262,19 +246,18 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, email, address, dpurl } = row;
+                  {filteredUsers.map((row) => {
+                    const { name, role, email, address, age } = row;
                     const selectedUser = selected.indexOf(email) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                      <TableRow hover key={name} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, email)} />
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={dpurl} />
                             <Typography variant="subtitle2" noWrap>
                               {name}
                             </Typography>
@@ -288,27 +271,23 @@ export default function UserPage() {
                         <TableCell align="left">{address}</TableCell>
 
                         <TableCell align="left">
-                          <Label
-                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
-                          >
-                            {sentenceCase(status)}
-                          </Label>
+                            {age}
                         </TableCell>
 
-                        <TableCell align="right">
+                        {/* <TableCell align="right">
                           <IconButton
                             size="large"
                             color="inherit"
-                            onClick={(event) => handleOpenMenu(event, status, email)}
+                            // onClick={(event) => handleOpenMenu(event, status, email)}
                           >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
 
-                        <Popover
+                        {/* <Popover
                           open={Boolean(open)}
                           anchorEl={open}
-                          onClose={handleCloseMenu}
+                          // onClose={handleCloseMenu}
                           anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
                           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                           PaperProps={{
@@ -332,7 +311,7 @@ export default function UserPage() {
                             <Iconify icon={'mdi:ban'} sx={{ mr: 2 }} />
                             Banned
                           </MenuItem>
-                        </Popover>
+                        </Popover> */}
                       </TableRow>
                     );
                   })}
@@ -384,3 +363,65 @@ export default function UserPage() {
     </>
   );
 }
+
+// import { useState } from 'react';
+// import { Form, Table } from 'react-bootstrap';
+
+// const SearchableTable = () => {
+//   const [searchTerms, setSearchTerms] = useState([]);
+
+//   const data = [
+//     { id: 1, name: 'John Doe', age: 25 },
+//     { id: 2, name: 'Jane abc', age: 30 },
+//     { id: 3, name: 'Jane rr', age: 40 },
+//     { id: 4, name: 'Jane pp', age: 50 },
+//     { id: 5, name: 'Jane www', age: 35 },
+//   ];
+
+//   const filteredData = data.filter(item =>
+//     searchTerms.every(searchTerm =>
+//       Object.values(item).some(value =>
+//         value.toLowerCase().includes(searchTerm.toLowerCase())
+//       )
+//     )
+//   );
+
+//   const handleSearchChange = (e) => {
+//     const value = e.target.value.toLowerCase();
+//     setSearchTerms(value ? value.split(',') : []);
+//   };
+
+//   return (
+//     <div>
+//       <Form.Group controlId="searchForm">
+//         <Form.Control
+//           type="text"
+//           placeholder="Search by comma-separated values..."
+//           value={searchTerms.join(',')}
+//           onChange={handleSearchChange}
+//         />
+//       </Form.Group>
+
+//       <Table striped bordered hover>
+//         <thead>
+//           <tr>
+//             {Object.keys(data[0]).map((key) => (
+//               <th key={key}>{key}</th>
+//             ))}
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {filteredData.map((row, index) => (
+//             <tr key={index}>
+//               {Object.values(row).map((value, index) => (
+//                 <td key={index}>{value}</td>
+//               ))}
+//             </tr>
+//           ))}
+//         </tbody>
+//       </Table>
+//     </div>
+//   );
+// };
+
+// export default SearchableTable;

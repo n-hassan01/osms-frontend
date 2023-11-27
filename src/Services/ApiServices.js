@@ -47,7 +47,7 @@ export const getLoggedInUserDetails = async () => {
   const cookie = getCookieService('jwt-token-cookie');
 
   try {
-    return await axios.get(`${usersUrl}logged-user/`, {
+    return await axios.get(`${usersUrl}loggedin-user/`, {
       headers: {
         Authorization: `Bearer ${cookie}`,
       },
@@ -64,6 +64,22 @@ export const getAccountDetails = async (emailAddress) => {
 
   try {
     return await axios.get(`${usersUrl}account-info/${emailAddress}`, {
+      headers: {
+        Authorization: `Bearer ${cookie}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getUserProfileDetails = async () => {
+  const cookie = getCookieService('jwt-token-cookie');
+
+  try {
+    return await axios.get(`${usersUrl}profile/`, {
       headers: {
         Authorization: `Bearer ${cookie}`,
       },
@@ -273,6 +289,7 @@ export const getLikeCount = async (blogId) => {
 };
 
 // admin panel
+// UOM
 export const getUomDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-unit-measure/`);
@@ -331,7 +348,7 @@ export const getHrAllOrganizationUnits = async () => {
     return err.message;
   }
 };
-export const getPerHrLocationsDetails = async ( { location_id } ) => {
+export const getPerHrLocationsDetails = async ({ location_id }) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -341,7 +358,7 @@ export const getPerHrLocationsDetails = async ( { location_id } ) => {
   }
 };
 
-export const getPerHrOrganizationUnits = async ( { organization_id } ) => {
+export const getPerHrOrganizationUnits = async ({ organization_id }) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-organization-units/${organization_id}`);
   } catch (err) {
@@ -363,7 +380,7 @@ export const addHrLocationsDetails = async (location) => {
 export const addHrOrganizationUnitsDetails = async (organization) => {
   console.log('organization for api ', organization);
   try {
-    console.log("Inside it ",organization)
+    console.log('Inside it ', organization);
     return await axios.post(`${usersUrl}add-hr-organization-units/`, organization);
   } catch (err) {
     console.log(err.message);
@@ -372,11 +389,145 @@ export const addHrOrganizationUnitsDetails = async (organization) => {
   }
 };
 // eslint-disable-next-line camelcase
-export const updateHrLocationsDetails = async ( locationsDetails ) => {
-  console.log('location for api ', locationsDetails.location_id );
+export const updateHrLocationsDetails = async (locationsDetails) => {
+  console.log('location for api ', locationsDetails.location_id);
   try {
     // eslint-disable-next-line camelcase
-    return await axios.put(`${usersUrl}update-hr-locations-all/${locationsDetails.location_id}`,locationsDetails);
+    return await axios.put(`${usersUrl}update-hr-locations-all/${locationsDetails.location_id}`, locationsDetails);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// item master
+export const getSytemItems = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addSystemItemsDetails = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-item-master`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateSystemItems = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}update-item-master`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const disableSystemItems = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}delete-item-master`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// txn request headers and lines
+export const getTransactionTypeList = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-transaction-types/list`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getOrganizationIdList = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hr-organization-units/list`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addTxnRequestHeader = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-txn-header`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addTxnRequestLines = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-txn-line`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getInventoryItemIdList = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/inventory_item_id`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getUomCodeList = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-unit-measure/uom_code`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteTxnRequestLines = async (lineId) => {
+  console.log(lineId);
+  try {
+    return await axios.delete(`${usersUrl}delete-txn-lines/${lineId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteTxnRequestHeader = async (headerId) => {
+  try {
+    return await axios.delete(`${usersUrl}delete-txn-header/${headerId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// user menu services
+export const getUserMenuList = async (userInfo) => {
+  try {
+    return await axios.get(`${usersUrl}get-menus/${userInfo}`);
   } catch (err) {
     console.log(err.message);
 
