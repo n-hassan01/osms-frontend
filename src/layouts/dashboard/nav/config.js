@@ -11,31 +11,31 @@ const navConfig = [
     path: '/dashboard/app',
     icon: icon('ic_analytics'),
   },
-  {
-    title: 'users',
-    path: '/dashboard/user',
-    icon: icon('ic_users'),
-  },
-  {
-    title: 'portfolio',
-    path: '/dashboard/portfolio',
-    icon: icon('portfolio'),
-  },
-  {
-    title: 'blog',
-    path: '/dashboard/blog',
-    icon: icon('ic_blog'),
-  },
-  {
-    title: 'profile',
-    path: '/dashboard/profile',
-    icon: icon('ic_profile'),
-  },
-  {
-    title: 'contact',
-    path: '/dashboard/contact',
-    icon: icon('ic_contact'),
-  },
+  // {
+  //   title: 'users',
+  //   path: '/dashboard/user',
+  //   icon: icon('ic_users'),
+  // },
+  // {
+  //   title: 'portfolio',
+  //   path: '/dashboard/portfolio',
+  //   icon: icon('portfolio'),
+  // },
+  // {
+  //   title: 'blog',
+  //   path: '/dashboard/blog',
+  //   icon: icon('ic_blog'),
+  // },
+  // {
+  //   title: 'profile',
+  //   path: '/dashboard/profile',
+  //   icon: icon('ic_profile'),
+  // },
+  // {
+  //   title: 'contact',
+  //   path: '/dashboard/contact',
+  //   icon: icon('ic_contact'),
+  // },
 ];
 
 export default navConfig;

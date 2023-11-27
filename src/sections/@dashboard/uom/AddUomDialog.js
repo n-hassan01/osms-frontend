@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { sentenceCase } from 'change-case';
@@ -121,7 +122,7 @@ export default function ResponsiveDialog() {
         Add UOM
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        {/* <DialogTitle id="responsive-dialog-title">{'Add New Users'}</DialogTitle> */}
+        <DialogTitle id="responsive-dialog-title">{'Add New Uom'}</DialogTitle>
         <DialogContent>
           <Stack spacing={3}>
             <TextField
