@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable camelcase */
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -27,20 +28,22 @@ import Scrollbar from '../components/scrollbar';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrganizationUnits';
-import AddHrOrganizationUnits from '../sections/@dashboard/user/AddHrOrganizationUnits';
-import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
-import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
-
+import { getPerAllPeoplesService } from '../Services/Admin/GetPerAllPeoples';
+import AddPerAllPeoples from '../sections/@dashboard/user/AddPerAllPeoples';
+import DeletePerAllPeoples from '../sections/@dashboard/user/DeletePerAllPeoples';
+import UpdatePerAllPeoples from '../sections/@dashboard/user/UpdatePerAllPeoples';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'organization_id', label: 'Organization ID', alignRight: false },
-  { id: 'business_group_id', label: 'Business Group ID', alignRight: false },
-  { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'date_from', label: 'Date Form', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'date_to', label: 'Date To', alignRight: false },
+  { id: 'personId', label: 'Person ID', alignRight: false },
+  { id: 'effectiveStartDate', label: 'Effective Start Date', alignRight: false },
+  { id: 'effectiveEndDate', label: 'Effective End Date', alignRight: false },
+  { id: 'businessGroupId', label: 'Business Group ID', alignRight: false },
+  { id: 'employeeNumber', label: 'Employee Number', alignRight: false },
+  { id: ' fullName', label: ' Full Name', alignRight: false },
+  { id: 'emailAddress', label: 'Email Address', alignRight: false },
+  { id: 'workTelephone', label: 'Work Telephone', alignRight: false },
+  { id: 'originalDateOfHire', label: 'Original Date Of Hire', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -79,7 +82,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowHrAllOrganizationUnits() {
+export default function ShowPerAllPeoples() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -105,8 +108,8 @@ export default function ShowHrAllOrganizationUnits() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrAllOrganizationUnitsService();
-        console.log('Hola', usersDetails.data[0].organization_id);
+        const usersDetails = await getPerAllPeoplesService();
+
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -115,23 +118,6 @@ export default function ShowHrAllOrganizationUnits() {
 
     fetchData();
   }, []);
-
-  //   const [loggedInUser, setLoggedInUser] = useState({});
-
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       try {
-  //         const usersDetails = await getLoggedInUserDetails();
-  //         if (usersDetails) setLoggedInUser(usersDetails.data);
-  //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
-  //       }
-  //     }
-
-  //     fetchData();
-  //   }, []);
-
-  //   const displayAddUser = loggedInUser.role === 1 ? 'block' : 'none';
 
   const handleOpenMenu = (event, status, email) => {
     if (status === 'approved') setIsDisableApprove(true);
@@ -147,6 +133,7 @@ export default function ShowHrAllOrganizationUnits() {
 
   const handleCloseMenu = () => {
     setOpen(null);
+    window.location.reload();
   };
 
   const approveUser = async () => {
@@ -154,11 +141,6 @@ export default function ShowHrAllOrganizationUnits() {
       status: 'approved',
       email: selectedUserEmail,
     };
-
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
 
     handleCloseMenu();
     window.location.reload();
@@ -170,13 +152,8 @@ export default function ShowHrAllOrganizationUnits() {
       email: selectedUserEmail,
     };
 
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
-
     handleCloseMenu();
-  
+    window.location.reload();
   };
 
   const handleRequestSort = (event, property) => {
@@ -240,10 +217,10 @@ export default function ShowHrAllOrganizationUnits() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Organization Units
+            Locations
           </Typography>
           <div>
-            <AddHrOrganizationUnits />
+            <AddPerAllPeoples />
           </div>
         </Stack>
 
@@ -269,44 +246,44 @@ export default function ShowHrAllOrganizationUnits() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { organization_id, business_group_id, location_id, date_from, name, date_to } = row;
-                    const selectedUser = selected.indexOf(organization_id) !== -1;
+                    const {
+                      person_id,
+                      effective_start_date,
+
+                      effective_end_date,
+
+                      business_group_id,
+                      employee_number,
+                      full_name,
+                      email_address,
+                      work_telephone,
+                      original_date_of_hire,
+                    } = row;
+                    const selectedUser = selected.indexOf(person_id) !== -1;
 
                     return (
-                      <TableRow hover key={organization_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={person_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, organization_id)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, person_id)} />
                         </TableCell>
-                        {/* <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
-                        <TableCell align="left">{organization_id}</TableCell>
+
+                        <TableCell align="left">{person_id}</TableCell>
+                        <TableCell align="left">{effective_start_date}</TableCell>
+
+                        <TableCell align="left">{effective_end_date}</TableCell>
+
                         <TableCell align="left">{business_group_id}</TableCell>
-
-                        <TableCell align="left">{location_id}</TableCell>
-
-                        <TableCell align="left">{date_from}</TableCell>
-                        <TableCell align="left">{name}</TableCell>
-                        <TableCell align="left">{date_to}</TableCell>
-
-                        {/* <TableCell align="left">
-                          <Label
-                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
-                          >
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell> */}
+                        <TableCell align="left">{employee_number}</TableCell>
+                        <TableCell align="left">{full_name}</TableCell>
+                        <TableCell align="left">{email_address}</TableCell>
+                        <TableCell align="left">{work_telephone}</TableCell>
+                        <TableCell align="left">{original_date_of_hire}</TableCell>
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrOrganizationUnits organization_id={organization_id} />
+                          <UpdatePerAllPeoples person_id={person_id} />
                         </div>
                         <TableCell align="right">
-                        <DeleteHrOrganizationUnits organization_id={organization_id} />
+                          <DeletePerAllPeoples person_id={person_id} />
                         </TableCell>
 
                         <Popover

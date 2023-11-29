@@ -4,20 +4,20 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import {
-  Card,
-  Checkbox,
-  Container,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    Checkbox,
+    Container,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -27,22 +27,27 @@ import Scrollbar from '../components/scrollbar';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrganizationUnits';
-import AddHrOrganizationUnits from '../sections/@dashboard/user/AddHrOrganizationUnits';
-import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
-import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
+import { getAllMtlTransactionsService } from '../Services/Admin/GetAllMtlMaterialTransactions';
+import AddMtlTransactionTypes from '../sections/@dashboard/user/AddMtlTransactionTypes';
+import DeleteMtlTransactionTypes from '../sections/@dashboard/user/DeleteMtlTransactionTypes';
+import UpdateMtlTransactionTypes from '../sections/@dashboard/user/UpdateMtlTransactionTypes';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'organization_id', label: 'Organization ID', alignRight: false },
-  { id: 'business_group_id', label: 'Business Group ID', alignRight: false },
-  { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'date_from', label: 'Date Form', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'date_to', label: 'Date To', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
+    { id: 'transactionId', label: 'Transaction ID', alignRight: false },
+    { id: 'inventoryItemId', label: 'Inventory Item ID', alignRight: false },
+    { id: 'organizationId', label: 'Organization ID', alignRight: false },
+    { id: 'subinventoryCode', label: 'Subinventory Code', alignRight: false },
+    { id: 'transactionTypeId', label: 'Transaction Type ID', alignRight: false },
+    { id: 'transactionQuantity', label: 'Transaction Quantity', alignRight: false },
+    { id: 'transactionUom', label: 'Transaction Uom', alignRight: false },
+    { id: 'transactionDate', label: 'Transaction Date', alignRight: false },
+    { id: 'transaction_cost', label: 'Transaction Cost', alignRight: false },
+    { id: 'currencyCode', label: 'Currency Code', alignRight: false },
+    { id: 'shipmentNumber', label: 'Shipment Number', alignRight: false },
+    { id: 'action', label: 'Action', alignRight: false },
+    { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
 ];
@@ -79,7 +84,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowHrAllOrganizationUnits() {
+export default function ShowMtlMaterialTransactions() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -105,8 +110,8 @@ export default function ShowHrAllOrganizationUnits() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrAllOrganizationUnitsService();
-        console.log('Hola', usersDetails.data[0].organization_id);
+        const usersDetails = await getAllMtlTransactionsService();
+        console.log('Hola', usersDetails.data[0].transaction_id);
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -234,16 +239,16 @@ export default function ShowHrAllOrganizationUnits() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Mtl Transaction Type | OSMS </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Organization Units
+          Mtl Transaction Type
           </Typography>
           <div>
-            <AddHrOrganizationUnits />
+            <AddMtlTransactionTypes/>
           </div>
         </Stack>
 
@@ -269,13 +274,13 @@ export default function ShowHrAllOrganizationUnits() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { organization_id, business_group_id, location_id, date_from, name, date_to } = row;
-                    const selectedUser = selected.indexOf(organization_id) !== -1;
+                    const { transaction_type_id, transaction_type_name, description } = row;
+                    const selectedUser = selected.indexOf(transaction_type_id) !== -1;
 
                     return (
-                      <TableRow hover key={organization_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={transaction_type_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, organization_id)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, transaction_type_id)} />
                         </TableCell>
                         {/* <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
@@ -285,14 +290,12 @@ export default function ShowHrAllOrganizationUnits() {
                             </Typography>
                           </Stack>
                         </TableCell> */}
-                        <TableCell align="left">{organization_id}</TableCell>
-                        <TableCell align="left">{business_group_id}</TableCell>
+                        <TableCell align="left">{transaction_type_id}</TableCell>
+                        <TableCell align="left">{transaction_type_name}</TableCell>
 
-                        <TableCell align="left">{location_id}</TableCell>
+                        <TableCell align="left">{ description}</TableCell>
 
-                        <TableCell align="left">{date_from}</TableCell>
-                        <TableCell align="left">{name}</TableCell>
-                        <TableCell align="left">{date_to}</TableCell>
+                   
 
                         {/* <TableCell align="left">
                           <Label
@@ -303,10 +306,10 @@ export default function ShowHrAllOrganizationUnits() {
                         </TableCell> */}
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrOrganizationUnits organization_id={organization_id} />
+                          <UpdateMtlTransactionTypes transaction_type_id={transaction_type_id} />
                         </div>
                         <TableCell align="right">
-                        <DeleteHrOrganizationUnits organization_id={organization_id} />
+                        <DeleteMtlTransactionTypes transaction_type_id={transaction_type_id} />
                         </TableCell>
 
                         <Popover

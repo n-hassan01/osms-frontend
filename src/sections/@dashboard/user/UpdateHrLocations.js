@@ -80,7 +80,7 @@ export default function UpdateHrLocations({ location_id }) {
   const loadUser = async () => {
     console.log('with brackets', { location_id });
     console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService({ location_id });
+    const result = await getPerHrLocationsDetailsService( location_id );
     console.log(
       'Eiii',
       result.data[0].location_id,
