@@ -12,6 +12,7 @@ import { addUserAssign, getFndUserIds, getMenuIds } from '../Services/ApiService
 
 export default function MenuCreation() {
   const [userInput, setUserInput] = useState('');
+  const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(false);
   const [showLines, setShowLines] = useState(false);
 
@@ -68,7 +69,11 @@ export default function MenuCreation() {
 
   const [i, setI] = useState(false);
   const handleMenuItemClick = (selectedItem) => {
+   
+    const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
+    setUser(selectedUser.user_id)
     setUserInput(selectedItem);
+
     setFilteredList([]);
   };
 
@@ -109,7 +114,7 @@ export default function MenuCreation() {
     {
       menuId: '',
 
-      userId: userInput,
+      userId: user,
     },
   ]);
   const handleAddRow = () => {
@@ -118,7 +123,7 @@ export default function MenuCreation() {
       {
         menuId: '',
 
-        userId: userInput,
+        userId: user,
       },
     ]);
     console.log(menurows);
@@ -219,7 +224,7 @@ export default function MenuCreation() {
                       </ul>
                     )}
                       
-            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2} style={{marginTop:"10px"}}>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2} style={{marginTop:"5px"}}>
               <Button onClick={handleReload}>Add New User</Button>
               <Button
                 style={{ marginLeft: '5px' }}
@@ -230,7 +235,7 @@ export default function MenuCreation() {
                     {
                       menuId: '',
 
-                      userId: userInput,
+                      userId: user,
                     },
                   ]);
                 }}
