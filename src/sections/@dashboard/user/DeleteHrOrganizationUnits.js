@@ -78,7 +78,7 @@ export default function DeleteHrOrganizationUnits({ organization_id }) {
 
   return (
     <React.Fragment>
-      <Button variant="outlined" startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
+      <Button variant="outlined" startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen} >
         Delete
       </Button>
       <Dialog
