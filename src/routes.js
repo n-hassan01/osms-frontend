@@ -34,14 +34,6 @@ import UserPage from './pages/UserPage';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
-
-
-
-
-
-
-
-
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -54,7 +46,7 @@ export default function Router() {
       try {
         const accountDetails = await getUserProfileDetails(); // Call your async function here
         if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
-        // else navigate('/login');
+        else navigate('/login');
         // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -84,6 +76,10 @@ export default function Router() {
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
         { path: 'showorganizationunits', element: <ShowHrAllOrganizationUnits /> },
+        { path: 'showmtlmaterialtransactions', element: <ShowMtlMaterialTransactions /> },
+        { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
+        { path: 'menucreation', element: <MenuCreation /> },
+        { path: 'menuassign', element: <MenuAssign /> },
       ],
     },
     {
