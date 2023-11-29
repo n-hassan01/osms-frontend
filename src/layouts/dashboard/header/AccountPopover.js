@@ -24,6 +24,7 @@ export default function AccountPopover() {
       try {
         const accountDetails = await getUserProfileDetails(); // Call your async function here
         if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        else navigate('/login');
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
