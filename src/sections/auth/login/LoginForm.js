@@ -13,7 +13,7 @@ import Iconify from '../../../components/iconify';
 
 export default function LoginForm() {
   const initialUser = {
-    email: '',
+    id: '',
     password: '',
   };
   const [user, setUser] = useState(initialUser);
@@ -28,6 +28,7 @@ export default function LoginForm() {
 
   const handleClick = async () => {
     try {
+      console.log(user);
       const response = await login(user);
 
       if (response.request.status === 200) {
@@ -42,7 +43,7 @@ export default function LoginForm() {
 
         console.log(cookie);
 
-        navigate('/dashboard');
+        navigate('/dashboard/app');
       } else {
         alert('Authentication failed! Try again');
       }
@@ -55,7 +56,7 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+        <TextField name="id" label="ID" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
 
         <TextField
           name="password"

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { Avatar, Box, Divider, IconButton, MenuItem, Popover, Stack, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 // mocks_
-import Logout from "../../../Services/LogoutService";
+import Logout from '../../../Services/LogoutService';
 // import account from '../../../_mock/account';
-import { getAccountDetailsService } from '../../../Services/GetAccountsDetails';
+// import { getAccountDetailsService } from '../../../Services/GetAccountsDetails';
+import { getUserProfileDetails } from '../../../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +22,9 @@ export default function AccountPopover() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getAccountDetailsService(); // Call your async function here
-        setAccount(accountDetails); // Set the account details in the component's state
+        const accountDetails = await getUserProfileDetails(); // Call your async function here
+        if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        else navigate('/login');
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -40,27 +42,27 @@ export default function AccountPopover() {
   const handleClose = () => {
     setOpen(null);
   };
-  
+
   const openProfilePage = () => {
-    navigate('/dashboard/profile')
+    navigate('/dashboard/profile');
     setOpen(null);
   };
 
   const openDashboardPage = () => {
-    navigate('/dashboard')
+    navigate('/dashboard');
     setOpen(null);
   };
 
   const openSettingsPage = () => {
-    navigate('/dashboard/settings')
+    navigate('/dashboard/settings');
     setOpen(null);
   };
 
   const logout = () => {
     Logout();
-    
+
     setOpen(null);
-    navigate('/login')
+    navigate('/login');
   };
 
   const MENU_OPTIONS = [
@@ -100,7 +102,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar src={account.dpurl} alt="display photo" />
+        <Avatar src={"https://us.remarkhb.com/wp-content/uploads/2022/01/remark-200x190.png"} alt="display photo" />
       </IconButton>
 
       <Popover
@@ -124,10 +126,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.name}
+            {account.full_name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {account.employee_number}
           </Typography>
         </Box>
 
