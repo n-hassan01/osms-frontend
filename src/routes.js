@@ -6,20 +6,37 @@ import SimpleLayout from './layouts/simple';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import Form from './pages/Form';
 import ImageGallary from './pages/ImageGallary';
 import LoginPage from './pages/LoginPage';
+import MenuAssign from './pages/MenuAssign';
+import MenuCreation from './pages/MenuCreation';
 import MtlSystemItemPage from './pages/MtlSystemItemPage';
 import MtlUnitMeasurePage from './pages/MtlUnitMeasurePage';
 import Page404 from './pages/Page404';
 import PortfolioPage from './pages/PortfolioPage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import ShowEmployee from './pages/ShowEmployee';
+import ShowFndUser from './pages/ShowFndUser';
+import ShowFormWithTable from './pages/ShowFormWithTable';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
+import ShowMainSystemMenu from './pages/ShowMainSystemMenu';
+import ShowMenus from './pages/ShowMenus';
 import ShowMtlMaterialTransactions from './pages/ShowMtlMaterialTransactions';
 import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
+import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
+
+
+
+
+
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +65,10 @@ export default function Router() {
       element: <MtlUnitMeasurePage />,
     },
     {
+      path: 'form',
+      element: <Form />,
+    },
+    {
       path: 'items',
       element: <MtlSystemItemPage />,
     },
@@ -68,12 +89,47 @@ export default function Router() {
       element: <ShowHrAllOrganizationUnits />,
     },
     {
+      path: 'showfnduser',
+      element: <ShowFndUser />,
+    },
+   
+    {
+      path: 'menucreation',
+      element: < MenuCreation/>,
+    },
+
+    {
+      path: 'showmenus',
+      element: <ShowMenus/>,
+    },    
+    {
+      path: 'showmainsystemmenu',
+      element: <ShowMainSystemMenu />,
+    },
+    {
+      path: 'showperallpeoples',
+      element: <ShowPerAllPeoples />,
+    },
+    {
+      path: 'showemployee',
+      element: <ShowEmployee />,
+    },
+    
+    {
+      path: 'showformwithtable',
+      element: <ShowFormWithTable />,
+    },
+    {
       path: 'imagegallary',
       element: <ImageGallary />,
     },
     {
       path: 'signup',
       element: <SignupPage />,
+    },
+    {
+      path: 'menuassign',
+      element: <MenuAssign />,
     },
     {
       element: <SimpleLayout />,

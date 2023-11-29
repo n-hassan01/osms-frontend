@@ -1,3 +1,5 @@
+/* eslint-disable no-irregular-whitespace */
+/* eslint-disable no-undef */
 /* eslint-disable camelcase */
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -22,29 +24,26 @@ import {
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-
+// sections
+// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
+//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import AddHrLocations from '../sections/@dashboard/user/AddHrLocations';
-import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
-import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
+import { getFndUserService } from '../Services/Admin/Getfnduser';
+import AddFndUser from '../sections/@dashboard/user/AddFndUser';
+import DeleteFndUser from '../sections/@dashboard/user/DeleteFndUser';
+import UpdateFndUser from '../sections/@dashboard/user/UpdateFndUser';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'location_code', label: 'Location Code', alignRight: false },
+  { id: 'userId', label: 'User ID', alignRight: false },
+  { id: 'userName', label: 'User Name', alignRight: false },
+  { id: 'userPassword', label: 'User Password', alignRight: false },
+  { id: 'startDate', label: 'Start Date', alignRight: false },
+  { id: 'endDate', label: 'End Date', alignRight: false },
+  { id: ' description', label: ' DESCRIPTION', alignRight: false },
+  { id: 'employeeId', label: 'Employee Id', alignRight: false },
 
-  { id: 'description', label: 'Description', alignRight: false },
-
-  { id: 'inactive_date', label: 'Inactive Date', alignRight: false },
-  { id: 'address_line_1', label: 'Address Line1', alignRight: false },
-  { id: 'address_line_2', label: 'Address Line2', alignRight: false },
-  { id: 'address_line_3', label: 'Address Line3', alignRight: false },
-  { id: 'town_or_city', label: 'Town Or City', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'Postal Code', alignRight: false },
-  { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -83,7 +82,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowLocationsAll() {
+export default function ShowPerAllPeoples() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -109,8 +108,8 @@ export default function ShowLocationsAll() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
+        const usersDetails = await getFndUserService();
+
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -119,6 +118,18 @@ export default function ShowLocationsAll() {
 
     fetchData();
   }, []);
+
+  const handleOpenMenu = (event, status, email) => {
+    if (status === 'approved') setIsDisableApprove(true);
+    else setIsDisableApprove(false);
+
+    if (status === 'banned') setIsDisableBan(true);
+    else setIsDisableBan(false);
+
+    setSelectedUserEmail(email);
+
+    setOpen(event.currentTarget);
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -206,10 +217,10 @@ export default function ShowLocationsAll() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Locations
+            Fnd User
           </Typography>
           <div>
-            <AddHrLocations />
+            <AddFndUser />
           </div>
         </Stack>
 
@@ -235,48 +246,27 @@ export default function ShowLocationsAll() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      location_id,
-                      location_code,
-
-                      description,
-
-                      inactive_date,
-                      address_line_1,
-                      address_line_2,
-                      address_line_3,
-                      town_or_city,
-                      country,
-                      postal_code,
-                      telephone_number_1,
-                    } = row;
-                    const selectedUser = selected.indexOf(location_code) !== -1;
+                    const { user_id, user_name, user_password, start_date, end_date, description, employee_id } = row;
+                    const selectedUser = selected.indexOf(user_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_code} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={user_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
                         </TableCell>
-
-                        <TableCell align="left">{location_id}</TableCell>
-                        <TableCell align="left">{location_code}</TableCell>
-
+                        <TableCell align="left">{user_id}</TableCell>
+                        <TableCell align="left">{user_name}</TableCell>
+                        <TableCell align="left">{user_password}</TableCell>
+                        <TableCell align="left">{start_date}</TableCell>
+                        <TableCell align="left">{end_date}</TableCell>
                         <TableCell align="left">{description}</TableCell>
-
-                        <TableCell align="left">{inactive_date}</TableCell>
-                        <TableCell align="left">{address_line_1}</TableCell>
-                        <TableCell align="left">{address_line_2}</TableCell>
-                        <TableCell align="left">{address_line_3}</TableCell>
-                        <TableCell align="left">{town_or_city}</TableCell>
-                        <TableCell align="left">{country}</TableCell>
-                        <TableCell align="left">{postal_code}</TableCell>
-                        <TableCell align="left">{telephone_number_1}</TableCell>
+                        <TableCell align="left">{employee_id}</TableCell>
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrLocations location_id={location_id} />
+                          <UpdateFndUser user_id={user_id} />
                         </div>
                         <TableCell align="right">
-                          <DeleteHrLocations location_id={location_id} />
+                          <DeleteFndUser user_id={user_id} />
                         </TableCell>
 
                         <Popover

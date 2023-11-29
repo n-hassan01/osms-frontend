@@ -113,35 +113,6 @@ export default function ShowMtlTransactionTypes() {
     fetchData();
   }, []);
 
-  //   const [loggedInUser, setLoggedInUser] = useState({});
-
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       try {
-  //         const usersDetails = await getLoggedInUserDetails();
-  //         if (usersDetails) setLoggedInUser(usersDetails.data);
-  //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
-  //       }
-  //     }
-
-  //     fetchData();
-  //   }, []);
-
-  //   const displayAddUser = loggedInUser.role === 1 ? 'block' : 'none';
-
-  const handleOpenMenu = (event, status, email) => {
-    if (status === 'approved') setIsDisableApprove(true);
-    else setIsDisableApprove(false);
-
-    if (status === 'banned') setIsDisableBan(true);
-    else setIsDisableBan(false);
-
-    setSelectedUserEmail(email);
-
-    setOpen(event.currentTarget);
-  };
-
   const handleCloseMenu = () => {
     setOpen(null);
   };
@@ -151,11 +122,6 @@ export default function ShowMtlTransactionTypes() {
       status: 'approved',
       email: selectedUserEmail,
     };
-
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
 
     handleCloseMenu();
     window.location.reload();
@@ -167,13 +133,7 @@ export default function ShowMtlTransactionTypes() {
       email: selectedUserEmail,
     };
 
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
-
     handleCloseMenu();
-  
   };
 
   const handleRequestSort = (event, property) => {
@@ -237,10 +197,10 @@ export default function ShowMtlTransactionTypes() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-          Mtl Transaction Type
+            Mtl Transaction Type
           </Typography>
           <div>
-            <AddMtlTransactionTypes/>
+            <AddMtlTransactionTypes />
           </div>
         </Stack>
 
@@ -272,36 +232,22 @@ export default function ShowMtlTransactionTypes() {
                     return (
                       <TableRow hover key={transaction_type_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, transaction_type_id)} />
+                          <Checkbox
+                            checked={selectedUser}
+                            onChange={(event) => handleClick(event, transaction_type_id)}
+                          />
                         </TableCell>
-                        {/* <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
+
                         <TableCell align="left">{transaction_type_id}</TableCell>
                         <TableCell align="left">{transaction_type_name}</TableCell>
 
-                        <TableCell align="left">{ description}</TableCell>
-
-                   
-
-                        {/* <TableCell align="left">
-                          <Label
-                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
-                          >
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell> */}
+                        <TableCell align="left">{description}</TableCell>
 
                         <div style={{ marginTop: '22px' }}>
                           <UpdateMtlTransactionTypes transaction_type_id={transaction_type_id} />
                         </div>
                         <TableCell align="right">
-                        <DeleteMtlTransactionTypes transaction_type_id={transaction_type_id} />
+                          <DeleteMtlTransactionTypes transaction_type_id={transaction_type_id} />
                         </TableCell>
 
                         <Popover

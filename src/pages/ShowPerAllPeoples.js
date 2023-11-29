@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable camelcase */
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -22,29 +23,27 @@ import {
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-
+// sections
+// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
+//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import AddHrLocations from '../sections/@dashboard/user/AddHrLocations';
-import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
-import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
+import { getPerAllPeoplesService } from '../Services/Admin/GetPerAllPeoples';
+import AddPerAllPeoples from '../sections/@dashboard/user/AddPerAllPeoples';
+import DeletePerAllPeoples from '../sections/@dashboard/user/DeletePerAllPeoples';
+import UpdatePerAllPeoples from '../sections/@dashboard/user/UpdatePerAllPeoples';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'location_code', label: 'Location Code', alignRight: false },
-
-  { id: 'description', label: 'Description', alignRight: false },
-
-  { id: 'inactive_date', label: 'Inactive Date', alignRight: false },
-  { id: 'address_line_1', label: 'Address Line1', alignRight: false },
-  { id: 'address_line_2', label: 'Address Line2', alignRight: false },
-  { id: 'address_line_3', label: 'Address Line3', alignRight: false },
-  { id: 'town_or_city', label: 'Town Or City', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'Postal Code', alignRight: false },
-  { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
+  { id: 'personId', label: 'Person ID', alignRight: false },
+  { id: 'effectiveStartDate', label: 'Effective Start Date', alignRight: false },
+  { id: 'effectiveEndDate', label: 'Effective End Date', alignRight: false },
+  { id: 'businessGroupId', label: 'Business Group ID', alignRight: false },
+  { id: 'employeeNumber', label: 'Employee Number', alignRight: false },
+  { id: ' fullName', label: ' Full Name', alignRight: false },
+  { id: 'emailAddress', label: 'Email Address', alignRight: false },
+  { id: 'workTelephone', label: 'Work Telephone', alignRight: false },
+  { id: 'originalDateOfHire', label: 'Original Date Of Hire', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -83,7 +82,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowLocationsAll() {
+export default function ShowPerAllPeoples() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -109,8 +108,8 @@ export default function ShowLocationsAll() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
+        const usersDetails = await getPerAllPeoplesService();
+
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -119,6 +118,18 @@ export default function ShowLocationsAll() {
 
     fetchData();
   }, []);
+
+  const handleOpenMenu = (event, status, email) => {
+    if (status === 'approved') setIsDisableApprove(true);
+    else setIsDisableApprove(false);
+
+    if (status === 'banned') setIsDisableBan(true);
+    else setIsDisableBan(false);
+
+    setSelectedUserEmail(email);
+
+    setOpen(event.currentTarget);
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -209,7 +220,7 @@ export default function ShowLocationsAll() {
             Locations
           </Typography>
           <div>
-            <AddHrLocations />
+            <AddPerAllPeoples />
           </div>
         </Stack>
 
@@ -236,47 +247,43 @@ export default function ShowLocationsAll() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
-                      location_id,
-                      location_code,
+                      person_id,
+                      effective_start_date,
 
-                      description,
+                      effective_end_date,
 
-                      inactive_date,
-                      address_line_1,
-                      address_line_2,
-                      address_line_3,
-                      town_or_city,
-                      country,
-                      postal_code,
-                      telephone_number_1,
+                      business_group_id,
+                      employee_number,
+                      full_name,
+                      email_address,
+                      work_telephone,
+                      original_date_of_hire,
                     } = row;
-                    const selectedUser = selected.indexOf(location_code) !== -1;
+                    const selectedUser = selected.indexOf(person_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_code} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={person_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, person_id)} />
                         </TableCell>
 
-                        <TableCell align="left">{location_id}</TableCell>
-                        <TableCell align="left">{location_code}</TableCell>
+                        <TableCell align="left">{person_id}</TableCell>
+                        <TableCell align="left">{effective_start_date}</TableCell>
 
-                        <TableCell align="left">{description}</TableCell>
+                        <TableCell align="left">{effective_end_date}</TableCell>
 
-                        <TableCell align="left">{inactive_date}</TableCell>
-                        <TableCell align="left">{address_line_1}</TableCell>
-                        <TableCell align="left">{address_line_2}</TableCell>
-                        <TableCell align="left">{address_line_3}</TableCell>
-                        <TableCell align="left">{town_or_city}</TableCell>
-                        <TableCell align="left">{country}</TableCell>
-                        <TableCell align="left">{postal_code}</TableCell>
-                        <TableCell align="left">{telephone_number_1}</TableCell>
+                        <TableCell align="left">{business_group_id}</TableCell>
+                        <TableCell align="left">{employee_number}</TableCell>
+                        <TableCell align="left">{full_name}</TableCell>
+                        <TableCell align="left">{email_address}</TableCell>
+                        <TableCell align="left">{work_telephone}</TableCell>
+                        <TableCell align="left">{original_date_of_hire}</TableCell>
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrLocations location_id={location_id} />
+                          <UpdatePerAllPeoples person_id={person_id} />
                         </div>
                         <TableCell align="right">
-                          <DeleteHrLocations location_id={location_id} />
+                          <DeletePerAllPeoples person_id={person_id} />
                         </TableCell>
 
                         <Popover

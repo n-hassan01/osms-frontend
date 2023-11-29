@@ -136,7 +136,7 @@ export default function DeleteMtlTransactionTypes({ transaction_type_id }) {
 
   return (
     <React.Fragment>
-      <Button variant="outlined" style={{backgroundColor:"red",color:"white"}} startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
+      <Button variant="outlined" startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
        Delete
       </Button>
       <Dialog

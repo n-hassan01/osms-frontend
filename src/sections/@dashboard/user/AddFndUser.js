@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Stack, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -7,12 +8,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { sentenceCase } from 'change-case';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addMtlTransactionTypes } from '../../../Services/Admin/AddMtlTransactionTypes';
+import { addFndUserService } from '../../../Services/Admin/AddFndUser';
 import Iconify from '../../../components/iconify';
 
-export default function AddMtlTransactionTypes() {
+export default function ResponsiveDialog() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -21,23 +23,17 @@ export default function AddMtlTransactionTypes() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-  const day = currentDate.getDate().toString().padStart(2, '0');
-  const formattedDate = `${month}-${day}-${year}`;
 
-  const transactionDetails = {
-    lastUpdateDate: '',
-    lastUpdatedBy: '',
-    creationDate: formattedDate,
-    createdBy: '',
-    transactionTypeName: '',
+  const fndUserDetails = {
+    userName: '',
+    userPassword: '',
+    startDate: '',
+    endDate: '',
     description: '',
-    transactionActionId: '',
-    transactionSourceTypeId: '',
+    employeeId: '',
   };
-  const [transaction, setTransaction] = useState(transactionDetails);
+
+  const [fnduser, setFnduser] = useState(fndUserDetails);
 
   const options = [
     { value: 1, label: 'Admin' },
@@ -53,7 +49,7 @@ export default function AddMtlTransactionTypes() {
   const validatePassword = (password) => password.length >= 6;
 
   const onValueChange = (e) => {
-    setTransaction({ ...transaction, [e.target.name]: e.target.value });
+    setFnduser({ ...fnduser, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
@@ -62,10 +58,11 @@ export default function AddMtlTransactionTypes() {
 
   const handleClick = async () => {
     try {
-      const response = await addMtlTransactionTypes(transaction);
+      console.log(fnduser);
+      const response = await addFndUserService(fnduser);
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showmtltransactiontypes');
+      navigate('/showfnduser');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
@@ -80,72 +77,62 @@ export default function AddMtlTransactionTypes() {
   return (
     <div>
       <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        New Transaction
+        New User
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Organization'}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
         <DialogContent>
           <Stack spacing={3}>
             <TextField
-              type="date"
-              name="lastUpdateDate"
-              label={sentenceCase('Last Update Date')}
+              required
+              name="userName"
+              label="User Name"
+              autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
-              error={!!errors.lastUpdateDate}
-              helperText={errors.lastUpdateDate}
+            />
+
+            <TextField
+              required
+              name="userPassword"
+              label="User Password"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+
+            <TextField
+              type="date"
+              name="startDate"
+              label={sentenceCase('startDate')}
+              onChange={(e) => onValueChange(e)}
+              error={!!errors.startDate}
+              helperText={errors.startDate}
               InputLabelProps={{
                 shrink: true,
               }}
-              value={transaction.lastUpdateDate}
+              value={fnduser.startDate}
             />
 
             <TextField
-              required
-              name="lastUpdatedBy"
-              label="Last Updated By"
-              autoComplete="given-name"
+              type="date"
+              name="endDate"
+              label={sentenceCase('endDate')}
               onChange={(e) => onValueChange(e)}
-              error={!!errors.lastUpdatedBy}
-              helperText={errors.lastUpdatedBy}
+              error={!!errors.endDate}
+              helperText={errors.endDate}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={fnduser.endDate}
             />
-
             <TextField
-              required
-              name="createdBy"
-              label="Created By"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              error={!!errors.createdBy}
-              helperText={errors.createdBy}
-            />
-
-            <TextField
-              required
-              name="transactionTypeName"
-              label="Transaction Type Name"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-
-            <TextField
-              required
               name="description"
               label="Description"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
-
             <TextField
-              required
-              name="transactionActionId"
-              label="Transaction Action Id"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              required
-              name="transactionSourceTypeId"
-              label="Transaction Source Type Id"
+              name="employeeId"
+              label="Employee ID"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />

@@ -1,4 +1,8 @@
+/* eslint-disable no-else-return */
+/* eslint-disable consistent-return */
 /* eslint-disable camelcase */
+
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -22,29 +26,23 @@ import {
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-
+// sections
+// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
+//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import AddHrLocations from '../sections/@dashboard/user/AddHrLocations';
-import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
-import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
+import { getMainSystemMenuService } from '../Services/Admin/GetMainSystemMenu';
+import AddMainSystemMenu from '../sections/@dashboard/user/AddMainSystemMenu';
+import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
+import UpdateMainSystemMenu from '../sections/@dashboard/user/UpdateMainSystemMenu';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'location_code', label: 'Location Code', alignRight: false },
+  { id: 'systemMenuId', label: 'System Menu ID', alignRight: false },
+  { id: 'systemMenuDescription', label: 'System Menu Description', alignRight: false },
+  { id: 'menuActive', label: 'Menu Active', alignRight: false },
+  { id: 'iconPath', label: 'Icon Path', alignRight: false },
 
-  { id: 'description', label: 'Description', alignRight: false },
-
-  { id: 'inactive_date', label: 'Inactive Date', alignRight: false },
-  { id: 'address_line_1', label: 'Address Line1', alignRight: false },
-  { id: 'address_line_2', label: 'Address Line2', alignRight: false },
-  { id: 'address_line_3', label: 'Address Line3', alignRight: false },
-  { id: 'town_or_city', label: 'Town Or City', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'Postal Code', alignRight: false },
-  { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -71,19 +69,23 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+ 
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    if (query) {
+      return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    }
+    return stabilizedThis.map((el) => el[0]);
+
+
+  
 }
 
-export default function ShowLocationsAll() {
+export default function ShowMainSystemMenu() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -109,8 +111,8 @@ export default function ShowLocationsAll() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
+        const usersDetails = await getMainSystemMenuService();
+
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -119,6 +121,35 @@ export default function ShowLocationsAll() {
 
     fetchData();
   }, []);
+
+  //   const [loggedInUser, setLoggedInUser] = useState({});
+
+  //   useEffect(() => {
+  //     async function fetchData() {
+  //       try {
+  //         const usersDetails = await getLoggedInUserDetails();
+  //         if (usersDetails) setLoggedInUser(usersDetails.data);
+  //       } catch (error) {
+  //         console.error('Error fetching account details:', error);
+  //       }
+  //     }
+
+  //     fetchData();
+  //   }, []);
+
+  //   const displayAddUser = loggedInUser.role === 1 ? 'block' : 'none';
+
+  const handleOpenMenu = (event, status, email) => {
+    if (status === 'approved') setIsDisableApprove(true);
+    else setIsDisableApprove(false);
+
+    if (status === 'banned') setIsDisableBan(true);
+    else setIsDisableBan(false);
+
+    setSelectedUserEmail(email);
+
+    setOpen(event.currentTarget);
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -131,6 +162,11 @@ export default function ShowLocationsAll() {
       email: selectedUserEmail,
     };
 
+    // const response = await updateUserStatus(body);
+
+    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
+    // alert(alertMessage);
+
     handleCloseMenu();
     window.location.reload();
   };
@@ -140,6 +176,11 @@ export default function ShowLocationsAll() {
       status: 'banned',
       email: selectedUserEmail,
     };
+
+    // const response = await updateUserStatus(body);
+
+    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
+    // alert(alertMessage);
 
     handleCloseMenu();
     window.location.reload();
@@ -206,10 +247,10 @@ export default function ShowLocationsAll() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Locations
+            Show Main System Menu
           </Typography>
           <div>
-            <AddHrLocations />
+            <AddMainSystemMenu />
           </div>
         </Stack>
 
@@ -235,48 +276,40 @@ export default function ShowLocationsAll() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      location_id,
-                      location_code,
-
-                      description,
-
-                      inactive_date,
-                      address_line_1,
-                      address_line_2,
-                      address_line_3,
-                      town_or_city,
-                      country,
-                      postal_code,
-                      telephone_number_1,
-                    } = row;
-                    const selectedUser = selected.indexOf(location_code) !== -1;
+                    const { system_menu_id, system_menu_description, menu_active, icon_path } = row;
+                    const selectedUser = selected.indexOf(system_menu_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_code} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={system_menu_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, system_menu_id)} />
                         </TableCell>
+                        {/* <TableCell component="th" scope="row" padding="none">
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <Avatar alt={name} />
+                            <Typography variant="subtitle2" noWrap>
+                              {name}
+                            </Typography>
+                          </Stack>
+                        </TableCell> */}
+                        <TableCell align="left">{system_menu_id}</TableCell>
+                        <TableCell align="left">{system_menu_description}</TableCell>
+                        <TableCell align="left">{menu_active}</TableCell>
+                        <TableCell align="left">{icon_path}</TableCell>
 
-                        <TableCell align="left">{location_id}</TableCell>
-                        <TableCell align="left">{location_code}</TableCell>
-
-                        <TableCell align="left">{description}</TableCell>
-
-                        <TableCell align="left">{inactive_date}</TableCell>
-                        <TableCell align="left">{address_line_1}</TableCell>
-                        <TableCell align="left">{address_line_2}</TableCell>
-                        <TableCell align="left">{address_line_3}</TableCell>
-                        <TableCell align="left">{town_or_city}</TableCell>
-                        <TableCell align="left">{country}</TableCell>
-                        <TableCell align="left">{postal_code}</TableCell>
-                        <TableCell align="left">{telephone_number_1}</TableCell>
+                        {/* <TableCell align="left">
+                          <Label
+                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
+                          >
+                            {sentenceCase(status)}
+                          </Label>
+                        </TableCell> */}
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrLocations location_id={location_id} />
+                          <UpdateMainSystemMenu system_menu_id={system_menu_id} />
                         </div>
                         <TableCell align="right">
-                          <DeleteHrLocations location_id={location_id} />
+                          <DeleteMainSystemMenu system_menu_id={system_menu_id} />
                         </TableCell>
 
                         <Popover

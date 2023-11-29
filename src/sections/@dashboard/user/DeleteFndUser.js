@@ -15,17 +15,16 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
+import { getPerFndUserService } from '../../../Services/Admin/GetPerFndUser';
 import Iconify from '../../../components/iconify';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-
-export default function DeleteHrLocations({ location_id }) {
+export default function DeleteFndUser({ user_id }) {
   const navigate = useNavigate();
-  console.log('delete page ', location_id);
+  console.log('delete page ', user_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -33,14 +32,11 @@ export default function DeleteHrLocations({ location_id }) {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
- 
-
-  const [location, setLocation] = useState({
-    locationId: '',
- 
+  const [fnduser, setFnduser] = useState({
+    userId: '',
   });
   const onValueChange = (e) => {
-    setLocation({ ...location, [e.target.name]: e.target.value });
+    setFnduser({ ...fnduser, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
@@ -48,35 +44,31 @@ export default function DeleteHrLocations({ location_id }) {
     loadUser();
   };
   const loadUser = async () => {
-    console.log('with brackets', { location_id });
-    console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService( location_id );
-   
-    setLocation({
-      ...location,
-      locationId: result.data[0].location_id,
-      
+    console.log('with brackets', { user_id });
+    console.log('without', user_id);
+    const result = await getPerFndUserService(user_id);
+
+    setFnduser({
+      ...fnduser,
+      userId: result.data[0].user_id,
     });
 
-    console.log('location Details', location);
+    console.log('people Details', fnduser);
   };
 
   const handleClick = async () => {
     try {
-      console.log('loc', location);
-      const response = await axios.put(
-        `http://localhost:5001/delete-hr-locations-all/${location.locationId}`
-      );
+      console.log('loc', fnduser);
+      const response = await axios.delete(`http://localhost:5001/delete-fnd-user/${fnduser.userId}`);
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showlocationsall');
+      navigate('/showfnduser');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
-  
   };
 
   const handleClose = () => {
@@ -85,8 +77,8 @@ export default function DeleteHrLocations({ location_id }) {
 
   return (
     <React.Fragment>
-      <Button variant="outlined"  startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
-       Delete
+      <Button variant="outlined" startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
+        Delete
       </Button>
       <Dialog
         open={open}
@@ -95,10 +87,10 @@ export default function DeleteHrLocations({ location_id }) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Are you sure you want to Delete ?"}</DialogTitle>
+        <DialogTitle>{'Are you sure you want to Delete ?'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Location Id : <b> {location_id} </b> 
+            User Id : <b> {user_id} </b>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
