@@ -1,9 +1,10 @@
+/* eslint-disable import/named */
 /* eslint-disable camelcase */
-import { getPerHrLocationsDetails } from '../ApiServices';
+import { getPerFndUserDetails } from '../ApiServices';
 
-export const getPerHrLocationsDetailsService = async ( location_id ) => {
+export const getPerFndUserService = async ( user_id ) => {
  
-  const response = await getPerHrLocationsDetails( location_id );
+  const response = await getPerFndUserDetails( user_id );
 
   if(!response) return null;
 

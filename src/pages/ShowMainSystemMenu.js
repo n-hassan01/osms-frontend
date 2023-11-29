@@ -1,4 +1,8 @@
+/* eslint-disable no-else-return */
+/* eslint-disable consistent-return */
 /* eslint-disable camelcase */
+
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -27,20 +31,18 @@ import Scrollbar from '../components/scrollbar';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
-import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrganizationUnits';
-import AddHrOrganizationUnits from '../sections/@dashboard/user/AddHrOrganizationUnits';
-import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
-import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
-
+import { getMainSystemMenuService } from '../Services/Admin/GetMainSystemMenu';
+import AddMainSystemMenu from '../sections/@dashboard/user/AddMainSystemMenu';
+import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
+import UpdateMainSystemMenu from '../sections/@dashboard/user/UpdateMainSystemMenu';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'organization_id', label: 'Organization ID', alignRight: false },
-  { id: 'business_group_id', label: 'Business Group ID', alignRight: false },
-  { id: 'location_id', label: 'Location ID', alignRight: false },
-  { id: 'date_from', label: 'Date Form', alignRight: false },
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'date_to', label: 'Date To', alignRight: false },
+  { id: 'systemMenuId', label: 'System Menu ID', alignRight: false },
+  { id: 'systemMenuDescription', label: 'System Menu Description', alignRight: false },
+  { id: 'menuActive', label: 'Menu Active', alignRight: false },
+  { id: 'iconPath', label: 'Icon Path', alignRight: false },
+
   { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
@@ -67,19 +69,23 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+ 
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    if (query) {
+      return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    }
+    return stabilizedThis.map((el) => el[0]);
+
+
+  
 }
 
-export default function ShowHrAllOrganizationUnits() {
+export default function ShowMainSystemMenu() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -105,8 +111,8 @@ export default function ShowHrAllOrganizationUnits() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrAllOrganizationUnitsService();
-        console.log('Hola', usersDetails.data[0].organization_id);
+        const usersDetails = await getMainSystemMenuService();
+
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -147,6 +153,7 @@ export default function ShowHrAllOrganizationUnits() {
 
   const handleCloseMenu = () => {
     setOpen(null);
+    window.location.reload();
   };
 
   const approveUser = async () => {
@@ -176,7 +183,7 @@ export default function ShowHrAllOrganizationUnits() {
     // alert(alertMessage);
 
     handleCloseMenu();
-  
+    window.location.reload();
   };
 
   const handleRequestSort = (event, property) => {
@@ -240,10 +247,10 @@ export default function ShowHrAllOrganizationUnits() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Organization Units
+            Show Main System Menu
           </Typography>
           <div>
-            <AddHrOrganizationUnits />
+            <AddMainSystemMenu />
           </div>
         </Stack>
 
@@ -269,13 +276,13 @@ export default function ShowHrAllOrganizationUnits() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { organization_id, business_group_id, location_id, date_from, name, date_to } = row;
-                    const selectedUser = selected.indexOf(organization_id) !== -1;
+                    const { system_menu_id, system_menu_description, menu_active, icon_path } = row;
+                    const selectedUser = selected.indexOf(system_menu_id) !== -1;
 
                     return (
-                      <TableRow hover key={organization_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={system_menu_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, organization_id)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, system_menu_id)} />
                         </TableCell>
                         {/* <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
@@ -285,14 +292,10 @@ export default function ShowHrAllOrganizationUnits() {
                             </Typography>
                           </Stack>
                         </TableCell> */}
-                        <TableCell align="left">{organization_id}</TableCell>
-                        <TableCell align="left">{business_group_id}</TableCell>
-
-                        <TableCell align="left">{location_id}</TableCell>
-
-                        <TableCell align="left">{date_from}</TableCell>
-                        <TableCell align="left">{name}</TableCell>
-                        <TableCell align="left">{date_to}</TableCell>
+                        <TableCell align="left">{system_menu_id}</TableCell>
+                        <TableCell align="left">{system_menu_description}</TableCell>
+                        <TableCell align="left">{menu_active}</TableCell>
+                        <TableCell align="left">{icon_path}</TableCell>
 
                         {/* <TableCell align="left">
                           <Label
@@ -303,10 +306,10 @@ export default function ShowHrAllOrganizationUnits() {
                         </TableCell> */}
 
                         <div style={{ marginTop: '22px' }}>
-                          <UpdateHrOrganizationUnits organization_id={organization_id} />
+                          <UpdateMainSystemMenu system_menu_id={system_menu_id} />
                         </div>
                         <TableCell align="right">
-                        <DeleteHrOrganizationUnits organization_id={organization_id} />
+                          <DeleteMainSystemMenu system_menu_id={system_menu_id} />
                         </TableCell>
 
                         <Popover

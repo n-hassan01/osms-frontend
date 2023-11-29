@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
-import { getPerHrLocationsDetails } from '../ApiServices';
+import { getperPerAllPeoplesDetails } from '../ApiServices';
 
-export const getPerHrLocationsDetailsService = async ( location_id ) => {
+export const getperPerAllPeoplesService = async ( person_id ) => {
  
-  const response = await getPerHrLocationsDetails( location_id );
+  const response = await getperPerAllPeoplesDetails( person_id );
 
   if(!response) return null;
 
