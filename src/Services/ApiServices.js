@@ -288,6 +288,16 @@ export const getLikeCount = async (blogId) => {
   }
 };
 
+export const logoutService = async () => {
+  try {
+    return await axios.get(`${usersUrl}logout/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // admin panel
 // UOM
 export const getUomDetails = async () => {
