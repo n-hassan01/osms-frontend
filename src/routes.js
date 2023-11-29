@@ -54,7 +54,7 @@ export default function Router() {
       try {
         const accountDetails = await getUserProfileDetails(); // Call your async function here
         if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
-        else navigate('/login');
+        // else navigate('/login');
         // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -138,7 +138,7 @@ export default function Router() {
    
     {
       path: 'menucreation',
-      element: < MenuCreation/>,
+      element: <MenuCreation/>,
     },
 
     {

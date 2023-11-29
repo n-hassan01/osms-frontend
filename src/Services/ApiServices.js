@@ -368,6 +368,42 @@ export const getMainSystemMenuDetails = async () => {
     return err.message;
   }
 };
+export const getAllMtlTransactionTypes = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-transaction-types/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getAllMtlTransactions = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-material-transactions/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getFndUserIds = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-fnd-user/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getMenuIds = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-menu-ids/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 export const getMenusDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-menus/`);
@@ -418,8 +454,7 @@ export const getHrAllOrganizationUnits = async () => {
   }
 };
 
-
-export const getPerHrLocationsDetails = async ( { location_id } ) => {
+export const getPerHrLocationsDetails = async ({ location_id }) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -428,7 +463,6 @@ export const getPerHrLocationsDetails = async ( { location_id } ) => {
     return err.message;
   }
 };
-
 
 export const getPerHrOrganizationUnits = async (organization_id) => {
   try {
