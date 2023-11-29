@@ -1,4 +1,5 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
@@ -19,34 +20,36 @@ import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
-import getCookieService from './Services/GetCookieService';
-// import { getUserProfileDetails } from './Services/ApiServices';
+// import getCookieService from './Services/GetCookieService';
+import { getUserProfileDetails } from './Services/ApiServices';
 // ----------------------------------------------------------------------
 
 export default function Router() {
-  const cookie = getCookieService('jwt-token-cookie');
-  console.log(cookie);
-  // const [isAuthorized, setIsAuthorized] = useState({});
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const accountDetails = await getUserProfileDetails(); // Call your async function here
-  //       setIsAuthorized(accountDetails.status === 200);
-  //       // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
-  //     } catch (error) {
-  //       // Handle any errors that might occur during the async operation
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
+  const navigate = useNavigate();
+  // const cookie = getCookieService('jwt-token-cookie');
+  // console.log(cookie);
+  const [isAuthorized, setIsAuthorized] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const accountDetails = await getUserProfileDetails(); // Call your async function here
+        if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
+        else navigate('/login');
+        // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
 
-  //   fetchData();
-  // }, []);
+    fetchData();
+  }, []);
   
   const routes = useRoutes([
     {
       path: '/dashboard',
       // element: <DashboardLayout />,
-      element: cookie ? <DashboardLayout /> : <Navigate to="/login" />,
+      element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
@@ -74,27 +77,27 @@ export default function Router() {
     {
       path: 'uom',
       // element: <MtlUnitMeasurePage />,
-      element: cookie ? <MtlUnitMeasurePage /> : <Navigate to="/login" />,
+      element: isAuthorized ? <MtlUnitMeasurePage /> : <Navigate to="/login" />,
     },
     {
       path: 'items',
       // element: <MtlSystemItemPage />,
-      element: cookie ? <MtlSystemItemPage /> : <Navigate to="/login" />,
+      element: isAuthorized ? <MtlSystemItemPage /> : <Navigate to="/login" />,
     },
     {
       path: 'requisition',
       // element: <RequisitionFormPage />,
-      element: cookie ? <RequisitionFormPage /> : <Navigate to="/login" />,
+      element: isAuthorized ? <RequisitionFormPage /> : <Navigate to="/login" />,
     },
     {
       path: 'showlocationsall',
       // element: <ShowLocationsAll />,
-      element: cookie ? <ShowLocationsAll /> : <Navigate to="/login" />,
+      element: isAuthorized ? <ShowLocationsAll /> : <Navigate to="/login" />,
     },
     {
       path: 'showorganizationunits',
       // element: <ShowHrAllOrganizationUnits />,
-      element: cookie ? <ShowHrAllOrganizationUnits /> : <Navigate to="/login" />,
+      element: isAuthorized ? <ShowHrAllOrganizationUnits /> : <Navigate to="/login" />,
     },
     {
       path: 'imagegallary',
