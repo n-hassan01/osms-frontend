@@ -1,8 +1,8 @@
-import removeCookie from "./RemoveCookieService";
+import { logoutService } from './ApiServices';
 
-const logout = () => {
-    removeCookie('jwt-token-cookie');
-    removeCookie('account-details-cookie');
-}
+const logout = async () => {
+  const logoutDetails = await logoutService();
+  console.log(logoutDetails);
+};
 
 export default logout;
