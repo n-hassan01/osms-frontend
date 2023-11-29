@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // @mui
 import { Avatar, Box, Drawer, Link, Typography } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
@@ -35,6 +35,7 @@ Nav.propTypes = {
 
 export default function Nav({ openNav, onCloseNav }) {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   // const isDesktop = useResponsive('up', 'lg');
 
@@ -52,6 +53,8 @@ export default function Nav({ openNav, onCloseNav }) {
         const accountDetails = await getLoggedInUserDetails();
         if (accountDetails.status === 200) {
           setAccount(accountDetails.data);
+        } else {
+          navigate('/login');
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
