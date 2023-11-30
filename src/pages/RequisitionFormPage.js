@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
 import {
@@ -12,10 +13,38 @@ import {
   getOrganizationIdList,
   getTransactionTypeList,
   getUomCodeList,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
+  const navigate = useNavigate();
+
+  function getCurrentDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  const [account, setAccount] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const accountDetails = await getUserProfileDetails(); // Call your async function here
+        if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        else navigate('/login');
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, []);
+  console.log(account.full_name);
+
   const [transactionTypeIds, setTransactionTypeIds] = useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -263,16 +292,17 @@ export default function Page404() {
               />
             </label>
           </div>
-          <div className="col-auto" style={{ width: '180px' }}>
+          <div className="col-auto" style={{ width: '200px' }}>
             <label htmlFor="createdBy" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
               Create By
               <input
-                type="number"
+                type="text"
                 id="createdBy"
                 className="form-control"
                 style={{ marginLeft: '7px' }}
                 readOnly
-                value={headerDetails.createdBy}
+                // value={headerDetails.createdBy}
+                defaultValue={account.full_name}
               />
             </label>
           </div>
@@ -294,6 +324,7 @@ export default function Page404() {
             <label htmlFor="transactionTypeId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
               Transaction Type ID
               <select
+                className="form-control"
                 name="transactionTypeId"
                 id="transactionTypeId"
                 style={{ backgroundColor: 'white' }}
@@ -311,7 +342,7 @@ export default function Page404() {
               </select>
             </label>
           </div>
-          <div className="col-auto" style={{ width: '180px' }}>
+          {/* <div className="col-auto" style={{ width: '180px' }}>
             <label htmlFor="moveOrderType" className="col-form-label" style={{ display: 'flex', fontSize: '11px' }}>
               Move Order Type
               <input
@@ -325,11 +356,12 @@ export default function Page404() {
                 readOnly={isReadOnly}
               />
             </label>
-          </div>
+          </div> */}
           <div className="col-auto" style={{ width: '180px' }}>
             <label htmlFor="organizationId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
               Organization ID
               <select
+                className="form-control"
                 name="organizationId"
                 id="organizationId"
                 style={{ backgroundColor: 'white' }}
@@ -346,62 +378,6 @@ export default function Page404() {
                 ))}
               </select>
               <span style={{ color: 'red' }}>*</span>
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '180px' }}>
-            <label
-              htmlFor="fromSubinventoryCode"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '11px' }}
-            >
-              From Subinventory Code
-              <input
-                type="text"
-                id="fromSubinventoryCode"
-                name="fromSubinventoryCode"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => {
-                  onChangeHeader(e);
-                }}
-                readOnly={isReadOnly}
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '180px' }}>
-            <label
-              htmlFor="toSubinventoryCode"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '11px' }}
-            >
-              To Subinventory Code
-              <input
-                type="text"
-                id="toSubinventoryCode"
-                name="toSubinventoryCode"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => {
-                  onChangeHeader(e);
-                }}
-                readOnly={isReadOnly}
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '241px' }}>
-            <label htmlFor="dateRequired" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Date Required
-              <input
-                type="date"
-                id="dateRequired"
-                name="dateRequired"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => {
-                  onChangeHeader(e);
-                }}
-                readOnly={isReadOnly}
-              />
             </label>
           </div>
           <div className="col-auto" style={{ width: '241px' }}>
@@ -454,7 +430,6 @@ export default function Page404() {
                   <th>
                     Inventory Item ID <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th>From Subinventory Code</th>
                   <th>
                     Uom Code <span style={{ color: 'red' }}>*</span>
                   </th>
@@ -496,24 +471,11 @@ export default function Page404() {
                         <input
                           type="text"
                           className="form-control"
-                          name="fromSubinventoryCode"
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <select
-                          className="form-control"
                           name="uomCode"
-                          defaultValue={''}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        >
-                          <option />
-                          {uomCodes.map((code, index) => (
-                            <option key={index} value={code.uom_code}>
-                              {code.unit_of_measure}
-                            </option>
-                          ))}
-                        </select>
+                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          defaultValue={'PCs'}
+                          readOnly
+                        />
                       </td>
                       <td>
                         <input
@@ -528,6 +490,7 @@ export default function Page404() {
                           type="date"
                           className="form-control"
                           name="dateRequired"
+                          defaultValue={getCurrentDate()}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>

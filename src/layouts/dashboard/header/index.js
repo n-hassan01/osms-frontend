@@ -44,7 +44,7 @@ Header.propTypes = {
 export default function Header({ onOpenNav }) {
   return (
     <StyledRoot>
-      <StyledToolbar>
+      <StyledToolbar style={{boxShadow: '1px 1px #ced4da'}}>
         <IconButton
           onClick={onOpenNav}
           sx={{
