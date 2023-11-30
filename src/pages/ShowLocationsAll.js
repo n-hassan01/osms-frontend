@@ -2,8 +2,10 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
@@ -26,7 +28,6 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
 import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import AddHrLocations from '../sections/@dashboard/user/AddHrLocations';
 import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
 import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
 // ----------------------------------------------------------------------
@@ -84,6 +85,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowLocationsAll() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -209,7 +211,9 @@ export default function ShowLocationsAll() {
             Locations
           </Typography>
           <div>
-            <AddHrLocations />
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={()=>{ navigate('/addhrlocations');}}>
+        New Location
+      </Button>
           </div>
         </Stack>
 

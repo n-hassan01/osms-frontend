@@ -19,11 +19,13 @@ import { Helmet } from 'react-helmet-async';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
+
 import { addMainSystemMenuDetails, addMenusDetails, addSubMenusDetails } from '../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
 export default function Page404() {
+
   const [open, setOpen] = useState(false);
 
   const [ischecked, setIsChecked] = useState(false);
@@ -256,7 +258,7 @@ export default function Page404() {
           </Typography>
         </Stack>
 
-        <h5>User ID</h5>
+        
         <Grid container spacing={2} style={{ marginTop: '10px' }}>
           <Grid item xs={2}>
             <TextField
