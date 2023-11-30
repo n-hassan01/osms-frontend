@@ -31,6 +31,7 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
+import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -144,6 +145,14 @@ export default function Router() {
     {
       path: 'showmainsystemmenu',
       element: <ShowMainSystemMenu />,
+    },
+    // {
+    //   path: 'showlocationsall',
+    //   element: <ShowLocationsAll />,
+    // },
+    {
+      path: 'addhrlocations',
+      element: <AddHrLocations />,
     },
     {
       path: 'showperallpeoples',

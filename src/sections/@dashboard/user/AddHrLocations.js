@@ -1,18 +1,14 @@
-import { Stack, TextField } from '@mui/material';
+import { ButtonGroup, Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addHrLocationsDetailsService } from '../../../Services/Admin/AddHrLocations';
-import Iconify from '../../../components/iconify';
 
-export default function ResponsiveDialog() {
+export default function AddHrLocations() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -23,7 +19,7 @@ export default function ResponsiveDialog() {
   const [errors, setErrors] = useState({});
 
   const locationsDetails = {
-    locationId: '',
+   
     locationCode: '',
     businessGroupId: '5',
     description: '',
@@ -78,46 +74,6 @@ export default function ResponsiveDialog() {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
-    // const { email, password, confirmPassword } = user;
-    // const newErrors = {};
-
-    // // Validate email
-    // if (!validateEmail(email)) {
-    //   newErrors.email = !email ? 'Email is required' : 'Invalid email address';
-    // }
-
-    // // Validate password
-    // if (!validatePassword(password)) {
-    //   newErrors.password = !password ? 'Password is required' : 'Password must be at least 6 characters long';
-    // }
-
-    // // Validate confirmPassword
-    // if (password !== confirmPassword) {
-    //   newErrors.confirmPassword = 'Passwords do not match';
-    // }
-
-    // // Check if there are any errors
-    // if (Object.keys(newErrors).length === 0) {
-    //   try {
-    //     const response = await signup(user);
-
-    //     if (response.status === 200) {
-    //       alert('Successfully added!');
-    //     } else {
-    //       console.log(response);
-    //       alert('Process failed! Try again later');
-    //     }
-
-    //     handleClose();
-    //     navigate('/dashboard/user', { replace: true });
-    //     window.location.reload();
-    //   } catch (err) {
-    //     console.log(err.message);
-    //     alert('Process failed! Try again later');
-    //   }
-    // } else {
-    //   setErrors(newErrors);
-    // }
   };
 
   const handleClose = () => {
@@ -126,20 +82,17 @@ export default function ResponsiveDialog() {
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        New Location
-      </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={3}>
-            <TextField
-              required
-              name="locationId"
-              label="Location ID"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-            />
+   
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+          <Typography variant="h4" gutterBottom>
+            Location Add
+          </Typography>
+        </Stack>
+
+        <Grid container spacing={2} style={{ marginTop: '10px' }}>
+        
+          <Grid item xs={2}>
             <TextField
               required
               name="locationCode"
@@ -149,6 +102,8 @@ export default function ResponsiveDialog() {
               error={!!errors.email}
               helperText={errors.email}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               required
               name="description"
@@ -156,7 +111,8 @@ export default function ResponsiveDialog() {
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
-
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               required
               name="addressLine1"
@@ -164,18 +120,24 @@ export default function ResponsiveDialog() {
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               name="addressLine2"
               label="Address Line2"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               name="addressLine3"
               label="Address Line3"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               required
               name="townOrCity"
@@ -183,6 +145,8 @@ export default function ResponsiveDialog() {
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               required
               name="country"
@@ -190,6 +154,8 @@ export default function ResponsiveDialog() {
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               required
               name="postalCode"
@@ -197,6 +163,8 @@ export default function ResponsiveDialog() {
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
+          <Grid item xs={2}>
             <TextField
               required
               name="telephoneNumber1"
@@ -204,63 +172,22 @@ export default function ResponsiveDialog() {
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
             />
+          </Grid>
 
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="description"
-              label="Description"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.password}
-              helperText={errors.password}
-            /> */}
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="confirmPassword"
-              label="Confirm Password"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-            /> */}
-            {/* <Select
-              name="role"
-              placeholder="User role"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              options={options}
-            /> */}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClick}>
-            Submit
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        
+            <Grid item xs={2}>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+            <Button autoFocus onClick={handleClick}>
+              Submit
+            </Button>
+            <Button onClick={handleClose} autoFocus>
+              Cancel
+            </Button>
+            </ButtonGroup>
+            </Grid>
+            
+        </Grid>
+      </Container>
     </div>
   );
 }
