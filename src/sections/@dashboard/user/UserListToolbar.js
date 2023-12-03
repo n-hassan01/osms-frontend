@@ -2,9 +2,10 @@ import PropTypes from 'prop-types';
 // @mui
 import { IconButton, InputAdornment, OutlinedInput, Toolbar, Tooltip, Typography } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
+import axios from 'axios';
 // component
 import Iconify from '../../../components/iconify';
-import { deleteUser } from '../../../Services/ApiServices';
+
 
 // ----------------------------------------------------------------------
 
@@ -42,18 +43,23 @@ UserListToolbar.propTypes = {
 
 export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers }) {
   const deleteSelectedUser = async () => {
+    let alertMessage;
     const result = selectedUsers.map(async (element) => {
       try {
-        console.log(element);
-        const response = await deleteUser(element);
+    
+        const response = await axios.put(
+            `http://localhost:5001/delete-hr-locations-all/${element}`
+          );
 
-        const alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
-        alert(alertMessage);
+         alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
+         alert(alertMessage);
         window.location.reload();
       } catch (err) {
         console.log(err.message);
       }
+      
     });
+    
   };
 
   return (

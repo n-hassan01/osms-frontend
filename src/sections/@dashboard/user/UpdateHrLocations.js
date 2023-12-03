@@ -1,13 +1,13 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
-import { Stack, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import { useTheme } from '@mui/material/styles';
+// import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 
 import { useState } from 'react';
@@ -19,33 +19,8 @@ export default function UpdateHrLocations({ location_id }) {
   const navigate = useNavigate();
   console.log('update page ', location_id);
   const [open, setOpen] = useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({});
-
-  // const locationsDetails = {
-  //   locationId: '',
-  //   locationCode: '',
-  //   businessGroupId: '5',
-  //   description: '',
-  //   shipToLocationId: '3',
-  //   inventoryOrganizationId: '4',
-  //   addressLine1: '',
-  //   addressLine2: '',
-  //   addressLine3: '',
-  //   townOrCity: '',
-  //   country: '',
-  //   postalCode: '',
-  //   telephoneNumber1: '',
-  //   telephoneNumber2: '01533581070 ',
-  //   telephoneNumber3: '01533581070',
-  //   lastUpdateDate: '08-08-2023',
-  //   lastUpdatedBy: '1',
-  //   createdBy: '2',
-  //   creationDate: '07-08-2023',
-  // };
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [location, setLocation] = useState({
     locationId: '',
@@ -80,7 +55,7 @@ export default function UpdateHrLocations({ location_id }) {
   const loadUser = async () => {
     console.log('with brackets', { location_id });
     console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService( location_id );
+    const result = await getPerHrLocationsDetailsService(location_id);
     console.log(
       'Eiii',
       result.data[0].location_id,
@@ -121,46 +96,6 @@ export default function UpdateHrLocations({ location_id }) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
-    // const { email, password, confirmPassword } = user;
-    // const newErrors = {};
-
-    // // Validate email
-    // if (!validateEmail(email)) {
-    //   newErrors.email = !email ? 'Email is required' : 'Invalid email address';
-    // }
-
-    // // Validate password
-    // if (!validatePassword(password)) {
-    //   newErrors.password = !password ? 'Password is required' : 'Password must be at least 6 characters long';
-    // }
-
-    // // Validate confirmPassword
-    // if (password !== confirmPassword) {
-    //   newErrors.confirmPassword = 'Passwords do not match';
-    // }
-
-    // // Check if there are any errors
-    // if (Object.keys(newErrors).length === 0) {
-    //   try {
-    //     const response = await signup(user);
-
-    //     if (response.status === 200) {
-    //       alert('Successfully added!');
-    //     } else {
-    //       console.log(response);
-    //       alert('Process failed! Try again later');
-    //     }
-
-    //     handleClose();
-    //     navigate('/dashboard/user', { replace: true });
-    //     window.location.reload();
-    //   } catch (err) {
-    //     console.log(err.message);
-    //     alert('Process failed! Try again later');
-    //   }
-    // } else {
-    //   setErrors(newErrors);
-    // }
   };
 
   const handleClose = () => {
@@ -169,21 +104,19 @@ export default function UpdateHrLocations({ location_id }) {
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
+      <Button variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
         Update
       </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
+
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        // aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle id="responsive-dialog-title">{'Update Locations'}</DialogTitle>
         <DialogContent>
-          <Stack spacing={3}>
-            <TextField
-              type={'text'}
-              name="locationId"
-              label="Location ID"
-              value={location.locationId}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
-            />
+          <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'row', gap: '16px', width: '1200px' }}>
             <TextField
               type={'text'}
               name="locationCode"
@@ -256,62 +189,16 @@ export default function UpdateHrLocations({ location_id }) {
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, telephoneNumber1: e.target.value })}
             />
-
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="description"
-              label="Description"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.password}
-              helperText={errors.password}
-            /> */}
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="confirmPassword"
-              label="Confirm Password"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-            /> */}
-            {/* <Select
-              name="role"
-              placeholder="User role"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              options={options}
-            /> */}
-          </Stack>
+            <DialogActions>
+              <Button autoFocus onClick={handleClick}>
+                Submit
+              </Button>
+              <Button onClick={handleClose} autoFocus>
+                Cancel
+              </Button>
+            </DialogActions>
+          </div>
         </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClick}>
-            Submit
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );

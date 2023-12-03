@@ -1,8 +1,10 @@
 /* eslint-disable camelcase */
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+
 // @mui
 import {
   Button,
@@ -33,7 +35,6 @@ import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'location_id', label: 'Location ID', alignRight: false },
   { id: 'location_code', label: 'Location Code', alignRight: false },
 
   { id: 'description', label: 'Description', alignRight: false },
@@ -155,10 +156,12 @@ export default function ShowLocationsAll() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.email);
+      const newSelecteds = USERLIST.map((n) => n.location_id);
       setSelected(newSelecteds);
+
       return;
     }
+    console.log('allselectedUsers : ', selectedUsers);
     setSelected([]);
   };
 
@@ -176,7 +179,7 @@ export default function ShowLocationsAll() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
-    console.log(typeof selectedUsers);
+    console.log('toselectedUsers : ', selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -205,15 +208,22 @@ export default function ShowLocationsAll() {
         <title> HR Locations | OSMS </title>
       </Helmet>
 
-      <Container>
+      <Container >
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Locations
           </Typography>
           <div>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={()=>{ navigate('/addhrlocations');}}>
-        New Location
-      </Button>
+            <Button
+              variant="outlined"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/addhrlocations');
+              }}
+              style={{ marginTop: '10px' }}
+            >
+              Add Location
+            </Button>
           </div>
         </Stack>
 
@@ -254,15 +264,30 @@ export default function ShowLocationsAll() {
                       postal_code,
                       telephone_number_1,
                     } = row;
-                    const selectedUser = selected.indexOf(location_code) !== -1;
+                    const rowValues = [
+                      location_id,
+                      location_code,
+
+                      description,
+
+                      inactive_date,
+                      address_line_1,
+                      address_line_2,
+                      address_line_3,
+                      town_or_city,
+                      country,
+                      postal_code,
+                      telephone_number_1,
+                    ];
+
+                    const selectedUser = selected.indexOf(location_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_code} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={location_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_id)} />
                         </TableCell>
 
-                        <TableCell align="left">{location_id}</TableCell>
                         <TableCell align="left">{location_code}</TableCell>
 
                         <TableCell align="left">{description}</TableCell>
@@ -276,9 +301,9 @@ export default function ShowLocationsAll() {
                         <TableCell align="left">{postal_code}</TableCell>
                         <TableCell align="left">{telephone_number_1}</TableCell>
 
-                        <div style={{ marginTop: '22px' }}>
+                        <TableCell align="right">
                           <UpdateHrLocations location_id={location_id} />
-                        </div>
+                        </TableCell>
                         <TableCell align="right">
                           <DeleteHrLocations location_id={location_id} />
                         </TableCell>

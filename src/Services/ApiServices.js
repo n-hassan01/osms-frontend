@@ -464,7 +464,8 @@ export const getHrAllOrganizationUnits = async () => {
   }
 };
 
-export const getPerHrLocationsDetails = async ({ location_id }) => {
+export const getPerHrLocationsDetails = async ( location_id ) => {
+
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -496,6 +497,7 @@ export const getPerAllMtlTransactionTypes = async (transaction_type_id) => {
 
 export const addHrLocationsDetails = async (location) => {
   console.log('location for api ', location);
+
   try {
     return await axios.post(`${usersUrl}add-hr-locations-all/`, location);
   } catch (err) {
