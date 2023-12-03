@@ -32,6 +32,7 @@ import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
 import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
+import AddHrOrganizationUnits from './sections/@dashboard/user/AddHrOrganizationUnits';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -123,6 +124,8 @@ export default function Router() {
       path: 'showmtlmaterialtransactions',
       element: <ShowMtlMaterialTransactions />,
     },
+    // alif V
+          
     {
       path: 'showmtltransactiontypes',
       element: <ShowMtlTransactionTypes />,
@@ -157,6 +160,10 @@ export default function Router() {
     {
       path: 'addhrlocations',
       element: <AddHrLocations />,
+    },
+    {
+      path: 'addhrorganization',
+      element: <AddHrOrganizationUnits />,
     },
     {
       path: 'showperallpeoples',

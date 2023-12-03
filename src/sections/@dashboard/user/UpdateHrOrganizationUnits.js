@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
-import { Stack, TextField } from '@mui/material';
+import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -89,46 +89,6 @@ export default function UpdateHrOrganizationUnits({ organization_id }) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
-    // const { email, password, confirmPassword } = user;
-    // const newErrors = {};
-
-    // // Validate email
-    // if (!validateEmail(email)) {
-    //   newErrors.email = !email ? 'Email is required' : 'Invalid email address';
-    // }
-
-    // // Validate password
-    // if (!validatePassword(password)) {
-    //   newErrors.password = !password ? 'Password is required' : 'Password must be at least 6 characters long';
-    // }
-
-    // // Validate confirmPassword
-    // if (password !== confirmPassword) {
-    //   newErrors.confirmPassword = 'Passwords do not match';
-    // }
-
-    // // Check if there are any errors
-    // if (Object.keys(newErrors).length === 0) {
-    //   try {
-    //     const response = await signup(user);
-
-    //     if (response.status === 200) {
-    //       alert('Successfully added!');
-    //     } else {
-    //       console.log(response);
-    //       alert('Process failed! Try again later');
-    //     }
-
-    //     handleClose();
-    //     navigate('/dashboard/user', { replace: true });
-    //     window.location.reload();
-    //   } catch (err) {
-    //     console.log(err.message);
-    //     alert('Process failed! Try again later');
-    //   }
-    // } else {
-    //   setErrors(newErrors);
-    // }
   };
 
   const handleClose = () => {
@@ -137,13 +97,13 @@ export default function UpdateHrOrganizationUnits({ organization_id }) {
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
+      <Button variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
         Update
       </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
+      <Dialog fullScreen open={open} onClose={handleClose}>
+        <DialogTitle id="responsive-dialog-title">{'Update Organization '}</DialogTitle>
         <DialogContent>
-          <Stack spacing={3}>
+          <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'row', gap: '16px', width: '1200px' }}>
             <TextField
               type={'text'}
               name="organizationId"
@@ -194,53 +154,7 @@ export default function UpdateHrOrganizationUnits({ organization_id }) {
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
             />
-
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="description"
-              label="Description"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.password}
-              helperText={errors.password}
-            /> */}
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="confirmPassword"
-              label="Confirm Password"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-            /> */}
-            {/* <Select
-              name="role"
-              placeholder="User role"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              options={options}
-            /> */}
-          </Stack>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClick}>

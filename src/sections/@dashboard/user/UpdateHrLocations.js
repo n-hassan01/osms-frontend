@@ -112,7 +112,7 @@ export default function UpdateHrLocations({ location_id }) {
         fullScreen
         open={open}
         onClose={handleClose}
-        // aria-labelledby="responsive-dialog-title"
+      
       >
         <DialogTitle id="responsive-dialog-title">{'Update Locations'}</DialogTitle>
         <DialogContent>

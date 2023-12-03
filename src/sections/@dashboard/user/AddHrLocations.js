@@ -20,7 +20,6 @@ export default function AddHrLocations() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-
   const [location, setLocation] = useState([
     {
       locationCode: '',
@@ -55,10 +54,6 @@ export default function AddHrLocations() {
   };
 
   const validatePassword = (password) => password.length >= 6;
-
-  // const onValueChange = (e) => {
-  //   setLocation({ ...location, [e.target.name]: e.target.value });
-  // };
 
   const handleMenuChange = (index, name, value) => {
     const updatedRows = [...location];
@@ -105,10 +100,8 @@ export default function AddHrLocations() {
         const response = await addHrLocationsDetailsService(requestBody);
         console.log('Pass to home after request ');
         handleClose();
-     
       }
       setLocation([]);
-
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
@@ -166,9 +159,7 @@ export default function AddHrLocations() {
             >
               Add Location
             </Button>
-            {/* <Button style={{ marginRight: '10px' }} onClick={handleClick}>
-              Submit
-            </Button> */}
+
             <Button onClick={handleClose}>Cancel</Button>
           </ButtonGroup>
         </Grid>
