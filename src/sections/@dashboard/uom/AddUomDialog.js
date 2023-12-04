@@ -1,92 +1,89 @@
-import { Stack, TextField, TextareaAutosize } from '@mui/material';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
+import { Button, Grid } from '@mui/material';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addUomDetails } from '../../../Services/ApiServices';
-import Iconify from '../../../components/iconify';
 
 export default function ResponsiveDialog() {
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedLines, setSelectedLines] = useState([]);
 
-  const [errors, setErrors] = useState({});
+  // Function to handle row selection
+  const handleRowSelect = (index, row) => {
+    console.log(row);
+    const updatedSelectedLines = [...selectedLines];
+    const lineIndex = updatedSelectedLines.indexOf(row.lineId);
 
-  const initialUser = {
-    unitOfMeasure: '',
-    uomCode: '',
-    uomClass: '',
-    lastUpdateDate: '',
-    lastUpdatedBy: '',
-    createdBy: '',
-    creationDate: '',
-    lastUpdateLogin: null,
-    description: '',
+    const updatedSelectedRows = [...selectedRows];
+    const rowIndex = updatedSelectedRows.indexOf(index);
+
+    if (rowIndex === -1) {
+      updatedSelectedRows.push(index);
+    } else {
+      updatedSelectedRows.splice(rowIndex, 1);
+    }
+
+    if (lineIndex === -1) {
+      updatedSelectedLines.push(row.lineId);
+    } else {
+      updatedSelectedLines.splice(lineIndex, 1);
+    }
+
+    setSelectedRows(updatedSelectedRows);
+    setSelectedLines(updatedSelectedLines);
   };
-  const [user, setUser] = useState(initialUser);
 
-  const validateUom = (password) => password.length <= 25;
-  const validateUomCode = (password) => password.length <= 3;
-  const validateUomClass = (password) => password.length <= 10;
-  const validateDescription = (password) => password.length <= 50;
+  const [rows, setRows] = useState([]);
 
-  const onValueChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+  const [showLines, setShowLines] = useState(false);
+
+  const handleAddRow = () => {
+    setShowLines(true);
+    setRows([
+      ...rows,
+      {
+        unitOfMeasure: '',
+        uomCode: '',
+        uomClass: '',
+        description: '',
+      },
+    ]);
+    console.log(rows);
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleDeleteRows = () => {
+    const updatedRows = rows.filter((_, index) => !selectedRows.includes(index));
+    setRows(updatedRows);
+    setSelectedRows([]);
+  };
+
+  const handleInputChange = (index, name, value) => {
+    const updatedRows = [...rows];
+    updatedRows[index][name] = value;
+    setRows(updatedRows);
   };
 
   const handleClick = async () => {
-    const { unitOfMeasure, uomCode, uomClass, description } = user;
-    const newErrors = {};
+    const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
+    console.log(filteredArray);
 
-    // Validate unitOfMeasure
-    if (!validateUom(unitOfMeasure) || !unitOfMeasure) {
-      newErrors.unitOfMeasure = !unitOfMeasure
-        ? 'Unit Of Measure is required'
-        : 'Unit Of Measure must be maximum 25 characters long';
-    }
+    for (const [index, lineInfo] of filteredArray.entries()) {
+      const date = new Date().toJSON();
 
-    // Validate uomCode
-    if (!validateUomCode(uomCode) || !uomCode) {
-      newErrors.uomCode = !uomCode ? 'Uom Code is required' : 'Uom Code must be maximum 3 characters long';
-    }
-
-    // Validate uomClass
-    if (!validateUomClass(uomClass) || !uomClass) {
-      newErrors.uomClass = !uomClass ? 'Uom Class is required' : 'Uom Class must be maximum 10 characters long';
-    }
-
-    // Validate description
-    if (!validateDescription(description)) {
-      newErrors.description = 'Description must be maximum 25 characters long';
-    }
-
-    const date = new Date().toJSON();
-
-    // Check if there are any errors
-    if (Object.keys(newErrors).length === 0) {
       try {
         const uomBody = {
-          unitOfMeasure: user.unitOfMeasure,
-          uomCode: user.uomCode,
-          uomClass: user.uomClass,
+          unitOfMeasure: lineInfo.unitOfMeasure,
+          uomCode: lineInfo.uomCode,
+          uomClass: lineInfo.uomClass,
           lastUpdateDate: date,
           lastUpdatedBy: 'Admin',
           createdBy: 'Admin',
           creationDate: date,
-          description: user.description,
+          description: lineInfo.description,
         };
 
         const response = await addUomDetails(uomBody);
@@ -94,86 +91,132 @@ export default function ResponsiveDialog() {
         console.log(response);
 
         if (response.status === 200) {
-          alert('Successfully added!');
+          // alert('Successfully added!');
+          filteredArray.splice(index, 1);
         } else {
           console.log(response);
-          alert('Process failed! Try again later');
+          // alert('Process failed! Try again later');
         }
-
-        handleClose();
-        navigate('/uom', { replace: true });
-        window.location.reload();
       } catch (err) {
         console.log(err.message);
-        alert('Process failed! Try again later');
+        // alert('Process failed! Try again later');
       }
-    } else {
-      setErrors(newErrors);
     }
-  };
 
-  const handleClose = () => {
-    setOpen(false);
+    if (filteredArray.length === 0) {
+      console.log(filteredArray);
+      navigate('/dashboard/uom', { replace: true });
+      // window.location.reload();
+    } else {
+      setRows(filteredArray);
+      alert('Process failed! Try again later');
+      // window.location.reload();
+    }
   };
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} color='primary' onClick={handleClickOpen}>
-        Add UOM
-      </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Uom'}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={3}>
-            <TextField
-              required
-              name="unitOfMeasure"
-              label={sentenceCase('unit_of_measure')}
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              error={!!errors.unitOfMeasure}
-              helperText={errors.unitOfMeasure}
-            />
-
-            <TextField
-              required
-              name="uomCode"
-              label={sentenceCase('uom_code')}
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              error={!!errors.uomCode}
-              helperText={errors.uomCode}
-            />
-
-            <TextField
-              required
-              name="uomClass"
-              label={sentenceCase('uom_class')}
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              error={!!errors.uomClass}
-              helperText={errors.uomClass}
-            />
-
-            <TextareaAutosize
-              name="description"
-              placeholder="Description.."
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              error={!!errors.description}
-              helperText={errors.description}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClick}>
-            Submit
+      <Grid container spacing={2}>
+        <Grid item xs={3} style={{ display: 'flex' }}>
+          <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={handleClick}>
+            Save
           </Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
+          <Button
+            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+            onClick={handleDeleteRows}
+          >
+            Delete
           </Button>
-        </DialogActions>
-      </Dialog>
+          <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
+            Add Lines
+          </Button>
+        </Grid>
+      </Grid>
+
+      <form className="form-horizontal" style={{ marginTop: '20px' }}>
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped table-highlight">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    onChange={() => {
+                      // Select or deselect all rows
+                      const allRowsSelected = selectedRows.length === rows.length;
+                      const newSelectedRows = allRowsSelected ? [] : rows.map((_, index) => index);
+                      setSelectedRows(newSelectedRows);
+                    }}
+                    checked={selectedRows.length === rows.length && rows.length !== 0}
+                  />
+                </th>
+                <th>
+                  {sentenceCase('unit_of_measure')} <span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>
+                  {sentenceCase('uom_code')} <span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>
+                  {sentenceCase('uom_class')} <span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {showLines &&
+                rows.map((row, index) => (
+                  <tr key={index}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        onChange={() => handleRowSelect(index, row)}
+                        checked={selectedRows.includes(index)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        required
+                        name="unitOfMeasure"
+                        title="Maximum 25 characters are allowed."
+                        style={{ backgroundColor: 'white' }}
+                        autoComplete="given-name"
+                        onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        required
+                        name="uomCode"
+                        title="Maximum 3 characters are allowed."
+                        style={{ backgroundColor: 'white' }}
+                        autoComplete="given-name"
+                        onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        required
+                        name="uomClass"
+                        title="Maximum 10 characters are allowed."
+                        style={{ backgroundColor: 'white' }}
+                        autoComplete="given-name"
+                        onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <textarea
+                        name="description"
+                        title="Maximum 50 characters are allowed."
+                        style={{ height: '30px' }}
+                        onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </form>
     </div>
   );
 }

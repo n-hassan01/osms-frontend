@@ -199,7 +199,6 @@ export default function Page404() {
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedLines, setSelectedLines] = useState([]);
-  // const [rows, setRows] = useState(/* Your initial rows data here */);
 
   // Function to handle row selection
   const handleRowSelect = (index, row) => {
@@ -398,13 +397,13 @@ export default function Page404() {
           <Grid container spacing={2}>
             <Grid item xs={3}>
               <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button style={{ marginRight: '10px' }} onClick={saveHeader}>
+                <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={saveHeader}>
                   Save
                 </Button>
-                <Button style={{ marginRight: '10px' }} onClick={onClickDelete}>
+                <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={onClickDelete}>
                   Delete
                 </Button>
-                <Button onClick={handleAddRow}>Add Lines</Button>
+                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>Add Lines</Button>
               </ButtonGroup>
             </Grid>
           </Grid>
@@ -502,12 +501,12 @@ export default function Page404() {
         </form>
         {showLines && (
           <Grid item xs={3}>
-            <Button variant="contained" style={{ marginRight: '10px' }} onClick={saveLines}>
+            <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={saveLines}>
               Save
             </Button>
             {showApprovalButton && (
               <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button style={{ display: { showApprovalButton } }} onClick={submitRequisition}>
+                <Button style={{ display: { showApprovalButton }, backgroundColor: 'lightgray', color: 'black' }} onClick={submitRequisition}>
                   Approval
                 </Button>
               </ButtonGroup>

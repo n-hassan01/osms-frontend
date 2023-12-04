@@ -31,6 +31,7 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
+import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
 import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
@@ -74,6 +75,7 @@ export default function Router() {
         { path: 'contact', element: <ContactPage /> },
         { path: 'items', element: <MtlSystemItemPage /> },
         { path: 'uom', element: <MtlUnitMeasurePage /> },
+        { path: 'add-uom', element: <AddUomDialog /> },
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
         { path: 'showorganizationunits', element: <ShowHrAllOrganizationUnits /> },
@@ -112,8 +114,8 @@ export default function Router() {
     },
     {
       path: 'showlocationsall',
-      // element: <ShowLocationsAll />,
-      element: isAuthorized ? <ShowLocationsAll /> : <Navigate to="/login" />,
+      element: <ShowLocationsAll />,
+      // element: isAuthorized ? <ShowLocationsAll /> : <Navigate to="/login" />,
     },
     {
       path: 'showmtlmaterialtransactions',

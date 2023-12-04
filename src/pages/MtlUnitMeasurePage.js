@@ -1,11 +1,12 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-key */
 /* eslint-disable camelcase */
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+// import { useTheme } from '@mui/material/styles';
+// import useMediaQuery from '@mui/material/useMediaQuery';
 import { sentenceCase } from 'change-case';
 import { format } from 'date-fns';
 import { filter } from 'lodash';
@@ -17,6 +18,7 @@ import {
   Card,
   Checkbox,
   Container,
+  DialogTitle,
   IconButton,
   Paper,
   Stack,
@@ -26,8 +28,6 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  TextField,
-  TextareaAutosize,
   Typography,
 } from '@mui/material';
 // components
@@ -35,7 +35,6 @@ import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { getUomDetails, updateUomDetails } from '../Services/ApiServices';
-import AddUomDialog from '../sections/@dashboard/uom/AddUomDialog';
 import UomListToolbar from '../sections/@dashboard/uom/UomListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
 
@@ -131,10 +130,10 @@ export default function UserPage() {
   }
 
   const [open, setOpen] = useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  // const theme = useTheme();
+  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
-  const [errors, setErrors] = useState({});
+  // const [errors, setErrors] = useState({});
 
   const [rowData, setRowData] = useState(null);
 
@@ -154,79 +153,38 @@ export default function UserPage() {
   };
 
   const isDisable = true;
-  const validateUom = (password) => password.length <= 25;
-  const validateUomCode = (password) => password.length <= 3;
-  const validateUomClass = (password) => password.length <= 10;
-  const validateDescription = (password) => password.length <= 50;
 
   const handleEdit = async () => {
-    const {
-      unit_of_measure,
-      uom_code,
-      uom_class,
-      last_update_date,
-      last_updated_by,
-      created_by,
-      creation_date,
-      description,
-    } = rowData;
-    const newErrors = {};
+    const { unit_of_measure, uom_code, uom_class, last_update_date, last_updated_by, created_by, creation_date } =
+      rowData;
+    try {
+      const uomBody = {
+        unitOfMeasure: unit_of_measure,
+        uomCode: uom_code,
+        uomClass: uom_class,
+        lastUpdateDate: last_update_date,
+        lastUpdatedBy: last_updated_by,
+        createdBy: created_by,
+        creationDate: creation_date,
+        description: rowData.description ? rowData.description : '',
+      };
 
-    // Validate unit_of_measure
-    if (!validateUom(unit_of_measure) || !unit_of_measure) {
-      newErrors.unit_of_measure = !unit_of_measure
-        ? 'Unit Of Measure is required'
-        : 'Unit Of Measure must be maximum 25 characters long';
-    }
+      const response = await updateUomDetails(uomBody);
 
-    // Validate uom_code
-    if (!validateUomCode(uom_code) || !uom_code) {
-      newErrors.uom_code = !uom_code ? 'Uom Code is required' : 'Uom Code must be maximum 3 characters long';
-    }
-
-    // Validate uom_class
-    if (!validateUomClass(uom_class) || !uom_class) {
-      newErrors.uom_class = !uom_class ? 'Uom Class is required' : 'Uom Class must be maximum 10 characters long';
-    }
-
-    // Validate description
-    if (description && !validateDescription(description)) {
-      newErrors.description = 'Description must be maximum 25 characters long';
-    }
-
-    // Check if there are any errors
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        const uomBody = {
-          unitOfMeasure: unit_of_measure,
-          uomCode: uom_code,
-          uomClass: uom_class,
-          lastUpdateDate: last_update_date,
-          lastUpdatedBy: last_updated_by,
-          createdBy: created_by,
-          creationDate: creation_date,
-          description: rowData.description ? rowData.description : '',
-        };
-
-        const response = await updateUomDetails(uomBody);
-
-        if (response.status === 200) {
-          alert('Successfully updated!');
-        } else {
-          console.log(response);
-          alert('Process failed! Try again later');
-        }
-
-        handleClose();
-        navigate('/uom', { replace: true });
-        window.location.reload();
-        console.log(uomBody);
-      } catch (err) {
-        console.log(err.message);
+      if (response.status === 200) {
+        alert('Successfully updated!');
+      } else {
+        console.log(response);
         alert('Process failed! Try again later');
       }
-    } else {
-      setErrors(newErrors);
+
+      handleClose();
+      navigate('/dashboard/uom', { replace: true });
+      // window.location.reload();
+      console.log(uomBody);
+    } catch (err) {
+      console.log(err.message);
+      alert('Process failed! Try again later');
     }
   };
 
@@ -288,6 +246,11 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const addUom = () => {
+    // navigate('/dashboard/add-uom');
+    navigate('/dashboard/add-uom', { replace: true });
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -305,9 +268,9 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Mtl Units of Measure
           </Typography>
-          <div>
-            <AddUomDialog />
-          </div>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} color="primary" onClick={addUom}>
+            Add UOM
+          </Button>
         </Stack>
 
         <Card>
@@ -386,52 +349,62 @@ export default function UserPage() {
                 )}
 
                 {rowData && (
-                  <Dialog open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
+                  <Dialog fullScreen open={open} onClose={handleClose}>
+                    <DialogTitle>Edit UOM</DialogTitle>
+                    <Stack />
                     <DialogContent>
-                      <Stack spacing={3}>
-                        <TextField
-                          required
-                          name="unit_of_measure"
-                          label="Unit of Measure"
-                          autoComplete="given-name"
-                          value={rowData.unit_of_measure}
-                          onChange={(e) => onValueChange(e)}
-                          disabled={isDisable}
-                          error={!!errors.unitOfMeasure}
-                          helperText={errors.unitOfMeasure}
-                        />
+                      <Stack
+                        spacing={1.5}
+                        direction="row" // Set the direction to "row" for horizontal alignment
+                      >
+                        <div>
+                          <label htmlFor="unit_of_measure">Unit of Measure: </label>
+                          <input
+                            required
+                            id="unit_of_measure"
+                            name="unit_of_measure"
+                            title="Maximum 25 characters are allowed."
+                            value={rowData.unit_of_measure}
+                            onChange={(e) => onValueChange(e)}
+                            disabled={isDisable}
+                          />
+                        </div>
 
-                        <TextField
-                          required
-                          name="uom_code"
-                          label="UOM Code"
-                          autoComplete="given-name"
-                          value={rowData.uom_code}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.uomCode}
-                          helperText={errors.uomCode}
-                        />
+                        <div>
+                          <label htmlFor="uom_code">UOM Code: </label>
+                          <input
+                            required
+                            id="uom_code"
+                            name="uom_code"
+                            title="Maximum 3 characters are allowed."
+                            value={rowData.uom_code}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
 
-                        <TextField
-                          required
-                          name="uom_class"
-                          label="UOM Class"
-                          autoComplete="given-name"
-                          value={rowData.uom_class}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.uomClass}
-                          helperText={errors.uomClass}
-                        />
+                        <div>
+                          <label htmlFor="uom_class">UOM Class: </label>
+                          <input
+                            required
+                            id="uom_class"
+                            name="uom_class"
+                            title="Maximum 10 characters are allowed."
+                            value={rowData.uom_class}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
 
-                        <TextareaAutosize
-                          name="description"
-                          placeholder="Description.."
-                          autoComplete="given-name"
-                          value={rowData.description}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.description}
-                          helperText={errors.description}
-                        />
+                        <div>
+                          <label htmlFor="description">Description: </label>
+                          <textarea
+                            id="description"
+                            name="description"
+                            title="Maximum 50 characters are allowed."
+                            style={{ height: '30px' }}
+                            value={rowData.description}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
                       </Stack>
                     </DialogContent>
                     <DialogActions>
