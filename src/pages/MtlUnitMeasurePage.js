@@ -5,8 +5,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-// import { useTheme } from '@mui/material/styles';
-// import useMediaQuery from '@mui/material/useMediaQuery';
 import { sentenceCase } from 'change-case';
 import { format } from 'date-fns';
 import { filter } from 'lodash';
@@ -130,11 +128,6 @@ export default function UserPage() {
   }
 
   const [open, setOpen] = useState(false);
-  // const theme = useTheme();
-  // const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
-  // const [errors, setErrors] = useState({});
-
   const [rowData, setRowData] = useState(null);
 
   const onValueChange = (e) => {
