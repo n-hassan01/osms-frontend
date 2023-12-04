@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-key */
 /* eslint-disable camelcase */
 import Button from '@mui/material/Button';
@@ -15,6 +16,7 @@ import {
   Card,
   Checkbox,
   Container,
+  DialogTitle,
   IconButton,
   Paper,
   Stack,
@@ -24,8 +26,6 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  TextField,
-  TextareaAutosize,
   Typography,
 } from '@mui/material';
 // components
@@ -33,7 +33,7 @@ import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { getSytemItems, updateSystemItems } from '../Services/ApiServices';
-import AddSystemItemsDialog from '../sections/@dashboard/items/AddSystemItemsDialog';
+// import AddSystemItemsDialog from '../sections/@dashboard/items/AddSystemItemsDialog';
 import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
 
@@ -135,9 +135,6 @@ export default function UserPage() {
   }
 
   const [open, setOpen] = useState(false);
-
-  const [errors, setErrors] = useState({});
-
   const [rowData, setRowData] = useState(null);
 
   const onValueChange = (e) => {
@@ -154,14 +151,6 @@ export default function UserPage() {
   const handleClose = () => {
     setOpen(false);
   };
-
-  const isDisable = true;
-  const validateInventoryItemCode = (password) => password.length <= 40;
-  const validatePrimaryUomCode = (password) => password.length <= 3;
-  const ValidatePrimaryUnitOfMeasure = (password) => password.length <= 25;
-  const validateDescription = (password) => password.length <= 240;
-  // const validateEnabledFlag = (inputValue) => inputValue.length > 1;
-  const validateBuyerId = (inputValue) => inputValue <= 999999999;
 
   const handleEdit = async () => {
     const {
@@ -181,78 +170,48 @@ export default function UserPage() {
       maximum_order_quantity,
     } = rowData;
 
-    const newErrors = {};
-    // Validate inventory_item_code
-    if (!validateInventoryItemCode(inventory_item_code) || !inventory_item_code) {
-      newErrors.inventory_item_code = !inventory_item_code
-        ? 'Inventory_Item_Code is required'
-        : 'Inventory_Item_Code must be maximum 40 characters long';
-    }
+    try {
+      const currentDay = new Date().toJSON();
 
-    // Validate primary_uom_code
-    if (primary_uom_code && !validatePrimaryUomCode(primary_uom_code)) {
-      newErrors.primary_uom_code = 'Primary Uom Code must be maximum 3 characters long';
-    }
+      const requestBody = {
+        inventoryItemId: inventory_item_id,
+        organizationId: organization_id,
+        inventoryItemCode: inventory_item_code,
+        description: rowData.description ? rowData.description : '',
+        primaryUomCode: primary_uom_code,
+        primaryUnitOfMeasure: primary_unit_of_measure,
+        lastUpdateDate: currentDay,
+        lastUpdatedBy: 'Admin',
+        // enabledFlag: enabled_flag,
+        startDateActive: start_date_active || null,
+        endDateActive: end_date_active || null,
+        buyerId: buyer_id,
+        minMinmaxQuantity: min_minmax_quantity,
+        maxMinmaxQuantity: max_minmax_quantity,
+        minimumOrderQuantity: minimum_order_quantity,
+        maximumOrderQuantity: maximum_order_quantity,
+      };
 
-    // Validate primary_unit_of_measure
-    if (primary_unit_of_measure && !ValidatePrimaryUnitOfMeasure(primary_unit_of_measure)) {
-      newErrors.primary_unit_of_measure = 'Primary_Unit_Of_Measure must be maximum 25 characters long';
-    }
+      const response = await updateSystemItems(requestBody);
 
-    // Validate description
-    if (description && !validateDescription(description)) {
-      newErrors.description = 'Description must be maximum 240 characters long';
-    }
-
-    // Validate buyerId
-    if (buyer_id && !validateBuyerId(buyer_id)) {
-      newErrors.buyer_id = 'Buyer Id must be maximum 9 digits long';
-    }
-
-    // Check if there are any errors
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        const currentDay = new Date().toJSON();
-
-        const requestBody = {
-          inventoryItemId: inventory_item_id,
-          organizationId: organization_id,
-          inventoryItemCode: inventory_item_code,
-          description: rowData.description ? rowData.description : '',
-          primaryUomCode: primary_uom_code,
-          primaryUnitOfMeasure: primary_unit_of_measure,
-          lastUpdateDate: currentDay,
-          lastUpdatedBy: 'Admin',
-          // enabledFlag: enabled_flag,
-          startDateActive: start_date_active || null,
-          endDateActive: end_date_active || null,
-          buyerId: buyer_id,
-          minMinmaxQuantity: min_minmax_quantity,
-          maxMinmaxQuantity: max_minmax_quantity,
-          minimumOrderQuantity: minimum_order_quantity,
-          maximumOrderQuantity: maximum_order_quantity,
-        };
-
-        const response = await updateSystemItems(requestBody);
-
-        if (response.status === 200) {
-          alert('Successfully updated!');
-        } else {
-          console.log(response);
-          alert('Process failed! Try again later');
-        }
-
-        handleClose();
-        navigate('/items', { replace: true });
-        window.location.reload();
-        console.log(requestBody);
-      } catch (err) {
-        console.log(err.message);
+      if (response.status === 200) {
+        alert('Successfully updated!');
+      } else {
+        console.log(response);
         alert('Process failed! Try again later');
       }
-    } else {
-      setErrors(newErrors);
+
+      handleClose();
+      navigate('/dashboard/items', { replace: true });
+      // window.location.reload();
+      console.log(requestBody);
+    } catch (err) {
+      console.log(err.message);
+      alert('Process failed! Try again later');
     }
+    // } else {
+    //   setErrors(newErrors);
+    // }
   };
 
   // const TABLE_HEAD = Object.keys(USERLIST[0]).map((column => ({id: column, label: sentenceCase(column), alignRight: false})));
@@ -341,6 +300,11 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const addItemMaster = () => {
+    // navigate('/dashboard/add-uom');
+    navigate('/dashboard/addSystemItem', { replace: true });
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -358,9 +322,14 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Mtl System Items
           </Typography>
-          <div>
-            <AddSystemItemsDialog />
-          </div>
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:plus-fill" />}
+            color="primary"
+            onClick={addItemMaster}
+          >
+            Add Item Master
+          </Button>
         </Stack>
 
         <Card>
@@ -483,161 +452,161 @@ export default function UserPage() {
                 )}
 
                 {rowData && (
-                  <Dialog open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
+                  <Dialog fullScreen open={open} onClose={handleClose}>
+                    <DialogTitle>Edit Item Master</DialogTitle>
+                    <Stack />
                     <DialogContent>
-                      <Stack spacing={3}>
-                        <TextField
-                          required
-                          disabled={isDisable}
-                          type="number"
-                          name="inventory_item_id"
-                          label={sentenceCase('inventory_item_id')}
-                          value={rowData.inventory_item_id}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.inventoryItemId}
-                          helperText={errors.inventoryItemId}
-                        />
-
-                        <TextField
-                          required
-                          disabled={isDisable}
-                          type="number"
-                          name="organization_id"
-                          label={sentenceCase('organization_id')}
-                          value={rowData.organization_id}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.organizationId}
-                          helperText={errors.organizationId}
-                        />
-
-                        <TextField
-                          required
-                          name="inventory_item_code"
-                          label={sentenceCase('inventory_item_code')}
-                          autoComplete="given-name"
-                          value={rowData.inventory_item_code}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.inventoryItemCode}
-                          helperText={errors.inventoryItemCode}
-                        />
-
-                        <TextareaAutosize
-                          name="description"
-                          placeholder="Description.."
-                          autoComplete="given-name"
-                          value={rowData.description}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.description}
-                          helperText={errors.description}
-                        />
-
-                        <TextField
-                          name="primary_uom_code"
-                          label={sentenceCase('primary_uom_code')}
-                          autoComplete="given-name"
-                          value={rowData.primary_uom_code}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.primaryUomCode}
-                          helperText={errors.primaryUomCode}
-                        />
-
-                        <TextField
-                          name="primary_unit_of_measure"
-                          label={sentenceCase('primary_unit_of_measure')}
-                          autoComplete="given-name"
-                          value={rowData.primary_unit_of_measure}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.primaryUnitOfMeasure}
-                          helperText={errors.primaryUnitOfMeasure}
-                        />
-
-                        <TextField
-                          required
-                          disabled={isDisable}
-                          name="enabled_flag"
-                          label={sentenceCase('enabled_flag')}
-                          autoComplete="given-name"
-                          value={rowData.enabled_flag}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.enabledFlag}
-                          helperText={errors.enabledFlag}
-                        />
-
-                        <TextField
-                          type="date"
-                          name="start_date_active"
-                          label={sentenceCase('start_date_active')}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.startDateActive}
-                          helperText={errors.startDateActive}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                          value={rowData.start_date_active}
-                        />
-
-                        <TextField
-                          type="date"
-                          name="end_date_active"
-                          label={sentenceCase('end_date_active')}
-                          value={rowData.end_date_active}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.endDateActive}
-                          helperText={errors.endDateActive}
-                          InputLabelProps={{
-                            shrink: true,
-                          }}
-                        />
-
-                        <TextField
-                          type="number"
-                          name="buyer_id"
-                          label={sentenceCase('buyer_id')}
-                          value={rowData.buyer_id}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.buyerId}
-                          helperText={errors.buyerId}
-                        />
-
-                        <TextField
-                          type="number"
-                          name="min_minmax_quantity"
-                          label={sentenceCase('min_minmax_quantity')}
-                          value={rowData.min_minmax_quantity}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.minMinmaxQuantity}
-                          helperText={errors.minMinmaxQuantity}
-                        />
-
-                        <TextField
-                          type="number"
-                          name="max_minmax_quantity"
-                          label={sentenceCase('max_minmax_quantity')}
-                          value={rowData.max_minmax_quantity}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.maxMinmaxQuantity}
-                          helperText={errors.maxMinmaxQuantity}
-                        />
-
-                        <TextField
-                          type="number"
-                          name="minimum_order_quantity"
-                          label={sentenceCase('minimum_order_quantity')}
-                          value={rowData.minimum_order_quantity}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.minimumOrderQuantity}
-                          helperText={errors.minimumOrderQuantity}
-                        />
-
-                        <TextField
-                          type="number"
-                          name="maximum_order_quantity"
-                          label={sentenceCase('maximum_order_quantity')}
-                          value={rowData.maximum_order_quantity}
-                          onChange={(e) => onValueChange(e)}
-                          error={!!errors.maximumOrderQuantity}
-                          helperText={errors.maximumOrderQuantity}
-                        />
+                      <Stack spacing={1.5} direction="row">
+                        {/* <div>
+                          <label htmlFor="inventory_item_id">{sentenceCase('inventory_item_id')}: </label>
+                          <input
+                            required
+                            disabled={isDisable}
+                            type="number"
+                            name="inventory_item_id"
+                            id="inventory_item_id"
+                            title="Maximum 25 characters are allowed."
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.inventory_item_id}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div> */}
+                        <div>
+                          <label htmlFor="inventory_item_code">{sentenceCase('inventory_item_code')}: </label>
+                          <input
+                            required
+                            name="inventory_item_code"
+                            id="inventory_item_code"
+                            title="Maximum 40 characters are allowed."
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.inventory_item_code}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="primary_uom_code">{sentenceCase('primary_uom_code')}: </label>
+                          <input
+                            name="primary_uom_code"
+                            id="primary_uom_code"
+                            title="Maximum 3 characters are allowed."
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.primary_uom_code}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="primary_unit_of_measure">{sentenceCase('primary_unit_of_measure')}: </label>
+                          <input
+                            name="primary_unit_of_measure"
+                            id="primary_unit_of_measure"
+                            title="Maximum 25 characters are allowed."
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.primary_unit_of_measure}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        {/* <div>
+                          <label htmlFor="enabled_flag">{sentenceCase('enabled_flag')}: </label>
+                          <input
+                            required
+                            disabled={isDisable}
+                            name="enabled_flag"
+                            id="enabled_flag"
+                            title="Maximum 1 character is allowed."
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.enabled_flag}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div> */}
+                        <div>
+                          <label htmlFor="start_date_active">{sentenceCase('start_date_active')}: </label>
+                          <input
+                            type="date"
+                            name="start_date_active"
+                            id="start_date_active"
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.start_date_active}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="end_date_active">{sentenceCase('end_date_active')}: </label>
+                          <input
+                            type="date"
+                            name="end_date_active"
+                            id="end_date_active"
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.end_date_active}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="buyer_id">{sentenceCase('buyer_id')}: </label>
+                          <input
+                            type="number"
+                            name="buyer_id"
+                            id="buyer_id"
+                            title="Maximum 9 digits are allowed."
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.buyer_id}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="min_minmax_quantity">{sentenceCase('min_minmax_quantity')}: </label>
+                          <input
+                            type="number"
+                            name="min_minmax_quantity"
+                            id="min_minmax_quantity"
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.min_minmax_quantity}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="max_minmax_quantity">{sentenceCase('max_minmax_quantity')}: </label>
+                          <input
+                            type="number"
+                            name="max_minmax_quantity"
+                            id="max_minmax_quantity"
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.max_minmax_quantity}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="minimum_order_quantity">{sentenceCase('minimum_order_quantity')}: </label>
+                          <input
+                            type="number"
+                            name="minimum_order_quantity"
+                            id="minimum_order_quantity"
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.minimum_order_quantity}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="maximum_order_quantity">{sentenceCase('maximum_order_quantity')}: </label>
+                          <input
+                            type="number"
+                            name="maximum_order_quantity"
+                            id="maximum_order_quantity"
+                            style={{ backgroundColor: 'white' }}
+                            value={rowData.maximum_order_quantity}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="description">{sentenceCase('description')}: </label>
+                          <textarea
+                            name="description"
+                            id="description"
+                            title="Maximum 240 characters are allowed."
+                            style={{ height: '30px' }}
+                            value={rowData.description}
+                            onChange={(e) => onValueChange(e)}
+                          />
+                        </div>
                       </Stack>
                     </DialogContent>
                     <DialogActions>

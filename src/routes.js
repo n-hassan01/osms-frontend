@@ -31,6 +31,7 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
+import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
 import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
 // import getCookieService from './Services/GetCookieService';
@@ -58,7 +59,7 @@ export default function Router() {
 
     fetchData();
   }, []);
-  
+
   const routes = useRoutes([
     {
       path: '/dashboard',
@@ -76,6 +77,7 @@ export default function Router() {
         { path: 'items', element: <MtlSystemItemPage /> },
         { path: 'uom', element: <MtlUnitMeasurePage /> },
         { path: 'add-uom', element: <AddUomDialog /> },
+        { path: 'addSystemItem', element: <AddSystemItemsDialog /> },
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
         { path: 'showorganizationunits', element: <ShowHrAllOrganizationUnits /> },
@@ -134,16 +136,16 @@ export default function Router() {
       path: 'showfnduser',
       element: <ShowFndUser />,
     },
-   
+
     {
       path: 'menucreation',
-      element: <MenuCreation/>,
+      element: <MenuCreation />,
     },
 
     {
       path: 'showmenus',
-      element: <ShowMenus/>,
-    },    
+      element: <ShowMenus />,
+    },
     {
       path: 'showmainsystemmenu',
       element: <ShowMainSystemMenu />,
@@ -164,7 +166,7 @@ export default function Router() {
       path: 'showemployee',
       element: <ShowEmployee />,
     },
-    
+
     {
       path: 'showformwithtable',
       element: <ShowFormWithTable />,
