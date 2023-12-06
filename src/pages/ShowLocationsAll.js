@@ -11,6 +11,7 @@ import {
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -27,11 +28,8 @@ import {
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-
 import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
-import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -47,7 +45,6 @@ const TABLE_HEAD = [
   { id: 'country', label: 'Country', alignRight: false },
   { id: 'postal_code', label: 'Postal Code', alignRight: false },
   { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -208,7 +205,7 @@ export default function ShowLocationsAll() {
         <title> HR Locations | OSMS </title>
       </Helmet>
 
-      <Container >
+      <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Locations
@@ -218,7 +215,7 @@ export default function ShowLocationsAll() {
               variant="outlined"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/addhrlocations');
+                navigate('/dashboard/addhrlocations');
               }}
               style={{ marginTop: '10px' }}
             >
@@ -302,11 +299,19 @@ export default function ShowLocationsAll() {
                         <TableCell align="left">{telephone_number_1}</TableCell>
 
                         <TableCell align="right">
-                          <UpdateHrLocations location_id={location_id} />
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const locationId = location_id;
+                              navigate(`/dashboard/updatehrlocations/${locationId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
+                        
                         </TableCell>
-                        <TableCell align="right">
-                          <DeleteHrLocations location_id={location_id} />
-                        </TableCell>
+                      
 
                         <Popover
                           open={Boolean(open)}

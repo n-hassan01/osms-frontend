@@ -350,6 +350,16 @@ export const getHrLocationsDetails = async () => {
     return err.message;
   }
 };
+
+export const getHrLocationsIdDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hr-locations-id/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 export const getPerAllPeoplesDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-per-all-peoples/`);

@@ -64,7 +64,7 @@ export default function DeleteHrOrganizationUnits({ organization_id }) {
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showorganizationunits');
+      navigate('/dashboard/showorganizationunits');
       window.location.reload();
     } catch (err) {
       console.log(err.message);

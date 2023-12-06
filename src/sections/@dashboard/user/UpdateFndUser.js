@@ -1,21 +1,17 @@
 /* eslint-disable import/named */
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
-import { Stack, TextField } from '@mui/material';
+
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getPerFndUserService } from '../../../Services/Admin/GetPerFndUser';
-import Iconify from '../../../components/iconify';
 
-export default function UpdateHrLocations({ user_id }) {
+export default function UpdateFndUser() {
+  const { user_id } = useParams();
   const navigate = useNavigate();
   console.log('update page person', user_id);
   const [open, setOpen] = useState(false);
@@ -42,21 +38,29 @@ export default function UpdateHrLocations({ user_id }) {
     setOpen(true);
     loadUser();
   };
-  const loadUser = async () => {
-    console.log('with brackets', { user_id });
-    console.log('without', user_id);
-    const result = await getPerFndUserService(user_id);
-    console.log('Eiii', result.data[0].user_id);
-    setFnduser({
-      ...fnduser,
-      userName: result.data[0].user_name,
-      userPassword: result.data[0].user_password,
-      startDate: result.data[0].start_date,
-      endDate: result.data[0].end_date,
-      description: result.data[0].description,
-      employeeId: result.data[0].employee_id,
-    });
-  };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        console.log('with brackets', { user_id });
+        console.log('without', user_id);
+        const result = await getPerFndUserService(user_id);
+        console.log('Eiii', result.data[0].user_id);
+        setFnduser({
+          ...fnduser,
+          userName: result.data[0].user_name,
+          userPassword: result.data[0].user_password,
+          startDate: result.data[0].start_date,
+          endDate: result.data[0].end_date,
+          description: result.data[0].description,
+          employeeId: result.data[0].employee_id,
+        });
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const handleClick = async () => {
     try {
@@ -65,8 +69,6 @@ export default function UpdateHrLocations({ user_id }) {
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showfnduser');
-      window.location.reload();
     } catch (err) {
       console.log(err.message.TextField);
       alert('Process failed! Try again later');
@@ -74,84 +76,82 @@ export default function UpdateHrLocations({ user_id }) {
   };
 
   const handleClose = () => {
+    navigate('/dashboard/showfnduser');
+    window.location.reload();
     setOpen(false);
   };
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        Update
-      </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={3}>
-            <TextField
-              type={'text'}
-              name="user_id"
-              label="User Id"
-              value={user_id}
+      <h3 style={{ marginLeft: '50px' }}>Update {fnduser.employeeId} FndUser</h3>
+      <form className="form-horizontal" style={{ marginTop: '5%', marginLeft: '50px' }}>
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped table-highlight">
+            <thead>
+              <tr>
+                <th>
+                  User Name <span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>
+                  User Password <span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>
+                  Start Date <span style={{ color: 'red' }}>*</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <td style={{ width: '100px' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="userName"
+                  label="User Name"
+                  value={fnduser.userName}
+                  onChange={(e) => onValueChange(e)}
+                  //  onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                />
+              </td>
+              <td style={{ width: '550px' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="userPassword"
+                  label="User Password"
+                  value={fnduser.userPassword}
+                  onChange={(e) => onValueChange(e)}
+                  // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                />
+              </td>
 
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="userName"
-              label="User Name"
-              value={fnduser.userName}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine1: e.target.value })}
-            />
+              <td style={{ width: '550px' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="  startDate"
+                  label="  Start Date"
+                  value={fnduser.startDate}
+                 // onChange={(e) => onValueChange(e)}
+                  // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                />
+              </td>
+            </tbody>
+          </table>
 
-            <TextField
-              type={'text'}
-              name="userPassword"
-              label="User Password"
-              value={fnduser.userPassword}
-              onChange={(e) => onValueChange(e)}
-            />
-
-            <TextField
-              type={'text'}
-              name="  startDate"
-              label="  Start Date"
-              value={fnduser.startDate}
-              onChange={(e) => onValueChange(e)}
-            />
-
-            <TextField
-              type={'text'}
-              name="  endDate"
-              label="  End Date"
-              value={fnduser.endDate}
-              onChange={(e) => onValueChange(e)}
-            />
-
-            <TextField
-              type={'text'}
-              name="description"
-              label="Description"
-              value={fnduser.description}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              type={'text'}
-              name="employeeId"
-              label="Employee ID"
-              value={fnduser.employeeId}
-              onChange={(e) => onValueChange(e)}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClick}>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={handleClick}
+          >
             Submit
           </Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={handleClose}
+          >
             Cancel
           </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </form>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -19,8 +20,9 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
+
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -31,22 +33,17 @@ import OrganizationListToolbar from '../sections/@dashboard/user/OrganizationLis
 
 import { UserListHead } from '../sections/@dashboard/user';
 
-
 import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrganizationUnits';
-
-import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
-import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'organization_id', label: 'Organization ID', alignRight: false },
+  // { id: 'organization_id', label: 'Organization ID', alignRight: false },
   { id: 'business_group_id', label: 'Business Group ID', alignRight: false },
   { id: 'location_id', label: 'Location ID', alignRight: false },
   { id: 'date_from', label: 'Date Form', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'date_to', label: 'Date To', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -122,7 +119,6 @@ export default function ShowHrAllOrganizationUnits() {
     fetchData();
   }, []);
 
-
   const handleOpenMenu = (event, status, email) => {
     if (status === 'approved') setIsDisableApprove(true);
     else setIsDisableApprove(false);
@@ -145,7 +141,6 @@ export default function ShowHrAllOrganizationUnits() {
       email: selectedUserEmail,
     };
 
-
     handleCloseMenu();
     window.location.reload();
   };
@@ -156,10 +151,7 @@ export default function ShowHrAllOrganizationUnits() {
       email: selectedUserEmail,
     };
 
- 
-
     handleCloseMenu();
-  
   };
 
   const handleRequestSort = (event, property) => {
@@ -231,12 +223,11 @@ export default function ShowHrAllOrganizationUnits() {
             Organization Units
           </Typography>
           <div>
-           
             <Button
               variant="outlined"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/addhrorganization');
+                navigate('/dashboard/addhrorganization');
               }}
               style={{ marginTop: '10px' }}
             >
@@ -275,8 +266,8 @@ export default function ShowHrAllOrganizationUnits() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, organization_id)} />
                         </TableCell>
-                     
-                        <TableCell align="left">{organization_id}</TableCell>
+
+                        {/* <TableCell align="left">{organization_id}</TableCell> */}
                         <TableCell align="left">{business_group_id}</TableCell>
 
                         <TableCell align="left">{location_id}</TableCell>
@@ -286,19 +277,19 @@ export default function ShowHrAllOrganizationUnits() {
                         <TableCell align="left">{date_to}</TableCell>
 
                         <TableCell align="right">
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const organizationId = organization_id;
+                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                            </IconButton>
                         
-                          {/* <IconButton size="large" color="primary" onClick={() => handleClickOpen(row.organization_id)}>
-                            <Iconify icon={'tabler:edit'} 
-                            />
-                          </IconButton> */}
-                          <UpdateHrOrganizationUnits organization_id={organization_id} />
-
                         </TableCell>
-                        <TableCell align="right">
-                          <DeleteHrOrganizationUnits organization_id={organization_id} />
-                        </TableCell>
-
-                      
+                       
 
                         <Popover
                           open={Boolean(open)}

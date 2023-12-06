@@ -1,9 +1,8 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
-import { ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 
-import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useState } from 'react';
@@ -108,34 +107,38 @@ export default function AddHrLocations() {
     }
   };
   const handleAddRow = () => {
-    setLocation([
-      ...location,
-      {
-        locationCode: '',
-        businessGroupId: '5',
-        description: '',
-        shipToLocationId: '3',
-        inventoryOrganizationId: '4',
-        addressLine1: '',
-        addressLine2: '',
-        addressLine3: '',
-        townOrCity: '',
-        country: '',
-        postalCode: '',
-        telephoneNumber1: '',
-        telephoneNumber2: '01533581070 ',
-        telephoneNumber3: '01533581070',
-        lastUpdateDate: '08-08-2023',
-        lastUpdatedBy: '1',
-        createdBy: '2',
-        creationDate: '07-08-2023',
-      },
-    ]);
+    if (location.length === 1) setShowMenuLines(true);
+
+    if (showMenuLines) {
+      setLocation([
+        ...location,
+        {
+          locationCode: '',
+          businessGroupId: '5',
+          description: '',
+          shipToLocationId: '3',
+          inventoryOrganizationId: '4',
+          addressLine1: '',
+          addressLine2: '',
+          addressLine3: '',
+          townOrCity: '',
+          country: '',
+          postalCode: '',
+          telephoneNumber1: '',
+          telephoneNumber2: '01533581070 ',
+          telephoneNumber3: '01533581070',
+          lastUpdateDate: '08-08-2023',
+          lastUpdatedBy: '1',
+          createdBy: '2',
+          creationDate: '07-08-2023',
+        },
+      ]);
+    }
     console.log(location);
   };
 
   const handleClose = () => {
-    navigate('/showlocationsall');
+    navigate('/dashboard/showlocationsall');
 
     window.location.reload();
     setOpen(false);
@@ -150,18 +153,21 @@ export default function AddHrLocations() {
           </Typography>
         </Stack>
         <Grid item xs={3}>
-          <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-            <Button
-              style={{ marginRight: '10px' }}
-              onClick={() => {
-                setShowMenuLines(true);
-              }}
-            >
-              Add Location
-            </Button>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={() => {
+              handleAddRow();
+            }}
+          >
+            Add Location
+          </Button>
 
-            <Button onClick={handleClose}>Cancel</Button>
-          </ButtonGroup>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
         </Grid>
 
         <div>
@@ -203,9 +209,8 @@ export default function AddHrLocations() {
                   {showMenuLines &&
                     location.map((row, index) => (
                       <tr key={index}>
-                        <td>
+                        <td style={{ width: '150px' }}>
                           <input
-                            style={{ width: '150px' }}
                             type="text"
                             className="form-control"
                             name="locationCode"
@@ -214,7 +219,7 @@ export default function AddHrLocations() {
                         </td>
                         <td>
                           <input
-                            style={{ width: '150px' }}
+                            style={{ width: '350px' }}
                             type="text"
                             className="form-control"
                             name="description"
@@ -223,7 +228,7 @@ export default function AddHrLocations() {
                         </td>
                         <td>
                           <input
-                            style={{ width: '150px' }}
+                            style={{ width: '350px' }}
                             type="text"
                             className="form-control"
                             name="addressLine1"
@@ -232,7 +237,7 @@ export default function AddHrLocations() {
                         </td>
                         <td>
                           <input
-                            style={{ width: '150px' }}
+                            style={{ width: '350px' }}
                             type="text"
                             className="form-control"
                             name="addressLine2"
@@ -241,7 +246,7 @@ export default function AddHrLocations() {
                         </td>
                         <td>
                           <input
-                            style={{ width: '150px' }}
+                            style={{ width: '350px' }}
                             type="text"
                             className="form-control"
                             name="addressLine3"
@@ -250,7 +255,7 @@ export default function AddHrLocations() {
                         </td>
                         <td>
                           <input
-                            style={{ width: '150px' }}
+                            style={{ width: '200px' }}
                             type="text"
                             className="form-control"
                             name="townOrCity"
@@ -277,17 +282,12 @@ export default function AddHrLocations() {
                         </td>
                         <td>
                           <input
-                            style={{ width: '150px' }}
+                            style={{ width: '350px' }}
                             type="text"
                             className="form-control"
                             name="telephoneNumber1"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
-                        </td>
-                        <td>
-                          <Button>
-                            <AddIcon onClick={handleAddRow} />
-                          </Button>
                         </td>
                       </tr>
                     ))}
@@ -295,18 +295,19 @@ export default function AddHrLocations() {
               </table>
             </div>
             {showMenuLines && (
-              <Grid item xs={3}>
-                <ButtonGroup
-                  variant="contained"
-                  aria-label="outlined primary button group"
-                  spacing={2}
-                  style={{ marginTop: '20px' }}
+              <Grid item xs={3} style={{marginTop:"20px"}}>
+                <Button
+                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={handleClick}
                 >
-                  <Button style={{ marginRight: '10px' }} onClick={handleClick}>
-                    Submit
-                  </Button>
-                  <Button onClick={handleClose}>Cancel</Button>
-                </ButtonGroup>
+                  Submit
+                </Button>
+                <Button
+                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
               </Grid>
             )}
           </form>

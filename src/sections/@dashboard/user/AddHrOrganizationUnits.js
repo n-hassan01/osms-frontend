@@ -1,25 +1,40 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
-import AddIcon from '@mui/icons-material/Add';
-import { ButtonGroup, Container, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addHrOrganizationUnits } from '../../../Services/Admin/AddHrOrganizationUnits';
+import { getHrLocationsIdDetails } from '../../../Services/ApiServices';
+
 
 export default function AddHrOrganizationUnits() {
   const navigate = useNavigate();
-
+  const [isReadOnly, setIsReadOnly] = useState(false);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [showMenuLines, setShowMenuLines] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [transactionTypeIds, setTransactionTypeIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getHrLocationsIdDetails();
+    
+        if (response) setTransactionTypeIds(response.data);
+     
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
 
+    fetchData();
+  }, []);
   const [organization, setOrganization] = useState([
     {
       businessGroupId: '',
@@ -64,8 +79,6 @@ export default function AddHrOrganizationUnits() {
 
   const handleClick = async () => {
     try {
-
- 
       const filteredArray = organization.filter((item) => Object.values(item).some((value) => value !== ''));
 
       let c;
@@ -94,36 +107,40 @@ export default function AddHrOrganizationUnits() {
         console.log('Pass to home after request ');
         handleClose();
       }
+      setOrganization([]);
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
   };
   const handleAddRow = () => {
-    setOrganization([
-      ...organization,
-      {
-        organizationId: '',
-        businessGroupId: '',
-        locationId: '',
-        dateFrom: '',
-        name: '',
-        dateTo: '',
-        lastUpdateDate: '08-28-2022',
-        lastUpdatedBy: '1',
-        createdBy: '2',
-        creationDate: '08-28-2022',
-      },
-    ]);
-    console.log(organization);
+    if (organization.length === 1) setShowMenuLines(true);
+
+    if (showMenuLines) {
+      setOrganization([
+        ...organization,
+        {
+          businessGroupId: '',
+          locationId: '',
+          dateFrom: '',
+          name: '',
+          dateTo: '',
+          lastUpdateDate: '08-28-2022',
+          lastUpdatedBy: '1',
+          createdBy: '2',
+          creationDate: '08-28-2022',
+        },
+      ]);
+      console.log(organization);
+    }
   };
 
   const handleClose = () => {
-    navigate('/showorganizationunits');
+    navigate('/dashboard/showorganizationunits');
 
     window.location.reload();
 
-   setOpen(false);
+    setOpen(false);
   };
 
   return (
@@ -136,20 +153,22 @@ export default function AddHrOrganizationUnits() {
         </Stack>
 
         <Grid item xs={3}>
-          <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-            <Button
-              style={{ marginRight: '10px' }}
-              onClick={() => {
-                setShowMenuLines(true);
-              }}
-            >
-              Add Organization
-            </Button>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={() => {
+              handleAddRow();
+            }}
+          >
+            Add Organization
+          </Button>
 
-            <Button onClick={handleClose}>Cancel</Button>
-          </ButtonGroup>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
         </Grid>
-   
 
         <div>
           <form className="form-horizontal" style={{ marginTop: '5%' }}>
@@ -178,25 +197,35 @@ export default function AddHrOrganizationUnits() {
                   {showMenuLines &&
                     organization.map((row, index) => (
                       <tr key={index}>
-                        <td>
+                        <td style={{ width: '190px' }}>
                           <input
-                            style={{ width: '150px' }}
                             type="text"
                             className="form-control"
                             name="businessGroupId"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
-                        <td>
-                          <input
-                            style={{ width: '150px' }}
-                            type="text"
-                            className="form-control"
-                            name="locationId"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
+                        <td style={{ width: '150px' }}>
+                        <select
+                        style={{ width: '150px',height:"35px",backgroundColor: 'white' }}
+                name="locationId"
+                id="locationId"
+        
+                onChange={(e) => {
+                  handleMenuChange(index, e.target.name, e.target.value);
+                }}
+                readOnly={isReadOnly}
+              >
+                <option value="null" />
+                {transactionTypeIds.map((id, index) => (
+                  <option key={index} value={id.location_id}>
+                    {id.location_id}
+                  </option>
+                ))}
+              </select>
+                       
                         </td>
-                        <td>
+                        <td style={{ width: '150px' }}>
                           <TextField
                             type="date"
                             name="dateFrom"
@@ -210,9 +239,8 @@ export default function AddHrOrganizationUnits() {
                             value={organization.dateFrom}
                           />
                         </td>
-                        <td>
+                        <td style={{ width: '350px' }}>
                           <input
-                            style={{ width: '150px' }}
                             type="text"
                             className="form-control"
                             name="name"
@@ -220,7 +248,7 @@ export default function AddHrOrganizationUnits() {
                           />
                         </td>
 
-                        <td>
+                        <td style={{ width: '150px' }}>
                           <TextField
                             type="date"
                             name="dateTo"
@@ -234,12 +262,6 @@ export default function AddHrOrganizationUnits() {
                             value={organization.dateTo}
                           />
                         </td>
-
-                        <td>
-                          <Button>
-                            <AddIcon onClick={handleAddRow} />
-                          </Button>
-                        </td>
                       </tr>
                     ))}
                 </tbody>
@@ -247,17 +269,18 @@ export default function AddHrOrganizationUnits() {
             </div>
             {showMenuLines && (
               <Grid item xs={3}>
-                <ButtonGroup
-                  variant="contained"
-                  aria-label="outlined primary button group"
-                  spacing={2}
-                  style={{ marginTop: '20px' }}
+                <Button
+                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={handleClick}
                 >
-                  <Button style={{ marginRight: '10px' }} onClick={handleClick}>
-                    Submit
-                  </Button>
-                  <Button onClick={handleClose}>Cancel</Button>
-                </ButtonGroup>
+                  Submit
+                </Button>
+                <Button
+                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={handleClose}
+                >
+                  Cancel
+                </Button>
               </Grid>
             )}
           </form>

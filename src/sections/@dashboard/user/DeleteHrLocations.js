@@ -73,7 +73,7 @@ export default function DeleteHrLocations({ location_id }) {
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showlocationsall');
+      navigate('/dashboard/showlocationsall');
       window.location.reload();
     } catch (err) {
       console.log(err.message);

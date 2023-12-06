@@ -4,11 +4,15 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
+
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -24,27 +28,17 @@ import {
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
+import FndUserToollist from '../sections/@dashboard/user/fndUserToollist';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-
 import { getFndUserService } from '../Services/Admin/Getfnduser';
-import AddFndUser from '../sections/@dashboard/user/AddFndUser';
-import DeleteFndUser from '../sections/@dashboard/user/DeleteFndUser';
-import UpdateFndUser from '../sections/@dashboard/user/UpdateFndUser';
+import { UserListHead } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'userId', label: 'User ID', alignRight: false },
   { id: 'userName', label: 'User Name', alignRight: false },
-  { id: 'userPassword', label: 'User Password', alignRight: false },
-  { id: 'startDate', label: 'Start Date', alignRight: false },
-  { id: 'endDate', label: 'End Date', alignRight: false },
-  { id: ' description', label: ' DESCRIPTION', alignRight: false },
-  { id: 'employeeId', label: 'Employee Id', alignRight: false },
-
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -82,7 +76,8 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowPerAllPeoples() {
+export default function ShowFndUser() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -220,12 +215,21 @@ export default function ShowPerAllPeoples() {
             Fnd User
           </Typography>
           <div>
-            <AddFndUser />
+            <Button
+              variant="outlined"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/addfnduser');
+              }}
+              style={{ marginTop: '10px' }}
+            >
+              Add FndUser
+            </Button>
           </div>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <FndUserToollist
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -246,7 +250,7 @@ export default function ShowPerAllPeoples() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { user_id, user_name, user_password, start_date, end_date, description, employee_id } = row;
+                    const { user_id, user_name } = row;
                     const selectedUser = selected.indexOf(user_id) !== -1;
 
                     return (
@@ -256,18 +260,23 @@ export default function ShowPerAllPeoples() {
                         </TableCell>
                         <TableCell align="left">{user_id}</TableCell>
                         <TableCell align="left">{user_name}</TableCell>
-                        <TableCell align="left">{user_password}</TableCell>
-                        <TableCell align="left">{start_date}</TableCell>
-                        <TableCell align="left">{end_date}</TableCell>
-                        <TableCell align="left">{description}</TableCell>
-                        <TableCell align="left">{employee_id}</TableCell>
 
-                        <div style={{ marginTop: '22px' }}>
-                          <UpdateFndUser user_id={user_id} />
-                        </div>
-                        <TableCell align="right">
-                          <DeleteFndUser user_id={user_id} />
+                        <TableCell align="left">
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const userId = user_id;
+
+                              navigate(`/dashboard/updatefnduser/${userId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                               
+                          </IconButton>
+                          
                         </TableCell>
+                   
 
                         <Popover
                           open={Boolean(open)}
