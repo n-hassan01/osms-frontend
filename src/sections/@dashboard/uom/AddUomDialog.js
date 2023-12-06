@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { Button, Grid } from '@mui/material';
+import { Button, Container, Grid } from '@mui/material';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -37,17 +37,23 @@ export default function ResponsiveDialog() {
     setSelectedLines(updatedSelectedLines);
   };
 
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([{
+    unitOfMeasure: 'aa',
+    uomCode: null,
+    uomClass: 'dd',
+    description: 'ff',
+  }]);
 
   const [showLines, setShowLines] = useState(false);
 
   const handleAddRow = () => {
-    setShowLines(true);
-    setRows([
+    console.log(rows);
+    if(rows.length === 1) setShowLines(true);
+    if(showLines) setRows([
       ...rows,
       {
         unitOfMeasure: '',
-        uomCode: '',
+        uomCode: null,
         uomClass: '',
         description: '',
       },
@@ -115,7 +121,13 @@ export default function ResponsiveDialog() {
   };
 
   return (
-    <div>
+    <>
+      <Container>
+        {/* <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+          <Typography variant="h4" gutterBottom>
+            Requisition Form
+          </Typography>
+        </Stack> */}
       <Grid container spacing={2}>
         <Grid item xs={3} style={{ display: 'flex' }}>
           <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={handleClick}>
@@ -176,10 +188,12 @@ export default function ResponsiveDialog() {
                     <td>
                       <input
                         required
+                        className="form-control"
                         name="unitOfMeasure"
                         title="Maximum 25 characters are allowed."
                         style={{ backgroundColor: 'white' }}
                         autoComplete="given-name"
+                        value={row.unitOfMeasure}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
@@ -187,9 +201,11 @@ export default function ResponsiveDialog() {
                       <input
                         required
                         name="uomCode"
+                        className="form-control"
                         title="Maximum 3 characters are allowed."
                         style={{ backgroundColor: 'white' }}
                         autoComplete="given-name"
+                        value={row.uomCode}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
@@ -197,6 +213,7 @@ export default function ResponsiveDialog() {
                       <input
                         required
                         name="uomClass"
+                        className="form-control"
                         title="Maximum 10 characters are allowed."
                         style={{ backgroundColor: 'white' }}
                         autoComplete="given-name"
@@ -206,6 +223,7 @@ export default function ResponsiveDialog() {
                     <td>
                       <textarea
                         name="description"
+                        className="form-control"
                         title="Maximum 50 characters are allowed."
                         style={{ height: '30px' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -217,6 +235,7 @@ export default function ResponsiveDialog() {
           </table>
         </div>
       </form>
-    </div>
+      </Container>
+    </>
   );
 }

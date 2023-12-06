@@ -3,11 +3,10 @@
 /* eslint-disable camelcase */
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { format } from 'date-fns';
-import { filter } from 'lodash';
+import { filter, findIndex } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +16,7 @@ import {
   Checkbox,
   Container,
   DialogTitle,
+  Grid,
   IconButton,
   Paper,
   Stack,
@@ -60,6 +60,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
+  console.log(query);
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -67,6 +68,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
+    console.log(filter(array, (_user) => _user.inventory_item_id.toLowerCase().indexOf(query.toLowerCase()) !== -1));
     return filter(array, (_user) => _user.inventory_item_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
@@ -259,32 +261,23 @@ export default function UserPage() {
   //   }
   //   setSelected([]);
   // };
-
   const handleClick = (event, name) => {
-    selectedUsers.push(name);
-    let newSelected = [];
-    newSelected = newSelected.concat(selected, name);
+    const selectedIndex = findIndex(selected, (user) => user.itemId === name.itemId && user.orgId === name.orgId);
 
+    selectedUsers.push(name);
+
+    let newSelected = [];
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+    }
     setSelected(newSelected);
   };
-  // const handleClick = (event, name) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   console.log(name);
-  //   console.log(selectedIndex);
-  //   selectedUsers.push(name);
-  //   let newSelected = [];
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-  //   }
-  //   setSelected(newSelected);
-  //   console.log(typeof selectedUsers);
-  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -308,6 +301,7 @@ export default function UserPage() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  console.log(filteredUsers);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -323,10 +317,11 @@ export default function UserPage() {
             Mtl System Items
           </Typography>
           <Button
-            variant="contained"
+            variant="text"
             startIcon={<Iconify icon="eva:plus-fill" />}
             color="primary"
             onClick={addItemMaster}
+            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
           >
             Add Item Master
           </Button>
@@ -354,6 +349,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    console.log(row);
                     const {
                       inventory_item_id,
                       organization_id,
@@ -608,15 +604,31 @@ export default function UserPage() {
                           />
                         </div>
                       </Stack>
+                      <Grid container spacing={2} style={{ marginTop: '25px' }}>
+                        <Grid item xs={3} style={{ display: 'flex' }}>
+                          <Button
+                            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                            onClick={handleEdit}
+                          >
+                            Submit
+                          </Button>
+                          <Button
+                            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                            onClick={handleClose}
+                          >
+                            Back
+                          </Button>
+                        </Grid>
+                      </Grid>
                     </DialogContent>
-                    <DialogActions>
+                    {/* <DialogActions>
                       <Button autoFocus onClick={handleEdit}>
                         Submit
                       </Button>
                       <Button onClick={handleClose} autoFocus>
                         Cancel
                       </Button>
-                    </DialogActions>
+                    </DialogActions> */}
                   </Dialog>
                 )}
               </Table>
