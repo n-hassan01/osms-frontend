@@ -1,6 +1,6 @@
 {
   "name": "@minimal/material-kit-react",
-  "author": "minimals.cc",
+  "author": "Naimul Hassan",
   "licence": "MIT",
   "version": "1.7.0",
   "private": false,
@@ -46,6 +46,7 @@
     "@mui/icons-material": "^5.14.13",
     "@mui/lab": "^5.0.0-alpha.103",
     "@mui/material": "^5.11.10",
+    "@mui/x-data-grid": "^6.18.1",
     "apexcharts": "^3.37.0",
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",

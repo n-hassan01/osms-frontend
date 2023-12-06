@@ -14,36 +14,42 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { getPerHrOrganizationUnitsService } from '../../../Services/Admin/GetPerHrOrganizationUnits';
+import { getPerAllMtlTransactionTypesService } from '../../../Services/Admin/GetPerAllMtlTransactionTypes';
 import Iconify from '../../../components/iconify';
 
-export default function UpdateHrOrganizationUnits({ organization_id }) {
+export default function UpdateMtlTransactionTypes({ transaction_type_id }) {
   const navigate = useNavigate();
-  console.log('update page ', organization_id);
+  console.log('update page ', transaction_type_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const currentDate = new Date();
 
-  const [organization, setOrganization] = useState({
-    organizationId: '',
-    businessGroupId: '',
-    locationId: '',
+  // Extract the date components
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const day = currentDate.getDate().toString().padStart(2, '0');
+  
+  // Create the formatted date string
+  const formattedDate = `${year}-${month}-${day}`;
 
-    dateFrom: '',
-    name: '',
-    dateTo: '',
-
-    lastUpdateDate: '08-08-2023',
-    lastUpdatedBy: '1',
-    createdBy: '2',
-    creationDate: '07-08-2023',
+  const [transaction, setTransaction] = useState({
+    transactionTypeId:'',
+    lastUpdateDate: '',
+    lastUpdatedBy: '',
+    creationDate: formattedDate,
+    createdBy: '',
+    transactionTypeName: '',
+    description: '',
+    transactionActionId: '',
+    transactionSourceTypeId: '',
   });
 
   const onValueChange = (e) => {
-    setOrganization({ ...organization, [e.target.name]: e.target.value });
+    setTransaction({ ...transaction, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
@@ -51,39 +57,45 @@ export default function UpdateHrOrganizationUnits({ organization_id }) {
     loadUser();
   };
   const loadUser = async () => {
-    console.log('with brackets', { organization_id });
-    console.log('without', organization_id);
-    const result = await getPerHrOrganizationUnitsService(organization_id);
-    const dateTimeString1 = result.data[0].date_from;
-    const datefrom = dateTimeString1.split('T')[0];
-    const dateTimeString2 = result.data[0].date_to;
-    const dateto = dateTimeString2.split('T')[0];
+    console.log('with brackets update', { transaction_type_id });
+    console.log('without', transaction_type_id);
+    const result = await getPerAllMtlTransactionTypesService(transaction_type_id);
+    // const dateTimeString1 = result.data[0].date_from;
+    // const datefrom = dateTimeString1.split('T')[0];
+    // const dateTimeString2 = result.data[0].date_to;
+    // const dateto = dateTimeString2.split('T')[0];
+    
 
-    setOrganization({
-      ...organization,
-      organizationId: result.data[0].organization_id,
-      businessGroupId: result.data[0].business_group_id,
-      locationId: result.data[0].location_id,
+    setTransaction({
+      ...transaction,
+      transactionTypeId:result.data[0].transaction_type_id,
+      lastUpdateDate: result.data[0].last_update_date,
+     
+      lastUpdatedBy: result.data[0].last_updated_by,
+      creationDate: result.data[0].creation_date,
+      createdBy: result.data[0].created_by,
 
-      dateFrom: datefrom,
-      name: result.data[0].name,
-      dateTo: dateto,
+  
+      transactionTypeName: result.data[0].transaction_type_name,
+      description: result.data[0].description,
+      transactionActionId: result.data[0].transaction_action_id,
+      transactionSourceTypeId: result.data[0].transaction_source_type_id,
     });
 
-    console.log('location Details', organization);
+    console.log('transaction Details', transaction);
   };
 
   const handleClick = async () => {
     try {
-      console.log('loc', organization);
+      console.log('loc', transaction);
       const response = await axios.put(
-        `http://localhost:5001/update-hr-organization-units/${organization.organizationId}`,
-        organization
+        `http://localhost:5001/update-mtl-transaction-types/${transaction.transactionTypeId}`,
+        transaction
       );
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showorganizationunits');
+      navigate('/showmtltransactiontypes');
       window.location.reload();
     } catch (err) {
       console.log(err.message);
@@ -146,100 +158,80 @@ export default function UpdateHrOrganizationUnits({ organization_id }) {
           <Stack spacing={3}>
             <TextField
               type={'text'}
-              name="organizationId"
-              label="Organization ID"
-              value={organization.organizationId}
-              onChange={(e) => onValueChange(e)}
+              name="transactionTypeId"
+              label="Transaction Type Id"
+              value={transaction.transactionTypeId}
+              // onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
             />
             <TextField
               type={'text'}
-              name="businessGroupId"
-              label="Business Group Id "
-              value={organization.businessGroupId}
+              name="lastUpdateDate"
+              label="Last Update Date "
+              value={transaction.lastUpdateDate}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, locationCode: e.target.value })}
             />
             <TextField
               type={'text'}
-              name="locationId"
-              label="Location ID"
-              value={organization.locationId}
+              name="lastUpdatedBy"
+              label="Last Updated By"
+              value={transaction.lastUpdatedBy}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
             />
 
             <TextField
               type={'text'}
-              name="dateFrom"
-              label="Date From"
-              value={organization.dateFrom}
-              onChange={(e) => onValueChange(e)}
+              name="creationDate"
+              label="Creation Date"
+              value={transaction.creationDate}
+             // onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, description: e.target.value })}
             />
 
             <TextField
               type={'text'}
-              name="name"
-              label="Name"
-              value={organization.name}
+              name="createdBy"
+              label="Created By"
+              value={transaction.createdBy}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, addressLine1: e.target.value })}
             />
             <TextField
               type={'text'}
-              name="dateTo"
-              label="Date To"
-              value={organization.dateTo}
+              name="transactionTypeName"
+              label="Transaction Type Name"
+              value={transaction.transactionTypeName}
+              onChange={(e) => onValueChange(e)}
+              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
+            />
+            <TextField
+              type={'text'}
+              name="description"
+              label="Description"
+              value={transaction.description}
+              onChange={(e) => onValueChange(e)}
+              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
+            />
+            <TextField
+              type={'text'}
+              name="transactionActionId"
+              label="Transaction Action Id"
+              value={transaction.transactionActionId}
+              onChange={(e) => onValueChange(e)}
+              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
+            />
+            <TextField
+              type={'text'}
+              name="transactionSourceTypeId"
+              label="Transaction Source Type Id"
+              value={transaction.transactionSourceTypeId}
               onChange={(e) => onValueChange(e)}
               // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
             />
 
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="description"
-              label="Description"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.password}
-              helperText={errors.password}
-            /> */}
-            {/* <TextField
-              autoComplete="new-password"
-              required
-              name="confirmPassword"
-              label="Confirm Password"
-              type={showPassword ? 'text' : 'password'}
-              onChange={(e) => onValueChange(e)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              error={!!errors.confirmPassword}
-              helperText={errors.confirmPassword}
-            /> */}
-            {/* <Select
-              name="role"
-              placeholder="User role"
-              autoComplete="given-name"
-              onChange={(e) => onValueChange(e)}
-              options={options}
-            /> */}
+            
           </Stack>
         </DialogContent>
         <DialogActions>

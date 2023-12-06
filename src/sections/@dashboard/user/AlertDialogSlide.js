@@ -23,15 +23,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function DeleteHrOrganizationUnits({ organization_id }) {
+export default function AlertDialogSlide({ organization_id }) {
   const navigate = useNavigate();
   console.log('delete page ', organization_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
+
+ 
+
   const [organization, setOrganization] = useState({
     organizationId: '',
+
   });
 
   const onValueChange = (e) => {
@@ -43,13 +49,14 @@ export default function DeleteHrOrganizationUnits({ organization_id }) {
     loadUser();
   };
   const loadUser = async () => {
-    console.log('with brackets', { organization_id });
+    console.log('with brackets', {organization_id });
     console.log('without', organization_id);
-    const result = await getPerHrOrganizationUnitsService(organization_id);
-
+    const result = await getPerHrOrganizationUnitsService( organization_id );
+   
     setOrganization({
       ...organization,
       organizationId: result.data[0].organization_id,
+      
     });
 
     console.log('location Details', organization);
@@ -70,16 +77,67 @@ export default function DeleteHrOrganizationUnits({ organization_id }) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
+    // const { email, password, confirmPassword } = user;
+    // const newErrors = {};
+
+    // // Validate email
+    // if (!validateEmail(email)) {
+    //   newErrors.email = !email ? 'Email is required' : 'Invalid email address';
+    // }
+
+    // // Validate password
+    // if (!validatePassword(password)) {
+    //   newErrors.password = !password ? 'Password is required' : 'Password must be at least 6 characters long';
+    // }
+
+    // // Validate confirmPassword
+    // if (password !== confirmPassword) {
+    //   newErrors.confirmPassword = 'Passwords do not match';
+    // }
+
+    // // Check if there are any errors
+    // if (Object.keys(newErrors).length === 0) {
+    //   try {
+    //     const response = await signup(user);
+
+    //     if (response.status === 200) {
+    //       alert('Successfully added!');
+    //     } else {
+    //       console.log(response);
+    //       alert('Process failed! Try again later');
+    //     }
+
+    //     handleClose();
+    //     navigate('/dashboard/user', { replace: true });
+    //     window.location.reload();
+    //   } catch (err) {
+    //     console.log(err.message);
+    //     alert('Process failed! Try again later');
+    //   }
+    // } else {
+    //   setErrors(newErrors);
+    // }
   };
 
   const handleClose = () => {
     setOpen(false);
   };
 
+
+  // const [open, setOpen] = React.useState(false);
+
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
   return (
     <React.Fragment>
-      <Button variant="outlined" startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen} >
-        Delete
+      <Button variant="outlined" style={{backgroundColor:"red",color:"white"}} startIcon={<Iconify icon="eva:minus-fill" />} onClick={handleClickOpen}>
+       Delete
       </Button>
       <Dialog
         open={open}
@@ -88,10 +146,10 @@ export default function DeleteHrOrganizationUnits({ organization_id }) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{'Are you sure you want to Delete ?'}</DialogTitle>
+        <DialogTitle>{"Use Google's location service?"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Organization Id : <b> {organization_id} </b>
+           Are you sure you want to Delete Organization Id : <b> {organization_id} </b> 
           </DialogContentText>
         </DialogContent>
         <DialogActions>

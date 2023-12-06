@@ -2,8 +2,10 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
@@ -22,13 +24,10 @@ import {
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-// sections
-// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
-//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
+
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
 import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import AddHrLocations from '../sections/@dashboard/user/AddHrLocations';
 import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
 import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
 // ----------------------------------------------------------------------
@@ -86,6 +85,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowLocationsAll() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -122,35 +122,6 @@ export default function ShowLocationsAll() {
     fetchData();
   }, []);
 
-  //   const [loggedInUser, setLoggedInUser] = useState({});
-
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       try {
-  //         const usersDetails = await getLoggedInUserDetails();
-  //         if (usersDetails) setLoggedInUser(usersDetails.data);
-  //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
-  //       }
-  //     }
-
-  //     fetchData();
-  //   }, []);
-
-  //   const displayAddUser = loggedInUser.role === 1 ? 'block' : 'none';
-
-  const handleOpenMenu = (event, status, email) => {
-    if (status === 'approved') setIsDisableApprove(true);
-    else setIsDisableApprove(false);
-
-    if (status === 'banned') setIsDisableBan(true);
-    else setIsDisableBan(false);
-
-    setSelectedUserEmail(email);
-
-    setOpen(event.currentTarget);
-  };
-
   const handleCloseMenu = () => {
     setOpen(null);
     window.location.reload();
@@ -162,11 +133,6 @@ export default function ShowLocationsAll() {
       email: selectedUserEmail,
     };
 
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
-
     handleCloseMenu();
     window.location.reload();
   };
@@ -176,11 +142,6 @@ export default function ShowLocationsAll() {
       status: 'banned',
       email: selectedUserEmail,
     };
-
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
 
     handleCloseMenu();
     window.location.reload();
@@ -250,7 +211,9 @@ export default function ShowLocationsAll() {
             Locations
           </Typography>
           <div>
-            <AddHrLocations />
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={()=>{ navigate('/addhrlocations');}}>
+        New Location
+      </Button>
           </div>
         </Stack>
 
@@ -298,14 +261,7 @@ export default function ShowLocationsAll() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
                         </TableCell>
-                        {/* <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
+
                         <TableCell align="left">{location_id}</TableCell>
                         <TableCell align="left">{location_code}</TableCell>
 
@@ -319,14 +275,6 @@ export default function ShowLocationsAll() {
                         <TableCell align="left">{country}</TableCell>
                         <TableCell align="left">{postal_code}</TableCell>
                         <TableCell align="left">{telephone_number_1}</TableCell>
-
-                        {/* <TableCell align="left">
-                          <Label
-                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
-                          >
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell> */}
 
                         <div style={{ marginTop: '22px' }}>
                           <UpdateHrLocations location_id={location_id} />

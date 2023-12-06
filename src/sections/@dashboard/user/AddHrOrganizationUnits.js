@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addHrOrganizationUnits } from '../../../Services/Admin/AddHrOrganizationUnits';
@@ -60,11 +60,19 @@ export default function AddHrOrganizationUnits() {
   const handleClick = async () => {
     try {
       console.log(organization);
+      const dateTimeString1 = organization.dateFrom;
+      const datefrom = dateTimeString1.split('T')[0];
+      console.log('after set', datefrom);
+      const dateTimeString2 = organization.dateTo;
+      const dateto = dateTimeString2.split('T')[0];
+      console.log('after set', dateto);
+      setOrganization({ ...organization, dateFrom: datefrom, dateTo: dateto });
+      console.log('after set', organization);
       const response = await addHrOrganizationUnits(organization);
       console.log('Pass to home after request ');
       handleClose();
       navigate('/showorganizationunits');
-      window.location.reload();
+     
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
@@ -148,17 +156,40 @@ export default function AddHrOrganizationUnits() {
               onChange={(e) => onValueChange(e)}
             />
 
-            <TextField
+            {/* <TextField
               required
               name="dateFrom"
               label="Date From"
               autoComplete="given-name"
               onChange={(e) => onValueChange(e)}
+            /> */}
+            <TextField
+              type="date"
+              name="dateFrom"
+              label={sentenceCase('dateFrom')}
+              onChange={(e) => onValueChange(e)}
+              error={!!errors.dateFrom}
+              helperText={errors.dateFrom}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={organization.dateFrom}
             />
 
-           
             <TextField name="name" label="Name" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
-            <TextField name="dateTo" label="Date To" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+            {/* <TextField name="dateTo" label="Date To" autoComplete="given-name" onChange={(e) => onValueChange(e)} /> */}
+            <TextField
+              type="date"
+              name="dateTo"
+              label={sentenceCase('dateTo')}
+              onChange={(e) => onValueChange(e)}
+              error={!!errors.dateTo}
+              helperText={errors.dateTo}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={organization.dateTo}
+            />
 
             {/* <TextField
               autoComplete="new-password"

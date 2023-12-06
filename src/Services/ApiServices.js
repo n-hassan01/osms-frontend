@@ -1,3 +1,4 @@
+/* eslint-disable arrow-body-style */
 /* eslint-disable camelcase */
 import axios from 'axios';
 import getCookieService from './GetCookieService';
@@ -349,6 +350,110 @@ export const getHrLocationsDetails = async () => {
     return err.message;
   }
 };
+export const getPerAllPeoplesDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-per-all-peoples/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getfnduserDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-fnd-user/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getMainSystemMenuDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-main-system-menu/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getAllMtlTransactionTypes = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-transaction-types/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getAllMtlTransactions = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-material-transactions/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getFndUserIds = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-fnd-user/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getMenuIds = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-menu-ids/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getMenusDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-menus/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getperPerAllPeoplesDetails = async (person_id) => {
+  try {
+    return await axios.get(`${usersUrl}getper-per-all-peoples/${person_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPerFndUserDetails = async (user_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-fnd-user/${user_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getperMainSystemMenuDetails = async (system_menu_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-main-system-menu/${system_menu_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getHrAllOrganizationUnits = async () => {
   try {
     return await axios.get(`${usersUrl}get-hr-organization-units/`);
@@ -358,6 +463,7 @@ export const getHrAllOrganizationUnits = async () => {
     return err.message;
   }
 };
+
 export const getPerHrLocationsDetails = async ({ location_id }) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
@@ -368,7 +474,7 @@ export const getPerHrLocationsDetails = async ({ location_id }) => {
   }
 };
 
-export const getPerHrOrganizationUnits = async ({ organization_id }) => {
+export const getPerHrOrganizationUnits = async (organization_id) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-organization-units/${organization_id}`);
   } catch (err) {
@@ -377,6 +483,17 @@ export const getPerHrOrganizationUnits = async ({ organization_id }) => {
     return err.message;
   }
 };
+
+export const getPerAllMtlTransactionTypes = async (transaction_type_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-mtl-transaction-types/${transaction_type_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addHrLocationsDetails = async (location) => {
   console.log('location for api ', location);
   try {
@@ -387,6 +504,72 @@ export const addHrLocationsDetails = async (location) => {
     return err.message;
   }
 };
+
+export const addPerAllPeopleDetails = async (people) => {
+  console.log('people for api ', people);
+  try {
+    return await axios.post(`${usersUrl}add-per-all-peoples/`, people);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addFndUserDetails = async (fnduser) => {
+  console.log('people for api ', fnduser);
+  try {
+    return await axios.post(`${usersUrl}add-fnd-user/`, fnduser);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addMainSystemMenuDetails = async (mainsystemmenu) => {
+  console.log('people for api ', mainsystemmenu);
+  try {
+    return await axios.post(`${usersUrl}add-main-system-menu/`, mainsystemmenu);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addMenusDetails = async (menus) => {
+  console.log('people for api ', menus);
+  try {
+    return await axios.post(`${usersUrl}add-menus/`, menus);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addSubMenusDetails = async (submenus) => {
+  console.log('people for api ', submenus);
+  try {
+    return await axios.post(`${usersUrl}add-sub-menu/`, submenus);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const addUserAssign = async (assign) => {
+  console.log('people for api ', assign);
+  try {
+    return await axios.post(`${usersUrl}add-user-assign/`, assign);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addHrOrganizationUnitsDetails = async (organization) => {
   console.log('organization for api ', organization);
   try {
@@ -398,6 +581,19 @@ export const addHrOrganizationUnitsDetails = async (organization) => {
     return err.message;
   }
 };
+
+export const addMtlTransactionTypesDetails = async (transaction) => {
+  console.log('Transaction for api ', transaction);
+  try {
+    console.log('Inside it ', transaction);
+    return await axios.post(`${usersUrl}add-mtl-transaction-types/`, transaction);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // eslint-disable-next-line camelcase
 export const updateHrLocationsDetails = async (locationsDetails) => {
   console.log('location for api ', locationsDetails.location_id);
