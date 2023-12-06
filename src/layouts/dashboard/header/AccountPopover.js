@@ -11,8 +11,6 @@ import { getUserProfileDetails } from '../../../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
-// ----------------------------------------------------------------------
-
 export default function AccountPopover() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);

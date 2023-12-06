@@ -31,6 +31,8 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import UserPage from './pages/UserPage';
+import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
+import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
 import AddFndUser from './sections/@dashboard/user/AddFndUser';
 import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
 import AddHrOrganizationUnits from './sections/@dashboard/user/AddHrOrganizationUnits';
@@ -56,7 +58,7 @@ export default function Router() {
       try {
         const accountDetails = await getUserProfileDetails(); // Call your async function here
         if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
-        // else navigate('/login');
+        else navigate('/login');
         // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -66,6 +68,7 @@ export default function Router() {
 
     fetchData();
   }, []);
+
 
   const routes = useRoutes([
     {
@@ -83,8 +86,14 @@ export default function Router() {
         { path: 'contact', element: <ContactPage /> },
         { path: 'items', element: <MtlSystemItemPage /> },
         { path: 'uom', element: <MtlUnitMeasurePage /> },
+        { path: 'add-uom', element: <AddUomDialog /> },
+        { path: 'addSystemItem', element: <AddSystemItemsDialog /> },
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'showorganizationunits', element: <ShowHrAllOrganizationUnits /> },
+        { path: 'showmtlmaterialtransactions', element: <ShowMtlMaterialTransactions /> },
+        { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
+        { path: 'menucreation', element: <MenuCreation /> },
+        { path: 'menuassign', element: <MenuAssign /> },
         { path: 'updatehrorganizationunits/:organization_id', element: <UpdateHrOrganizationUnits /> },
         { path: 'addhrorganization', element: <AddHrOrganizationUnits /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
@@ -132,11 +141,30 @@ export default function Router() {
       // element: <RequisitionFormPage />,
       element: isAuthorized ? <RequisitionFormPage /> : <Navigate to="/login" />,
     },
+    {
+      path: 'showlocationsall',
+      element: <ShowLocationsAll />,
+      // element: isAuthorized ? <ShowLocationsAll /> : <Navigate to="/login" />,
+    },
 
     {
       path: 'showmtlmaterialtransactions',
       element: <ShowMtlMaterialTransactions />,
     },
+    {
+      path: 'showmtltransactiontypes',
+      element: <ShowMtlTransactionTypes />,
+    },
+    {
+      path: 'showorganizationunits',
+      // element: <ShowHrAllOrganizationUnits />,
+      element: isAuthorized ? <ShowHrAllOrganizationUnits /> : <Navigate to="/login" />,
+    },
+    {
+      path: 'showfnduser',
+      element: <ShowFndUser />,
+    },
+
     // alif V
 
     {
