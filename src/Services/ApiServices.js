@@ -463,6 +463,15 @@ export const getperMainSystemMenuDetails = async (system_menu_id) => {
     return err.message;
   }
 };
+export const getperMenuDetails = async (menu_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-menus/${menu_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 
 export const getHrAllOrganizationUnits = async () => {
   try {

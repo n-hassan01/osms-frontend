@@ -32,10 +32,10 @@ import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-
 import { getMainSystemMenuService } from '../Services/Admin/GetMainSystemMenu';
+import { UserListHead } from '../sections/@dashboard/user';
 import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
+import MenusListToolbar from '../sections/@dashboard/user/MenusListToolbar';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -278,7 +278,7 @@ export default function ShowMainSystemMenu() {
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <MenusListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
