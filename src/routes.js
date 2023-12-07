@@ -109,7 +109,6 @@ export default function Router() {
         { path: 'showperallpeoples', element: <ShowPerAllPeoples /> },
         { path: 'addperallpeoples', element: <AddPerAllPeoples /> },
         { path: 'updateperallpeoples/:person_id', element: <UpdatePerAllPeoples /> },
-
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
         { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
