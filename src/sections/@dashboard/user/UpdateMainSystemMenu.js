@@ -30,19 +30,23 @@ export default function UpdateMainSystemMenu() {
     setMainsystemmenu({ ...mainsystemmenu, [e.target.name]: e.target.value });
   };
 
+  const handleClickOpen = () => {
+    setOpen(true);
+    loadUser();
+  };
   useEffect(() => {
     async function fetchData() {
       try {
         console.log('with brackets', { system_menu_id });
-    console.log('without', system_menu_id);
-    const result = await getperMainSystemMenuService(system_menu_id);
-    console.log('Eiii', result.data[0].system_menu_id);
-    setMainsystemmenu({
-      ...mainsystemmenu,
-      systemMenuDescription: result.data[0].system_menu_description,
-      menuActive: result.data[0].menu_active,
-      iconPath: result.data[0].icon_path,
-    });
+        console.log('without', system_menu_id);
+        const result = await getperMainSystemMenuService(system_menu_id);
+        console.log('Eiii', result.data[0].system_menu_id);
+        setMainsystemmenu({
+          ...mainsystemmenu,
+          systemMenuDescription: result.data[0].system_menu_description,
+          menuActive: result.data[0].menu_active,
+          iconPath: result.data[0].icon_path,
+        });
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -50,7 +54,6 @@ export default function UpdateMainSystemMenu() {
 
     fetchData();
   }, []);
-  
 
   const handleClick = async () => {
     try {
@@ -62,7 +65,6 @@ export default function UpdateMainSystemMenu() {
 
       console.log('Pass to home after request ');
       handleClose();
-     
     } catch (err) {
       console.log(err.message.TextField);
       alert('Process failed! Try again later');
@@ -70,66 +72,67 @@ export default function UpdateMainSystemMenu() {
   };
 
   const handleClose = () => {
-    navigate('/dashboard/showmenus');
+    navigate('/dashboard/showmainsystemmenu');
     window.location.reload();
     setOpen(false);
   };
 
   return (
     <div>
-    <h3 style={{ marginLeft: '50px' }}>Update {mainsystemmenu.iconPath} Menu</h3>
-    <form className="form-horizontal" style={{ marginTop: '5%', marginLeft: '50px' }}>
-
-        <table className="table table-bordered table-striped table-highlight">
-          <thead>
-            <tr>
-              <th>
-              System Menu Description <span style={{ color: 'red' }}>*</span>
-              </th>
-              <th>
-              Menu Active <span style={{ color: 'red' }}>*</span>
-              </th>
-              <th>
-              Icon Path <span style={{ color: 'red' }}>*</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <td style={{ width: '100px' }}>
-              <input
-                type="text"
-                className="form-control"
-                name="systemMenuDescription"
-              label="System Menu Description"
-              value={mainsystemmenu.systemMenuDescription}
-              onChange={(e) => onValueChange(e)}
-                //  onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-              />
-            </td>
-            <td style={{ width: '550px' }}>
-              <input
-                type="text"
-                className="form-control"
-                name="menuActive"
-              label="Menu Active"
-              value={mainsystemmenu.menuActive}
-              onChange={(e) => onValueChange(e)}
-                // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-              />
-            </td>
-            <td style={{ width: '250px' }}>
-              <input
-                type="text"
-                className="form-control"
-                name="  iconPath"
-              label="  Icon Path"
-              value={mainsystemmenu.iconPath}
-              onChange={(e) => onValueChange(e)}
-                //   onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-              />
-            </td>
-          </tbody>
-        </table>
+      <h3 style={{ marginLeft: '50px' }}>Update {mainsystemmenu.systemMenuDescription} Menu</h3>
+      <form className="form-horizontal" style={{ marginTop: '5%', marginLeft: '50px' }}>
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped table-highlight">
+            <thead>
+              <tr>
+                <th>
+                  System Menu Description<span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>
+                  Menu Active <span style={{ color: 'red' }}>*</span>
+                </th>
+                <th>
+                  Icon Path <span style={{ color: 'red' }}>*</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <td style={{ width: '100px' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="systemMenuDescription"
+                  label="System Menu Description"
+                  value={mainsystemmenu.systemMenuDescription}
+                  onChange={(e) => onValueChange(e)}
+                  //  onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                />
+              </td>
+              <td style={{ width: '550px' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="menuActive"
+                  label="Menu Active"
+                  value={mainsystemmenu.menuActive}
+                  onChange={(e) => onValueChange(e)}
+                  // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                />
+              </td>
+              <td style={{ width: '550px' }}>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="iconPath"
+                  label="Icon Path"
+                  value={mainsystemmenu.iconPath}
+                  onChange={(e) => onValueChange(e)}
+                  // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                />
+              </td>
+            </tbody>
+          </table>
+        </div>
         <Button
           style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
           onClick={handleClick}
@@ -142,9 +145,7 @@ export default function UpdateMainSystemMenu() {
         >
           Cancel
         </Button>
-
-       </form>
-      </div>
-   
+      </form>
+    </div>
   );
 }

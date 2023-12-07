@@ -70,7 +70,6 @@ export default function Router() {
     fetchData();
   }, []);
 
-
   const routes = useRoutes([
     {
       path: '/dashboard',
@@ -110,10 +109,11 @@ export default function Router() {
         { path: 'showperallpeoples', element: <ShowPerAllPeoples /> },
         { path: 'addperallpeoples', element: <AddPerAllPeoples /> },
         { path: 'updateperallpeoples/:person_id', element: <UpdatePerAllPeoples /> },
-        { path: 'showmenus', element: <ShowMenus /> },
-        { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
+
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
+        { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
+        { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
       ],
     },
 

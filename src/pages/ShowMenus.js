@@ -2,6 +2,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable camelcase */
 
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -12,7 +13,6 @@ import {
   Card,
   Checkbox,
   Container,
-  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -31,9 +31,11 @@ import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead } from '../sections/@dashboard/user';
-import MenusListToolbar from '../sections/@dashboard/user/MenusListToolbar';
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+
 import { getMenusService } from '../Services/Admin/GetMenus';
+import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
+import UpdateMainSystemMenu from '../sections/@dashboard/user/UpdateMainSystemMenu';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -43,7 +45,7 @@ const TABLE_HEAD = [
   { id: 'systemMenuId', label: 'System Menu ID', alignRight: false },
 
   { id: 'action', label: 'Action', alignRight: false },
-
+  { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
 ];
@@ -68,16 +70,20 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
+ 
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    if (query) {
+      return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    }
+    return stabilizedThis.map((el) => el[0]);
+
+
+  
 }
 
 export default function ShowMenus() {
@@ -246,33 +252,32 @@ export default function ShowMenus() {
             Show Main Menus
           </Typography>
           <div>
-            <Button
-              variant="text"
-              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px',marginTop:"10px" }}
-              color="primary"
+          <Button
+              variant="outlined"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
                 navigate('/dashboard/menucreation');
               }}
+              style={{ marginTop: '10px' }}
             >
-              Menu Create
+             Menu Create
             </Button>
             <Button
-              variant="text"
-              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginLeft: '5px',marginTop:"10px" }}
-              color="primary"
+              variant="outlined"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
                 navigate('/dashboard/menuassign');
               }}
+              style={{ marginLeft:"5px",marginTop: '10px' }}
             >
               Menu Assign
             </Button>
+    
           </div>
         </Stack>
 
         <Card>
-          <MenusListToolbar
+          <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -309,28 +314,25 @@ export default function ShowMenus() {
                             </Typography>
                           </Stack>
                         </TableCell> */}
-                        <TableCell align="left">{menu_id}</TableCell>
+                       <TableCell align="left">{ menu_id}</TableCell>
                         <TableCell align="left">{menu_description}</TableCell>
                         <TableCell align="left">{menu_active}</TableCell>
                         <TableCell align="left">{system_menu_id}</TableCell>
 
-                  
-                      
-                        <TableCell align="left">
-                          <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={() => {
-                              const menuId = menu_id;
-                              navigate(`/dashboard/updatemainsystemmenu/${menuId}`);
-                            }}
+                        {/* <TableCell align="left">
+                          <Label
+                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
                           >
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell>
-                        {/* <TableCell align="right">
-                          <DeleteMainSystemMenu menu_id={menu_id} />
+                            {sentenceCase(status)}
+                          </Label>
                         </TableCell> */}
+
+                        <div style={{ marginTop: '22px' }}>
+                          <UpdateMainSystemMenu menu_id={menu_id} />
+                        </div>
+                        <TableCell align="right">
+                          <DeleteMainSystemMenu menu_id={menu_id} />
+                        </TableCell>
 
                         <Popover
                           open={Boolean(open)}
