@@ -20,7 +20,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -202,12 +202,13 @@ export default function ShowMtlTransactionTypes() {
 
           <div>
             <Button
-              variant="outlined"
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
                 navigate('/dashboard/addmtltransactiontypes');
               }}
-              style={{ marginTop: '10px' }}
             >
               Add MTL Transaction Types
             </Button>
@@ -264,8 +265,7 @@ export default function ShowMtlTransactionTypes() {
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
-                            </IconButton>
-                         
+                          </IconButton>
                         </TableCell>
                         {/* <TableCell align="right">
                           <DeleteMtlTransactionTypes transaction_type_id={transaction_type_id} />

@@ -41,6 +41,7 @@ import AddPerAllPeoples from './sections/@dashboard/user/AddPerAllPeoples';
 import UpdateFndUser from './sections/@dashboard/user/UpdateFndUser';
 import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
 import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
+import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 import UpdatePerAllPeoples from './sections/@dashboard/user/UpdatePerAllPeoples';
 // import getCookieService from './Services/GetCookieService';
@@ -99,6 +100,7 @@ export default function Router() {
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
         { path: 'updatehrlocations/:location_id', element: <UpdateHrLocations /> },
         { path: 'addhrlocations', element: <AddHrLocations /> },
+        { path: 'addhrlocations/:location_id', element: <AddHrLocations /> },
         { path: 'showfnduser', element: <ShowFndUser /> },
         { path: 'updatefnduser/:user_id', element: <UpdateFndUser /> },
         { path: 'addfnduser', element: <AddFndUser /> },
@@ -109,6 +111,7 @@ export default function Router() {
         { path: 'addperallpeoples', element: <AddPerAllPeoples /> },
         { path: 'updateperallpeoples/:person_id', element: <UpdatePerAllPeoples /> },
         { path: 'showmenus', element: <ShowMenus /> },
+        { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
       ],

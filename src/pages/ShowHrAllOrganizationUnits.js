@@ -224,12 +224,13 @@ export default function ShowHrAllOrganizationUnits() {
           </Typography>
           <div>
             <Button
-              variant="outlined"
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
                 navigate('/dashboard/addhrorganization');
               }}
-              style={{ marginTop: '10px' }}
             >
               Add Organization
             </Button>
@@ -286,10 +287,8 @@ export default function ShowHrAllOrganizationUnits() {
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
-                            </IconButton>
-                        
+                          </IconButton>
                         </TableCell>
-                       
 
                         <Popover
                           open={Boolean(open)}

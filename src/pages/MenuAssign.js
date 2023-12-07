@@ -14,7 +14,7 @@ export default function MenuCreation() {
   const [userInput, setUserInput] = useState('');
   const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(false);
-  const [showLines, setShowLines] = useState(false);
+  const [showLines, setShowLines] = useState(true);
 
   const [list, setList] = useState([]);
   const [originalList, setOriginalList] = useState([]);
@@ -105,7 +105,10 @@ export default function MenuCreation() {
       const response = await addUserAssign(requestBody);
 
       if (response === 200) {
+       
+ 
         setMenuRows([]);
+        
       }
     }
     setCount(c);

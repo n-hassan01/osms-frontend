@@ -21,7 +21,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -46,7 +46,6 @@ const TABLE_HEAD = [
   { id: 'workTelephone', label: 'Work Telephone', alignRight: false },
   { id: 'originalDateOfHire', label: 'Original Date Of Hire', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
-
 
   { id: '' },
 ];
@@ -222,17 +221,17 @@ export default function ShowPerAllPeoples() {
             Per All Peoples
           </Typography>
           <div>
-          <Button
-              variant="outlined"
+            <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
                 navigate('/dashboard/addperallpeoples');
               }}
-              style={{ marginTop: '10px' }}
             >
               Add PerAllPeoples
             </Button>
-         
           </div>
         </Stack>
 
@@ -291,7 +290,6 @@ export default function ShowPerAllPeoples() {
                         <TableCell align="left">{work_telephone}</TableCell>
                         <TableCell align="left">{original_date_of_hire}</TableCell>
 
-                      
                         <TableCell align="right">
                           <IconButton
                             size="large"
@@ -302,8 +300,7 @@ export default function ShowPerAllPeoples() {
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
-                            </IconButton>
-                        
+                          </IconButton>
                         </TableCell>
                         {/* <TableCell align="right">
                           <DeletePerAllPeoples person_id={person_id} />

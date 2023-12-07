@@ -6,6 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 
 // @mui
+
 import {
   Button,
   Card,
@@ -24,6 +25,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -212,12 +214,13 @@ export default function ShowLocationsAll() {
           </Typography>
           <div>
             <Button
-              variant="outlined"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
+              variant="text"
               onClick={() => {
                 navigate('/dashboard/addhrlocations');
               }}
-              style={{ marginTop: '10px' }}
             >
               Add Location
             </Button>
@@ -309,9 +312,7 @@ export default function ShowLocationsAll() {
                           >
                             <Iconify icon={'tabler:edit'} />
                           </IconButton>
-                        
                         </TableCell>
-                      
 
                         <Popover
                           open={Boolean(open)}

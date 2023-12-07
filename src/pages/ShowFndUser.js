@@ -216,12 +216,13 @@ export default function ShowFndUser() {
           </Typography>
           <div>
             <Button
-              variant="outlined"
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
                 navigate('/dashboard/addfnduser');
               }}
-              style={{ marginTop: '10px' }}
             >
               Add FndUser
             </Button>
@@ -274,9 +275,7 @@ export default function ShowFndUser() {
                             <Iconify icon={'tabler:edit'} />
                                
                           </IconButton>
-                          
                         </TableCell>
-                   
 
                         <Popover
                           open={Boolean(open)}
