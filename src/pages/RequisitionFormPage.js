@@ -33,7 +33,8 @@ export default function Page404() {
     async function fetchData() {
       try {
         const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        if (accountDetails.status === 200)
+          setAccount(accountDetails.data); // Set the account details in the component's state
         else navigate('/login');
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -43,7 +44,7 @@ export default function Page404() {
 
     fetchData(); // Call the async function when the component mounts
   }, []);
-  console.log(account.full_name);
+  console.log(account);
 
   const [transactionTypeIds, setTransactionTypeIds] = useState([]);
   useEffect(() => {
@@ -110,7 +111,10 @@ export default function Page404() {
   const [headerDetails, setHeaderDetails] = useState({});
 
   const saveHeader = async () => {
-    const response = await addTxnRequestHeader(headerInfo);
+    const requestBody = { ...headerInfo, createdBy: account.user_id };
+    console.log(requestBody);
+
+    const response = await addTxnRequestHeader(requestBody);
     if (response.status === 200) {
       // setShowHeaderDetails(true);
       setIsReadOnly(true);
@@ -130,9 +134,9 @@ export default function Page404() {
     {
       inventoryItemId: null,
       fromSubinventoryCode: '',
-      uomCode: '',
+      uomCode: 'PCs',
       requiredQuantity: null,
-      dateRequired: '',
+      dateRequired: getCurrentDate(),
       lineId: null,
     },
   ]);
@@ -145,9 +149,9 @@ export default function Page404() {
         {
           inventoryItemId: null,
           fromSubinventoryCode: '',
-          uomCode: '',
+          uomCode: 'PCs',
           requiredQuantity: null,
-          dateRequired: '',
+          dateRequired: getCurrentDate(),
           lineId: null,
         },
       ]);
@@ -165,7 +169,8 @@ export default function Page404() {
 
   const submitRequisition = () => {
     if (confirm('Are you sure for this requisition?')) {
-      window.location.reload();
+      // window.location.reload();
+      navigate('/dashboard/allRequisitions', { replace: true });
     }
   };
 
@@ -186,9 +191,9 @@ export default function Page404() {
 
       const response = await addTxnRequestLines(requestBody);
 
-      console.log(response.data.lineInfo.line_id);
-
       if (response.status === 200) {
+        console.log(response.data.lineInfo.line_id);
+        
         setShowApprovalButton(true);
         handleInputChange(index, 'lineId', response.data.lineInfo.line_id);
       } else {
@@ -397,13 +402,21 @@ export default function Page404() {
           <Grid container spacing={2}>
             <Grid item xs={3}>
               <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={saveHeader}>
+                <Button
+                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  onClick={saveHeader}
+                >
                   Save
                 </Button>
-                <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={onClickDelete}>
+                <Button
+                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  onClick={onClickDelete}
+                >
                   Delete
                 </Button>
-                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>Add Lines</Button>
+                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
+                  Add Lines
+                </Button>
               </ButtonGroup>
             </Grid>
           </Grid>
@@ -472,7 +485,8 @@ export default function Page404() {
                           className="form-control"
                           name="uomCode"
                           // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                          defaultValue={'PCs'}
+                          // defaultValue={'PCs'}
+                          defaultValue={row.uomCode}
                           readOnly
                         />
                       </td>
@@ -506,7 +520,10 @@ export default function Page404() {
             </Button>
             {showApprovalButton && (
               <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button style={{ display: { showApprovalButton }, backgroundColor: 'lightgray', color: 'black' }} onClick={submitRequisition}>
+                <Button
+                  style={{ display: { showApprovalButton }, backgroundColor: 'lightgray', color: 'black' }}
+                  onClick={submitRequisition}
+                >
                   Approval
                 </Button>
               </ButtonGroup>
