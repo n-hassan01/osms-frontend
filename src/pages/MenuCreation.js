@@ -256,6 +256,7 @@ export default function Page404() {
           <Typography variant="h4" gutterBottom>
             Main System Menu
           </Typography>
+      
         </Stack>
 
         

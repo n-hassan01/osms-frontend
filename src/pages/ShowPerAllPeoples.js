@@ -3,11 +3,14 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -26,16 +29,14 @@ import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHead } from '../sections/@dashboard/user';
+import PerAllPeoplesTypesList from '../sections/@dashboard/user/PerAllPeoplesTypesList';
 
 import { getPerAllPeoplesService } from '../Services/Admin/GetPerAllPeoples';
-import AddPerAllPeoples from '../sections/@dashboard/user/AddPerAllPeoples';
-import DeletePerAllPeoples from '../sections/@dashboard/user/DeletePerAllPeoples';
-import UpdatePerAllPeoples from '../sections/@dashboard/user/UpdatePerAllPeoples';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'personId', label: 'Person ID', alignRight: false },
+  // { id: 'personId', label: 'Person ID', alignRight: false },
   { id: 'effectiveStartDate', label: 'Effective Start Date', alignRight: false },
   { id: 'effectiveEndDate', label: 'Effective End Date', alignRight: false },
   { id: 'businessGroupId', label: 'Business Group ID', alignRight: false },
@@ -44,7 +45,6 @@ const TABLE_HEAD = [
   { id: 'emailAddress', label: 'Email Address', alignRight: false },
   { id: 'workTelephone', label: 'Work Telephone', alignRight: false },
   { id: 'originalDateOfHire', label: 'Original Date Of Hire', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -83,6 +83,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowPerAllPeoples() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -211,21 +212,31 @@ export default function ShowPerAllPeoples() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Per All Peoples | OSMS </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Locations
+            Per All Peoples
           </Typography>
           <div>
-            <AddPerAllPeoples />
+            <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/addperallpeoples');
+              }}
+            >
+              Add PerAllPeoples
+            </Button>
           </div>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <PerAllPeoplesTypesList
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -267,7 +278,7 @@ export default function ShowPerAllPeoples() {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, person_id)} />
                         </TableCell>
 
-                        <TableCell align="left">{person_id}</TableCell>
+                        {/* <TableCell align="left">{person_id}</TableCell> */}
                         <TableCell align="left">{effective_start_date}</TableCell>
 
                         <TableCell align="left">{effective_end_date}</TableCell>
@@ -279,12 +290,21 @@ export default function ShowPerAllPeoples() {
                         <TableCell align="left">{work_telephone}</TableCell>
                         <TableCell align="left">{original_date_of_hire}</TableCell>
 
-                        <div style={{ marginTop: '22px' }}>
-                          <UpdatePerAllPeoples person_id={person_id} />
-                        </div>
                         <TableCell align="right">
-                          <DeletePerAllPeoples person_id={person_id} />
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const personId = person_id;
+                              navigate(`/dashboard/updateperallpeoples/${personId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
                         </TableCell>
+                        {/* <TableCell align="right">
+                          <DeletePerAllPeoples person_id={person_id} />
+                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}

@@ -34,25 +34,25 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-UserListToolbar.propTypes = {
+FndUserToollist.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   selectedUsers: PropTypes.array,
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers }) {
+export default function FndUserToollist({ numSelected, filterName, onFilterName, selectedUsers }) {
   const deleteSelectedUser = async () => {
     let alertMessage;
     const result = selectedUsers.map(async (element) => {
       try {
     
-        const response = await axios.put(
-            `http://localhost:5001/delete-hr-locations-all/${element}`
+        const response = await await axios.delete(
+            `http://localhost:5001/delete-fnd-user/${element}`
           );
 
          alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
-         alert(alertMessage);
+         alert(`You have Deleted Successfully ${element}`);
         window.location.reload();
       } catch (err) {
         console.log(err.message);

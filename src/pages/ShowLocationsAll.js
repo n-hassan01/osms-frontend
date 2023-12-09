@@ -1,14 +1,18 @@
 /* eslint-disable camelcase */
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+
 // @mui
+
 import {
   Button,
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -21,19 +25,16 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-
 import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import DeleteHrLocations from '../sections/@dashboard/user/DeleteHrLocations';
-import UpdateHrLocations from '../sections/@dashboard/user/UpdateHrLocations';
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'location_id', label: 'Location ID', alignRight: false },
   { id: 'location_code', label: 'Location Code', alignRight: false },
 
   { id: 'description', label: 'Description', alignRight: false },
@@ -46,7 +47,6 @@ const TABLE_HEAD = [
   { id: 'country', label: 'Country', alignRight: false },
   { id: 'postal_code', label: 'Postal Code', alignRight: false },
   { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -155,10 +155,12 @@ export default function ShowLocationsAll() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.email);
+      const newSelecteds = USERLIST.map((n) => n.location_id);
       setSelected(newSelecteds);
+
       return;
     }
+    console.log('allselectedUsers : ', selectedUsers);
     setSelected([]);
   };
 
@@ -176,7 +178,7 @@ export default function ShowLocationsAll() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
-    console.log(typeof selectedUsers);
+    console.log('toselectedUsers : ', selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -211,9 +213,17 @@ export default function ShowLocationsAll() {
             Locations
           </Typography>
           <div>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={()=>{ navigate('/addhrlocations');}}>
-        New Location
-      </Button>
+            <Button
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              variant="text"
+              onClick={() => {
+                navigate('/dashboard/addhrlocations');
+              }}
+            >
+              Add Location
+            </Button>
           </div>
         </Stack>
 
@@ -254,15 +264,30 @@ export default function ShowLocationsAll() {
                       postal_code,
                       telephone_number_1,
                     } = row;
-                    const selectedUser = selected.indexOf(location_code) !== -1;
+                    const rowValues = [
+                      location_id,
+                      location_code,
+
+                      description,
+
+                      inactive_date,
+                      address_line_1,
+                      address_line_2,
+                      address_line_3,
+                      town_or_city,
+                      country,
+                      postal_code,
+                      telephone_number_1,
+                    ];
+
+                    const selectedUser = selected.indexOf(location_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_code} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={location_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_code)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_id)} />
                         </TableCell>
 
-                        <TableCell align="left">{location_id}</TableCell>
                         <TableCell align="left">{location_code}</TableCell>
 
                         <TableCell align="left">{description}</TableCell>
@@ -276,11 +301,17 @@ export default function ShowLocationsAll() {
                         <TableCell align="left">{postal_code}</TableCell>
                         <TableCell align="left">{telephone_number_1}</TableCell>
 
-                        <div style={{ marginTop: '22px' }}>
-                          <UpdateHrLocations location_id={location_id} />
-                        </div>
                         <TableCell align="right">
-                          <DeleteHrLocations location_id={location_id} />
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const locationId = location_id;
+                              navigate(`/dashboard/updatehrlocations/${locationId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
                         </TableCell>
 
                         <Popover

@@ -350,6 +350,16 @@ export const getHrLocationsDetails = async () => {
     return err.message;
   }
 };
+
+export const getHrLocationsIdDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hr-locations-id/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 export const getPerAllPeoplesDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-per-all-peoples/`);
@@ -453,6 +463,15 @@ export const getperMainSystemMenuDetails = async (system_menu_id) => {
     return err.message;
   }
 };
+export const getperMenuDetails = async (menu_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-menus/${menu_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 
 export const getHrAllOrganizationUnits = async () => {
   try {
@@ -464,7 +483,8 @@ export const getHrAllOrganizationUnits = async () => {
   }
 };
 
-export const getPerHrLocationsDetails = async ({ location_id }) => {
+export const getPerHrLocationsDetails = async ( location_id ) => {
+
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -496,6 +516,7 @@ export const getPerAllMtlTransactionTypes = async (transaction_type_id) => {
 
 export const addHrLocationsDetails = async (location) => {
   console.log('location for api ', location);
+
   try {
     return await axios.post(`${usersUrl}add-hr-locations-all/`, location);
   } catch (err) {

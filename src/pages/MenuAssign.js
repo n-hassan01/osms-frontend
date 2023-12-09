@@ -14,7 +14,7 @@ export default function MenuCreation() {
   const [userInput, setUserInput] = useState('');
   const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(false);
-  const [showLines, setShowLines] = useState(false);
+  const [showLines, setShowLines] = useState(true);
 
   const [list, setList] = useState([]);
   const [originalList, setOriginalList] = useState([]);
@@ -105,7 +105,10 @@ export default function MenuCreation() {
       const response = await addUserAssign(requestBody);
 
       if (response === 200) {
+       
+ 
         setMenuRows([]);
+        
       }
     }
     setCount(c);
@@ -151,47 +154,7 @@ export default function MenuCreation() {
           </Typography>
         </Stack>
         <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row' }}>
-          {/* <div style={{ marginLeft: '180px' }}>
-            <input
-              type="text"
-              placeholder="Type User ID "
-              value={userInput}
-              onChange={handleInputChange}
-              style={{ marginTop: '18px' }}
-            />
-            {i === true && (
-              <ul style={{ marginTop: '18px' }}>
-                {filteredList.map((item, index) => (
-                  <>
-                    <MenuItem key={index} value={item} onClick={() => handleMenuItemClick(item)}>
-                      {item}
-                    </MenuItem>
-                  </>
-                ))}
-              </ul>
-            )}
-          </div>
-          <Grid item xs={3}>
-            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-              <Button onClick={handleReload}>Add New User</Button>
-              <Button
-                style={{ marginLeft: '5px' }}
-                onClick={() => {
-                  setShowLines(true);
-
-                  setMenuRows([
-                    {
-                      menuId: '',
-
-                      userId: userInput,
-                    },
-                  ]);
-                }}
-              >
-                Add Menu ID
-              </Button>
-            </ButtonGroup>
-          </Grid> */}
+        
 
           <div>
             <form className="form-horizontal" style={{ marginTop: '3%', width: '400px' }}>
