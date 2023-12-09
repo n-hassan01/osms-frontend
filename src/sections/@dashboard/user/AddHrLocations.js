@@ -139,9 +139,9 @@ export default function AddHrLocations() {
   };
 
   const handleClose = () => {
-    navigate('/dashboard/showlocationsall');
+    // navigate('/dashboard/showlocationsall');
 
-    window.location.reload();
+    // window.location.reload();
     setOpen(false);
   };
 
