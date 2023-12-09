@@ -1,21 +1,16 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
-import { Stack, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getperPerAllPeoplesService } from '../../../Services/Admin/GetperPerAllPeoples';
-import Iconify from '../../../components/iconify';
 
-export default function UpdateHrLocations({ person_id }) {
+export default function UpdatePerAllPeoples() {
+  const { person_id } = useParams();
   const navigate = useNavigate();
   console.log('update page person', person_id);
   const [open, setOpen] = useState(false);
@@ -47,33 +42,40 @@ export default function UpdateHrLocations({ person_id }) {
     setOpen(true);
     loadUser();
   };
-  const loadUser = async () => {
-    console.log('with brackets', { person_id });
-    console.log('without', person_id);
-    const result = await getperPerAllPeoplesService(person_id);
-    console.log('Eiii', result.data[0].person_id);
-    setPeople({
-      ...people,
-      effectiveStartDate: result.data[0].effective_start_date,
-      effectiveEndDate: result.data[0].effective_end_date,
-      businessGroupId: result.data[0].business_group_id,
-      employeeNumber: result.data[0].employee_number,
-      workTelephone: result.data[0].work_telephone,
-      fullName: result.data[0].full_name,
-      emailAddress: result.data[0].email_address,
-      originalDateOfHire: result.data[0].original_date_of_hire,
-    });
-  };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        console.log('with brackets', { person_id });
+        console.log('without', person_id);
+        const result = await getperPerAllPeoplesService(person_id);
+        console.log('Eiii', result.data[0].person_id);
+        setPeople({
+          ...people,
+          effectiveStartDate: result.data[0].effective_start_date,
+          effectiveEndDate: result.data[0].effective_end_date,
+          businessGroupId: result.data[0].business_group_id,
+          employeeNumber: result.data[0].employee_number,
+          workTelephone: result.data[0].work_telephone,
+          fullName: result.data[0].full_name,
+          emailAddress: result.data[0].email_address,
+          originalDateOfHire: result.data[0].original_date_of_hire,
+        });
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const handleClick = async () => {
     try {
       console.log('loc', people);
-      const response = await axios.put(`http://localhost:5001/update-per-all-peoples/${person_id}`, people);
+      const response = await axios.put(`http://182.160.114.100:5001/update-per-all-peoples/${person_id}`, people);
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showperallpeoples');
-      window.location.reload();
     } catch (err) {
       console.log(err.message.TextField);
       alert('Process failed! Try again later');
@@ -81,86 +83,154 @@ export default function UpdateHrLocations({ person_id }) {
   };
 
   const handleClose = () => {
+    navigate('/dashboard/showperallpeoples');
+    window.location.reload();
     setOpen(false);
   };
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        Update
-      </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={3}>
-            <TextField type={'text'} name="personId" label="Person Id" value={person_id} />
-            <TextField
-              type={'text'}
-              name="effectiveStartDate"
-              label="Effective Start Date"
-              value={people.effectiveStartDate}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              type={'text'}
-              name="effectiveEndDate"
-              label="Effective End Date"
-              value={people.effectiveEndDate}
-              onChange={(e) => onValueChange(e)}
-            />
+      <div>
+        <h3 style={{ marginLeft: '50px' }}>Update {people.fullName} </h3>
+        <form className="form-horizontal" style={{ marginTop: '5%', marginLeft: '50px' }}>
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped table-highlight">
+              <thead>
+                <tr>
+                  {/* <th>
+                    Effective Start Date <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Effective End Date<span style={{ color: 'red' }}>*</span>
+                  </th> */}
+                  <th>
+                    Business Group Id <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Email Address <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Employee Number <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Work Telephone<span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                    Full Name<span style={{ color: 'red' }}>*</span>
+                  </th>
+                  {/* <th>
+                  Original Date Of Hire<span style={{ color: 'red' }}>*</span>
+                  </th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {/* <td style={{ width: '250px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="effectiveStartDate"
+                    label="Effective Start Date"
+                    value={people.effectiveStartDate}
+                    onChange={(e) => onValueChange(e)}
+                    //  onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '400px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="effectiveEndDate"
+                    label="Effective End Date"
+                    value={people.effectiveEndDate}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td> */}
 
-            <TextField
-              type={'text'}
-              name="businessGroupId"
-              label="Business Group Id"
-              value={people.businessGroupId}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              type={'text'}
-              name="emailAddress"
-              label="Email Address"
-              value={people.emailAddress}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              type={'text'}
-              name="employeeNumber"
-              label="Employee Number"
-              value={people.employeeNumber}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              type={'text'}
-              name="workTelephone"
-              label="Work Telephone"
-              value={people.workTelephone}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              type={'text'}
-              name="fullName"
-              label="Full Name"
-              value={people.fullName}
-              onChange={(e) => onValueChange(e)}
-            />
-            <TextField
-              name="originalDateOfHire"
-              label="Original Date Of Hire"
-              value={people.originalDateOfHire}
-              onChange={(e) => onValueChange(e)}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClick}>
-            Submit
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+                <td style={{ width: '150px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="businessGroupId"
+                    label="Business Group Id"
+                    value={people.businessGroupId}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="emailAddress"
+                    label="Email Address"
+                    value={people.emailAddress}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '250px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="employeeNumber"
+                    label="Employee Number"
+                    value={people.employeeNumber}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '250px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="workTelephone"
+                    label="Work Telephone"
+                    value={people.workTelephone}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="fullName"
+                    label="Full Name"
+                    value={people.fullName}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                {/* <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="originalDateOfHire"
+                    label="Original Date Of Hire"
+                    value={people.originalDateOfHire}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td> */}
+              </tbody>
+            </table>
+
+            <Button
+              style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+              onClick={handleClick}
+            >
+              Submit
+            </Button>
+            <Button
+              style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

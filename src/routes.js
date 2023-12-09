@@ -16,13 +16,28 @@ import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
 import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
+import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
+import ShowMainSystemMenu from './pages/ShowMainSystemMenu';
+import Showmenus from './pages/ShowMenus';
 import ShowMtlMaterialTransactions from './pages/ShowMtlMaterialTransactions';
 import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
+import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import SignupPage from './pages/SignupPage';
 import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
+import AddFndUser from './sections/@dashboard/user/AddFndUser';
+import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
+import AddHrOrganizationUnits from './sections/@dashboard/user/AddHrOrganizationUnits';
+import AddMtlTransactionTypes from './sections/@dashboard/user/AddMtlTransactionTypes';
+import AddPerAllPeoples from './sections/@dashboard/user/AddPerAllPeoples';
+import UpdateFndUser from './sections/@dashboard/user/UpdateFndUser';
+import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
+import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
+import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
+import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
+import UpdatePerAllPeoples from './sections/@dashboard/user/UpdatePerAllPeoples';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -52,7 +67,7 @@ export default function Router() {
   const routes = useRoutes([
     {
       path: '/dashboard',
-      // element: <DashboardLayout />,
+      //  element: <DashboardLayout />,
       element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
@@ -69,11 +84,32 @@ export default function Router() {
         { path: 'showorganizationunits', element: <ShowHrAllOrganizationUnits /> },
         { path: 'showmtlmaterialtransactions', element: <ShowMtlMaterialTransactions /> },
         { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
+        { path: 'showmenus', element: <Showmenus /> },
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
+        { path: 'updatehrorganizationunits/:organization_id', element: <UpdateHrOrganizationUnits /> },
+        { path: 'addhrorganization', element: <AddHrOrganizationUnits /> },
+        { path: 'showlocationsall', element: <ShowLocationsAll /> },
+        { path: 'updatehrlocations/:location_id', element: <UpdateHrLocations /> },
+        { path: 'addhrlocations', element: <AddHrLocations /> },
+        { path: 'addhrlocations/:location_id', element: <AddHrLocations /> },
+        { path: 'showfnduser', element: <ShowFndUser /> },
+        { path: 'updatefnduser/:user_id', element: <UpdateFndUser /> },
+        { path: 'addfnduser', element: <AddFndUser /> },
+        { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
+        { path: 'addmtltransactiontypes', element: <AddMtlTransactionTypes /> },
+        { path: 'updatemtltransactiontypes/:transaction_type_id', element: <UpdateMtlTransactionTypes /> },
+        { path: 'showperallpeoples', element: <ShowPerAllPeoples /> },
+        { path: 'addperallpeoples', element: <AddPerAllPeoples /> },
+        { path: 'updateperallpeoples/:person_id', element: <UpdatePerAllPeoples /> },
+        { path: 'menucreation', element: <MenuCreation /> },
+        { path: 'menuassign', element: <MenuAssign /> },
+        { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
+        { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
         { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
       ],
     },
+
     {
       path: 'login',
       element: <LoginPage />,

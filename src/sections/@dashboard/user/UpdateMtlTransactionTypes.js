@@ -1,23 +1,18 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable camelcase */
 /* eslint-disable no-undef */
-import { Stack, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { getPerAllMtlTransactionTypesService } from '../../../Services/Admin/GetPerAllMtlTransactionTypes';
-import Iconify from '../../../components/iconify';
 
-export default function UpdateMtlTransactionTypes({ transaction_type_id }) {
+export default function UpdateMtlTransactionTypes() {
+  const { transaction_type_id } = useParams();
   const navigate = useNavigate();
   console.log('update page ', transaction_type_id);
   const [open, setOpen] = useState(false);
@@ -32,12 +27,12 @@ export default function UpdateMtlTransactionTypes({ transaction_type_id }) {
   const year = currentDate.getFullYear();
   const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
   const day = currentDate.getDate().toString().padStart(2, '0');
-  
+
   // Create the formatted date string
   const formattedDate = `${year}-${month}-${day}`;
 
   const [transaction, setTransaction] = useState({
-    transactionTypeId:'',
+    transactionTypeId: '',
     lastUpdateDate: '',
     lastUpdatedBy: '',
     creationDate: formattedDate,
@@ -56,26 +51,24 @@ export default function UpdateMtlTransactionTypes({ transaction_type_id }) {
     setOpen(true);
     loadUser();
   };
-  const loadUser = async () => {
-    console.log('with brackets update', { transaction_type_id });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        console.log('with brackets update', { transaction_type_id });
     console.log('without', transaction_type_id);
     const result = await getPerAllMtlTransactionTypesService(transaction_type_id);
-    // const dateTimeString1 = result.data[0].date_from;
-    // const datefrom = dateTimeString1.split('T')[0];
-    // const dateTimeString2 = result.data[0].date_to;
-    // const dateto = dateTimeString2.split('T')[0];
-    
+
 
     setTransaction({
       ...transaction,
-      transactionTypeId:result.data[0].transaction_type_id,
+      transactionTypeId: result.data[0].transaction_type_id,
       lastUpdateDate: result.data[0].last_update_date,
-     
+
       lastUpdatedBy: result.data[0].last_updated_by,
       creationDate: result.data[0].creation_date,
       createdBy: result.data[0].created_by,
 
-  
       transactionTypeName: result.data[0].transaction_type_name,
       description: result.data[0].description,
       transactionActionId: result.data[0].transaction_action_id,
@@ -83,166 +76,177 @@ export default function UpdateMtlTransactionTypes({ transaction_type_id }) {
     });
 
     console.log('transaction Details', transaction);
-  };
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  
 
   const handleClick = async () => {
     try {
       console.log('loc', transaction);
       const response = await axios.put(
-        `http://localhost:5001/update-mtl-transaction-types/${transaction.transactionTypeId}`,
+        `http://182.160.114.100:5001/update-mtl-transaction-types/${transaction.transactionTypeId}`,
         transaction
       );
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showmtltransactiontypes');
-      window.location.reload();
+      
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
-    // const { email, password, confirmPassword } = user;
-    // const newErrors = {};
-
-    // // Validate email
-    // if (!validateEmail(email)) {
-    //   newErrors.email = !email ? 'Email is required' : 'Invalid email address';
-    // }
-
-    // // Validate password
-    // if (!validatePassword(password)) {
-    //   newErrors.password = !password ? 'Password is required' : 'Password must be at least 6 characters long';
-    // }
-
-    // // Validate confirmPassword
-    // if (password !== confirmPassword) {
-    //   newErrors.confirmPassword = 'Passwords do not match';
-    // }
-
-    // // Check if there are any errors
-    // if (Object.keys(newErrors).length === 0) {
-    //   try {
-    //     const response = await signup(user);
-
-    //     if (response.status === 200) {
-    //       alert('Successfully added!');
-    //     } else {
-    //       console.log(response);
-    //       alert('Process failed! Try again later');
-    //     }
-
-    //     handleClose();
-    //     navigate('/dashboard/user', { replace: true });
-    //     window.location.reload();
-    //   } catch (err) {
-    //     console.log(err.message);
-    //     alert('Process failed! Try again later');
-    //   }
-    // } else {
-    //   setErrors(newErrors);
-    // }
   };
 
   const handleClose = () => {
+    navigate('/dashboard/showmtltransactiontypes');
+      window.location.reload();
     setOpen(false);
   };
 
   return (
     <div>
-      <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        Update
-      </Button>
-      <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={3}>
-            <TextField
-              type={'text'}
-              name="transactionTypeId"
-              label="Transaction Type Id"
-              value={transaction.transactionTypeId}
-              // onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="lastUpdateDate"
-              label="Last Update Date "
-              value={transaction.lastUpdateDate}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationCode: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="lastUpdatedBy"
-              label="Last Updated By"
-              value={transaction.lastUpdatedBy}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, locationId: e.target.value })}
-            />
+      <div>
+        <h3 style={{ marginLeft: '50px' }}>
+          Update {transaction.transactionTypeId} of {transaction.transactionTypeName} transaction
+        </h3>
+        <form className="form-horizontal" style={{ marginTop: '5%', marginLeft: '50px' }}>
+          <div className="table-responsive">
+            <table className="table table-bordered table-striped table-highlight">
+              <thead>
+                <tr>
+                  <th>
+                  Last Update Date <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                  Last Updated By <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                  Created By <span style={{ color: 'red' }}>*</span>
+                  </th>
+                
+                </tr>
+              </thead>
+              <tbody>
+                <td style={{ width: '250px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="lastUpdateDate"
+                    label="Last Update Date "
+                    value={transaction.lastUpdateDate}
+                    // onChange={(e) => onValueChange(e)}
+                    //  onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '400px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="lastUpdatedBy"
+                    label="Last Updated By"
+                    value={transaction.lastUpdatedBy}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
 
-            <TextField
-              type={'text'}
-              name="creationDate"
-              label="Creation Date"
-              value={transaction.creationDate}
-             // onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, description: e.target.value })}
-            />
-
-            <TextField
-              type={'text'}
-              name="createdBy"
-              label="Created By"
-              value={transaction.createdBy}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine1: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="transactionTypeName"
-              label="Transaction Type Name"
-              value={transaction.transactionTypeName}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="description"
-              label="Description"
-              value={transaction.description}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="transactionActionId"
-              label="Transaction Action Id"
-              value={transaction.transactionActionId}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
-            <TextField
-              type={'text'}
-              name="transactionSourceTypeId"
-              label="Transaction Source Type Id"
-              value={transaction.transactionSourceTypeId}
-              onChange={(e) => onValueChange(e)}
-              // onChange={(e) => setLocation({ ...location, addressLine2: e.target.value })}
-            />
-
-            
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClick}>
-            Submit
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+                <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="createdBy"
+                    label="Created By"
+                    value={transaction.createdBy}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+          
+              </tbody>
+            </table>
+            <table className="table table-bordered table-striped table-highlight">
+              <thead>
+                <tr>
+             
+                  <th>
+                  Transaction Type Name<span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                  Description <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                  Transaction Action Id <span style={{ color: 'red' }}>*</span>
+                  </th>
+                  <th>
+                  Transaction Source Type Id <span style={{ color: 'red' }}>*</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+           
+                <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="transactionTypeName"
+                    label="Transaction Type Name"
+                    value={transaction.transactionTypeName}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '750px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="description"
+                    label="Description"
+                    value={transaction.description}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="transactionActionId"
+                    label="Transaction Action Id"
+                    value={transaction.transactionActionId}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+                <td style={{ width: '350px' }}>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="transactionSourceTypeId"
+                    label="Transaction Source Type Id"
+                    value={transaction.transactionSourceTypeId}
+                    onChange={(e) => onValueChange(e)}
+                    // onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                  />
+                </td>
+              </tbody>
+            </table>
+          
+            <Button style={{ marginRight: '10px', fontWeight: 'bold', color: 'black',backgroundColor:"lightgray" }} onClick={handleClick}>
+                    Submit
+                  </Button>
+                  <Button style={{ marginRight: '10px', fontWeight: 'bold', color: 'black',backgroundColor:"lightgray" }} onClick={handleClose}>
+                    Cancel
+                  </Button>
+         
+          </div>
+        </form>
+      </div>
     </div>
+   
   );
 }

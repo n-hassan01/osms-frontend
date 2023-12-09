@@ -1,3 +1,5 @@
+/* eslint-disable import/named */
+/* eslint-disable camelcase */
 /* eslint-disable no-undef */
 import { Stack, TextField } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -7,14 +9,15 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addMainSystemMenuService } from '../../../Services/Admin/AddMainSystemMenu';
+import { getperMenuDetails } from '../../../Services/ApiServices';
 import Iconify from '../../../components/iconify';
 
-export default function ResponsiveDialog() {
+export default function UpdateMenu({ menu_id }) {
   const navigate = useNavigate();
-
+  console.log('update page person', menu_id);
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -22,45 +25,47 @@ export default function ResponsiveDialog() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const menusDetails = {
+  const [mmenu, setMenu] = useState({
     menuDescription: '',
     menuActive: '',
-    systemMenuId: '',
-  };
 
-  const [menus, setMenus] = useState(menusDetails);
-
-  const options = [
-    { value: 1, label: 'Admin' },
-    { value: 2, label: 'Writer' },
-    { value: 3, label: 'Viewer' },
-  ];
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password) => password.length >= 6;
+  });
 
   const onValueChange = (e) => {
-    setMainsystemmenu({ ...mainsystemmenu, [e.target.name]: e.target.value });
+    setMenu({ ...menu, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
     setOpen(true);
+    loadUser();
+  };
+  const loadUser = async () => {
+    console.log('with brackets', { menu_id });
+    console.log('without', menu_id);
+    const result = await getperMenuDetails(menu_id);
+    console.log('Eiii', result.data[0].system_menu_id);
+    setMmenu({
+      ...menu,
+      menuDescription: result.data[0].menu_description,
+      menuActive: result.data[0].menu_active,
+
+    });
   };
 
   const handleClick = async () => {
     try {
-      console.log(mainsystemmenu);
-      const response = await addMainSystemMenuService(mainsystemmenu);
+      console.log('loc', mainsystemmenu);
+      const response = await axios.put(
+        `http://182.160.114.100:5001/update-main-system-menu/${system_menu_id}`,
+        mainsystemmenu
+      );
+
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/dashboard/showmainsystemmenu');
+      navigate('/showmainsystemmenu');
       window.location.reload();
     } catch (err) {
-      console.log(err.message);
+      console.log(err.message.TextField);
       alert('Process failed! Try again later');
     }
   };
@@ -72,29 +77,36 @@ export default function ResponsiveDialog() {
   return (
     <div>
       <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={handleClickOpen}>
-        New Menus
+        Update
       </Button>
       <Dialog fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
         <DialogTitle id="responsive-dialog-title">{'Add New Locations'}</DialogTitle>
         <DialogContent>
           <Stack spacing={3}>
+            <TextField type={'text'} name="system_menu_id" label="System Menu Id" value={system_menu_id} />
             <TextField
-              required
+              type={'text'}
               name="systemMenuDescription"
               label="System Menu Description"
-              autoComplete="given-name"
+              value={mainsystemmenu.systemMenuDescription}
               onChange={(e) => onValueChange(e)}
             />
 
             <TextField
-              required
+              type={'text'}
               name="menuActive"
               label="Menu Active"
-              autoComplete="given-name"
+              value={mainsystemmenu.menuActive}
               onChange={(e) => onValueChange(e)}
             />
 
-            <TextField name="iconPath" label="Icon Path" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+            <TextField
+              type={'text'}
+              name="  iconPath"
+              label="  Icon Path"
+              value={mainsystemmenu.iconPath}
+              onChange={(e) => onValueChange(e)}
+            />
           </Stack>
         </DialogContent>
         <DialogActions>

@@ -6,22 +6,24 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    Container,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  Checkbox,
+  Container,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -32,7 +34,6 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
 import { getMenusService } from '../Services/Admin/GetMenus';
-import AddMenus from '../sections/@dashboard/user/AddMenus';
 import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
 import UpdateMainSystemMenu from '../sections/@dashboard/user/UpdateMainSystemMenu';
 // ----------------------------------------------------------------------
@@ -43,8 +44,6 @@ const TABLE_HEAD = [
   { id: 'menuActive', label: 'Menu Active', alignRight: false },
   { id: 'systemMenuId', label: 'System Menu ID', alignRight: false },
 
-  { id: 'action', label: 'Action', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
 ];
@@ -86,6 +85,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowMenus() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -250,7 +250,27 @@ export default function ShowMenus() {
             Show Main Menus
           </Typography>
           <div>
-            <AddMenus/>
+          <Button
+              variant="outlined"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/menucreation');
+              }}
+              style={{ marginTop: '10px' }}
+            >
+             Menu Create
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/menuassign');
+              }}
+              style={{ marginLeft:"5px",marginTop: '10px' }}
+            >
+              Menu Assign
+            </Button>
+    
           </div>
         </Stack>
 
@@ -305,12 +325,12 @@ export default function ShowMenus() {
                           </Label>
                         </TableCell> */}
 
-                        <div style={{ marginTop: '22px' }}>
+                        {/* <div style={{ marginTop: '22px' }}>
                           <UpdateMainSystemMenu menu_id={menu_id} />
                         </div>
                         <TableCell align="right">
                           <DeleteMainSystemMenu menu_id={menu_id} />
-                        </TableCell>
+                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}
