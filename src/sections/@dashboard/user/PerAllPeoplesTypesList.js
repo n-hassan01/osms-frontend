@@ -48,7 +48,7 @@ export default function PerAllPeoplesTypesList({ numSelected, filterName, onFilt
       try {
     
         const response =  await axios.delete(
-            `http://localhost:5001/delete-per-all-peoples/${element}`
+            `http://182.160.114.100:5001/delete-per-all-peoples/${element}`
           );
 
          alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';

@@ -105,30 +105,30 @@ export default function UserPage() {
     fetchData(); // Call the async function when the component mounts
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (account) {
-          const requisitionDetails = await getUserwiseTxnRequestHeader(account.user_id);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (account) {
+  //         const requisitionDetails = await getUserwiseTxnRequestHeader(account.user_id);
 
-          // Assuming `requisitionDetails.data` is an array, modify as needed
-          if (requisitionDetails.data && requisitionDetails.data.length > 0) {
-            // Assuming `updateUomInfo` is a function to process data
-            setUserList(requisitionDetails.data);
-          } else {
-            // Handle the case when requisitionDetails.data is empty or undefined
-            setUserList([]);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-        // Handle the error as needed, e.g., set an error state or display a message
-      }
-    };
+  //         // Assuming `requisitionDetails.data` is an array, modify as needed
+  //         if (requisitionDetails.data && requisitionDetails.data.length > 0) {
+  //           // Assuming `updateUomInfo` is a function to process data
+  //           setUserList(requisitionDetails.data);
+  //         } else {
+  //           // Handle the case when requisitionDetails.data is empty or undefined
+  //           setUserList([]);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //       // Handle the error as needed, e.g., set an error state or display a message
+  //     }
+  //   };
 
-    fetchData();
-  }, [account]);
-  console.log(USERLIST);
+  //   fetchData();
+  // }, [account]);
+  // console.log(USERLIST);
 
   function updateUomInfo(uom) {
     if (uom.last_update_date) {

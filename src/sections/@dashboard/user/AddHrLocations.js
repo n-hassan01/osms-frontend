@@ -23,10 +23,11 @@ export default function AddHrLocations() {
   const [location, setLocation] = useState([
     {
       locationCode: '',
-      businessGroupId: '5',
+      businessGroupId: 5,
       description: '',
-      shipToLocationId: '3',
-      inventoryOrganizationId: '4',
+      shipToLocationId: 3,
+      inventoryOrganizationId: 4,
+
       addressLine1: '',
       addressLine2: '',
       addressLine3: '',
@@ -37,8 +38,8 @@ export default function AddHrLocations() {
       telephoneNumber2: '01533581070 ',
       telephoneNumber3: '01533581070',
       lastUpdateDate: '08-08-2023',
-      lastUpdatedBy: '1',
-      createdBy: '2',
+      lastUpdatedBy: 1,
+      createdBy: 2,
       creationDate: '07-08-2023',
     },
   ]);
@@ -78,10 +79,11 @@ export default function AddHrLocations() {
 
         const requestBody = {
           locationCode: lineInfo.locationCode,
-          businessGroupId: '5',
+          businessGroupId: 5,
           description: lineInfo.description,
-          shipToLocationId: '3',
-          inventoryOrganizationId: '4',
+          shipToLocationId: 3,
+          inventoryOrganizationId: 4,
+
           addressLine1: lineInfo.addressLine1,
           addressLine2: lineInfo.addressLine2,
           addressLine3: lineInfo.addressLine3,
@@ -92,8 +94,8 @@ export default function AddHrLocations() {
           telephoneNumber2: '01533581070 ',
           telephoneNumber3: '01533581070',
           lastUpdateDate: '08-08-2023',
-          lastUpdatedBy: '1',
-          createdBy: '2',
+          lastUpdatedBy: 1,
+          createdBy: 2,
           creationDate: '07-08-2023',
         };
 
@@ -115,10 +117,11 @@ export default function AddHrLocations() {
         ...location,
         {
           locationCode: '',
-          businessGroupId: '5',
+          businessGroupId: 5,
           description: '',
-          shipToLocationId: '3',
-          inventoryOrganizationId: '4',
+          shipToLocationId: 3,
+          inventoryOrganizationId: 4,
+
           addressLine1: '',
           addressLine2: '',
           addressLine3: '',
@@ -129,8 +132,8 @@ export default function AddHrLocations() {
           telephoneNumber2: '01533581070 ',
           telephoneNumber3: '01533581070',
           lastUpdateDate: '08-08-2023',
-          lastUpdatedBy: '1',
-          createdBy: '2',
+          lastUpdatedBy: 1,
+          createdBy: 2,
           creationDate: '07-08-2023',
         },
       ]);
@@ -296,7 +299,7 @@ export default function AddHrLocations() {
               </table>
             </div>
             {showMenuLines && (
-              <Grid item xs={3} style={{marginTop:"20px"}}>
+              <Grid item xs={3} style={{ marginTop: "20px" }}>
                 <Button
                   style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
                   onClick={handleClick}

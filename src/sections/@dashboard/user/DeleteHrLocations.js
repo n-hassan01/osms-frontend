@@ -68,7 +68,7 @@ export default function DeleteHrLocations({ location_id }) {
     try {
       console.log('loc', location);
       const response = await axios.put(
-        `http://localhost:5001/delete-hr-locations-all/${location.locationId}`
+        `http://182.160.114.100:5001/delete-hr-locations-all/${location.locationId}`
       );
 
       console.log('Pass to home after request ');

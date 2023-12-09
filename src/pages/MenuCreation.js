@@ -15,6 +15,7 @@
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-restricted-globals */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, TextField, Typography } from '@mui/material';
@@ -25,7 +26,7 @@ import { addMainSystemMenuDetails, addMenusDetails, addSubMenusDetails } from '.
 // ----------------------------------------------------------------------
 
 export default function Page404() {
-
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const [ischecked, setIsChecked] = useState(false);
@@ -148,6 +149,9 @@ export default function Page404() {
       }
     }
     setCount(c);
+    alert("Successfully added");
+    navigate('/dashboard/showmenus');
+    window.location.reload();
   };
 
   console.log('mm out', menuId);

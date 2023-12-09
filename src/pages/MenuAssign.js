@@ -7,10 +7,12 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { addUserAssign, getFndUserIds, getMenuIds } from '../Services/ApiServices';
 
 export default function MenuCreation() {
+  const navigate = useNavigate();
   const [userInput, setUserInput] = useState('');
   const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(false);
@@ -112,6 +114,11 @@ export default function MenuCreation() {
       }
     }
     setCount(c);
+    alert("Successfully added");
+    navigate('/dashboard/showmenus');
+
+    window.location.reload();
+    
   };
   const [menurows, setMenuRows] = useState([
     {
@@ -192,15 +199,9 @@ export default function MenuCreation() {
               <Button
                 style={{ marginLeft: '5px' }}
                 onClick={() => {
-                  setShowLines(true);
+                  handleAddRow();
 
-                  setMenuRows([
-                    {
-                      menuId: '',
-
-                      userId: user,
-                    },
-                  ]);
+                  
                 }}
               >
                 Add Menu ID
@@ -252,11 +253,11 @@ export default function MenuCreation() {
                               ))}
                             </TextField>
                           </td>
-                          <td>
+                          {/* <td>
                             <Button>
                               <AddIcon onClick={handleAddRow} />
                             </Button>
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                   </tbody>

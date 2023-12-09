@@ -7,8 +7,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addHrOrganizationUnits } from '../../../Services/Admin/AddHrOrganizationUnits';
 import { getHrLocationsIdDetails } from '../../../Services/ApiServices';
+import { addHrOrganizationUnits } from '../../../Services/Admin/AddHrOrganizationUnits';
+
 
 
 export default function AddHrOrganizationUnits() {
@@ -43,8 +44,8 @@ export default function AddHrOrganizationUnits() {
       name: '',
       dateTo: '',
       lastUpdateDate: '08-28-2022',
-      lastUpdatedBy: '1',
-      createdBy: '2',
+      lastUpdatedBy: 1,
+      createdBy: 2,
       creationDate: '08-28-2022',
     },
   ]);
@@ -98,8 +99,8 @@ export default function AddHrOrganizationUnits() {
           name: lineInfo.name,
           dateTo: dateto,
           lastUpdateDate: '08-28-2022',
-          lastUpdatedBy: '1',
-          createdBy: '2',
+          lastUpdatedBy: 1,
+          createdBy:2,
           creationDate: '08-28-2022',
         };
 

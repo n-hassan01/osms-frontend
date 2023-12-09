@@ -57,7 +57,7 @@ export default function ResponsiveDialog() {
       const response = await addMainSystemMenuService(mainsystemmenu);
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showmainsystemmenu');
+      navigate('/dashboard/showmainsystemmenu');
       window.location.reload();
     } catch (err) {
       console.log(err.message);

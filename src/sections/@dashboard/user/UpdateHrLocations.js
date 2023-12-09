@@ -17,10 +17,11 @@ export default function UpdateHrLocations() {
   const [location, setLocation] = useState({
     locationId: '',
     locationCode: '',
-    businessGroupId: '5',
+    businessGroupId: 5,
     description: '',
-    shipToLocationId: '3',
-    inventoryOrganizationId: '4',
+    shipToLocationId: 3,
+    inventoryOrganizationId: 4,
+
     addressLine1: '',
     addressLine2: '',
     addressLine3: '',
@@ -31,8 +32,8 @@ export default function UpdateHrLocations() {
     telephoneNumber2: '01533581070 ',
     telephoneNumber3: '01533581070',
     lastUpdateDate: '08-08-2023',
-    lastUpdatedBy: '1',
-    createdBy: '2',
+    lastUpdatedBy: 1,
+    createdBy: 2,
     creationDate: '07-08-2023',
   });
 
@@ -85,7 +86,7 @@ export default function UpdateHrLocations() {
     try {
       console.log('loc', location);
       const response = await axios.put(
-        `http://localhost:5001/update-hr-locations-all/${location.locationId}`,
+        `http://182.160.114.100:5001/update-hr-locations-all/${location.locationId}`,
         location
       );
 

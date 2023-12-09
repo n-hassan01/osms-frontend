@@ -48,7 +48,7 @@ export default function MtlTransactionTypesList({ numSelected, filterName, onFil
       try {
     
         const response = await await axios.delete(
-            `http://localhost:5001/delete-mtl-transaction-types/${element}`
+            `http://182.160.114.100:5001/delete-mtl-transaction-types/${element}`
           );
 
          alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
