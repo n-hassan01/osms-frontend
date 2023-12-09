@@ -3,11 +3,21 @@
 import { Button, Container, Grid } from '@mui/material';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { addSystemItemsDetails } from '../../../Services/ApiServices';
 
 export default function ResponsiveDialog() {
   const navigate = useNavigate();
+  const { item } = useParams();
+  const [showLines, setShowLines] = useState(item !== 'null');
+
+  let rowValue = {};
+  if (item !== 'null') {
+    console.log(item);
+    // setShowLines(true);
+    rowValue = JSON.parse(item);
+  }
+  console.log(rowValue);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedLines, setSelectedLines] = useState([]);
@@ -37,30 +47,47 @@ export default function ResponsiveDialog() {
     setSelectedLines(updatedSelectedLines);
   };
 
-  const [rows, setRows] = useState([]);
-  const [showLines, setShowLines] = useState(false);
+  const [rows, setRows] = useState([
+    {
+      inventoryItemId: rowValue.inventory_item_id,
+      organizationId: rowValue.organization_id,
+      inventoryItemCode: rowValue.inventory_item_code,
+      description: rowValue.description,
+      primaryUomCode: rowValue.primary_uom_code,
+      primaryUnitOfMeasure: rowValue.primary_unit_of_measure,
+      enabledFlag: rowValue.enabled_flag,
+      startDateActive: rowValue.start_date_active,
+      endDateActive: rowValue.end_date_active,
+      buyerId: rowValue.buyer_id,
+      minMinmaxQuantity: rowValue.min_minmax_quantity,
+      maxMinmaxQuantity: rowValue.max_minmax_quantity,
+      minimumOrderQuantity: rowValue.minimum_order_quantity,
+      maximumOrderQuantity: rowValue.maximum_order_quantity,
+    },
+  ]);
 
   const handleAddRow = () => {
-    setShowLines(true);
-    setRows([
-      ...rows,
-      {
-        inventoryItemId: null,
-        organizationId: null,
-        inventoryItemCode: '',
-        description: '',
-        primaryUomCode: '',
-        primaryUnitOfMeasure: '',
-        enabledFlag: '',
-        startDateActive: '',
-        endDateActive: '',
-        buyerId: null,
-        minMinmaxQuantity: null,
-        maxMinmaxQuantity: null,
-        minimumOrderQuantity: null,
-        maximumOrderQuantity: null,
-      },
-    ]);
+    if (rows.length === 1) setShowLines(true);
+    if (showLines)
+      setRows([
+        ...rows,
+        {
+          inventoryItemId: null,
+          organizationId: null,
+          inventoryItemCode: '',
+          description: '',
+          primaryUomCode: '',
+          primaryUnitOfMeasure: '',
+          enabledFlag: '',
+          startDateActive: '',
+          endDateActive: '',
+          buyerId: null,
+          minMinmaxQuantity: null,
+          maxMinmaxQuantity: null,
+          minimumOrderQuantity: null,
+          maximumOrderQuantity: null,
+        },
+      ]);
     console.log(rows);
   };
 
@@ -210,6 +237,7 @@ export default function ResponsiveDialog() {
                         name="inventoryItemId"
                         className="form-control"
                         style={{ backgroundColor: 'white' }}
+                        value={row.inventoryItemId}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>

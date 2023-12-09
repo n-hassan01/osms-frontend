@@ -14,6 +14,7 @@ import Page404 from './pages/Page404';
 import ProfilePage from './pages/ProfilePage';
 import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
+import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
@@ -61,7 +62,7 @@ export default function Router() {
         { path: 'items', element: <MtlSystemItemPage /> },
         { path: 'uom', element: <MtlUnitMeasurePage /> },
         { path: 'add-uom', element: <AddUomDialog /> },
-        { path: 'addSystemItem', element: <AddSystemItemsDialog /> },
+        { path: 'addSystemItem/:item', element: <AddSystemItemsDialog /> },
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'allRequisitions', element: <RequisitionPage /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
@@ -70,6 +71,7 @@ export default function Router() {
         { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
+        { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
       ],
     },
     {
