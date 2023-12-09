@@ -700,6 +700,17 @@ export const addTxnRequestHeader = async (bodyInfo) => {
   }
 };
 
+export const getUserwiseTxnRequestHeader = async (bodyInfo) => {
+  try {
+    console.log(bodyInfo);
+    return await axios.get(`${usersUrl}get-txn-header/${bodyInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addTxnRequestLines = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}add-txn-line`, bodyInfo);

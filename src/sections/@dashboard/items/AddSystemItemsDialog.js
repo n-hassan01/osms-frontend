@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
-import { Button, Grid } from '@mui/material';
+import { Button, Container, Grid } from '@mui/material';
 import { sentenceCase } from 'change-case';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -136,7 +136,7 @@ export default function ResponsiveDialog() {
   };
 
   return (
-    <div>
+    <Container>
       <Grid container spacing={2}>
         <Grid item xs={3} style={{ display: 'flex' }}>
           <Button style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }} onClick={handleClick}>
@@ -208,6 +208,7 @@ export default function ResponsiveDialog() {
                         required
                         type="number"
                         name="inventoryItemId"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -216,6 +217,7 @@ export default function ResponsiveDialog() {
                       <input
                         required
                         name="inventoryItemCode"
+                        className="form-control"
                         title="Maximum 40 characters are allowed."
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -224,6 +226,7 @@ export default function ResponsiveDialog() {
                     <td>
                       <input
                         name="primaryUomCode"
+                        className="form-control"
                         title="Maximum 3 characters are allowed."
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -232,6 +235,7 @@ export default function ResponsiveDialog() {
                     <td>
                       <input
                         name="primaryUnitOfMeasure"
+                        className="form-control"
                         title="Maximum 25 characters are allowed."
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -241,6 +245,7 @@ export default function ResponsiveDialog() {
                       <input
                         required
                         name="enabledFlag"
+                        className="form-control"
                         title="Maximum 1 character is allowed."
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -250,6 +255,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="date"
                         name="startDateActive"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -258,6 +264,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="date"
                         name="endDateActive"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -266,6 +273,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="number"
                         name="buyerId"
+                        className="form-control"
                         title="Maximum 9 digits are allowed."
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -275,6 +283,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="number"
                         name="minMinmaxQuantity"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -283,6 +292,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="number"
                         name="maxMinmaxQuantity"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -291,6 +301,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="number"
                         name="minimumOrderQuantity"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -299,6 +310,7 @@ export default function ResponsiveDialog() {
                       <input
                         type="number"
                         name="maximumOrderQuantity"
+                        className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
@@ -306,6 +318,7 @@ export default function ResponsiveDialog() {
                     <td>
                       <textarea
                         name="description"
+                        className="form-control"
                         title="Maximum 240 characters are allowed."
                         style={{ height: '30px' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
@@ -317,6 +330,6 @@ export default function ResponsiveDialog() {
           </table>
         </div>
       </form>
-    </div>
+    </Container>
   );
 }
