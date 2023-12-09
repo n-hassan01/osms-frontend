@@ -44,8 +44,6 @@ const TABLE_HEAD = [
   { id: 'menuActive', label: 'Menu Active', alignRight: false },
   { id: 'systemMenuId', label: 'System Menu ID', alignRight: false },
 
-  { id: 'action', label: 'Action', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
 ];
@@ -327,12 +325,12 @@ export default function ShowMenus() {
                           </Label>
                         </TableCell> */}
 
-                        <div style={{ marginTop: '22px' }}>
+                        {/* <div style={{ marginTop: '22px' }}>
                           <UpdateMainSystemMenu menu_id={menu_id} />
                         </div>
                         <TableCell align="right">
                           <DeleteMainSystemMenu menu_id={menu_id} />
-                        </TableCell>
+                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}

@@ -72,7 +72,7 @@ export default function UpdatePerAllPeoples() {
   const handleClick = async () => {
     try {
       console.log('loc', people);
-      const response = await axios.put(`http://localhost:5001/update-per-all-peoples/${person_id}`, people);
+      const response = await axios.put(`http://182.160.114.100:5001/update-per-all-peoples/${person_id}`, people);
 
       console.log('Pass to home after request ');
       handleClose();

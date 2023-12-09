@@ -89,7 +89,7 @@ export default function UpdateMtlTransactionTypes() {
     try {
       console.log('loc', transaction);
       const response = await axios.put(
-        `http://localhost:5001/update-mtl-transaction-types/${transaction.transactionTypeId}`,
+        `http://182.160.114.100:5001/update-mtl-transaction-types/${transaction.transactionTypeId}`,
         transaction
       );
 

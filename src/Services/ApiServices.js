@@ -3,7 +3,7 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://localhost:5001/';
+const usersUrl = 'http://182.160.114.100:5001/';
 
 export const signup = async (user) => {
   try {
@@ -350,7 +350,6 @@ export const getHrLocationsDetails = async () => {
     return err.message;
   }
 };
-
 export const getHrLocationsIdDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-hr-locations-id/`);
@@ -484,7 +483,6 @@ export const getHrAllOrganizationUnits = async () => {
 };
 
 export const getPerHrLocationsDetails = async ( location_id ) => {
-
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -516,7 +514,6 @@ export const getPerAllMtlTransactionTypes = async (transaction_type_id) => {
 
 export const addHrLocationsDetails = async (location) => {
   console.log('location for api ', location);
-
   try {
     return await axios.post(`${usersUrl}add-hr-locations-all/`, location);
   } catch (err) {

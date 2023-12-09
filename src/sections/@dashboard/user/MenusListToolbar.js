@@ -48,7 +48,7 @@ export default function MenusListToolbar({ numSelected, filterName, onFilterName
       try {
     
         const response =  await axios.delete(
-            `http://localhost:5001/delete-main-system-menu/${element}`
+            `http://182.160.114.100:5001/delete-main-system-menu/${element}`
           );
 
          alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';

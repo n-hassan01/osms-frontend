@@ -80,7 +80,7 @@ export default function UpdateHrOrganizationUnits() {
     try {
       console.log('loc', organization);
       const response = await axios.put(
-        `http://localhost:5001/update-hr-organization-units/${organization.organizationId}`,
+        `http://182.160.114.100:5001/update-hr-organization-units/${organization.organizationId}`,
         organization
       );
 

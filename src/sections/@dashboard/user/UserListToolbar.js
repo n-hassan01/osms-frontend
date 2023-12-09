@@ -48,7 +48,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
       try {
     
         const response = await axios.put(
-            `http://localhost:5001/delete-hr-locations-all/${element}`
+            `http://182.160.114.100:5001/delete-hr-locations-all/${element}`
           );
 
          alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';

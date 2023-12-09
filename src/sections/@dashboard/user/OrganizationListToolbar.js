@@ -45,7 +45,7 @@ export default function OrganizationListToolbar({ numSelected, filterName, onFil
     let alertMessage;
     const result = selectedUsers.map(async (element) => {
       try {
-        const response = await await axios.delete(`http://localhost:5001/delete-hr-organization-units/${element}`);
+        const response = await await axios.delete(`http://182.160.114.100:5001/delete-hr-organization-units/${element}`);
 
         alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
         alert(`You have Deleted Successfully ${element}`);

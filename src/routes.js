@@ -36,6 +36,7 @@ import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrgani
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 import UpdatePerAllPeoples from './sections/@dashboard/user/UpdatePerAllPeoples';
+import Showmenus from './pages/ShowMenus';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -82,6 +83,7 @@ export default function Router() {
         { path: 'showorganizationunits', element: <ShowHrAllOrganizationUnits /> },
         { path: 'showmtlmaterialtransactions', element: <ShowMtlMaterialTransactions /> },
         { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
+        { path: 'showmenus', element: <Showmenus /> },
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
         { path: 'updatehrorganizationunits/:organization_id', element: <UpdateHrOrganizationUnits /> },

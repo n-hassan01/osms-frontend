@@ -59,7 +59,7 @@ export default function UpdateMainSystemMenu() {
     try {
       console.log('loc', mainsystemmenu);
       const response = await axios.put(
-        `http://localhost:5001/update-main-system-menu/${system_menu_id}`,
+        `http://182.160.114.100:5001/update-main-system-menu/${system_menu_id}`,
         mainsystemmenu
       );
 
