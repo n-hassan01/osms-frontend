@@ -19,9 +19,11 @@ import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
 import ShowMainSystemMenu from './pages/ShowMainSystemMenu';
+import Showmenus from './pages/ShowMenus';
 import ShowMtlMaterialTransactions from './pages/ShowMtlMaterialTransactions';
 import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
+import ShowWfNotifications from './pages/ShowWfNotifications';
 import SignupPage from './pages/SignupPage';
 import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
@@ -36,7 +38,6 @@ import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrgani
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 import UpdatePerAllPeoples from './sections/@dashboard/user/UpdatePerAllPeoples';
-import Showmenus from './pages/ShowMenus';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -104,6 +105,7 @@ export default function Router() {
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
         { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
+        {path:'showwfnotifications',element:<ShowWfNotifications />},
         { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
       ],
     },
