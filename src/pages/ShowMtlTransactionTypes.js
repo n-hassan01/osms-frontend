@@ -2,11 +2,14 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -25,20 +28,16 @@ import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHead } from '../sections/@dashboard/user';
+import MtlTransactionTypesList from '../sections/@dashboard/user/MtlTransactionTypesList';
 
 import { getAllMtlTransactionTypesService } from '../Services/Admin/GetAllMtlTransactionTypes';
-import AddMtlTransactionTypes from '../sections/@dashboard/user/AddMtlTransactionTypes';
-import DeleteMtlTransactionTypes from '../sections/@dashboard/user/DeleteMtlTransactionTypes';
-import UpdateMtlTransactionTypes from '../sections/@dashboard/user/UpdateMtlTransactionTypes';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'transactionTypeId', label: 'Transaction Type ID', alignRight: false },
   { id: 'transactionTypeName', label: 'Transaction Type Name', alignRight: false },
   { id: 'description', label: 'Description', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -77,6 +76,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowMtlTransactionTypes() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -197,15 +197,26 @@ export default function ShowMtlTransactionTypes() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Mtl Transaction Type
+            MTL Transaction Type
           </Typography>
+
           <div>
-            <AddMtlTransactionTypes />
+            <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/addmtltransactiontypes');
+              }}
+            >
+              Add MTL Transaction Types
+            </Button>
           </div>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <MtlTransactionTypesList
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -238,17 +249,27 @@ export default function ShowMtlTransactionTypes() {
                           />
                         </TableCell>
 
-                        <TableCell align="left">{transaction_type_id}</TableCell>
                         <TableCell align="left">{transaction_type_name}</TableCell>
 
                         <TableCell align="left">{description}</TableCell>
 
-                        <div style={{ marginTop: '22px' }}>
-                          <UpdateMtlTransactionTypes transaction_type_id={transaction_type_id} />
-                        </div>
-                        <TableCell align="right">
-                          <DeleteMtlTransactionTypes transaction_type_id={transaction_type_id} />
+                        <TableCell align="left">
+                          {/* <UpdateMtlTransactionTypes transaction_type_id={transaction_type_id} /> */}
+
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const transactionTypeId = transaction_type_id;
+                              navigate(`/dashboard/updatemtltransactiontypes/${transactionTypeId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
                         </TableCell>
+                        {/* <TableCell align="right">
+                          <DeleteMtlTransactionTypes transaction_type_id={transaction_type_id} />
+                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}

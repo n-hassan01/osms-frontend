@@ -3,6 +3,7 @@
 /* eslint-disable camelcase */
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { format } from 'date-fns';
@@ -13,11 +14,10 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
-  Checkbox,
+  // Checkbox,
   Container,
   DialogTitle,
-  Grid,
-  IconButton,
+  // IconButton,
   Paper,
   Stack,
   Table,
@@ -32,9 +32,9 @@ import {
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { getUomDetails, updateUomDetails } from '../Services/ApiServices';
-import UomListToolbar from '../sections/@dashboard/uom/UomListToolbar';
-import { UserListHead } from '../sections/@dashboard/user';
+import { getUserProfileDetails, getUserwiseTxnRequestHeader, updateUomDetails } from '../Services/ApiServices';
+// import UomListToolbar from '../sections/@dashboard/uom/UomListToolbar';
+import RequisitionListHead from '../sections/@dashboard/requisitions/RequisitionListHead';
 
 // ----------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.unit_of_measure.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.request_number.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -88,22 +88,47 @@ export default function UserPage() {
 
   const [USERLIST, setUserList] = useState([]);
 
+  const [account, setAccount] = useState({});
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getUomDetails();
-
-        if (usersDetails) {
-          const uom = usersDetails.data.map((data) => updateUomInfo(data));
-          setUserList(uom);
-        }
+        const accountDetails = await getUserProfileDetails(); // Call your async function here
+        if (accountDetails.status === 200)
+          setAccount(accountDetails.data); // Set the account details in the component's state
+        else navigate('/login');
       } catch (error) {
+        // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
       }
     }
 
-    fetchData();
+    fetchData(); // Call the async function when the component mounts
   }, []);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       if (account) {
+  //         const requisitionDetails = await getUserwiseTxnRequestHeader(account.user_id);
+
+  //         // Assuming `requisitionDetails.data` is an array, modify as needed
+  //         if (requisitionDetails.data && requisitionDetails.data.length > 0) {
+  //           // Assuming `updateUomInfo` is a function to process data
+  //           setUserList(requisitionDetails.data);
+  //         } else {
+  //           // Handle the case when requisitionDetails.data is empty or undefined
+  //           setUserList([]);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //       // Handle the error as needed, e.g., set an error state or display a message
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [account]);
+  // console.log(USERLIST);
 
   function updateUomInfo(uom) {
     if (uom.last_update_date) {
@@ -118,10 +143,10 @@ export default function UserPage() {
       uom.creation_date = format(date, 'dd-MM-yyyy');
     }
 
-    if (uom.disable_date) {
-      const date = new Date(uom.disable_date);
+    if (uom.header_status) {
+      const date = new Date(uom.header_status);
 
-      uom.disable_date = format(date, 'dd-MM-yyyy');
+      uom.header_status = format(date, 'dd-MM-yyyy');
     }
 
     return uom;
@@ -148,13 +173,20 @@ export default function UserPage() {
   const isDisable = true;
 
   const handleEdit = async () => {
-    const { unit_of_measure, uom_code, uom_class, last_update_date, last_updated_by, created_by, creation_date } =
-      rowData;
+    const {
+      request_number,
+      transaction_type_id,
+      organization_id,
+      last_update_date,
+      last_updated_by,
+      created_by,
+      creation_date,
+    } = rowData;
     try {
       const uomBody = {
-        unitOfMeasure: unit_of_measure,
-        uomCode: uom_code,
-        uomClass: uom_class,
+        unitOfMeasure: request_number,
+        uomCode: transaction_type_id,
+        uomClass: organization_id,
         lastUpdateDate: last_update_date,
         lastUpdatedBy: last_updated_by,
         createdBy: created_by,
@@ -185,12 +217,12 @@ export default function UserPage() {
   // TABLE_HEAD.push({id: ''})
   const TABLE_HEAD = [
     // { id: '' },
-    { id: 'unit_of_measure', label: sentenceCase('unit_of_measure'), alignRight: false },
-    { id: 'uom_code', label: sentenceCase('uom_code'), alignRight: false },
-    { id: 'uom_class', label: sentenceCase('uom_class'), alignRight: false },
-    { id: 'disable_date', label: sentenceCase('disable_date'), alignRight: false },
+    { id: 'request_number', label: sentenceCase('request_number'), alignRight: false },
+    { id: 'transaction_type_id', label: sentenceCase('transaction_type_id'), alignRight: false },
+    { id: 'organization_id', label: sentenceCase('organization_id'), alignRight: false },
     { id: 'description', label: sentenceCase('description'), alignRight: false },
-    { id: '' },
+    { id: 'header_status', label: sentenceCase('status'), alignRight: false },
+    // { id: '' },
   ];
 
   const handleRequestSort = (event, property) => {
@@ -201,7 +233,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.unit_of_measure);
+      const newSelecteds = USERLIST.map((n) => n.request_number);
       setSelected(newSelecteds);
       return;
     }
@@ -222,6 +254,7 @@ export default function UserPage() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
+    console.log(typeof selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -240,7 +273,7 @@ export default function UserPage() {
 
   const addUom = () => {
     // navigate('/dashboard/add-uom');
-    navigate('/dashboard/add-uom', { replace: true });
+    navigate('/dashboard/requisition', { replace: true });
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -258,7 +291,7 @@ export default function UserPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Mtl Units of Measure
+            Requisitions
           </Typography>
           <Button
             variant="text"
@@ -267,22 +300,22 @@ export default function UserPage() {
             onClick={addUom}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
           >
-            Add UOM
+            Add Requisitions
           </Button>
         </Stack>
 
         <Card>
-          <UomListToolbar
+          {/* <UomListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-          />
+          /> */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <RequisitionListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -293,25 +326,31 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { unit_of_measure, uom_code, uom_class, disable_date, description } = row;
-                    const rowValues = [unit_of_measure, uom_code, uom_class, disable_date, description];
-                    const selectedUser = selected.indexOf(unit_of_measure) !== -1;
+                    const { request_number, transaction_type_id, organization_id, header_status, description } = row;
+                    const rowValues = [
+                      request_number,
+                      transaction_type_id,
+                      organization_id,
+                      description,
+                      header_status,
+                    ];
+                    const selectedUser = selected.indexOf(request_number) !== -1;
 
                     return (
-                      <TableRow hover key={unit_of_measure} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, unit_of_measure)} />
-                        </TableCell>
+                      <TableRow hover key={request_number} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                        {/* <TableCell padding="checkbox">
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, request_number)} />
+                        </TableCell> */}
 
                         {rowValues.map((value) => (
                           <TableCell align="left">{value}</TableCell>
                         ))}
 
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <IconButton size="large" color="primary" onClick={() => handleClickOpen(row)}>
                             <Iconify icon={'tabler:edit'} />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     );
                   })}
@@ -352,48 +391,47 @@ export default function UserPage() {
                     <Stack />
                     <DialogContent>
                       <Stack
-                        spacing={1}
+                        spacing={1.5}
                         direction="row" // Set the direction to "row" for horizontal alignment
-                        alignItems="center"
                       >
                         <div>
-                          <label htmlFor="unit_of_measure">Unit of Measure: </label>
+                          <label htmlFor="request_number">Unit of Measure: </label>
                           <input
                             required
-                            id="unit_of_measure"
-                            name="unit_of_measure"
+                            id="request_number"
+                            name="request_number"
                             title="Maximum 25 characters are allowed."
-                            value={rowData.unit_of_measure}
+                            value={rowData.request_number}
                             onChange={(e) => onValueChange(e)}
                             disabled={isDisable}
                           />
                         </div>
 
                         <div>
-                          <label htmlFor="uom_code">UOM Code: </label>
+                          <label htmlFor="transaction_type_id">UOM Code: </label>
                           <input
                             required
-                            id="uom_code"
-                            name="uom_code"
+                            id="transaction_type_id"
+                            name="transaction_type_id"
                             title="Maximum 3 characters are allowed."
-                            value={rowData.uom_code}
+                            value={rowData.transaction_type_id}
                             onChange={(e) => onValueChange(e)}
                           />
                         </div>
 
                         <div>
-                          <label htmlFor="uom_class">UOM Class: </label>
+                          <label htmlFor="organization_id">UOM Class: </label>
                           <input
                             required
-                            id="uom_class"
-                            name="uom_class"
+                            id="organization_id"
+                            name="organization_id"
                             title="Maximum 10 characters are allowed."
-                            value={rowData.uom_class}
+                            value={rowData.organization_id}
                             onChange={(e) => onValueChange(e)}
                           />
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                        <div>
                           <label htmlFor="description">Description: </label>
                           <textarea
                             id="description"
@@ -405,31 +443,15 @@ export default function UserPage() {
                           />
                         </div>
                       </Stack>
-                      <Grid container spacing={2} style={{ marginTop: '25px' }}>
-                        <Grid item xs={3} style={{ display: 'flex' }}>
-                          <Button
-                            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                            onClick={handleEdit}
-                          >
-                            Submit
-                          </Button>
-                          <Button
-                            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                            onClick={handleClose}
-                          >
-                            Back
-                          </Button>
-                        </Grid>
-                      </Grid>
                     </DialogContent>
-                    {/* <DialogActions>
+                    <DialogActions>
                       <Button autoFocus onClick={handleEdit}>
                         Submit
                       </Button>
                       <Button onClick={handleClose} autoFocus>
                         Cancel
                       </Button>
-                    </DialogActions> */}
+                    </DialogActions>
                   </Dialog>
                 )}
               </Table>

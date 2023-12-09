@@ -3,7 +3,7 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://localhost:5001/';
+const usersUrl = 'http://182.160.114.100:5001/';
 
 export const signup = async (user) => {
   try {
@@ -350,6 +350,15 @@ export const getHrLocationsDetails = async () => {
     return err.message;
   }
 };
+export const getHrLocationsIdDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hr-locations-id/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 export const getPerAllPeoplesDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-per-all-peoples/`);
@@ -453,6 +462,15 @@ export const getperMainSystemMenuDetails = async (system_menu_id) => {
     return err.message;
   }
 };
+export const getperMenuDetails = async (menu_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-menus/${menu_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 
 export const getHrAllOrganizationUnits = async () => {
   try {
@@ -464,7 +482,7 @@ export const getHrAllOrganizationUnits = async () => {
   }
 };
 
-export const getPerHrLocationsDetails = async ({ location_id }) => {
+export const getPerHrLocationsDetails = async ( location_id ) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -672,6 +690,17 @@ export const getOrganizationIdList = async () => {
 export const addTxnRequestHeader = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}add-txn-header`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getUserwiseTxnRequestHeader = async (bodyInfo) => {
+  try {
+    console.log(bodyInfo);
+    return await axios.get(`${usersUrl}get-txn-header/${bodyInfo}`);
   } catch (err) {
     console.log(err.message);
 
