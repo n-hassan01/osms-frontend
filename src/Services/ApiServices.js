@@ -769,3 +769,46 @@ export const getUserMenuList = async (userInfo) => {
     return err.message;
   }
 };
+
+// sales order module services
+// sales order headers
+export const addSalesOrderHeaderService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-sales-order-header`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteSalesOrderHeaderService = async (headerId) => {
+  try {
+    return await axios.delete(`${usersUrl}delete-sales-order-header/${headerId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// sales order lines
+export const addSalesOrderLinesService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}sales-order-line/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteSalesOrderLinesService = async (lineId) => {
+  try {
+    return await axios.delete(`${usersUrl}sales-order-line/delete/${lineId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

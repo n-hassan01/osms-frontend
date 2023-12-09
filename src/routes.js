@@ -14,11 +14,13 @@ import Page404 from './pages/Page404';
 import ProfilePage from './pages/ProfilePage';
 import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
+import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
 import ShowMainSystemMenu from './pages/ShowMainSystemMenu';
+import Showmenus from './pages/ShowMenus';
 import ShowMtlMaterialTransactions from './pages/ShowMtlMaterialTransactions';
 import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
@@ -36,7 +38,6 @@ import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrgani
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 import UpdatePerAllPeoples from './sections/@dashboard/user/UpdatePerAllPeoples';
-import Showmenus from './pages/ShowMenus';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -76,7 +77,7 @@ export default function Router() {
         { path: 'items', element: <MtlSystemItemPage /> },
         { path: 'uom', element: <MtlUnitMeasurePage /> },
         { path: 'add-uom', element: <AddUomDialog /> },
-        { path: 'addSystemItem', element: <AddSystemItemsDialog /> },
+        { path: 'addSystemItem/:item', element: <AddSystemItemsDialog /> },
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'allRequisitions', element: <RequisitionPage /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
@@ -105,6 +106,7 @@ export default function Router() {
         { path: 'menuassign', element: <MenuAssign /> },
         { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
         { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
+        { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
       ],
     },
 
