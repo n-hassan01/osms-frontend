@@ -50,7 +50,10 @@ export default function DeleteHrLocations({ location_id }) {
   const loadUser = async () => {
     console.log('with brackets', { location_id });
     console.log('without', location_id);
-    const result = await getPerHrLocationsDetailsService( location_id );
+   
+    const numericValue = parseInt(location_id,10);
+
+    const result = await getPerHrLocationsDetailsService( numericValue );
    
     setLocation({
       ...location,
@@ -65,12 +68,12 @@ export default function DeleteHrLocations({ location_id }) {
     try {
       console.log('loc', location);
       const response = await axios.put(
-        `http://localhost:5001/delete-hr-locations-all/${location.locationId}`
+        `http://182.160.114.100:5001/delete-hr-locations-all/${location.locationId}`
       );
 
       console.log('Pass to home after request ');
       handleClose();
-      navigate('/showlocationsall');
+      navigate('/dashboard/showlocationsall');
       window.location.reload();
     } catch (err) {
       console.log(err.message);

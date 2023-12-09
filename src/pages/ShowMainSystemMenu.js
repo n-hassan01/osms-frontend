@@ -6,11 +6,14 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -21,7 +24,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -29,12 +32,10 @@ import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-
 import { getMainSystemMenuService } from '../Services/Admin/GetMainSystemMenu';
-import AddMainSystemMenu from '../sections/@dashboard/user/AddMainSystemMenu';
+import { UserListHead } from '../sections/@dashboard/user';
 import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
-import UpdateMainSystemMenu from '../sections/@dashboard/user/UpdateMainSystemMenu';
+import MenusListToolbar from '../sections/@dashboard/user/MenusListToolbar';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -86,6 +87,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowMainSystemMenu() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -250,12 +252,33 @@ export default function ShowMainSystemMenu() {
             Show Main System Menu
           </Typography>
           <div>
-            <AddMainSystemMenu />
+          <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px',marginTop:"10px" }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/menucreation');
+              }}
+            >
+              Menu Create
+            </Button>
+            <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginLeft: '5px',marginTop:"10px" }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/menuassign');
+              }}
+            >
+              Menu Assign
+            </Button>
           </div>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <MenusListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -284,30 +307,29 @@ export default function ShowMainSystemMenu() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, system_menu_id)} />
                         </TableCell>
-                        {/* <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
+                     
                         <TableCell align="left">{system_menu_id}</TableCell>
                         <TableCell align="left">{system_menu_description}</TableCell>
                         <TableCell align="left">{menu_active}</TableCell>
                         <TableCell align="left">{icon_path}</TableCell>
 
-                        {/* <TableCell align="left">
-                          <Label
-                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
-                          >
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell> */}
+                  
 
-                        <div style={{ marginTop: '22px' }}>
+                        {/* <div style={{ marginTop: '22px' }}>
                           <UpdateMainSystemMenu system_menu_id={system_menu_id} />
-                        </div>
+                        </div> */}
+                        <TableCell align="right">
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const systemMenuId = system_menu_id;
+                              navigate(`/dashboard/updatemainsystemmenu/${systemMenuId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
+                        </TableCell>
                         <TableCell align="right">
                           <DeleteMainSystemMenu system_menu_id={system_menu_id} />
                         </TableCell>

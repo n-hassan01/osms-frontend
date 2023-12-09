@@ -2,11 +2,14 @@
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   Checkbox,
   Container,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -19,29 +22,28 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import OrganizationListToolbar from '../sections/@dashboard/user/OrganizationListToolbar';
+
+import { UserListHead } from '../sections/@dashboard/user';
 
 import { getHrAllOrganizationUnitsService } from '../Services/Admin/GetHrAllOrganizationUnits';
-import AddHrOrganizationUnits from '../sections/@dashboard/user/AddHrOrganizationUnits';
-import DeleteHrOrganizationUnits from '../sections/@dashboard/user/DeleteHrOrganizationUnits';
-import UpdateHrOrganizationUnits from '../sections/@dashboard/user/UpdateHrOrganizationUnits';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'organization_id', label: 'Organization ID', alignRight: false },
+  // { id: 'organization_id', label: 'Organization ID', alignRight: false },
   { id: 'business_group_id', label: 'Business Group ID', alignRight: false },
   { id: 'location_id', label: 'Location ID', alignRight: false },
   { id: 'date_from', label: 'Date Form', alignRight: false },
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'date_to', label: 'Date To', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
@@ -80,6 +82,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowHrAllOrganizationUnits() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -116,23 +119,6 @@ export default function ShowHrAllOrganizationUnits() {
     fetchData();
   }, []);
 
-  //   const [loggedInUser, setLoggedInUser] = useState({});
-
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       try {
-  //         const usersDetails = await getLoggedInUserDetails();
-  //         if (usersDetails) setLoggedInUser(usersDetails.data);
-  //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
-  //       }
-  //     }
-
-  //     fetchData();
-  //   }, []);
-
-  //   const displayAddUser = loggedInUser.role === 1 ? 'block' : 'none';
-
   const handleOpenMenu = (event, status, email) => {
     if (status === 'approved') setIsDisableApprove(true);
     else setIsDisableApprove(false);
@@ -155,11 +141,6 @@ export default function ShowHrAllOrganizationUnits() {
       email: selectedUserEmail,
     };
 
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
-
     handleCloseMenu();
     window.location.reload();
   };
@@ -170,13 +151,7 @@ export default function ShowHrAllOrganizationUnits() {
       email: selectedUserEmail,
     };
 
-    // const response = await updateUserStatus(body);
-
-    // const alertMessage = response.status === 200 ? response.data.message : 'Process failed ! Try again';
-    // alert(alertMessage);
-
     handleCloseMenu();
-  
   };
 
   const handleRequestSort = (event, property) => {
@@ -225,6 +200,11 @@ export default function ShowHrAllOrganizationUnits() {
     setFilterName(event.target.value);
   };
 
+  // const handleClickOpen = (organization_id) => {
+
+  //   <UpdateHrOrganizationUnits organization_id={organization_id} />;
+  // };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -243,12 +223,22 @@ export default function ShowHrAllOrganizationUnits() {
             Organization Units
           </Typography>
           <div>
-            <AddHrOrganizationUnits />
+            <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/addhrorganization');
+              }}
+            >
+              Add Organization
+            </Button>
           </div>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <OrganizationListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -277,15 +267,8 @@ export default function ShowHrAllOrganizationUnits() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, organization_id)} />
                         </TableCell>
-                        {/* <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell> */}
-                        <TableCell align="left">{organization_id}</TableCell>
+
+                        {/* <TableCell align="left">{organization_id}</TableCell> */}
                         <TableCell align="left">{business_group_id}</TableCell>
 
                         <TableCell align="left">{location_id}</TableCell>
@@ -294,19 +277,17 @@ export default function ShowHrAllOrganizationUnits() {
                         <TableCell align="left">{name}</TableCell>
                         <TableCell align="left">{date_to}</TableCell>
 
-                        {/* <TableCell align="left">
-                          <Label
-                            color={(status === 'banned' && 'error') || (status === 'pending' && 'warning') || 'success'}
-                          >
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell> */}
-
-                        <div style={{ marginTop: '22px' }}>
-                          <UpdateHrOrganizationUnits organization_id={organization_id} />
-                        </div>
                         <TableCell align="right">
-                        <DeleteHrOrganizationUnits organization_id={organization_id} />
+                          <IconButton
+                            size="large"
+                            color="primary"
+                            onClick={() => {
+                              const organizationId = organization_id;
+                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
+                            }}
+                          >
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
                         </TableCell>
 
                         <Popover
