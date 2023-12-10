@@ -126,7 +126,7 @@ export default function AddPerAllPeoples() {
   };
 
   const handleClose = () => {
-    navigate('/showperallpeoples');
+    navigate('/dashboard/showperallpeoples');
     window.location.reload();
     setOpen(false);
   };
