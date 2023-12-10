@@ -7,12 +7,13 @@ import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } fro
 import {
   addSalesOrderHeaderService,
   addSalesOrderLinesService,
+  callSoApprovalService,
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getInventoryItemIdList,
-  getOrganizationIdList,
-  getTransactionTypeList,
-  getUomCodeList,
+  // getOrganizationIdList,
+  // getTransactionTypeList,
+  // getUomCodeList,
   getUserProfileDetails,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
@@ -46,47 +47,47 @@ export default function Page404() {
   }, []);
   console.log(account);
 
-  const [transactionTypeIds, setTransactionTypeIds] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getTransactionTypeList();
-        if (response) setTransactionTypeIds(response.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  // const [transactionTypeIds, setTransactionTypeIds] = useState([]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await getTransactionTypeList();
+  //       if (response) setTransactionTypeIds(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  const [organizationIds, setOrganizationIds] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getOrganizationIdList();
-        if (response) setOrganizationIds(response.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  // const [organizationIds, setOrganizationIds] = useState([]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await getOrganizationIdList();
+  //       if (response) setOrganizationIds(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
-  const [uomCodes, setUomCodes] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getUomCodeList();
-        if (response) setUomCodes(response.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  // const [uomCodes, setUomCodes] = useState([]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await getUomCodeList();
+  //       if (response) setUomCodes(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   const [inventoryItemIds, setInventoryItemIds] = useState([]);
   useEffect(() => {
@@ -105,11 +106,10 @@ export default function Page404() {
 
   const [filteredItemList, setFilteredItemList] = useState([]);
   // const [showItemList, setshowItemList] = useState([]);
-  const [inputItem, setInputItem] = useState('');
+  // const [inputItem, setInputItem] = useState('');
 
   const [headerInfo, setHeaderInfo] = useState({});
   const onChangeHeader = (e) => {
-    setShowSaveHeader(false);
     setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
   };
   const [showLines, setShowLines] = useState(false);
@@ -121,8 +121,6 @@ export default function Page404() {
   });
 
   const saveHeader = async () => {
-    // const getCurrentDate = new Date().toJSON();
-
     const requestBody = {
       orderedDate: getCurrentDate(),
       requestDate: headerInfo.requestDate ? headerInfo.requestDate : getCurrentDate(),
@@ -139,11 +137,14 @@ export default function Page404() {
     };
     console.log(requestBody);
 
+    // if(headerDetails.headerId) {
+    //   const response = await addSalesOrderHeaderService(requestBody);
+    // }
+
     const response = await addSalesOrderHeaderService(requestBody);
     if (response.status === 200) {
       // setShowHeaderDetails(true);
-      setIsReadOnly(true);
-      setShowSaveHeader(true);
+      // setIsReadOnly(true);
       setHeaderDetails({
         headerId: response.data.headerInfo[0].header_id,
         orderNumber: response.data.headerInfo[0].order_number,
@@ -200,10 +201,23 @@ export default function Page404() {
 
   const [showApprovalButton, setShowApprovalButton] = useState(false);
 
-  const submitRequisition = () => {
+  const submitRequisition = async () => {
     if (confirm('Are you sure for this requisition?')) {
+      const requestBody = {
+        pHierarchyId: 1,
+        pTransactionId: 1,
+        pTransactionNum: '1',
+        pAppsUsername: 'asm',
+      };
+      const response = await callSoApprovalService(requestBody);
+
+      if(response.status === 200) {
+        alert("Successfull!");
+        navigate('/dashboard/salesOrderForm', { replace: true });
+      } else {
+        alert("Process failed! Please try later");
+      }
       // window.location.reload();
-      navigate('/dashboard/salesOrderForm', { replace: true });
     }
   };
 
@@ -242,7 +256,6 @@ export default function Page404() {
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedLines, setSelectedLines] = useState([]);
-  const [showSaveHeader, setShowSaveHeader] = useState(false);
   const [showSaveLine, setShowSaveLine] = useState(false);
 
   // Function to handle row selection
@@ -279,7 +292,6 @@ export default function Page404() {
   };
 
   const onChecked = (event) => {
-    setShowSaveHeader(false);
     setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
   };
 
@@ -295,7 +307,7 @@ export default function Page404() {
   const onClickDelete = async () => {
     // const isEmptyObject =
     //   Object.values(rows[0]).every((value) => value === null || value === '') &&
-    //   !Object.values(headerDetails).every((value) => value === null || value === '');
+    //   !Object.values(headerDetails).every((value) => value === null);
 
     // console.log(isEmptyObject);
 
@@ -318,7 +330,7 @@ export default function Page404() {
     }
   };
 
-  const [isReadOnly, setIsReadOnly] = useState(false);
+  // const [isReadOnly, setIsReadOnly] = useState(false);
 
   const handleInputItemChange = (index, event) => {
     const input = event.target.value;
@@ -336,7 +348,7 @@ export default function Page404() {
     setFilteredItemList(filtered);
   };
 
-  const [selectedItem, setSelectedItem] = useState({});
+  // const [selectedItem, setSelectedItem] = useState({});
   const handleMenuItemClick = (index, item) => {
     const name = 'selectedItemName';
     const selected = 'selectedItem';
@@ -490,7 +502,6 @@ export default function Page404() {
                 <Button
                   style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
                   onClick={saveHeader}
-                  disabled={showSaveHeader}
                 >
                   Save
                 </Button>
@@ -532,9 +543,6 @@ export default function Page404() {
                   <th>Order Quantity Uom</th>
                   <th>Ordered Quantity</th>
                   <th>Sold From Org ID</th>
-                  <th>
-                    Inventory Item ID <span style={{ color: 'red' }}>*</span>
-                  </th>
                   <th>Unit Selling Price</th>
                 </tr>
               </thead>
@@ -595,17 +603,6 @@ export default function Page404() {
                           type="number"
                           className="form-control"
                           name="soldFromOrgId"
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          required
-                          type="number"
-                          className="form-control"
-                          name="inventoryItemId"
-                          value={row.selectedItem.inventory_item_id}
-                          readOnly
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
