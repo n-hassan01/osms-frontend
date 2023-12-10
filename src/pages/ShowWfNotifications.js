@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 /* eslint-disable camelcase */
 import axios from 'axios';
 import { filter } from 'lodash';
@@ -6,24 +7,24 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    Card,
-    Checkbox,
-    Container,
-    IconButton,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  Checkbox,
+  Container,
+  IconButton,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
-
+import { getLoggedInUserDetails } from '../Services/ApiServices';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -38,12 +39,11 @@ import { UserListHead } from '../sections/@dashboard/user';
 
 const TABLE_HEAD = [
   // { id: 'notification_id', label: 'Organization ID', alignRight: false },
-  { id: 'groupId', label: 'Group ID', alignRight: false },
+
   { id: 'message_type', label: 'Message_Type', alignRight: false },
   { id: 'message_name', label: 'Message Name', alignRight: false },
   { id: 'recipient_role', label: 'Recipient Role', alignRight: false },
-  { id: 'status', label: 'Status ', alignRight: false },
-  { id: 'access_key', label: 'Access Key ', alignRight: false },
+
   { id: 'original_recipient', label: 'Original Recipient ', alignRight: false },
 
   { id: '' },
@@ -68,6 +68,18 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+// function applySortFilter(array, comparator, query) {
+//   const stabilizedThis = array.map((el, index) => [el, index]);
+//   stabilizedThis.sort((a, b) => {
+//     const order = comparator(a[0], b[0]);
+//     if (order !== 0) return order;
+//     return a[1] - b[1];
+//   });
+//   if (query) {
+//     return filter(array, (_user) => _user.notification_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+//   }
+//   return stabilizedThis.map((el) => el[0]);
+// }
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -75,9 +87,22 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   if (query) {
-    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => {
+      const notificationId = _user.notification_id;
+      const lowerCaseQuery = query.toLowerCase();
+
+      if (typeof notificationId === 'string') {
+        return notificationId.toLowerCase().indexOf(lowerCaseQuery) !== -1;
+      } else if (typeof notificationId === 'number') {
+        return notificationId.toString().indexOf(lowerCaseQuery) !== -1;
+      }
+
+      return false;
+    });
   }
+
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -104,11 +129,21 @@ export default function ShowWfNotifications() {
   const [isDisableBan, setIsDisableBan] = useState(false);
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
+ 
+
+  const [user, setUser] = useState('');
+
+
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await axios.get(`http://localhost:5001/get-wf-notifications/`);
+        const usersDetailslogin = await getLoggedInUserDetails();
+        console.log('user login', usersDetailslogin.data.id);
+        console.log('user out', user);
+        const usersDetails = await axios.post(`http://localhost:5001/get-wf-notifications`, {
+          body: usersDetailslogin.data.id,
+        });
         console.log(('tutu', usersDetails));
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
@@ -117,7 +152,7 @@ export default function ShowWfNotifications() {
     }
 
     fetchData();
-  }, []);
+  }, [user]);
 
   const handleOpenMenu = (event, status, email) => {
     if (status === 'approved') setIsDisableApprove(true);
@@ -261,12 +296,11 @@ export default function ShowWfNotifications() {
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
                       notification_id,
-                      group_id,
+
                       message_type,
                       message_name,
                       recipient_role,
-                      status,
-                      access_key,
+
                       original_recipient,
                     } = row;
                     const selectedUser = selected.indexOf(notification_id) !== -1;
@@ -278,14 +312,12 @@ export default function ShowWfNotifications() {
                         </TableCell>
 
                         {/* <TableCell align="left">{notification_id}</TableCell> */}
-                        <TableCell align="left">{group_id}</TableCell>
 
                         <TableCell align="left">{message_type}</TableCell>
 
                         <TableCell align="left">{message_name}</TableCell>
                         <TableCell align="left">{recipient_role}</TableCell>
-                        <TableCell align="left">{status}</TableCell>
-                        <TableCell align="left">{access_key}</TableCell>
+
                         <TableCell align="left">{original_recipient}</TableCell>
 
                         <TableCell align="right">

@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
+import DashClone from './pages/DashClone';
 import DashboardAppPage from './pages/DashboardAppPage';
 import LoginPage from './pages/LoginPage';
 import MenuAssign from './pages/MenuAssign';
@@ -70,7 +71,8 @@ export default function Router() {
       //  element: <DashboardLayout />,
       element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/dashclone" />, index: true },
+        { path: 'dashclone', element: <DashClone /> },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'settings', element: <SettingsPage /> },
@@ -105,7 +107,7 @@ export default function Router() {
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
         { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
-        {path:'showwfnotifications',element:<ShowWfNotifications />},
+        { path: 'showwfnotifications', element: <ShowWfNotifications /> },
         { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
       ],
     },

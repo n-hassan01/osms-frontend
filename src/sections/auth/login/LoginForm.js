@@ -43,7 +43,7 @@ export default function LoginForm() {
 
         console.log(cookie);
 
-        navigate('/dashboard/app');
+        navigate('/dashboard/dashclone');
       } else {
         alert('Authentication failed! Try again');
       }
