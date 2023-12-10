@@ -15,6 +15,7 @@ import Page404 from './pages/Page404';
 import ProfilePage from './pages/ProfilePage';
 import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
+import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
@@ -79,7 +80,7 @@ export default function Router() {
         { path: 'items', element: <MtlSystemItemPage /> },
         { path: 'uom', element: <MtlUnitMeasurePage /> },
         { path: 'add-uom', element: <AddUomDialog /> },
-        { path: 'addSystemItem', element: <AddSystemItemsDialog /> },
+        { path: 'addSystemItem/:item', element: <AddSystemItemsDialog /> },
         { path: 'requisition', element: <RequisitionFormPage /> },
         { path: 'allRequisitions', element: <RequisitionPage /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
@@ -109,6 +110,7 @@ export default function Router() {
         { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },
         { path: 'showwfnotifications', element: <ShowWfNotifications /> },
         { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
+        { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
       ],
     },
 

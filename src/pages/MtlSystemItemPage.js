@@ -147,7 +147,10 @@ export default function UserPage() {
   const handleClickOpen = (row) => {
     console.log(row);
     setRowData(row);
-    setOpen(true);
+    // setOpen(true);
+    const encodedRow = encodeURIComponent(JSON.stringify(row));
+    console.log(encodedRow);
+    navigate(`/dashboard/addSystemItem/${encodedRow}`, { replace: true });
   };
 
   const handleClose = () => {
@@ -295,7 +298,7 @@ export default function UserPage() {
 
   const addItemMaster = () => {
     // navigate('/dashboard/add-uom');
-    navigate('/dashboard/addSystemItem', { replace: true });
+    navigate('/dashboard/addSystemItem/null', { replace: true });
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
