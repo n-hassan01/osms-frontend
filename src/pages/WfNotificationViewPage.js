@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-  addSalesOrderHeaderService,
-  addSalesOrderLinesService,
-  callSoApprovalService,
-  deleteSalesOrderHeaderService,
-  deleteSalesOrderLinesService,
-  getInventoryItemIdList,
-  getUserProfileDetails
+    addSalesOrderHeaderService,
+    addSalesOrderLinesService,
+    callSoApprovalService,
+    deleteSalesOrderHeaderService,
+    deleteSalesOrderLinesService,
+    getInventoryItemIdList,
+    getUserProfileDetails,
+    getWfNoficationViewService,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
@@ -43,6 +44,23 @@ export default function Page404() {
     fetchData(); // Call the async function when the component mounts
   }, []);
   console.log(account);
+
+  const [wfNotifications, setWfNotifications] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const wfNotificationsDetails = await getWfNoficationViewService(4); // Call your async function here
+        console.log(wfNotificationsDetails);
+        if (wfNotificationsDetails.status === 200) setWfNotifications(wfNotificationsDetails.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, []);
+  console.log(wfNotifications);
 
   const [inventoryItemIds, setInventoryItemIds] = useState([]);
   useEffect(() => {
@@ -160,11 +178,11 @@ export default function Page404() {
       };
       const response = await callSoApprovalService(requestBody);
 
-      if(response.status === 200) {
-        alert("Successfull!");
+      if (response.status === 200) {
+        alert('Successfull!');
         navigate('/dashboard/salesOrderForm', { replace: true });
       } else {
-        alert("Process failed! Please try later");
+        alert('Process failed! Please try later');
       }
       // window.location.reload();
     }
@@ -293,7 +311,6 @@ export default function Page404() {
     console.log(rows);
 
     // Filter the original list based on the input
-    console.log(inventoryItemIds);
     const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
     setFilteredItemList(filtered);
   };
@@ -320,132 +337,180 @@ export default function Page404() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Sales Order Form
+            This SO requires your approval
+          </Typography>
+        </Stack>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+          style={{ marginBottom: '5px' }}
+        >
+          <Typography variant="h5" gutterBottom>
+            Notifications
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
-          <div className="col-auto" style={{ width: '160px' }}>
-            <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Order Number
-              <input
-                type="number"
-                id="orderNumber"
-                name="orderNumber"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                value={headerDetails.orderNumber}
-                readOnly
-              />
+          <div className="col-auto" style={{ width: 'auto' }}>
+            <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
+              From
+              <span style={{ marginLeft: '10px' }}>{wfNotifications.from_user}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Ordered Date
-              <input type="date" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
+          <div className="col-auto" style={{ width: 'auto' }}>
+            <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
+              To
+              <span style={{ marginLeft: '10px' }}>{wfNotifications.to_user}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label
-              htmlFor="requestDate"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '13px' }}
-              onChange={(e) => onChangeHeader(e)}
-            >
-              Request Date
-              <input
-                type="date"
-                id="requestDate"
-                name="requestDate"
-                className="form-control"
-                defaultValue={getCurrentDate()}
-              />
+          <div className="col-auto" style={{ width: 'auto' }}>
+            <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
+              ID
+              <span style={{ marginLeft: '10px' }}>{wfNotifications.notification_id}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: '180px' }}>
-            <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Payment Term ID
-              <input
-                type="number"
-                id="paymentTermId"
-                name="paymentTermId"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
+          <div className="col-auto" style={{ width: 'auto' }}>
+            <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
+              Sent
+              <span style={{ marginLeft: '10px' }}>{wfNotifications.sent_date}</span>
+            </label>
+          </div>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={3}
+            style={{ marginBottom: '5px' }}
+          >
+            <Typography variant="h5" gutterBottom>
+              SO Headers
+            </Typography>
+          </Stack>
+          <div className="row g-3 align-items-center">
+            <div className="col-auto" style={{ width: '160px' }}>
+              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Order Number
+                <input
+                  type="number"
+                  id="orderNumber"
+                  name="orderNumber"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  value={headerDetails.orderNumber}
+                  readOnly
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '221px' }}>
+              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Ordered Date
+                <input type="date" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '221px' }}>
+              <label
+                htmlFor="requestDate"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
                 onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
+              >
+                Request Date
+                <input
+                  type="date"
+                  id="requestDate"
+                  name="requestDate"
+                  className="form-control"
+                  defaultValue={getCurrentDate()}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '180px' }}>
+              <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Payment Term ID
+                <input
+                  type="number"
+                  id="paymentTermId"
+                  name="paymentTermId"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '180px' }}>
+              <label
+                htmlFor="shippingMethodCode"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '14px' }}
+              >
+                Shipping Method
+                <input
+                  type="text"
+                  id="shippingMethodCode"
+                  name="shippingMethodCode"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                />
+              </label>
+            </div>
+            <div className="col-auto">
+              <label htmlFor="cancelledFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
+                Cancelled
+                <input
+                  type="checkbox"
+                  id="cancelledFlag"
+                  name="cancelledFlag"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChecked(e)}
+                  disabled
+                />
+              </label>
+            </div>
+            <div className="col-auto">
+              <label htmlFor="bookedFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
+                Booked
+                <input
+                  type="checkbox"
+                  id="bookedFlag"
+                  name="bookedFlag"
+                  style={{ marginLeft: '7px' }}
+                  // onChange={handleRowSelect}
+                  onChange={(e) => onChecked(e)}
+                  disabled
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '221px' }}>
+              <label htmlFor="bookedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Booked Date
+                <input
+                  type="date"
+                  id="bookedDate"
+                  name="bookedDate"
+                  className="form-control"
+                  defaultValue={getCurrentDate()}
+                  onChange={(e) => onChangeHeader(e)}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '200px' }}>
+              <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Sales Person
+                <input
+                  type="text"
+                  id="salesPerson"
+                  name="salesPerson"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  defaultValue={account.full_name}
+                  readOnly
+                />
+              </label>
+            </div>
           </div>
-          <div className="col-auto" style={{ width: '180px' }}>
-            <label
-              htmlFor="shippingMethodCode"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '14px' }}
-            >
-              Shipping Method
-              <input
-                type="text"
-                id="shippingMethodCode"
-                name="shippingMethodCode"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div>
-          <div className="col-auto">
-            <label htmlFor="cancelledFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Cancelled
-              <input
-                type="checkbox"
-                id="cancelledFlag"
-                name="cancelledFlag"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChecked(e)}
-                disabled
-              />
-            </label>
-          </div>
-          <div className="col-auto">
-            <label htmlFor="bookedFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Booked
-              <input
-                type="checkbox"
-                id="bookedFlag"
-                name="bookedFlag"
-                style={{ marginLeft: '7px' }}
-                // onChange={handleRowSelect}
-                onChange={(e) => onChecked(e)}
-                disabled
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label htmlFor="bookedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Booked Date
-              <input
-                type="date"
-                id="bookedDate"
-                name="bookedDate"
-                className="form-control"
-                defaultValue={getCurrentDate()}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '200px' }}>
-            <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Sales Person
-              <input
-                type="text"
-                id="salesPerson"
-                name="salesPerson"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                defaultValue={account.full_name}
-                readOnly
-              />
-            </label>
-          </div>
-          <Grid container spacing={2}>
+          {/* <Grid container spacing={2}>
             <Grid item xs={3}>
               <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
                 <Button
@@ -465,7 +530,7 @@ export default function Page404() {
                 </Button>
               </ButtonGroup>
             </Grid>
-          </Grid>
+          </Grid> */}
         </div>
 
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
