@@ -792,6 +792,16 @@ export const deleteSalesOrderHeaderService = async (headerId) => {
   }
 };
 
+export const updateSalesOrderHeaderService = async (headerId, headerInfo) => {
+  try {
+    return await axios.put(`${usersUrl}/update/${headerId}`, headerInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // sales order lines
 export const addSalesOrderLinesService = async (bodyInfo) => {
   try {
@@ -806,6 +816,17 @@ export const addSalesOrderLinesService = async (bodyInfo) => {
 export const deleteSalesOrderLinesService = async (lineId) => {
   try {
     return await axios.delete(`${usersUrl}sales-order-line/delete/${lineId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// procedure calls
+export const callSoApprovalService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}so-approval/call`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 
