@@ -137,7 +137,7 @@ export default function ShowWfNotifications() {
         const usersDetailslogin = await getLoggedInUserDetails();
         console.log('user login', usersDetailslogin.data.id);
         console.log('user out', user);
-        const usersDetails = await axios.post(`http://localhost:5001/get-wf-notifications`, {
+        const usersDetails = await axios.post(`http://182.160.114.100:5001/get-wf-notifications`, {
           body: usersDetailslogin.data.id,
         });
         console.log(('tutu', usersDetails));
