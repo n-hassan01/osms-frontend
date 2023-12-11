@@ -1,30 +1,48 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // @mui
-import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-    addSalesOrderHeaderService,
-    addSalesOrderLinesService,
-    callSoApprovalService,
-    deleteSalesOrderHeaderService,
-    deleteSalesOrderLinesService,
-    getInventoryItemIdList,
+    Button,
+    ButtonGroup,
+    Checkbox,
+    Container,
+    Grid,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Typography,
+} from '@mui/material';
+import {
+    callReqApprovalFromPanelService,
+    getApprovalSequenceService,
+    getSalesOrderHeaderService,
+    getSalesOrderLinesService,
     getUserProfileDetails,
     getWfNoficationViewService,
 } from '../Services/ApiServices';
+import { UserListHead } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
   const navigate = useNavigate();
+  const { notification_id } = useParams();
 
-  function getCurrentDate() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+  function getCurrentDate(date) {
+    // const now = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    const formatter = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const formattedTime = formatter.format(date);
+    console.log(formattedTime);
+    return `${year}-${month}-${day} ${formattedTime}`;
   }
 
   const [account, setAccount] = useState({});
@@ -49,7 +67,7 @@ export default function Page404() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const wfNotificationsDetails = await getWfNoficationViewService(4); // Call your async function here
+        const wfNotificationsDetails = await getWfNoficationViewService(notification_id); // Call your async function here
         console.log(wfNotificationsDetails);
         if (wfNotificationsDetails.status === 200) setWfNotifications(wfNotificationsDetails.data); // Set the account details in the component's state
       } catch (error) {
@@ -62,270 +80,92 @@ export default function Page404() {
   }, []);
   console.log(wfNotifications);
 
-  const [inventoryItemIds, setInventoryItemIds] = useState([]);
+  const [headerDetails, setHeaderDetails] = useState({});
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getInventoryItemIdList();
-        if (response) setInventoryItemIds(response.data);
+        let soHeaderDetails = {};
+        if (wfNotifications) soHeaderDetails = await getSalesOrderHeaderService(wfNotifications.user_key); // Call your async function here
+        console.log(soHeaderDetails);
+        if (soHeaderDetails.status === 200) setHeaderDetails(soHeaderDetails.data); // Set the account details in the component's state
       } catch (error) {
+        // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
       }
     }
 
-    fetchData();
-  }, []);
-  console.log(inventoryItemIds);
+    fetchData(); // Call the async function when the component mounts
+  }, [wfNotifications]);
+  console.log(headerDetails);
 
-  const [filteredItemList, setFilteredItemList] = useState([]);
+  const [lineDetails, setLineDetails] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let soLineDetails = {};
+        if (wfNotifications) soLineDetails = await getSalesOrderLinesService(wfNotifications.user_key); // Call your async function here
+        console.log(soLineDetails);
+        if (soLineDetails.status === 200) setLineDetails(soLineDetails.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
 
-  const [headerInfo, setHeaderInfo] = useState({});
-  const onChangeHeader = (e) => {
-    setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
-  };
-  const [showLines, setShowLines] = useState(false);
-  const [headerDetails, setHeaderDetails] = useState({
-    headerId: null,
-    orderNumber: null,
-  });
+    fetchData(); // Call the async function when the component mounts
+  }, [wfNotifications]);
+  console.log(lineDetails);
 
-  const saveHeader = async () => {
+  const [approvalSequenceDetails, setApprovalSequence] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let soLineDetails = {};
+        if (headerDetails) soLineDetails = await getApprovalSequenceService(wfNotifications.user_key); // Call your async function here
+        console.log(soLineDetails);
+        if (soLineDetails.status === 200) setApprovalSequence(soLineDetails.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [headerDetails]);
+  console.log(approvalSequenceDetails);
+
+  const TABLE_HEAD = [
+    // { id: '' },
+    { id: 'unit_of_measure', label: 'Line Number', alignRight: false },
+    { id: 'uom_code', label: 'Ordered Item', alignRight: false },
+    { id: 'uom_class', label: 'Order Quantity Uom', alignRight: false },
+    { id: 'disable_date', label: 'Ordered Quantity', alignRight: false },
+    { id: 'description', label: 'Sold From Org ID', alignRight: false },
+    { id: 'description', label: 'Unit Selling Price', alignRight: false },
+  ];
+
+  const TABLE_HEAD_Approval_Seq = [
+    // { id: '' },
+    { id: 'unit_of_measure', label: 'SL Num', alignRight: false },
+    { id: 'uom_code', label: 'Action Code', alignRight: false },
+    { id: 'uom_class', label: 'Action Date', alignRight: false },
+    { id: 'disable_date', label: 'Name', alignRight: false },
+    { id: 'description', label: 'Note', alignRight: false },
+  ];
+
+  const onApprove = async () => {
     const requestBody = {
-      orderedDate: getCurrentDate(),
-      requestDate: headerInfo.requestDate ? headerInfo.requestDate : getCurrentDate(),
-      paymentTermId: headerInfo.paymentTermId,
-      createdBy: account.user_id,
-      orderTypeId: headerInfo.orderTypeId,
-      lastUpdatedBy: account.user_id,
-      shippingMethodCode: headerInfo.shippingMethodCode,
-      cancelledFlag: headerInfo.cancelledFlag === true ? 'Y' : 'N',
-      bookedFlag: headerInfo.bookedFlag === true ? 'Y' : 'N',
-      salesrepId: account.user_id,
-      salesChannelCode: headerInfo.salesChannelCode,
-      bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
+      pTransactionID: '',
+      pTransactionNum: '',
+      pAppsUsername: '',
+      pNotificationID: '',
+      pApprovalType: '',
+      pEmpid: '',
+      pNote: '',
     };
-    console.log(requestBody);
+    const response = await callReqApprovalFromPanelService(requestBody);
 
-    // if(headerDetails.headerId) {
-    //   const response = await addSalesOrderHeaderService(requestBody);
-    // }
-
-    const response = await addSalesOrderHeaderService(requestBody);
-    if (response.status === 200) {
-      setHeaderDetails({
-        headerId: response.data.headerInfo[0].header_id,
-        orderNumber: response.data.headerInfo[0].order_number,
-      });
-      console.log(response.data);
-    } else {
-      alert('Process failed! Try again');
-    }
-  };
-
-  const [rows, setRows] = useState([
-    {
-      orderedItem: '',
-      orderQuantityUom: '',
-      orderedQuantity: null,
-      soldFromOrgId: null,
-      inventoryItemId: null,
-      unitSellingPrice: null,
-      selectedItemName: '',
-      selectedItem: {},
-      showList: false,
-      lineId: null,
-    },
-  ]);
-
-  const handleAddRow = () => {
-    if (rows.length === 1) setShowLines(true);
-    if (showLines) {
-      setRows([
-        ...rows,
-        {
-          orderedItem: '',
-          orderQuantityUom: '',
-          orderedQuantity: null,
-          soldFromOrgId: null,
-          inventoryItemId: null,
-          unitSellingPrice: null,
-          selectedItemName: '',
-          selectedItem: {},
-          showList: false,
-          lineId: null,
-        },
-      ]);
-    }
-    console.log(rows);
-  };
-
-  const handleInputChange = (index, name, value) => {
-    setShowSaveLine(false);
-    const updatedRows = [...rows];
-    updatedRows[index][name] = value;
-    setRows(updatedRows);
-  };
-
-  const [showApprovalButton, setShowApprovalButton] = useState(false);
-
-  const submitRequisition = async () => {
-    if (confirm('Are you sure for this requisition?')) {
-      const requestBody = {
-        pHierarchyId: 1,
-        pTransactionId: 1,
-        pTransactionNum: '1',
-        pAppsUsername: 'asm',
-      };
-      const response = await callSoApprovalService(requestBody);
-
-      if (response.status === 200) {
-        alert('Successfull!');
-        navigate('/dashboard/salesOrderForm', { replace: true });
-      } else {
-        alert('Process failed! Please try later');
-      }
-      // window.location.reload();
-    }
-  };
-
-  const saveLines = async () => {
-    const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
-    console.log(filteredArray);
-
-    filteredArray.forEach(async (lineInfo, index) => {
-      const requestBody = {
-        headerId: headerDetails.headerId,
-        lineNumber: index + 1,
-        inventoryItemId: lineInfo.selectedItem.inventory_item_id,
-        creationDate: getCurrentDate(),
-        createdBy: account.user_id,
-        orderedItem: lineInfo.selectedItem.description,
-        orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
-        orderedQuantity: lineInfo.orderedQuantity,
-        soldFromOrgId: lineInfo.soldFromOrgId,
-        unitSellingPrice: lineInfo.unitSellingPrice,
-      };
-      console.log(requestBody);
-
-      const response = await addSalesOrderLinesService(requestBody);
-
-      if (response.status === 200) {
-        console.log(response.data);
-
-        setShowApprovalButton(true);
-        handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-        setShowSaveLine(true);
-      } else {
-        setShowApprovalButton(false);
-      }
-    });
-  };
-
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedLines, setSelectedLines] = useState([]);
-  const [showSaveLine, setShowSaveLine] = useState(false);
-
-  // Function to handle row selection
-  const handleRowSelect = (index, row) => {
-    console.log(row);
-    const updatedSelectedLines = [...selectedLines];
-    const lineIndex = updatedSelectedLines.indexOf(row.lineId);
-
-    const updatedSelectedRows = [...selectedRows];
-    const rowIndex = updatedSelectedRows.indexOf(index);
-
-    if (rowIndex === -1) {
-      updatedSelectedRows.push(index);
-    } else {
-      updatedSelectedRows.splice(rowIndex, 1);
-    }
-
-    if (lineIndex === -1) {
-      updatedSelectedLines.push(row.lineId);
-    } else {
-      updatedSelectedLines.splice(lineIndex, 1);
-    }
-
-    setSelectedRows(updatedSelectedRows);
-    setSelectedLines(updatedSelectedLines);
-
-    console.log(selectedLines);
-  };
-
-  const handleDeleteRows = () => {
-    const updatedRows = rows.filter((_, index) => !selectedRows.includes(index));
-    setRows(updatedRows);
-    setSelectedRows([]);
-  };
-
-  const onChecked = (event) => {
-    setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
-  };
-
-  const handleDeleteLines = () => {
-    console.log(selectedLines);
-    selectedLines.forEach(async (line) => {
-      console.log(line);
-      await deleteSalesOrderLinesService(line);
-    });
-    setSelectedLines([]);
-  };
-
-  const onClickDelete = async () => {
-    // const isEmptyObject =
-    //   Object.values(rows[0]).every((value) => value === null || value === '') &&
-    //   !Object.values(headerDetails).every((value) => value === null);
-
-    // console.log(isEmptyObject);
-
-    if (
-      selectedLines.length === 0 &&
-      rows.length > 0 &&
-      !Object.values(rows[0]).every((value) => value === null || value === '')
-    ) {
-      alert('Please select lines to delete');
-    } else if (selectedLines.length === 0 && rows.length === 0) {
-      if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(headerDetails.orderNumber);
-        window.location.reload();
-      }
-    } else if (selectedLines.length > 0 && rows.length > 0) {
-      if (confirm('Are you sure to delete the lines?')) {
-        handleDeleteLines();
-        handleDeleteRows();
-      }
-    }
-  };
-
-  // const [isReadOnly, setIsReadOnly] = useState(false);
-
-  const handleInputItemChange = (index, event) => {
-    const input = event.target.value;
-    const name = 'selectedItemName';
-    const show = 'showList';
-
-    const updatedRows = [...rows];
-    updatedRows[index][name] = input;
-    updatedRows[index][show] = true;
-    setRows(updatedRows);
-    console.log(rows);
-
-    // Filter the original list based on the input
-    const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
-    setFilteredItemList(filtered);
-  };
-
-  const handleMenuItemClick = (index, item) => {
-    const name = 'selectedItemName';
-    const selected = 'selectedItem';
-    const show = 'showList';
-
-    const updatedRows = [...rows];
-    updatedRows[index][name] = item.description;
-    updatedRows[index][selected] = item;
-    updatedRows[index][show] = false;
-    setRows(updatedRows);
-    console.log(rows);
+    console.log(response);
   };
 
   return (
@@ -336,9 +176,39 @@ export default function Page404() {
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-          <Typography variant="h4" gutterBottom>
-            This SO requires your approval
+          <Typography variant="h4" gutterBottom style={{ width: '50%' }}>
+            {wfNotifications.subject}
           </Typography>
+          <Grid container spacing={2} style={{ width: '50%' }}>
+            <Grid item xs={3}>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+                <Button
+                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  onClick={onApprove}
+                >
+                  Approve
+                </Button>
+                <Button
+                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  //   onClick={onClickDelete}
+                >
+                  Reject
+                </Button>
+                <Button
+                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  //   onClick={handleAddRow}
+                >
+                  Request Information
+                </Button>
+                <Button
+                  style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
+                  //   onClick={handleAddRow}
+                >
+                  Done
+                </Button>
+              </ButtonGroup>
+            </Grid>
+          </Grid>
         </Stack>
         <Stack
           direction="row"
@@ -352,309 +222,143 @@ export default function Page404() {
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
-          <div className="col-auto" style={{ width: 'auto' }}>
+          <div className="col-auto" style={{ width: '50%' }}>
             <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
               From
               <span style={{ marginLeft: '10px' }}>{wfNotifications.from_user}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: 'auto' }}>
+          <div className="col-auto" style={{ width: '50%' }}>
             <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
               To
               <span style={{ marginLeft: '10px' }}>{wfNotifications.to_user}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: 'auto' }}>
+          <div className="col-auto" style={{ width: '50%' }}>
             <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
               ID
               <span style={{ marginLeft: '10px' }}>{wfNotifications.notification_id}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: 'auto' }}>
+          <div className="col-auto" style={{ width: '50%' }}>
             <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
               Sent
               <span style={{ marginLeft: '10px' }}>{wfNotifications.sent_date}</span>
             </label>
           </div>
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={3}
-            style={{ marginBottom: '5px' }}
-          >
-            <Typography variant="h5" gutterBottom>
-              SO Headers
-            </Typography>
-          </Stack>
-          <div className="row g-3 align-items-center">
-            <div className="col-auto" style={{ width: '160px' }}>
-              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Order Number
-                <input
-                  type="number"
-                  id="orderNumber"
-                  name="orderNumber"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  value={headerDetails.orderNumber}
-                  readOnly
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '221px' }}>
-              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Ordered Date
-                <input type="date" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '221px' }}>
-              <label
-                htmlFor="requestDate"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-                onChange={(e) => onChangeHeader(e)}
-              >
-                Request Date
-                <input
-                  type="date"
-                  id="requestDate"
-                  name="requestDate"
-                  className="form-control"
-                  defaultValue={getCurrentDate()}
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '180px' }}>
-              <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Payment Term ID
-                <input
-                  type="number"
-                  id="paymentTermId"
-                  name="paymentTermId"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '180px' }}>
-              <label
-                htmlFor="shippingMethodCode"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '14px' }}
-              >
-                Shipping Method
-                <input
-                  type="text"
-                  id="shippingMethodCode"
-                  name="shippingMethodCode"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            <div className="col-auto">
-              <label htmlFor="cancelledFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-                Cancelled
-                <input
-                  type="checkbox"
-                  id="cancelledFlag"
-                  name="cancelledFlag"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChecked(e)}
-                  disabled
-                />
-              </label>
-            </div>
-            <div className="col-auto">
-              <label htmlFor="bookedFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-                Booked
-                <input
-                  type="checkbox"
-                  id="bookedFlag"
-                  name="bookedFlag"
-                  style={{ marginLeft: '7px' }}
-                  // onChange={handleRowSelect}
-                  onChange={(e) => onChecked(e)}
-                  disabled
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '221px' }}>
-              <label htmlFor="bookedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Booked Date
-                <input
-                  type="date"
-                  id="bookedDate"
-                  name="bookedDate"
-                  className="form-control"
-                  defaultValue={getCurrentDate()}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '200px' }}>
-              <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Sales Person
-                <input
-                  type="text"
-                  id="salesPerson"
-                  name="salesPerson"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  defaultValue={account.full_name}
-                  readOnly
-                />
-              </label>
-            </div>
+        </div>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+          style={{ marginBottom: '2px', marginTop: '10px' }}
+        >
+          <Typography variant="h5" gutterBottom>
+            SO Headers
+          </Typography>
+        </Stack>
+        <div className="row g-3 align-items-center">
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
+              Order Number
+              <span style={{ marginLeft: '10px' }}>{headerDetails.order_number}</span>
+            </label>
           </div>
-          {/* <Grid container spacing={2}>
-            <Grid item xs={3}>
-              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button
-                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={saveHeader}
-                >
-                  Save
-                </Button>
-                <Button
-                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={onClickDelete}
-                >
-                  Delete
-                </Button>
-                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
-                  Add Lines
-                </Button>
-              </ButtonGroup>
-            </Grid>
-          </Grid> */}
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
+              Ordered Date
+              <span style={{ marginLeft: '10px' }}>{headerDetails.ordered_date}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="requestDate" className="col-form-label" style={{ display: 'flex' }}>
+              Request Date
+              <span style={{ marginLeft: '10px' }}>{headerDetails.request_date}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex' }}>
+              Payment Term ID
+              <span style={{ marginLeft: '10px' }}>{headerDetails.payment_term_id}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="shippingMethodCode" className="col-form-label" style={{ display: 'flex' }}>
+              Shipping Method
+              <span style={{ marginLeft: '10px' }}>{headerDetails.shipping_method_code}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex' }}>
+              Sales Person
+              <span style={{ marginLeft: '10px' }}>{headerDetails.salesrep_id}</span>
+            </label>
+          </div>
         </div>
 
-        <form className="form-horizontal" style={{ marginTop: '20px' }}>
-          <div className="table-responsive">
-            <table className="table table-bordered table-striped table-highlight">
-              <thead>
-                <tr>
-                  <th>
-                    <input
-                      type="checkbox"
-                      onChange={() => {
-                        // Select or deselect all rows
-                        const allRowsSelected = selectedRows.length === rows.length;
-                        const newSelectedRows = allRowsSelected ? [] : rows.map((_, index) => index);
-                        setSelectedRows(newSelectedRows);
-                      }}
-                      checked={selectedRows.length === rows.length && rows.length !== 0}
-                    />
-                  </th>
-                  <th>Line Number</th>
-                  <th>
-                    Ordered Item <span style={{ color: 'red' }}>*</span>
-                  </th>
-                  <th>Order Quantity Uom</th>
-                  <th>Ordered Quantity</th>
-                  <th>Sold From Org ID</th>
-                  <th>Unit Selling Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {showLines &&
-                  rows.map((row, index) => (
-                    <tr key={index}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          onChange={() => handleRowSelect(index, row)}
-                          checked={selectedRows.includes(index)}
-                        />
-                      </td>
-                      <td>
-                        <input type="number" className="form-control" name="lineNumber" value={index + 1} readOnly />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          style={{ width: 'auto' }}
-                          value={row.selectedItemName}
-                          onChange={(e) => handleInputItemChange(index, e)}
-                        />
-                        {row.showList && (
-                          <ul style={{ marginTop: '18px' }}>
-                            {filteredItemList.map((item, itemIndex) => (
-                              <>
-                                <MenuItem key={itemIndex} value={item} onClick={() => handleMenuItemClick(index, item)}>
-                                  {item.description}
-                                </MenuItem>
-                              </>
-                            ))}
-                          </ul>
-                        )}
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="orderQuantityUom"
-                          readOnly
-                          value={row.selectedItem.primary_uom_code}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="orderedQuantity"
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="soldFromOrgId"
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="unitSellingPrice"
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        </form>
-        {showLines && (
-          <Grid item xs={3}>
-            <Button
-              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-              onClick={saveLines}
-              disabled={showSaveLine}
-            >
-              Save
-            </Button>
-            {showApprovalButton && (
-              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button
-                  style={{ display: { showApprovalButton }, backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={submitRequisition}
-                >
-                  Approval
-                </Button>
-              </ButtonGroup>
-            )}
-          </Grid>
-        )}
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+          style={{ marginBottom: '5px', marginTop: '10px' }}
+        >
+          <Typography variant="h5" gutterBottom>
+            SO Lines
+          </Typography>
+        </Stack>
+        <TableContainer sx={{ minWidth: 800 }}>
+          <Table>
+            <UserListHead headLabel={TABLE_HEAD} />
+            <TableBody>
+              {lineDetails.map((value) => (
+                <TableRow key={value.line_id} hover tabIndex={-1}>
+                  <TableCell padding="checkbox">
+                    <Checkbox disabled />
+                  </TableCell>
+                  <TableCell>{value.line_number}</TableCell>
+                  <TableCell>{value.ordered_item}</TableCell>
+                  <TableCell>{value.order_quantity_uom}</TableCell>
+                  <TableCell>{value.ordered_quantity}</TableCell>
+                  <TableCell>{value.sold_from_org_id}</TableCell>
+                  <TableCell>{value.unit_selling_price}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+          style={{ marginBottom: '5px', marginTop: '40px' }}
+        >
+          <Typography variant="h5" gutterBottom>
+            Approval Sequence
+          </Typography>
+        </Stack>
+        <TableContainer sx={{ minWidth: 800 }}>
+          <Table>
+            <UserListHead headLabel={TABLE_HEAD_Approval_Seq} />
+            <TableBody>
+              {approvalSequenceDetails.map((value) => (
+                <TableRow key={value.sl} hover tabIndex={-1}>
+                  <TableCell padding="checkbox">
+                    <Checkbox disabled />
+                  </TableCell>
+                  <TableCell>{value.sl}</TableCell>
+                  <TableCell>{value.action_code}</TableCell>
+                  <TableCell>{value.action_date}</TableCell>
+                  <TableCell>{value.full_name}</TableCell>
+                  <TableCell>{value.note}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Container>
     </>
   );
