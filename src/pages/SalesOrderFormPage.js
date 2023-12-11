@@ -11,10 +11,7 @@ import {
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getInventoryItemIdList,
-  // getOrganizationIdList,
-  // getTransactionTypeList,
-  // getUomCodeList,
-  getUserProfileDetails,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
@@ -47,48 +44,6 @@ export default function Page404() {
   }, []);
   console.log(account);
 
-  // const [transactionTypeIds, setTransactionTypeIds] = useState([]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await getTransactionTypeList();
-  //       if (response) setTransactionTypeIds(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-
-  // const [organizationIds, setOrganizationIds] = useState([]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await getOrganizationIdList();
-  //       if (response) setOrganizationIds(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-
-  // const [uomCodes, setUomCodes] = useState([]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await getUomCodeList();
-  //       if (response) setUomCodes(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-
   const [inventoryItemIds, setInventoryItemIds] = useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -105,16 +60,12 @@ export default function Page404() {
   console.log(inventoryItemIds);
 
   const [filteredItemList, setFilteredItemList] = useState([]);
-  // const [showItemList, setshowItemList] = useState([]);
-  // const [inputItem, setInputItem] = useState('');
 
   const [headerInfo, setHeaderInfo] = useState({});
   const onChangeHeader = (e) => {
     setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
   };
   const [showLines, setShowLines] = useState(false);
-  // const [showList, setShowList] = useState(false);
-  // const [showHeaderDetails, setShowHeaderDetails] = useState(false);
   const [headerDetails, setHeaderDetails] = useState({
     headerId: null,
     orderNumber: null,
@@ -143,8 +94,6 @@ export default function Page404() {
 
     const response = await addSalesOrderHeaderService(requestBody);
     if (response.status === 200) {
-      // setShowHeaderDetails(true);
-      // setIsReadOnly(true);
       setHeaderDetails({
         headerId: response.data.headerInfo[0].header_id,
         orderNumber: response.data.headerInfo[0].order_number,
@@ -344,11 +293,11 @@ export default function Page404() {
     console.log(rows);
 
     // Filter the original list based on the input
+    console.log(inventoryItemIds);
     const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
     setFilteredItemList(filtered);
   };
 
-  // const [selectedItem, setSelectedItem] = useState({});
   const handleMenuItemClick = (index, item) => {
     const name = 'selectedItemName';
     const selected = 'selectedItem';

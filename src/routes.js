@@ -27,6 +27,7 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import ShowWfNotifications from './pages/ShowWfNotifications';
 import SignupPage from './pages/SignupPage';
+import WfNotificationView from './pages/WfNotificationViewPage';
 import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
 import AddFndUser from './sections/@dashboard/user/AddFndUser';
@@ -48,7 +49,6 @@ import { getUserProfileDetails } from './Services/ApiServices';
 export default function Router() {
   const navigate = useNavigate();
   // const cookie = getCookieService('jwt-token-cookie');
-  // console.log(cookie);
   const [isAuthorized, setIsAuthorized] = useState({});
   useEffect(() => {
     async function fetchData() {
@@ -111,6 +111,7 @@ export default function Router() {
         { path: 'showwfnotifications', element: <ShowWfNotifications /> },
         { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
         { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
+        { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
       ],
     },
 

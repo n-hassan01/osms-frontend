@@ -482,7 +482,7 @@ export const getHrAllOrganizationUnits = async () => {
   }
 };
 
-export const getPerHrLocationsDetails = async ( location_id ) => {
+export const getPerHrLocationsDetails = async (location_id) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
@@ -802,6 +802,16 @@ export const updateSalesOrderHeaderService = async (headerId, headerInfo) => {
   }
 };
 
+export const getSalesOrderHeaderService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}get-sales-order-header/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // sales order lines
 export const addSalesOrderLinesService = async (bodyInfo) => {
   try {
@@ -823,10 +833,50 @@ export const deleteSalesOrderLinesService = async (lineId) => {
   }
 };
 
+export const getSalesOrderLinesService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}sales-order-line/get/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 // procedure calls
 export const callSoApprovalService = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}so-approval/call`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const callReqApprovalFromPanelService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}so-approval/submit-approval/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// view calls
+export const getWfNoficationViewService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}wf-notification-view/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getApprovalSequenceService = async () => {
+  try {
+    return await axios.get(`${usersUrl}so-approval/get-approval-seq`);
   } catch (err) {
     console.log(err.message);
 
