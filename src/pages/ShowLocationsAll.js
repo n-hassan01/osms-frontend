@@ -307,7 +307,7 @@ export default function ShowLocationsAll() {
                             color="primary"
                             onClick={() => {
                               const locationId = location_id;
-                              navigate(`/dashboard/updatehrlocations/${locationId}`);
+                              navigate(`/dashboard/addhrlocations/${locationId}`);
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />

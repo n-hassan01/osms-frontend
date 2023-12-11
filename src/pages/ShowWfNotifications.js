@@ -12,6 +12,7 @@ import {
   Checkbox,
   Container,
   IconButton,
+  Link,
   MenuItem,
   Paper,
   Popover,
@@ -40,11 +41,9 @@ import { UserListHead } from '../sections/@dashboard/user';
 const TABLE_HEAD = [
   // { id: 'notification_id', label: 'Organization ID', alignRight: false },
 
-  { id: 'message_type', label: 'Message_Type', alignRight: false },
-  { id: 'message_name', label: 'Message Name', alignRight: false },
-  { id: 'recipient_role', label: 'Recipient Role', alignRight: false },
-
-  { id: 'original_recipient', label: 'Original Recipient ', alignRight: false },
+  { id: 'formUser', label: 'Form User', alignRight: false },
+  { id: 'subject', label: 'Subject', alignRight: false },
+  { id: 'sentDate', label: 'Sent Date', alignRight: false },
 
   { id: '' },
 ];
@@ -129,11 +128,8 @@ export default function ShowWfNotifications() {
   const [isDisableBan, setIsDisableBan] = useState(false);
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
- 
 
   const [user, setUser] = useState('');
-
-
 
   useEffect(() => {
     async function fetchData() {
@@ -255,7 +251,7 @@ export default function ShowWfNotifications() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Wf Notifications
+            Wf Notifications Panel
           </Typography>
           <div>
             <Button
@@ -297,11 +293,9 @@ export default function ShowWfNotifications() {
                     const {
                       notification_id,
 
-                      message_type,
-                      message_name,
-                      recipient_role,
-
-                      original_recipient,
+                      form_user,
+                      subject,
+                      sent_date,
                     } = row;
                     const selectedUser = selected.indexOf(notification_id) !== -1;
 
@@ -313,12 +307,17 @@ export default function ShowWfNotifications() {
 
                         {/* <TableCell align="left">{notification_id}</TableCell> */}
 
-                        <TableCell align="left">{message_type}</TableCell>
-
-                        <TableCell align="left">{message_name}</TableCell>
-                        <TableCell align="left">{recipient_role}</TableCell>
-
-                        <TableCell align="left">{original_recipient}</TableCell>
+                        <TableCell align="left">{form_user}</TableCell>
+                        <TableCell align="left">
+                          <Link
+                            onClick={() => {
+                              navigate(`/dashboard/wfNotificationView/${notification_id}`);
+                            }}
+                          >
+                            {subject}
+                          </Link>
+                        </TableCell>
+                        <TableCell align="left">{sent_date}</TableCell>
 
                         <TableCell align="right">
                           <IconButton
