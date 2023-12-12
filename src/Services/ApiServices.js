@@ -802,6 +802,16 @@ export const updateSalesOrderHeaderService = async (headerId, headerInfo) => {
   }
 };
 
+export const getSalesOrderHeaderService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}get-sales-order-header/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // sales order lines
 export const addSalesOrderLinesService = async (bodyInfo) => {
   try {
@@ -823,6 +833,15 @@ export const deleteSalesOrderLinesService = async (lineId) => {
   }
 };
 
+export const getSalesOrderLinesService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}sales-order-line/get/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 // procedure calls
 export const callSoApprovalService = async (bodyInfo) => {
   try {
