@@ -1,18 +1,18 @@
+/* eslint-disable no-else-return */
 /* eslint-disable camelcase */
-
+import axios from 'axios';
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-
 // @mui
-
 import {
   Button,
   Card,
   Checkbox,
   Container,
   IconButton,
+  Link,
   MenuItem,
   Paper,
   Popover,
@@ -25,29 +25,25 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-
+import { getLoggedInUserDetails } from '../Services/ApiServices';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
+// sections
+// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
+//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
+import OrganizationListToolbar from '../sections/@dashboard/user/OrganizationListToolbar';
 
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHead } from '../sections/@dashboard/user';
+
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'location_code', label: 'Location Code', alignRight: false },
+  // { id: 'notification_id', label: 'Organization ID', alignRight: false },
 
-  { id: 'description', label: 'Description', alignRight: false },
-
-  { id: 'inactive_date', label: 'Inactive Date', alignRight: false },
-  { id: 'address_line_1', label: 'Address Line1', alignRight: false },
-  { id: 'address_line_2', label: 'Address Line2', alignRight: false },
-  { id: 'address_line_3', label: 'Address Line3', alignRight: false },
-  { id: 'town_or_city', label: 'Town Or City', alignRight: false },
-  { id: 'country', label: 'Country', alignRight: false },
-  { id: 'postal_code', label: 'Postal Code', alignRight: false },
-  { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
-  { id: 'action', label: 'Action', alignRight: false },
+  { id: 'formUser', label: 'Form User', alignRight: false },
+  { id: 'subject', label: 'Subject', alignRight: false },
+  { id: 'sentDate', label: 'Sent Date', alignRight: false },
 
   { id: '' },
 ];
@@ -71,6 +67,18 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+// function applySortFilter(array, comparator, query) {
+//   const stabilizedThis = array.map((el, index) => [el, index]);
+//   stabilizedThis.sort((a, b) => {
+//     const order = comparator(a[0], b[0]);
+//     if (order !== 0) return order;
+//     return a[1] - b[1];
+//   });
+//   if (query) {
+//     return filter(array, (_user) => _user.notification_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+//   }
+//   return stabilizedThis.map((el) => el[0]);
+// }
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -78,13 +86,26 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   if (query) {
-    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => {
+      const notificationId = _user.notification_id;
+      const lowerCaseQuery = query.toLowerCase();
+
+      if (typeof notificationId === 'string') {
+        return notificationId.toLowerCase().indexOf(lowerCaseQuery) !== -1;
+      } else if (typeof notificationId === 'number') {
+        return notificationId.toString().indexOf(lowerCaseQuery) !== -1;
+      }
+
+      return false;
+    });
   }
+
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowLocationsAll() {
+export default function ShowWfNotifications() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -108,11 +129,18 @@ export default function ShowLocationsAll() {
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
 
+  const [user, setUser] = useState('');
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
+        const usersDetailslogin = await getLoggedInUserDetails();
+        console.log('user login', usersDetailslogin.data.id);
+        console.log('user out', user);
+        const usersDetails = await axios.post(`http://182.160.114.100:5001/get-wf-notifications`, {
+          body: usersDetailslogin.data.id,
+        });
+        console.log(('tutu', usersDetails));
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -120,11 +148,22 @@ export default function ShowLocationsAll() {
     }
 
     fetchData();
-  }, []);
+  }, [user]);
+
+  const handleOpenMenu = (event, status, email) => {
+    if (status === 'approved') setIsDisableApprove(true);
+    else setIsDisableApprove(false);
+
+    if (status === 'banned') setIsDisableBan(true);
+    else setIsDisableBan(false);
+
+    setSelectedUserEmail(email);
+
+    setOpen(event.currentTarget);
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
-    window.location.reload();
   };
 
   const approveUser = async () => {
@@ -144,7 +183,6 @@ export default function ShowLocationsAll() {
     };
 
     handleCloseMenu();
-    window.location.reload();
   };
 
   const handleRequestSort = (event, property) => {
@@ -155,12 +193,10 @@ export default function ShowLocationsAll() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.location_id);
+      const newSelecteds = USERLIST.map((n) => n.email);
       setSelected(newSelecteds);
-
       return;
     }
-    console.log('allselectedUsers : ', selectedUsers);
     setSelected([]);
   };
 
@@ -178,7 +214,7 @@ export default function ShowLocationsAll() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
-    console.log('toselectedUsers : ', selectedUsers);
+    console.log(typeof selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -195,6 +231,11 @@ export default function ShowLocationsAll() {
     setFilterName(event.target.value);
   };
 
+  // const handleClickOpen = (notification_id) => {
+
+  //   <UpdateHrOrganizationUnits notification_id={notification_id} />;
+  // };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -210,25 +251,25 @@ export default function ShowLocationsAll() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Locations
+            Wf Notifications Panel
           </Typography>
           <div>
             <Button
+              variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
-              variant="text"
               onClick={() => {
-                navigate('/dashboard/addhrlocations');
+                navigate('/dashboard/addhrorganization');
               }}
             >
-              Add Location
+              Add Wf Notifications
             </Button>
           </div>
         </Stack>
 
         <Card>
-          <UserListToolbar
+          <OrganizationListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -250,64 +291,41 @@ export default function ShowLocationsAll() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
-                      location_id,
-                      location_code,
+                      notification_id,
 
-                      description,
-
-                      inactive_date,
-                      address_line_1,
-                      address_line_2,
-                      address_line_3,
-                      town_or_city,
-                      country,
-                      postal_code,
-                      telephone_number_1,
+                      form_user,
+                      subject,
+                      sent_date,
                     } = row;
-                    const rowValues = [
-                      location_id,
-                      location_code,
-
-                      description,
-
-                      inactive_date,
-                      address_line_1,
-                      address_line_2,
-                      address_line_3,
-                      town_or_city,
-                      country,
-                      postal_code,
-                      telephone_number_1,
-                    ];
-
-                    const selectedUser = selected.indexOf(location_id) !== -1;
+                    const selectedUser = selected.indexOf(notification_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={notification_id} tabIndex={-1} role="checkbox">
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_id)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, notification_id)} />
                         </TableCell>
 
-                        <TableCell align="left">{location_code}</TableCell>
+                        {/* <TableCell align="left">{notification_id}</TableCell> */}
 
-                        <TableCell align="left">{description}</TableCell>
-
-                        <TableCell align="left">{inactive_date}</TableCell>
-                        <TableCell align="left">{address_line_1}</TableCell>
-                        <TableCell align="left">{address_line_2}</TableCell>
-                        <TableCell align="left">{address_line_3}</TableCell>
-                        <TableCell align="left">{town_or_city}</TableCell>
-                        <TableCell align="left">{country}</TableCell>
-                        <TableCell align="left">{postal_code}</TableCell>
-                        <TableCell align="left">{telephone_number_1}</TableCell>
+                        <TableCell align="left">{form_user}</TableCell>
+                        <TableCell align="left">
+                          <Link
+                            onClick={() => {
+                              navigate(`/dashboard/wfNotificationView/${notification_id}`);
+                            }}
+                          >
+                            {subject}
+                          </Link>
+                        </TableCell>
+                        <TableCell align="left">{sent_date}</TableCell>
 
                         <TableCell align="right">
                           <IconButton
                             size="large"
                             color="primary"
                             onClick={() => {
-                              const locationId = location_id;
-                              navigate(`/dashboard/addhrlocations/${locationId}`);
+                              const organizationId = notification_id;
+                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
