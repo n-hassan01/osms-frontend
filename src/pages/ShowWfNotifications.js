@@ -30,7 +30,7 @@ import Scrollbar from '../components/scrollbar';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 
-import { UserListHead } from '../sections/@dashboard/user';
+import ShowWfNotiHead from '../sections/@dashboard/user/ShowWfNotiHead';
 
 // ----------------------------------------------------------------------
 
@@ -262,7 +262,7 @@ export default function ShowWfNotifications() {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <ShowWfNotiHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
