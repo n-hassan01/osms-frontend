@@ -874,9 +874,9 @@ export const getWfNoficationViewService = async (requestInfo) => {
   }
 };
 
-export const getApprovalSequenceService = async () => {
+export const getApprovalSequenceService = async (requestInfo) => {
   try {
-    return await axios.get(`${usersUrl}so-approval/get-approval-seq`);
+    return await axios.get(`${usersUrl}so-approval/get-approval-seq/${requestInfo}`);
   } catch (err) {
     console.log(err.message);
 

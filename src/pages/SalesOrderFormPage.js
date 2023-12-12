@@ -154,9 +154,9 @@ export default function Page404() {
     if (confirm('Are you sure for this requisition?')) {
       const requestBody = {
         pHierarchyId: 1,
-        pTransactionId: 1,
-        pTransactionNum: '1',
-        pAppsUsername: 'asm',
+        pTransactionId: headerDetails.headerId,
+        pTransactionNum: headerDetails.orderNumber.toString(),
+        pAppsUsername: account.full_name,
       };
       const response = await callSoApprovalService(requestBody);
 
