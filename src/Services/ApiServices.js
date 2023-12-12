@@ -852,3 +852,34 @@ export const callSoApprovalService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const callReqApprovalFromPanelService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}so-approval/submit-approval/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// view calls
+export const getWfNoficationViewService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}wf-notification-view/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getApprovalSequenceService = async (requestInfo) => {
+  try {
+    return await axios.get(`${usersUrl}so-approval/get-approval-seq/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
