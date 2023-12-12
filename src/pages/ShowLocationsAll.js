@@ -219,7 +219,7 @@ export default function ShowLocationsAll() {
               startIcon={<Iconify icon="eva:plus-fill" />}
               variant="text"
               onClick={() => {
-                navigate('/dashboard/addhrlocations');
+                navigate(`/dashboard/addhrlocations/null`);
               }}
             >
               Add Location

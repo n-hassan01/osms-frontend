@@ -32,8 +32,6 @@ export default function LoginForm() {
       const response = await login(user);
 
       if (response.request.status === 200) {
-        alert(response.data.message);
-
         const token = response.data.value;
         const cookieName = 'jwt-token-cookie';
 
@@ -43,7 +41,7 @@ export default function LoginForm() {
 
         console.log(cookie);
 
-        navigate('/dashboard/dashclone');
+        navigate('/dashboard/app');
       } else {
         alert('Authentication failed! Try again');
       }
@@ -89,11 +87,11 @@ export default function LoginForm() {
       <Stack align="center" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <Typography variant="body2" color="text.secondary">
           {'Copyright © '}
-          <Link color="inherit" target="_blank" href="https://www.linkedin.com/in/naimul-hassan-432148197/">
-            Naimul Hassan
+          {new Date().getFullYear()}{' '}
+          <Link color="inherit" target="_blank" href="https://us.remarkhb.com/">
+            Remark HB Limited
           </Link>{' '}
-          {new Date().getFullYear()}
-          {'.'}
+          <span> All rights reserved.</span>
         </Typography>
       </Stack>
     </>
