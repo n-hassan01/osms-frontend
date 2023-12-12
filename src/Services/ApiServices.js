@@ -482,7 +482,7 @@ export const getHrAllOrganizationUnits = async () => {
   }
 };
 
-export const getPerHrLocationsDetails = async ( location_id ) => {
+export const getPerHrLocationsDetails = async (location_id) => {
   try {
     return await axios.get(`${usersUrl}get-per-hr-locations-all/${location_id}`);
   } catch (err) {
