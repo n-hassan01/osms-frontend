@@ -5,26 +5,26 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    ButtonGroup,
-    Checkbox,
-    Container,
-    Grid,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Typography,
+  Button,
+  ButtonGroup,
+  Checkbox,
+  Container,
+  Grid,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import {
-    callReqApprovalFromPanelService,
-    getApprovalSequenceService,
-    getSalesOrderHeaderService,
-    getSalesOrderLinesService,
-    getUserProfileDetails,
-    getWfNoficationViewService,
+  callReqApprovalFromPanelService,
+  getApprovalSequenceService,
+  getSalesOrderHeaderService,
+  getSalesOrderLinesService,
+  getUserProfileDetails,
+  getWfNoficationViewService,
 } from '../Services/ApiServices';
 import { UserListHead } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
@@ -155,17 +155,38 @@ export default function Page404() {
 
   const onApprove = async () => {
     const requestBody = {
-      pTransactionID: '',
-      pTransactionNum: '',
-      pAppsUsername: '',
-      pNotificationID: '',
-      pApprovalType: '',
-      pEmpid: '',
-      pNote: '',
+      pHierarchyId: 1,
+      pTransactionID: headerDetails.header_id,
+      pTransactionNum: headerDetails.order_number.toString(),
+      pAppsUsername: account.full_name,
+      pNotificationID: wfNotifications.notification_id,
+      pApprovalType: 'A',
+      pEmpid: 1,
+      pNote: 'A',
     };
     const response = await callReqApprovalFromPanelService(requestBody);
 
     console.log(response);
+  };
+
+  const onReject = async () => {
+    const requestBody = {
+      pHierarchyId: 1,
+      pTransactionID: headerDetails.header_id,
+      pTransactionNum: headerDetails.order_number.toString(),
+      pAppsUsername: account.full_name,
+      pNotificationID: wfNotifications.notification_id,
+      pApprovalType: 'R',
+      pEmpid: 1,
+      pNote: 'R',
+    };
+    const response = await callReqApprovalFromPanelService(requestBody);
+
+    console.log(response);
+  };
+
+  const onDone = async () => {
+    navigate('/dashboard/dashclone', { replace: true });
   };
 
   return (
@@ -190,7 +211,7 @@ export default function Page404() {
                 </Button>
                 <Button
                   style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  //   onClick={onClickDelete}
+                  onClick={onReject}
                 >
                   Reject
                 </Button>
@@ -202,7 +223,7 @@ export default function Page404() {
                 </Button>
                 <Button
                   style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
-                  //   onClick={handleAddRow}
+                    onClick={onDone}
                 >
                   Done
                 </Button>
