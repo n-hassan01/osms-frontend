@@ -7,6 +7,7 @@ import SimpleLayout from './layouts/simple';
 import DashClone from './pages/DashClone';
 import DashboardAppPage from './pages/DashboardAppPage';
 import LoginPage from './pages/LoginPage';
+import ManageSoPage from './pages/ManageSoPage';
 import MenuAssign from './pages/MenuAssign';
 import MenuCreation from './pages/MenuCreation';
 import MtlSystemItemPage from './pages/MtlSystemItemPage';
@@ -111,6 +112,7 @@ export default function Router() {
         { path: 'showwfnotifications', element: <ShowWfNotifications /> },
         { path: 'updatemainsystemmenu/:system_menu_id', element: <UpdateMainSystemMenu /> },
         { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
+        { path: 'manageSalesOrderForm', element: <ManageSoPage /> },
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
       ],
     },
