@@ -1,66 +1,59 @@
-
+/* eslint-disable react/jsx-key */
+/* eslint-disable camelcase */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-await-in-loop */
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { addHrLocationsDetailsService } from '../../../Services/Admin/AddHrLocations';
+import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
 
 export default function AddHrLocations() {
   const navigate = useNavigate();
-
+  const { location_id } = useParams();
+  console.log(location_id);
+  console.log(location_id === 'null');
+  const [e, setE] = useState();
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [showMenuLines, setShowMenuLines] = useState(false);
+  const [showMenuLines, setShowMenuLines] = useState(!(location_id === 'null'));
+  console.log(showMenuLines);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const [location, setLocation] = useState([
-    {
-      locationCode: '',
-      businessGroupId: 5,
-      description: '',
-      shipToLocationId: 3,
-      inventoryOrganizationId: 4,
+  const [clonelocation, setClonelocation] = useState([{}]);
 
-      addressLine1: '',
-      addressLine2: '',
-      addressLine3: '',
-      townOrCity: '',
-      country: '',
-      postalCode: '',
-      telephoneNumber1: '',
-      telephoneNumber2: '01533581070 ',
-      telephoneNumber3: '01533581070',
-      lastUpdateDate: '08-08-2023',
-      lastUpdatedBy: 1,
-      createdBy: 2,
-      creationDate: '07-08-2023',
-    },
-  ]);
-  const options = [
-    { value: 1, label: 'Admin' },
-    { value: 2, label: 'Writer' },
-    { value: 3, label: 'Viewer' },
-  ];
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        console.log('with brackets', { location_id });
+        console.log('without', typeof location_id);
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    return emailRegex.test(email);
-  };
+        console.log(typeof location_id);
+        if (location_id !== 'null') {
+          const result = await getPerHrLocationsDetailsService(parseInt(location_id, 10));
 
-  const validatePassword = (password) => password.length >= 6;
+          setClonelocation(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  console.log(clonelocation);
 
   const handleMenuChange = (index, name, value) => {
-    const updatedRows = [...location];
+    const updatedRows = [...clonelocation];
     updatedRows[index][name] = value;
-    setLocation(updatedRows);
-    console.log(location);
+    setClonelocation(updatedRows);
+    console.log(clonelocation);
   };
 
   const handleClickOpen = () => {
@@ -69,76 +62,112 @@ export default function AddHrLocations() {
   const [count, setCount] = useState(0);
   const handleClick = async () => {
     try {
-      console.log('loki', location);
+      console.log('clone', clonelocation.location_id);
 
-      const filteredArray = location.filter((item) => Object.values(item).some((value) => value !== ''));
+      const filteredArray = clonelocation.filter((item) => Object.values(item).some((value) => value !== ''));
 
       let c;
       for (c = 0; c < filteredArray.length; c++) {
         const lineInfo = filteredArray[c];
+        console.log('line info ', lineInfo);
+        if (location_id === 'null' || lineInfo.location_id === '') {
+          const requestBody = {
+            locationCode: lineInfo.location_code,
+            businessGroupId: '5',
+            description: lineInfo.description,
+            shipToLocationId: '3',
+            inventoryOrganizationId: '4',
 
-        const requestBody = {
-          locationCode: lineInfo.locationCode,
-          businessGroupId: 5,
-          description: lineInfo.description,
-          shipToLocationId: 3,
-          inventoryOrganizationId: 4,
+            addressLine1: lineInfo.address_line_1,
+            addressLine2: lineInfo.address_line_2,
+            addressLine3: lineInfo.address_line_3,
+            townOrCity: lineInfo.town_or_city,
+            country: lineInfo.country,
+            postalCode: lineInfo.postal_code,
+            telephoneNumber1: lineInfo.telephone_number_1,
+            telephoneNumber2: '01533581070 ',
+            telephoneNumber3: '01533581070',
+            lastUpdateDate: '08-08-2023',
+            lastUpdatedBy: '1',
+            createdBy: '2',
+            creationDate: '07-08-2023',
+          };
 
-          addressLine1: lineInfo.addressLine1,
-          addressLine2: lineInfo.addressLine2,
-          addressLine3: lineInfo.addressLine3,
-          townOrCity: lineInfo.townOrCity,
-          country: lineInfo.country,
-          postalCode: lineInfo.postalCode,
-          telephoneNumber1: lineInfo.telephoneNumber1,
-          telephoneNumber2: '01533581070 ',
-          telephoneNumber3: '01533581070',
-          lastUpdateDate: '08-08-2023',
-          lastUpdatedBy: 1,
-          createdBy: 2,
-          creationDate: '07-08-2023',
-        };
+          const response = await addHrLocationsDetailsService(requestBody);
+          console.log('Pass to home after request ');
+          handleClose();
+        } else {
+          const requestBody = {
+            locationId: lineInfo.location_id,
+            locationCode: lineInfo.location_code,
+            businessGroupId: '5',
+            description: lineInfo.description,
+            shipToLocationId: '3',
+            inventoryOrganizationId: '4',
 
-        const response = await addHrLocationsDetailsService(requestBody);
-        console.log('Pass to home after request ');
-        handleClose();
+            addressLine1: lineInfo.address_line_1,
+            addressLine2: lineInfo.address_line_2,
+            addressLine3: lineInfo.address_line_3,
+            townOrCity: lineInfo.town_or_city,
+            country: lineInfo.country,
+            postalCode: lineInfo.postal_code,
+            telephoneNumber1: lineInfo.telephone_number_1,
+            telephoneNumber2: '01533581070 ',
+            telephoneNumber3: '01533581070',
+            lastUpdateDate: '08-08-2023',
+            lastUpdatedBy: '1',
+            createdBy: '2',
+            creationDate: '07-08-2023',
+          };
+
+          const response = await axios.put(
+            `http://182.160.114.100:5001/update-hr-locations-all/${lineInfo.location_id}`,
+            requestBody
+          );
+          console.log('Pass to home after request ');
+          handleClose();
+        }
       }
-      setLocation([]);
+      setClonelocation([]);
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
     }
   };
   const handleAddRow = () => {
-    if (location.length === 1) setShowMenuLines(true);
-
+    console.log('ll', clonelocation.length);
+    if (clonelocation.length === 1) setShowMenuLines(true);
+   
+    console.log(clonelocation);
     if (showMenuLines) {
-      setLocation([
-        ...location,
+      console.log('dd', showMenuLines);
+      setClonelocation([
+        ...clonelocation,
         {
-          locationCode: '',
-          businessGroupId: 5,
+          location_id: '',
+          location_code: '',
+          business_group_id: '5',
           description: '',
-          shipToLocationId: 3,
-          inventoryOrganizationId: 4,
+          ship_to_location_id: '3',
+          inventory_organization_id: '4',
 
-          addressLine1: '',
-          addressLine2: '',
-          addressLine3: '',
-          townOrCity: '',
+          address_line_1: '',
+          address_line_2: '',
+          address_line_3: '',
+          town_or_city: '',
           country: '',
-          postalCode: '',
-          telephoneNumber1: '',
-          telephoneNumber2: '01533581070 ',
-          telephoneNumber3: '01533581070',
-          lastUpdateDate: '08-08-2023',
-          lastUpdatedBy: 1,
-          createdBy: 2,
-          creationDate: '07-08-2023',
+          postal_code: '',
+          telephone_number_1: '',
+          telephone_number_2: '01533581070 ',
+          telephone_number_3: '01533581070',
+          last_update_date: '08-08-2023',
+          last_updated_by: '1',
+          created_by: '2',
+          creation_date: '07-08-2023',
         },
       ]);
     }
-    console.log(location);
+    console.log(clonelocation);
   };
 
   const handleClose = () => {
@@ -211,13 +240,14 @@ export default function AddHrLocations() {
                 </thead>
                 <tbody>
                   {showMenuLines &&
-                    location.map((row, index) => (
+                    clonelocation.map((row, index) => (
                       <tr key={index}>
                         <td style={{ width: '150px' }}>
                           <input
                             type="text"
                             className="form-control"
-                            name="locationCode"
+                            name="location_code"
+                            value={row.location_code}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -227,6 +257,7 @@ export default function AddHrLocations() {
                             type="text"
                             className="form-control"
                             name="description"
+                            value={row.description}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -235,7 +266,8 @@ export default function AddHrLocations() {
                             style={{ width: '350px' }}
                             type="text"
                             className="form-control"
-                            name="addressLine1"
+                            name="address_line_1"
+                            value={row.address_line_1}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -244,7 +276,8 @@ export default function AddHrLocations() {
                             style={{ width: '350px' }}
                             type="text"
                             className="form-control"
-                            name="addressLine2"
+                            name="address_line_2"
+                            value={row.address_line_2}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -253,7 +286,8 @@ export default function AddHrLocations() {
                             style={{ width: '350px' }}
                             type="text"
                             className="form-control"
-                            name="addressLine3"
+                            name="address_line_3"
+                            value={row.address_line_3}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -262,7 +296,8 @@ export default function AddHrLocations() {
                             style={{ width: '200px' }}
                             type="text"
                             className="form-control"
-                            name="townOrCity"
+                            name="town_or_city"
+                            value={row.town_or_city}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -272,6 +307,7 @@ export default function AddHrLocations() {
                             type="text"
                             className="form-control"
                             name="country"
+                            value={row.country}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -280,7 +316,8 @@ export default function AddHrLocations() {
                             style={{ width: '150px' }}
                             type="text"
                             className="form-control"
-                            name="postalCode"
+                            name="postal_code"
+                            value={row.postal_code}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -289,7 +326,8 @@ export default function AddHrLocations() {
                             style={{ width: '350px' }}
                             type="text"
                             className="form-control"
-                            name="telephoneNumber1"
+                            name="telephone_number_1"
+                            value={row.telephone_number_1}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -299,7 +337,7 @@ export default function AddHrLocations() {
               </table>
             </div>
             {showMenuLines && (
-              <Grid item xs={3} style={{ marginTop: "20px" }}>
+              <Grid item xs={3} style={{ marginTop: '20px' }}>
                 <Button
                   style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
                   onClick={handleClick}

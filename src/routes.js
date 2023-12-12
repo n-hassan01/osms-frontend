@@ -4,7 +4,6 @@ import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import DashClone from './pages/DashClone';
 import DashboardAppPage from './pages/DashboardAppPage';
 import LoginPage from './pages/LoginPage';
 import ManageSoPage from './pages/ManageSoPage';
@@ -73,8 +72,8 @@ export default function Router() {
       //  element: <DashboardLayout />,
       element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
-        { element: <Navigate to="/dashboard/dashclone" />, index: true },
-        { path: 'dashclone', element: <DashClone /> },
+        { element: <Navigate to="/dashboard/app" />, index: true },
+        // { path: 'dashclone', element: <DashClone /> },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'settings', element: <SettingsPage /> },
@@ -95,7 +94,7 @@ export default function Router() {
         { path: 'addhrorganization', element: <AddHrOrganizationUnits /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
         { path: 'updatehrlocations/:location_id', element: <UpdateHrLocations /> },
-        { path: 'addhrlocations', element: <AddHrLocations /> },
+        // { path: 'addhrlocations', element: <AddHrLocations /> },
         { path: 'addhrlocations/:location_id', element: <AddHrLocations /> },
         { path: 'showfnduser', element: <ShowFndUser /> },
         { path: 'updatefnduser/:user_id', element: <UpdateFndUser /> },

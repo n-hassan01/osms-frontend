@@ -7,11 +7,8 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Button,
   Card,
-  Checkbox,
   Container,
-  IconButton,
   Link,
   MenuItem,
   Paper,
@@ -32,9 +29,8 @@ import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import OrganizationListToolbar from '../sections/@dashboard/user/OrganizationListToolbar';
 
-import { UserListHead } from '../sections/@dashboard/user';
+import ShowWfNotiHead from '../sections/@dashboard/user/ShowWfNotiHead';
 
 // ----------------------------------------------------------------------
 
@@ -250,36 +246,23 @@ export default function ShowWfNotifications() {
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            Wf Notifications Panel
+          <Typography variant="h5" gutterBottom>
+            Pending Notifications
           </Typography>
-          <div>
-            <Button
-              variant="text"
-              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-              color="primary"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => {
-                navigate('/dashboard/addhrorganization');
-              }}
-            >
-              Add Wf Notifications
-            </Button>
-          </div>
         </Stack>
 
         <Card>
-          <OrganizationListToolbar
+          {/* <OrganizationListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-          />
+          /> */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <ShowWfNotiHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -293,23 +276,24 @@ export default function ShowWfNotifications() {
                     const {
                       notification_id,
 
-                      form_user,
+                      from_user,
                       subject,
                       sent_date,
                     } = row;
                     const selectedUser = selected.indexOf(notification_id) !== -1;
 
                     return (
-                      <TableRow hover key={notification_id} tabIndex={-1} role="checkbox">
-                        <TableCell padding="checkbox">
+                      <TableRow hover key={notification_id} tabIndex={-1}>
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, notification_id)} />
-                        </TableCell>
+                        </TableCell> */}
 
                         {/* <TableCell align="left">{notification_id}</TableCell> */}
 
-                        <TableCell align="left">{form_user}</TableCell>
+                        <TableCell align="left">{from_user}</TableCell>
                         <TableCell align="left">
                           <Link
+                            style={{ cursor: 'pointer' }}
                             onClick={() => {
                               navigate(`/dashboard/wfNotificationView/${notification_id}`);
                             }}
@@ -319,7 +303,7 @@ export default function ShowWfNotifications() {
                         </TableCell>
                         <TableCell align="left">{sent_date}</TableCell>
 
-                        <TableCell align="right">
+                        {/* <TableCell align="right">
                           <IconButton
                             size="large"
                             color="primary"
@@ -330,7 +314,7 @@ export default function ShowWfNotifications() {
                           >
                             <Iconify icon={'tabler:edit'} />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}
