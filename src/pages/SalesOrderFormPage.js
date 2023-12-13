@@ -85,6 +85,7 @@ export default function Page404() {
       salesrepId: account.user_id,
       salesChannelCode: headerInfo.salesChannelCode,
       bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
+      description: headerInfo.description,
     };
     console.log(requestBody);
 
@@ -442,6 +443,20 @@ export default function Page404() {
                 style={{ marginLeft: '7px' }}
                 defaultValue={account.full_name}
                 readOnly
+              />
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '241px' }}>
+            <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
+              Description
+              <textarea
+                id="description"
+                name="description"
+                className="form-control"
+                style={{ marginLeft: '7px', height: '30px' }}
+                onChange={(e) => {
+                  onChangeHeader(e);
+                }}
               />
             </label>
           </div>
