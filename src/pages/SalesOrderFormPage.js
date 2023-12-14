@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-globals */
+import { format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,7 @@ import {
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getInventoryItemIdList,
-  getUserProfileDetails
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,13 @@ export default function Page404() {
     const day = String(now.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
+
+  const currentDate = new Date();
+
+ 
+  const lastTwoDigitsOfYear = String(currentDate.getFullYear()).slice(-2);
+  const formattedDate = format(currentDate, `dd/MM/${lastTwoDigitsOfYear}`);
 
   const [account, setAccount] = useState({});
   useEffect(() => {
@@ -160,11 +168,11 @@ export default function Page404() {
       };
       const response = await callSoApprovalService(requestBody);
 
-      if(response.status === 200) {
-        alert("Successfull!");
+      if (response.status === 200) {
+        alert('Successfull!');
         navigate('/dashboard/salesOrderForm', { replace: true });
       } else {
-        alert("Process failed! Please try later");
+        alert('Process failed! Please try later');
       }
       // window.location.reload();
     }
@@ -341,7 +349,7 @@ export default function Page404() {
           <div className="col-auto" style={{ width: '221px' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
               Ordered Date
-              <input type="date" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
+              <input  id="orderedDate" className="form-control" value={formattedDate} readOnly />
             </label>
           </div>
           <div className="col-auto" style={{ width: '221px' }}>

@@ -3,8 +3,9 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://182.160.114.100:5001/';
+ const usersUrl = 'http://182.160.114.100:5001/';
 
+ // const usersUrl = 'http://localhost:5001/';
 export const signup = async (user) => {
   try {
     return await axios.post(`${usersUrl}signup/`, user);
@@ -836,6 +837,19 @@ export const deleteSalesOrderLinesService = async (lineId) => {
 export const getSalesOrderLinesService = async (requestInfo) => {
   try {
     return await axios.get(`${usersUrl}sales-order-line/get/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getOrderNumberService = async (results,resultss) => {
+  const obj={
+    start:results,
+    end:resultss
+  }
+  try {
+    return await axios.post(`${usersUrl}get-order-number`,obj);
   } catch (err) {
     console.log(err.message);
 
