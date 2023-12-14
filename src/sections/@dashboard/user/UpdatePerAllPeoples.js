@@ -83,8 +83,8 @@ export default function UpdatePerAllPeoples() {
   };
 
   const handleClose = () => {
-    navigate('/dashboard/showperallpeoples');
-    window.location.reload();
+    // navigate('/dashboard/showperallpeoples');
+    // window.location.reload();
     setOpen(false);
   };
 
