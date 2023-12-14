@@ -73,7 +73,7 @@ export default function LoginPage() {
             <Typography variant="body2" sx={{ mb: 5 }}>
               Don’t have an account? {''}
               <Link variant="subtitle2" style={{ cursor: 'pointer' }} onClick={navigateToSignup}>
-                Create Customer Account
+                Create Business Partner/Employee Account
               </Link>
             </Typography>
 
