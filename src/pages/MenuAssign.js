@@ -4,23 +4,23 @@
 /* eslint-disable no-undef */
 /* eslint-disable import/named */
 
-import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Button, Container, Grid, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { addUserAssign, getFndUserIds, getMenuIds } from '../Services/ApiServices';
+
+// Add this import statement
 
 export default function MenuCreation() {
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState('');
   const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(false);
-  const [showLines, setShowLines] = useState(true);
 
   const [list, setList] = useState([]);
   const [originalList, setOriginalList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
-  const [tona, setTona] = useState();
 
   const handleReload = () => {
     window.location.reload();
@@ -30,13 +30,14 @@ export default function MenuCreation() {
     async function fetchData() {
       try {
         const response = await getFndUserIds();
-
+        console.log(response);
         if (response.status === 200) {
           setList(response.data);
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
+      console.log(list);
     }
 
     fetchData();
@@ -70,12 +71,19 @@ export default function MenuCreation() {
 
   const [i, setI] = useState(false);
   const handleMenuItemClick = (selectedItem) => {
-   
-    const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
-    setUser(selectedUser.user_id)
+    console.log(selectedItem);
     setUserInput(selectedItem);
-
     setFilteredList([]);
+    // const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
+    // console.log(selectedUser);
+    // setUserInput(selectedUser.user_name);
+    // console.log(userInput);
+    // setUser(selectedUser.user_id);
+    // console.log(user);
+    // setUserInput(selectedItem);
+
+    // console.log(userInput);
+    // setFilteredList([]);
   };
 
   const handleInputChange = (e) => {
@@ -83,11 +91,13 @@ export default function MenuCreation() {
     const input = e.target.value;
     console.log('ela', e.target.value);
     setUserInput(input);
+    console.log(userInput);
 
     // Filter the original list based on the input
     const filtered = originalList.filter((item) => item.toLowerCase().includes(input.toLowerCase()));
     setFilteredList(filtered);
   };
+
   const [count, setCount] = useState(0);
   const saveSubMenus = async () => {
     console.log('menurows:', menurows.length);
@@ -105,38 +115,41 @@ export default function MenuCreation() {
 
       const response = await addUserAssign(requestBody);
 
-      if (response === 200) {
-       
- 
+      if (response.status === 200) {
+        // Move this line outside the loop to clear the rows only once after all iterations
         setMenuRows([]);
-        
       }
     }
     setCount(c);
-    alert("Successfully added");
-    navigate('/dashboard/showmenus');
+    alert('Successfully added');
+    // navigate('/dashboard/showmenus');
 
-    window.location.reload();
-    
+    // window.location.reload();
   };
+
   const [menurows, setMenuRows] = useState([
     {
       menuId: '',
-
-      userId: user,
+      userId: userInput,
     },
   ]);
-  const handleAddRow = () => {
-    setMenuRows([
-      ...menurows,
-      {
-        menuId: '',
 
-        userId: user,
-      },
-    ]);
+  const handleAddRow = () => {
+    console.log(menurows.user);
+    setUserInput('');
+    if (menurows.length === 1) setShowMenuLines(true);
+    if (showMenuLines) {
+      setMenuRows([
+        ...menurows,
+        {
+          menuId: '',
+          userId: '',
+        },
+      ]);
+    }
     console.log(menurows);
   };
+
   const handleInputChanges = (index, name, value) => {
     console.log('index', index);
     console.log('name', name);
@@ -144,6 +157,13 @@ export default function MenuCreation() {
     const updatedRows = [...menurows];
     updatedRows[index][name] = value;
     setMenuRows(updatedRows);
+  };
+  const handleClose = () => {
+    navigate('/dashboard/menuassign');
+
+    window.location.reload();
+
+    setOpen(false);
   };
 
   console.log('mm', menurows);
@@ -159,11 +179,26 @@ export default function MenuCreation() {
             Assign Menu
           </Typography>
         </Stack>
-        <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row' }}>
-        
+        <Grid item xs={3}>
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={() => {
+              handleAddRow();
+            }}
+          >
+            Menu Assign
+          </Button>
 
+          <Button
+            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
+        </Grid>
+        <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row' }}>
           <div>
-            <form className="form-horizontal" style={{ marginTop: '3%', width: '400px' }}>
+            <form className="form-horizontal" style={{ marginTop: '5%' }}>
               <div className="table-responsive">
                 <table className="table table-bordered table-striped table-highlight">
                   <thead>
@@ -171,64 +206,34 @@ export default function MenuCreation() {
                       <th>
                         User ID <span style={{ color: 'red' }}>*</span>
                       </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <input
-                      type="text"
-                      placeholder="Type User ID "
-                      value={userInput}
-                      onChange={handleInputChange}
-                      style={{ marginTop: '18px' }}
-                    />
-                    {i === true && (
-                      <ul style={{ marginTop: '18px' }}>
-                        {filteredList.map((item, index) => (
-                          <>
-                            <MenuItem key={index} value={item} onClick={() => handleMenuItemClick(item)}>
-                              {item}
-                            </MenuItem>
-                          </>
-                        ))}
-                      </ul>
-                    )}
-                      
-            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2} style={{marginTop:"5px"}}>
-              <Button onClick={handleReload}>Add New User</Button>
-              <Button
-                style={{ marginLeft: '5px' }}
-                onClick={() => {
-                  handleAddRow();
-
-                  
-                }}
-              >
-                Add Menu ID
-              </Button>
-            </ButtonGroup>
-          
-                  </tbody>
-                </table>
-              </div>
-           
-            </form>
-          </div>
-
-          <div>
-            <form className="form-horizontal" style={{ marginTop: '4%', width: '300px' }}>
-              <div className="table-responsive">
-                <table className="table table-bordered table-striped table-highlight">
-                  <thead>
-                    <tr>
                       <th>
-                        Menu Name <span style={{ color: 'red' }}>*</span>
+                        Menu Description <span style={{ color: 'red' }}>*</span>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {showLines &&
+                    {showMenuLines &&
                       menurows.map((row, index) => (
                         <tr key={index}>
+                          <td style={{ width: '190px' }}>
+                            <input
+                              type="text"
+                              placeholder="Type User ID "
+                              value={userInput}
+                              onChange={handleInputChange}
+                              style={{ marginTop: '18px' }}
+                            />
+                            {i === true && (
+                              <ul style={{ marginTop: '18px' }}>
+                                {filteredList.map((item, index) => (
+                                  <MenuItem key={index} value={item} onClick={() => handleMenuItemClick(item)}>
+                                    {item}
+                                  </MenuItem>
+                                ))}
+                              </ul>
+                            )}
+                          </td>
+
                           <td>
                             <TextField
                               select
@@ -245,30 +250,34 @@ export default function MenuCreation() {
                               <MenuItem value={null}>
                                 <em />
                               </MenuItem>
-                              {menuids.map((id, index) => (
-                                <MenuItem key={index} value={id.menu_id}>
-                                  {id.menu_description}
-                                </MenuItem>
-                              ))}
+                              {/* Check if menuids is defined before mapping over it */}
+                              {menuids &&
+                                menuids.map((id, index) => (
+                                  <MenuItem key={index} value={id.menu_id}>
+                                    {id.menu_description}
+                                  </MenuItem>
+                                ))}
                             </TextField>
                           </td>
-                          {/* <td>
-                            <Button>
-                              <AddIcon onClick={handleAddRow} />
-                            </Button>
-                          </td> */}
                         </tr>
                       ))}
                   </tbody>
                 </table>
               </div>
-              {showLines && (
+              {showMenuLines && (
                 <Grid item xs={3}>
-                  <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                    <Button variant="contained" style={{ marginRight: '10px' }} onClick={saveSubMenus}>
-                      Save Menu
-                    </Button>
-                  </ButtonGroup>
+                  <Button
+                    style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                    onClick={saveSubMenus}
+                  >
+                    Submit
+                  </Button>
+                  <Button
+                    style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                    onClick={handleClose}
+                  >
+                    Cancel
+                  </Button>
                 </Grid>
               )}
             </form>

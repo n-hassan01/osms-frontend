@@ -1,6 +1,7 @@
 /* eslint-disable no-else-return */
 /* eslint-disable camelcase */
 import axios from 'axios';
+import { format } from 'date-fns';
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -22,7 +23,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { getLoggedInUserDetails } from '../Services/ApiServices';
+import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -126,6 +127,35 @@ export default function ShowWfNotifications() {
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
 
   const [user, setUser] = useState('');
+  const currentDate = new Date();
+
+  const lastTwoDigitsOfYear = String(currentDate.getFullYear()).slice(-2);
+  const formattedDate = format(currentDate, `dd/MM/${lastTwoDigitsOfYear}`);
+  console.log('lastTwoDigitsOfYear', lastTwoDigitsOfYear);
+  console.log('formattedDate', formattedDate);
+
+  const generateNumber = async () => {
+    const now = new Date();
+    const h = '0001';
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const months = String(now.getMonth() + 2).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    const results = `${day}${month}${h}`;
+    const resultss = `${day}${months}${h}`;
+    const usersDetails = await getOrderNumberService(results, resultss);
+
+    if (usersDetails.data[0].max !== null) {
+      console.log(usersDetails.data[0].max + 1);
+      return usersDetails.data[0].max + 1;
+    } else {
+      console.log(results);
+      return results;
+    }
+  };
+
+  const generatedNumber1 = generateNumber();
+  console.log(generatedNumber1);
 
   useEffect(() => {
     async function fetchData() {

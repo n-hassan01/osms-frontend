@@ -227,7 +227,7 @@ export default function ShowPerAllPeoples() {
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/dashboard/addperallpeoples');
+                navigate('/dashboard/addperallpeoples/null');
               }}
             >
               Add PerAllPeoples
@@ -296,7 +296,7 @@ export default function ShowPerAllPeoples() {
                             color="primary"
                             onClick={() => {
                               const personId = person_id;
-                              navigate(`/dashboard/updateperallpeoples/${personId}`);
+                              navigate(`/dashboard/addperallpeoples/${personId}`);
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
