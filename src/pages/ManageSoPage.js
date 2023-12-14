@@ -9,27 +9,24 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography
+  Card,
+  Container,
+  Link,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import {
-    getSalesOrderHeadersByUserService,
-    getUserProfileDetails
-} from '../Services/ApiServices';
+import { getSalesOrderHeadersByUserService, getUserProfileDetails } from '../Services/ApiServices';
 import SoListHead from '../sections/@dashboard/salesOrders/SoListHeader';
 import SoListToolbar from '../sections/@dashboard/salesOrders/SoListToolbar';
 
@@ -103,7 +100,7 @@ export default function UserPage() {
   }, []);
   console.log(account);
 
-//   const [soDetails, setsoDetails] = useState([]);
+  //   const [soDetails, setsoDetails] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
