@@ -40,7 +40,6 @@ import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
 import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
-import UpdatePerAllPeoples from './sections/@dashboard/user/UpdatePerAllPeoples';
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -94,7 +93,6 @@ export default function Router() {
         { path: 'addhrorganization', element: <AddHrOrganizationUnits /> },
         { path: 'showlocationsall', element: <ShowLocationsAll /> },
         { path: 'updatehrlocations/:location_id', element: <UpdateHrLocations /> },
-        // { path: 'addhrlocations', element: <AddHrLocations /> },
         { path: 'addhrlocations/:location_id', element: <AddHrLocations /> },
         { path: 'showfnduser', element: <ShowFndUser /> },
         { path: 'updatefnduser/:user_id', element: <UpdateFndUser /> },
@@ -103,8 +101,7 @@ export default function Router() {
         { path: 'addmtltransactiontypes', element: <AddMtlTransactionTypes /> },
         { path: 'updatemtltransactiontypes/:transaction_type_id', element: <UpdateMtlTransactionTypes /> },
         { path: 'showperallpeoples', element: <ShowPerAllPeoples /> },
-        { path: 'addperallpeoples', element: <AddPerAllPeoples /> },
-        { path: 'updateperallpeoples/:person_id', element: <UpdatePerAllPeoples /> },
+        { path: 'addperallpeoples/:person_id', element: <AddPerAllPeoples /> },
         { path: 'menucreation', element: <MenuCreation /> },
         { path: 'menuassign', element: <MenuAssign /> },
         { path: 'showmainsystemmenu', element: <ShowMainSystemMenu /> },

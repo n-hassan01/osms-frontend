@@ -12,6 +12,7 @@ import Iconify from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
+
   const initialUser = {
     id: '',
     password: '',
@@ -54,7 +55,7 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="id" label="ID" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+        <TextField name="id" label="Code/ID" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
 
         <TextField
           name="password"
