@@ -62,11 +62,14 @@ export default function Header({ onOpenNav }) {
         </IconButton>
 
         <HomeIcon
+          sx={{
+            fontSize: 25,
+            cursor: 'pointer',
+          }}
           onClick={() => {
             navigate(`/dashboard/app`);
           }}
           color="action"
-          sx={{ fontSize: 25 }}
         />
 
         {/* <Searchbar /> */}

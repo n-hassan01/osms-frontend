@@ -8,6 +8,7 @@ import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } fro
 import {
   addSalesOrderLinesService,
   callSoApprovalService,
+  deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getInventoryItemIdList,
   getSalesOrderHeaderService,
@@ -15,6 +16,7 @@ import {
   getUserProfileDetails,
   // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
+  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
@@ -112,7 +114,7 @@ export default function Page404() {
 
   const [filteredItemList, setFilteredItemList] = useState([]);
 
-//   const [headerInfo, setHeaderInfo] = useState({});
+  //   const [headerInfo, setHeaderInfo] = useState({});
   const onChangeHeader = (e) => {
     setSoHeaderDetails({ ...soHeaderDetails, [e.target.name]: e.target.value });
   };
@@ -124,63 +126,20 @@ export default function Page404() {
 
   const saveHeader = async () => {
     const requestBody = {
-      shippingMethodCode: soHeaderDetails.shipping_method_code,
-      description: soHeaderDetails.description,
+      lastUpdatedBy: account.user_id,
+      shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
+      description: soHeaderDetails.description ? soHeaderDetails.description : '',
     };
     console.log(requestBody);
 
-    // if(headerDetails.headerId) {
-    //   const response = await addSalesOrderHeaderService(requestBody);
-    // }
-
     const response = await updateSalesOrderHeaderService(soHeaderDetails.header_id, requestBody);
     if (response.status === 200) {
-      setHeaderDetails({
-        headerId: response.data.headerInfo[0].header_id,
-        orderNumber: response.data.headerInfo[0].order_number,
-      });
       console.log(response.data);
+      saveLines();
     } else {
       alert('Process failed! Try again');
     }
   };
-
-  //   const [rows, setRows] = useState([
-  //     {
-  //       orderedItem: '',
-  //       orderQuantityUom: '',
-  //       orderedQuantity: null,
-  //       soldFromOrgId: null,
-  //       inventoryItemId: null,
-  //       unitSellingPrice: null,
-  //       selectedItemName: '',
-  //       selectedItem: {},
-  //       showList: false,
-  //       lineId: null,
-  //     },
-  //   ]);
-
-  //   const handleAddRow = () => {
-  //     if (rows.length === 1) setShowLines(true);
-  //     if (showLines) {
-  //       setRows([
-  //         ...rows,
-  //         {
-  //           orderedItem: '',
-  //           orderQuantityUom: '',
-  //           orderedQuantity: null,
-  //           soldFromOrgId: null,
-  //           inventoryItemId: null,
-  //           unitSellingPrice: null,
-  //           selectedItemName: '',
-  //           selectedItem: {},
-  //           showList: false,
-  //           lineId: null,
-  //         },
-  //       ]);
-  //     }
-  //     console.log(rows);
-  //   };
 
   const handleAddRow = () => {
     // if (rows.length === 1) setShowLines(true);
@@ -262,7 +221,6 @@ export default function Page404() {
         },
       ]);
     }
-    // console.log(rows);
   };
 
   const handleInputChange = (index, name, value) => {
@@ -307,34 +265,63 @@ export default function Page404() {
     console.log(filteredArray);
 
     filteredArray.forEach(async (lineInfo, index) => {
-      const requestBody = {
-        headerId: headerDetails.headerId,
-        lineNumber: index + 1,
-        inventoryItemId: lineInfo.selectedItem.inventory_item_id
-          ? lineInfo.selectedItem.inventory_item_id
-          : lineInfo.inventory_item_id,
-        creationDate: getCurrentDate(),
-        createdBy: account.user_id,
-        orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.ordered_item,
-        orderQuantityUom: lineInfo.selectedItem.primary_uom_code
-          ? lineInfo.selectedItem.primary_uom_code
-          : lineInfo.order_quantity_uom,
-        orderedQuantity: lineInfo.orderedQuantity,
-        soldFromOrgId: lineInfo.soldFromOrgId,
-        unitSellingPrice: lineInfo.unitSellingPrice,
-      };
-      console.log(requestBody);
+      console.log(lineInfo.line_id);
+      console.log(lineInfo);
+      if (lineInfo.line_id) {
+        console.log(lineInfo);
+        const requestBody = {
+          // headerId: headerDetails.headerId,
+          // lineNumber: index + 1,
+          inventoryItemId: lineInfo.inventory_item_id,
+          // creationDate: getCurrentDate(),
+          // createdBy: account.user_id,
+          orderedItem: lineInfo.ordered_item,
+          orderQuantityUom: lineInfo.order_quantity_uom,
+          orderedQuantity: lineInfo.ordered_quantity,
+          // soldFromOrgId: lineInfo.soldFromOrgId,
+          unitSellingPrice: lineInfo.unit_sellin_gprice,
+        };
+        console.log(requestBody);
 
-      const response = await addSalesOrderLinesService(requestBody);
+        // const response = await addSalesOrderLinesService(requestBody);
+        const response = await updateSalesOrderLineService(lineInfo.line_id, requestBody);
 
-      if (response.status === 200) {
-        console.log(response.data);
+        if (response.status === 200) {
+          console.log(response.data);
 
-        setShowApprovalButton(true);
-        handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-        setShowSaveLine(true);
+          // setShowApprovalButton(true);
+          // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
+          // setShowSaveLine(true);
+        } else {
+          setShowApprovalButton(false);
+        }
       } else {
-        setShowApprovalButton(false);
+        console.log(soHeaderDetails.header_id);
+        const requestBody = {
+          headerId: soHeaderDetails.header_id,
+          lineNumber: index + 1,
+          inventoryItemId: lineInfo.selectedItem.inventory_item_id,
+          // creationDate: getCurrentDate(),
+          createdBy: account.user_id,
+          orderedItem: lineInfo.selectedItem.description,
+          orderQuantityUom: lineInfo.selectedItem.primary_uom_code,
+          orderedQuantity: lineInfo.ordered_quantity,
+          soldFromOrgId: lineInfo.sold_from_org_id,
+          unitSellingPrice: lineInfo.unit_selling_price,
+        };
+        console.log(requestBody);
+
+        const response = await addSalesOrderLinesService(requestBody);
+
+        if (response.status === 200) {
+          console.log(response.data);
+
+          setShowApprovalButton(true);
+          handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
+          setShowSaveLine(true);
+        } else {
+          setShowApprovalButton(false);
+        }
       }
     });
   };
@@ -346,8 +333,10 @@ export default function Page404() {
   // Function to handle row selection
   const handleRowSelect = (index, row) => {
     console.log(row);
+    console.log(index);
     const updatedSelectedLines = [...selectedLines];
     const lineIndex = updatedSelectedLines.indexOf(row.lineId);
+    console.log(lineIndex);
 
     const updatedSelectedRows = [...selectedRows];
     const rowIndex = updatedSelectedRows.indexOf(index);
@@ -359,13 +348,16 @@ export default function Page404() {
     }
 
     if (lineIndex === -1) {
-      updatedSelectedLines.push(row.lineId);
+      updatedSelectedLines.push(row.line_id);
     } else {
       updatedSelectedLines.splice(lineIndex, 1);
     }
 
     setSelectedRows(updatedSelectedRows);
     setSelectedLines(updatedSelectedLines);
+
+    console.log(updatedSelectedLines);
+    console.log(updatedSelectedRows);
 
     console.log(selectedLines);
   };
@@ -382,9 +374,9 @@ export default function Page404() {
   //     setSelectedRows([]);
   //   };
 
-//   const onChecked = (event) => {
-//     setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
-//   };
+  //   const onChecked = (event) => {
+  //     setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
+  //   };
 
   const handleDeleteLines = () => {
     console.log(selectedLines);
@@ -397,26 +389,27 @@ export default function Page404() {
 
   const onClickDelete = async () => {
     // const isEmptyObject =
-    //   Object.values(rows[0]).every((value) => value === null || value === '') &&
+    //   Object.values(soLineDetails[0]).every((value) => value === null || value === '') &&
     //   !Object.values(headerDetails).every((value) => value === null);
     // console.log(isEmptyObject);
-    // if (
-    //   selectedLines.length === 0 &&
-    //   rows.length > 0 &&
-    //   !Object.values(rows[0]).every((value) => value === null || value === '')
-    // ) {
-    //   alert('Please select lines to delete');
-    // } else if (selectedLines.length === 0 && rows.length === 0) {
-    //   if (confirm('Are you sure to delete the requisition?')) {
-    //     await deleteSalesOrderHeaderService(headerDetails.orderNumber);
-    //     window.location.reload();
-    //   }
-    // } else if (selectedLines.length > 0 && rows.length > 0) {
-    //   if (confirm('Are you sure to delete the lines?')) {
-    //     handleDeleteLines();
-    //     handleDeleteRows();
-    //   }
-    // }
+
+    if (
+      selectedLines.length === 0 &&
+      soLineDetails.length > 0 &&
+      !Object.values(soLineDetails[0]).every((value) => value === null || value === '')
+    ) {
+      alert('Please select lines to delete');
+    } else if (selectedLines.length === 0 && soLineDetails.length === 0) {
+      if (confirm('Are you sure to delete the requisition?')) {
+        await deleteSalesOrderHeaderService(soHeaderDetails.order_number);
+        window.location.reload();
+      }
+    } else if (selectedLines.length > 0 && soLineDetails.length > 0) {
+      if (confirm('Are you sure to delete the lines?')) {
+        handleDeleteLines();
+        handleDeleteRows();
+      }
+    }
   };
 
   // const [isReadOnly, setIsReadOnly] = useState(false);
@@ -502,7 +495,7 @@ export default function Page404() {
                 id="orderNumber"
                 name="orderNumber"
                 className="form-control"
-                style={{ marginLeft: '7px' }}
+                style={{ marginLeft: '7px', width: '100px' }}
                 // value={headerDetails.orderNumber}
                 value={soHeaderDetails.order_number}
                 readOnly
@@ -568,27 +561,6 @@ export default function Page404() {
               />
             </label>
           </div>
-          {/* <Grid container spacing={2}>
-            <Grid item xs={3}>
-              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button
-                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={saveHeader}
-                >
-                  Save
-                </Button>
-                <Button
-                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={onClickDelete}
-                >
-                  Delete
-                </Button>
-                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
-                  Add Lines
-                </Button>
-              </ButtonGroup>
-            </Grid>
-          </Grid> */}
         </div>
 
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
@@ -721,44 +693,39 @@ export default function Page404() {
           <Grid item xs={3}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
               <Button
-                style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={saveHeader}
               >
                 Save
               </Button>
               <Button
-                style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={onClickDelete}
               >
                 Delete
               </Button>
-              <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
+              <Button
+                style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={handleAddRow}
+              >
                 Add Lines
+              </Button>
+              <Button
+                style={{
+                  whiteSpace: 'nowrap',
+                  display: showApprovalButton,
+                  marginLeft: '10px',
+                  backgroundColor: 'lightgray',
+                  color: 'black',
+                }}
+                // disabled={showApprovalButton === 'none'}
+                onClick={submitRequisition}
+              >
+                Approval
               </Button>
             </ButtonGroup>
           </Grid>
         </Grid>
-        {/* {showLines && (
-          <Grid item xs={3}>
-            <Button
-              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-              onClick={saveLines}
-              disabled={showSaveLine}
-            >
-              Save
-            </Button>
-            {showApprovalButton && (
-              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button
-                  style={{ display: { showApprovalButton }, backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={submitRequisition}
-                >
-                  Approval
-                </Button>
-              </ButtonGroup>
-            )}
-          </Grid>
-        )} */}
       </Container>
     </>
   );
