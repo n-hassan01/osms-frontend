@@ -28,6 +28,7 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import ShowWfNotifications from './pages/ShowWfNotifications';
 import SignupPage from './pages/SignupPage';
+import UpdateSalesOrderForm from './pages/UpdateSalesOrderFormPage';
 import WfNotificationView from './pages/WfNotificationViewPage';
 import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
@@ -112,7 +113,9 @@ export default function Router() {
         { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
         { path: 'manageSalesOrderForm', element: <ManageSoPage /> },
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
+        { path: 'updateSalesOrderForm/:header_id', element: <UpdateSalesOrderForm /> },
         { path: 'showauthstatus', element: <ShowAuthStatus /> },
+
       ],
     },
 
