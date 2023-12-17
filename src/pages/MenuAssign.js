@@ -8,7 +8,7 @@ import { Button, Container, Grid, MenuItem, Stack, TextField, Typography } from 
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { addUserAssign, getFndUserIds, getMenuIds } from '../Services/ApiServices';
+import { addUserAssign, getFndUserIds, getMenusDetails } from '../Services/ApiServices';
 
 // Add this import statement
 
@@ -57,8 +57,8 @@ export default function MenuCreation() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getMenuIds();
-        console.log('hhh', response.data);
+        const response = await getMenusDetails();
+        console.log('hhh', response);
         if (response) setMenuIds(response.data);
         console.log(menuids);
       } catch (error) {
@@ -70,27 +70,28 @@ export default function MenuCreation() {
   }, []);
 
   const [i, setI] = useState(false);
-  const handleMenuItemClick = (selectedItem) => {
-    console.log(selectedItem);
-    setUserInput(selectedItem);
-    setFilteredList([]);
-    // const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
-    // console.log(selectedUser);
-    // setUserInput(selectedUser.user_name);
-    // console.log(userInput);
-    // setUser(selectedUser.user_id);
-    // console.log(user);
-    // setUserInput(selectedItem);
+  // const handleMenuItemClick = (selectedItem) => {
+  //   console.log(selectedItem);
+  //   setUserInput(selectedItem);
+  //   console.log(userInput);
+  //   setFilteredList([]);
+  //   // const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
+  //   // console.log(selectedUser);
+  //   // setUserInput(selectedUser.user_name);
+  //   // console.log(userInput);
+  //   // setUser(selectedUser.user_id);
+  //   // console.log(user);
+  //   // setUserInput(selectedItem);
 
-    // console.log(userInput);
-    // setFilteredList([]);
-  };
+  //   // console.log(userInput);
+  //   // setFilteredList([]);
+  // };
 
   const handleInputChange = (e) => {
     setI(true);
     const input = e.target.value;
     console.log('ela', e.target.value);
-    setUserInput(input);
+    // setUserInput(input);
     console.log(userInput);
 
     // Filter the original list based on the input
@@ -130,9 +131,13 @@ export default function MenuCreation() {
   const [menurows, setMenuRows] = useState([
     {
       menuId: '',
-      userId: userInput,
+      userId: '',
+      selectedItemName: '',
+      selectedItem: {},
+      showList: false,
     },
   ]);
+  console.log(userInput);
 
   const handleAddRow = () => {
     console.log(menurows.user);
@@ -144,6 +149,9 @@ export default function MenuCreation() {
         {
           menuId: '',
           userId: '',
+          selectedItemName: '',
+          selectedItem: {},
+          showList: false,
         },
       ]);
     }
@@ -156,7 +164,36 @@ export default function MenuCreation() {
     console.log('value', value);
     const updatedRows = [...menurows];
     updatedRows[index][name] = value;
+
     setMenuRows(updatedRows);
+  };
+  const handleInputItemChange = (index, event) => {
+    const input = event.target.value;
+    const name = 'selectedItemName';
+    const show = 'showList';
+
+    const updatedRows = [...rows];
+    updatedRows[index][name] = input;
+    updatedRows[index][show] = true;
+    setRows(updatedRows);
+    console.log(rows);
+
+    // Filter the original list based on the input
+    console.log(inventoryItemIds);
+    const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
+    setFilteredItemList(filtered);
+  };
+  const handleMenuItemClick = (index, item) => {
+    const name = 'selectedItemName';
+    const selected = 'selectedItem';
+    const show = 'showList';
+
+    const updatedRows = [...rows];
+    updatedRows[index][name] = item.description;
+    updatedRows[index][selected] = item;
+    updatedRows[index][show] = false;
+    setRows(updatedRows);
+    console.log(rows);
   };
   const handleClose = () => {
     navigate('/dashboard/menuassign');
@@ -218,16 +255,21 @@ export default function MenuCreation() {
                           <td style={{ width: '190px' }}>
                             <input
                               type="text"
+                              name="userId"
                               placeholder="Type User ID "
-                              value={userInput}
-                              onChange={handleInputChange}
+                              value={row.selectedItemName}
+                              onChange={(e) => handleInputItemChange(index, e)}
                               style={{ marginTop: '18px' }}
                             />
-                            {i === true && (
+                            {row.showList && (
                               <ul style={{ marginTop: '18px' }}>
                                 {filteredList.map((item, index) => (
-                                  <MenuItem key={index} value={item} onClick={() => handleMenuItemClick(item)}>
-                                    {item}
+                                  <MenuItem
+                                    key={index}
+                                    value={item}
+                                    onClick={(e) => handleMenuItemClick(index,item)}
+                                  >
+                                    {item.description}
                                   </MenuItem>
                                 ))}
                               </ul>
