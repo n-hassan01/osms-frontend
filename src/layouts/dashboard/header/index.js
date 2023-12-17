@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import { AppBar, Box, IconButton, Stack, Toolbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
+import HomeIcon from '@mui/icons-material/Home';
+import { useNavigate } from 'react-router-dom';
 import { bgBlur } from '../../../utils/cssStyles';
 // components
 import Iconify from '../../../components/iconify';
+
 //
 import AccountPopover from './AccountPopover';
 import NotificationsPopover from './NotificationsPopover';
@@ -42,9 +45,10 @@ Header.propTypes = {
 };
 
 export default function Header({ onOpenNav }) {
+  const navigate = useNavigate();
   return (
     <StyledRoot>
-      <StyledToolbar style={{boxShadow: '1px 1px #ced4da'}}>
+      <StyledToolbar style={{ boxShadow: '1px 1px #ced4da' }}>
         <IconButton
           onClick={onOpenNav}
           sx={{
@@ -52,10 +56,18 @@ export default function Header({ onOpenNav }) {
             color: 'text.primary',
             // display: { lg: 'none' },
           }}
-          style={{padding: '0'}}
+          style={{ padding: '0' }}
         >
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
+
+        <HomeIcon
+          onClick={() => {
+            navigate(`/dashboard/app`);
+          }}
+          color="action"
+          sx={{ fontSize: 25 }}
+        />
 
         {/* <Searchbar /> */}
         <Box sx={{ flexGrow: 1 }} />

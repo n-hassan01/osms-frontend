@@ -1,34 +1,34 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-  addSalesOrderHeaderService,
   addSalesOrderLinesService,
   callSoApprovalService,
-  createSalesOrderNumberService,
-  deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getInventoryItemIdList,
+  getSalesOrderHeaderService,
+  getSalesOrderLinesService,
   getUserProfileDetails,
+  // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
   const navigate = useNavigate();
+  const { header_id } = useParams();
+  console.log('headerId', header_id);
 
   function getCurrentDate() {
     const now = new Date();
-    // const year = now.getFullYear();
-    const year = String(now.getFullYear()).slice(-2);
+    const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    // return `${year}-${month}-${day}`;
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   function getFormattedDate(value) {
@@ -38,10 +38,6 @@ export default function Page404() {
     const day = String(date.getDate()).padStart(2, '0');
     return `${day}/${month}/${year}`;
   }
-
-  // const [showSaveLine, setShowSaveLine] = useState(false);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedLines, setSelectedLines] = useState([]);
 
   const [account, setAccount] = useState({});
   useEffect(() => {
@@ -61,22 +57,6 @@ export default function Page404() {
   }, []);
   console.log(account);
 
-  const [salesOrderNumber, setSalesOrderNumber] = useState(null);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await createSalesOrderNumberService(); // Call your async function here
-        if (response.status === 200) setSalesOrderNumber(response.data.fn_create_so_number); // Set the account details in the component's state
-      } catch (error) {
-        // Handle any errors that might occur during the async operation
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData(); // Call the async function when the component mounts
-  }, []);
-  console.log(salesOrderNumber);
-
   const [inventoryItemIds, setInventoryItemIds] = useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -92,171 +72,214 @@ export default function Page404() {
   }, []);
   console.log(inventoryItemIds);
 
+  const [soHeaderDetails, setSoHeaderDetails] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getSalesOrderHeaderService(parseInt(header_id, 10));
+        if (response) setSoHeaderDetails(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  console.log('soHeaderDetails', soHeaderDetails);
+
+  const [soLineDetails, setSoLineDetails] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getSalesOrderLinesService(parseInt(header_id, 10));
+        const updatedData = response.data.map((line) => ({
+          ...line,
+          selectedItemName: line.ordered_item,
+          selectedItem: {},
+          showList: false,
+        }));
+        console.log(updatedData);
+        // if (response) setSoLineDetails(response.data);
+        if (response) setSoLineDetails(updatedData);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  console.log('soLineDetails', soLineDetails);
+
   const [filteredItemList, setFilteredItemList] = useState([]);
 
-  const [headerInfo, setHeaderInfo] = useState({});
+//   const [headerInfo, setHeaderInfo] = useState({});
   const onChangeHeader = (e) => {
-    setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
+    setSoHeaderDetails({ ...soHeaderDetails, [e.target.name]: e.target.value });
   };
-  const [showLines, setShowLines] = useState(false);
+  const [showLines, setShowLines] = useState(true);
   const [headerDetails, setHeaderDetails] = useState({
     headerId: null,
     orderNumber: null,
   });
 
-  const saveLines = async (value) => {
-    console.log(value);
-    const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
-    console.log(filteredArray);
-
-    filteredArray.forEach(async (lineInfo, index) => {
-      if (lineInfo.lineId) {
-        const requestBody = {
-          inventoryItemId: lineInfo.selectedItem.inventory_item_id,
-          orderedItem: lineInfo.selectedItem.description,
-          orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
-          orderedQuantity: lineInfo.orderedQuantity,
-          unitSellingPrice: lineInfo.unitSellingPrice,
-        };
-        console.log(requestBody);
-
-        const response = await updateSalesOrderLineService(lineInfo.lineId, requestBody);
-
-        if (response.status === 200) {
-          console.log(response.data);
-
-          alert('saved');
-          setShowApprovalButton('block');
-          // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-          // setShowSaveLine(true);
-        } else {
-          setShowApprovalButton('none');
-        }
-      } else {
-        const requestBody = {
-          headerId: value,
-          lineNumber: index + 1,
-          inventoryItemId: lineInfo.selectedItem.inventory_item_id,
-          // creationDate: getCurrentDate(),
-          createdBy: account.user_id,
-          orderedItem: lineInfo.selectedItem.description,
-          orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
-          orderedQuantity: lineInfo.orderedQuantity,
-          soldFromOrgId: lineInfo.soldFromOrgId,
-          unitSellingPrice: lineInfo.unitSellingPrice,
-        };
-        console.log(requestBody);
-
-        const response = await addSalesOrderLinesService(requestBody);
-
-        if (response.status === 200) {
-          console.log(response.data);
-
-          alert('saved');
-          setShowApprovalButton('block');
-          handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-          // setShowSaveLine(true);
-        } else {
-          setShowApprovalButton('none');
-        }
-      }
-    });
-  };
-
   const saveHeader = async () => {
-    if (headerDetails.headerId) {
-      const requestBody = {
-        lastUpdatedBy: account.user_id,
-        shippingMethodCode: headerInfo.shippingMethodCode,
-        description: headerInfo.description,
-      };
-      console.log(requestBody);
+    const requestBody = {
+      shippingMethodCode: soHeaderDetails.shipping_method_code,
+      description: soHeaderDetails.description,
+    };
+    console.log(requestBody);
 
-      const response = await updateSalesOrderHeaderService(headerDetails.headerId, requestBody);
-      if (response.status === 200) {
-        console.log(response.data);
-        saveLines(headerDetails.headerId);
-      } else {
-        alert('Process failed! Try again');
-      }
+    // if(headerDetails.headerId) {
+    //   const response = await addSalesOrderHeaderService(requestBody);
+    // }
+
+    const response = await updateSalesOrderHeaderService(soHeaderDetails.header_id, requestBody);
+    if (response.status === 200) {
+      setHeaderDetails({
+        headerId: response.data.headerInfo[0].header_id,
+        orderNumber: response.data.headerInfo[0].order_number,
+      });
+      console.log(response.data);
     } else {
-      const requestBody = {
-        orderNumber: salesOrderNumber,
-        // requestDate: headerInfo.requestDate ? headerInfo.requestDate : getCurrentDate(),
-        // paymentTermId: headerInfo.paymentTermId,
-        createdBy: account.user_id,
-        // orderTypeId: headerInfo.orderTypeId,
-        lastUpdatedBy: account.user_id,
-        shippingMethodCode: headerInfo.shippingMethodCode,
-        // cancelledFlag: headerInfo.cancelledFlag === true ? 'Y' : 'N',
-        // bookedFlag: headerInfo.bookedFlag === true ? 'Y' : 'N',
-        salesrepId: account.user_id,
-        // salesChannelCode: headerInfo.salesChannelCode,
-        // bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
-        description: headerInfo.description,
-      };
-      console.log(requestBody);
-
-      const response = await addSalesOrderHeaderService(requestBody);
-      if (response.status === 200) {
-        setHeaderDetails({
-          headerId: response.data.headerInfo[0].header_id,
-          orderNumber: response.data.headerInfo[0].order_number,
-          // orderNumber: response.data.headerInfo[0].order_number,
-        });
-        console.log(response.data);
-        saveLines(response.data.headerInfo[0].header_id);
-      } else {
-        alert('Process failed! Try again');
-      }
+      alert('Process failed! Try again');
     }
   };
 
-  const [rows, setRows] = useState([
-    {
-      orderedItem: '',
-      orderQuantityUom: '',
-      orderedQuantity: null,
-      soldFromOrgId: null,
-      inventoryItemId: null,
-      unitSellingPrice: null,
-      selectedItemName: '',
-      selectedItem: {},
-      showList: false,
-      lineId: null,
-    },
-  ]);
+  //   const [rows, setRows] = useState([
+  //     {
+  //       orderedItem: '',
+  //       orderQuantityUom: '',
+  //       orderedQuantity: null,
+  //       soldFromOrgId: null,
+  //       inventoryItemId: null,
+  //       unitSellingPrice: null,
+  //       selectedItemName: '',
+  //       selectedItem: {},
+  //       showList: false,
+  //       lineId: null,
+  //     },
+  //   ]);
+
+  //   const handleAddRow = () => {
+  //     if (rows.length === 1) setShowLines(true);
+  //     if (showLines) {
+  //       setRows([
+  //         ...rows,
+  //         {
+  //           orderedItem: '',
+  //           orderQuantityUom: '',
+  //           orderedQuantity: null,
+  //           soldFromOrgId: null,
+  //           inventoryItemId: null,
+  //           unitSellingPrice: null,
+  //           selectedItemName: '',
+  //           selectedItem: {},
+  //           showList: false,
+  //           lineId: null,
+  //         },
+  //       ]);
+  //     }
+  //     console.log(rows);
+  //   };
 
   const handleAddRow = () => {
-    if (rows.length === 1) setShowLines(true);
+    // if (rows.length === 1) setShowLines(true);
     if (showLines) {
-      setRows([
-        ...rows,
+      setSoLineDetails([
+        ...soLineDetails,
         {
-          orderedItem: '',
-          orderQuantityUom: '',
-          orderedQuantity: null,
-          soldFromOrgId: null,
-          inventoryItemId: null,
-          unitSellingPrice: null,
+          line_id: null,
+          org_id: null,
+          header_id: null,
+          line_type_id: null,
+          line_number: null,
+          ordered_item: '',
+          request_date: null,
+          promise_date: null,
+          schedule_ship_date: null,
+          order_quantity_uom: '',
+          pricing_quantity: null,
+          pricing_quantity_uom: null,
+          cancelled_quantity: null,
+          shipped_quantity: null,
+          ordered_quantity: null,
+          fulfilled_quantity: null,
+          shipping_quantity: null,
+          shipping_quantity_uom: null,
+          delivery_lead_time: null,
+          tax_exempt_flag: null,
+          tax_exempt_number: null,
+          tax_exempt_reason_code: null,
+          ship_from_org_id: null,
+          ship_to_org_id: null,
+          invoice_to_org_id: null,
+          deliver_to_org_id: null,
+          ship_to_contact_id: null,
+          deliver_to_contact_id: null,
+          invoice_to_contact_id: null,
+          sold_from_org_id: null,
+          sold_to_org_id: null,
+          cust_po_number: null,
+          inventory_item_id: null,
+          tax_date: null,
+          tax_code: null,
+          tax_rate: null,
+          price_list_id: null,
+          pricing_date: null,
+          shipment_number: null,
+          agreement_id: null,
+          shipment_priority_code: null,
+          shipping_method_code: null,
+          freight_carrier_code: null,
+          freight_terms_code: null,
+          fob_point_code: null,
+          tax_point_code: null,
+          payment_term_id: null,
+          invoicing_rule_id: null,
+          accounting_rule_id: null,
+          source_document_type_id: null,
+          source_document_id: null,
+          source_document_line_id: null,
+          item_revision: null,
+          unit_selling_price: null,
+          unit_list_price: null,
+          tax_value: null,
+          creation_date: '',
+          created_by: null,
+          last_update_date: null,
+          last_updated_by: null,
+          last_update_login: null,
+          sort_order: null,
+          item_type_code: null,
+          cancelled_flag: null,
+          open_flag: '',
+          booked_flag: '',
+          salesrep_id: null,
+          order_source_id: null,
           selectedItemName: '',
           selectedItem: {},
           showList: false,
-          lineId: null,
         },
       ]);
     }
-    console.log(rows);
+    // console.log(rows);
   };
 
   const handleInputChange = (index, name, value) => {
-    // setShowSaveLine(false);
-    const updatedRows = [...rows];
+    setShowSaveLine(false);
+    const updatedRows = [...soLineDetails];
     updatedRows[index][name] = value;
-    setRows(updatedRows);
+    setSoLineDetails(updatedRows);
   };
 
-  const [showApprovalButton, setShowApprovalButton] = useState('none');
+  //   const handleInputChange = (index, name, value) => {
+  //     setShowSaveLine(false);
+  //     const updatedRows = [...rows];
+  //     updatedRows[index][name] = value;
+  //     setRows(updatedRows);
+  //   };
+
+  const [showApprovalButton, setShowApprovalButton] = useState(false);
 
   const submitRequisition = async () => {
     if (confirm('Are you sure for this requisition?')) {
@@ -271,13 +294,54 @@ export default function Page404() {
       if (response.status === 200) {
         alert('Successfull!');
         navigate('/dashboard/salesOrderForm', { replace: true });
-        // window.location.reload();
       } else {
-        // alert('Process failed! Please try later');
         alert('Process failed! Please try later');
       }
+      // window.location.reload();
     }
   };
+
+  const saveLines = async () => {
+    // const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
+    const filteredArray = soLineDetails.filter((item) => Object.values(item).some((value) => value !== ''));
+    console.log(filteredArray);
+
+    filteredArray.forEach(async (lineInfo, index) => {
+      const requestBody = {
+        headerId: headerDetails.headerId,
+        lineNumber: index + 1,
+        inventoryItemId: lineInfo.selectedItem.inventory_item_id
+          ? lineInfo.selectedItem.inventory_item_id
+          : lineInfo.inventory_item_id,
+        creationDate: getCurrentDate(),
+        createdBy: account.user_id,
+        orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.ordered_item,
+        orderQuantityUom: lineInfo.selectedItem.primary_uom_code
+          ? lineInfo.selectedItem.primary_uom_code
+          : lineInfo.order_quantity_uom,
+        orderedQuantity: lineInfo.orderedQuantity,
+        soldFromOrgId: lineInfo.soldFromOrgId,
+        unitSellingPrice: lineInfo.unitSellingPrice,
+      };
+      console.log(requestBody);
+
+      const response = await addSalesOrderLinesService(requestBody);
+
+      if (response.status === 200) {
+        console.log(response.data);
+
+        setShowApprovalButton(true);
+        handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
+        setShowSaveLine(true);
+      } else {
+        setShowApprovalButton(false);
+      }
+    });
+  };
+
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedLines, setSelectedLines] = useState([]);
+  const [showSaveLine, setShowSaveLine] = useState(false);
 
   // Function to handle row selection
   const handleRowSelect = (index, row) => {
@@ -307,14 +371,20 @@ export default function Page404() {
   };
 
   const handleDeleteRows = () => {
-    const updatedRows = rows.filter((_, index) => !selectedRows.includes(index));
-    setRows(updatedRows);
+    const updatedRows = soLineDetails.filter((_, index) => !selectedRows.includes(index));
+    setSoLineDetails(updatedRows);
     setSelectedRows([]);
   };
 
-  // const onChecked = (event) => {
-  //   setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
-  // };
+  //   const handleDeleteRows = () => {
+  //     const updatedRows = rows.filter((_, index) => !selectedRows.includes(index));
+  //     setRows(updatedRows);
+  //     setSelectedRows([]);
+  //   };
+
+//   const onChecked = (event) => {
+//     setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
+//   };
 
   const handleDeleteLines = () => {
     console.log(selectedLines);
@@ -329,27 +399,24 @@ export default function Page404() {
     // const isEmptyObject =
     //   Object.values(rows[0]).every((value) => value === null || value === '') &&
     //   !Object.values(headerDetails).every((value) => value === null);
-
     // console.log(isEmptyObject);
-    console.log(selectedRows);
-
-    if (
-      selectedLines.length === 0 &&
-      rows.length > 0 &&
-      !Object.values(rows[0]).every((value) => value === null || value === '' || value === false)
-    ) {
-      alert('Please select lines to delete');
-    } else if (selectedLines.length === 0 && rows.length === 0) {
-      if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(headerDetails.orderNumber);
-        window.location.reload();
-      }
-    } else if (selectedLines.length > 0 && rows.length > 0) {
-      if (confirm('Are you sure to delete the lines?')) {
-        handleDeleteLines();
-        handleDeleteRows();
-      }
-    }
+    // if (
+    //   selectedLines.length === 0 &&
+    //   rows.length > 0 &&
+    //   !Object.values(rows[0]).every((value) => value === null || value === '')
+    // ) {
+    //   alert('Please select lines to delete');
+    // } else if (selectedLines.length === 0 && rows.length === 0) {
+    //   if (confirm('Are you sure to delete the requisition?')) {
+    //     await deleteSalesOrderHeaderService(headerDetails.orderNumber);
+    //     window.location.reload();
+    //   }
+    // } else if (selectedLines.length > 0 && rows.length > 0) {
+    //   if (confirm('Are you sure to delete the lines?')) {
+    //     handleDeleteLines();
+    //     handleDeleteRows();
+    //   }
+    // }
   };
 
   // const [isReadOnly, setIsReadOnly] = useState(false);
@@ -359,11 +426,11 @@ export default function Page404() {
     const name = 'selectedItemName';
     const show = 'showList';
 
-    const updatedRows = [...rows];
+    const updatedRows = [...soLineDetails];
     updatedRows[index][name] = input;
     updatedRows[index][show] = true;
-    setRows(updatedRows);
-    console.log(rows);
+    setSoLineDetails(updatedRows);
+    console.log(soLineDetails);
 
     // Filter the original list based on the input
     console.log(inventoryItemIds);
@@ -371,20 +438,48 @@ export default function Page404() {
     setFilteredItemList(filtered);
   };
 
+  //   const handleInputItemChange = (index, event) => {
+  //     const input = event.target.value;
+  //     const name = 'selectedItemName';
+  //     const show = 'showList';
+
+  //     const updatedRows = [...rows];
+  //     updatedRows[index][name] = input;
+  //     updatedRows[index][show] = true;
+  //     setRows(updatedRows);
+  //     console.log(rows);
+
+  //     // Filter the original list based on the input
+  //     console.log(inventoryItemIds);
+  //     const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
+  //     setFilteredItemList(filtered);
+  //   };
+
   const handleMenuItemClick = (index, item) => {
     const name = 'selectedItemName';
     const selected = 'selectedItem';
     const show = 'showList';
 
-    const updatedRows = [...rows];
+    const updatedRows = [...soLineDetails];
     updatedRows[index][name] = item.description;
     updatedRows[index][selected] = item;
     updatedRows[index][show] = false;
-    setRows(updatedRows);
-    console.log(rows);
+    setSoLineDetails(updatedRows);
+    console.log(soLineDetails);
   };
 
-  console.log(showApprovalButton);
+  //   const handleMenuItemClick = (index, item) => {
+  //     const name = 'selectedItemName';
+  //     const selected = 'selectedItem';
+  //     const show = 'showList';
+
+  //     const updatedRows = [...rows];
+  //     updatedRows[index][name] = item.description;
+  //     updatedRows[index][selected] = item;
+  //     updatedRows[index][show] = false;
+  //     setRows(updatedRows);
+  //     console.log(rows);
+  //   };
 
   return (
     <>
@@ -395,7 +490,7 @@ export default function Page404() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Add Sales Order
+            Update Sales Order
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
@@ -407,49 +502,25 @@ export default function Page404() {
                 id="orderNumber"
                 name="orderNumber"
                 className="form-control"
-                style={{ marginLeft: '7px', width: '100px' }}
-                value={headerDetails.orderNumber}
-                // value={salesOrderNumber}
+                style={{ marginLeft: '7px' }}
+                // value={headerDetails.orderNumber}
+                value={soHeaderDetails.order_number}
                 readOnly
               />
             </label>
           </div>
           <div className="col-auto" style={{ width: '221px' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Order Date
-              <input type="text" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
+              Ordered Date
+              <input
+                type="text"
+                id="orderedDate"
+                className="form-control"
+                value={getFormattedDate(soHeaderDetails.ordered_date)}
+                readOnly
+              />
             </label>
           </div>
-          {/* <div className="col-auto" style={{ width: '221px' }}>
-            <label
-              htmlFor="requestDate"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '13px' }}
-              onChange={(e) => onChangeHeader(e)}
-            >
-              Request Date
-              <input
-                type="date"
-                id="requestDate"
-                name="requestDate"
-                className="form-control"
-                defaultValue={getCurrentDate()}
-              />
-            </label>
-          </div> */}
-          {/* <div className="col-auto" style={{ width: '180px' }}>
-            <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Payment Term ID
-              <input
-                type="number"
-                id="paymentTermId"
-                name="paymentTermId"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div> */}
           <div className="col-auto" style={{ width: '180px' }}>
             <label
               htmlFor="shippingMethodCode"
@@ -463,50 +534,11 @@ export default function Page404() {
                 name="shippingMethodCode"
                 className="form-control"
                 style={{ marginLeft: '7px' }}
+                defaultValue={soHeaderDetails.shipping_method_code}
                 onChange={(e) => onChangeHeader(e)}
               />
             </label>
           </div>
-          {/* <div className="col-auto">
-            <label htmlFor="cancelledFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Cancelled
-              <input
-                type="checkbox"
-                id="cancelledFlag"
-                name="cancelledFlag"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChecked(e)}
-                disabled
-              />
-            </label>
-          </div>
-          <div className="col-auto">
-            <label htmlFor="bookedFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Booked
-              <input
-                type="checkbox"
-                id="bookedFlag"
-                name="bookedFlag"
-                style={{ marginLeft: '7px' }}
-                // onChange={handleRowSelect}
-                onChange={(e) => onChecked(e)}
-                disabled
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label htmlFor="bookedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Booked Date
-              <input
-                type="date"
-                id="bookedDate"
-                name="bookedDate"
-                className="form-control"
-                defaultValue={getCurrentDate()}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div> */}
           <div className="col-auto" style={{ width: '390px' }}>
             <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
               Description
@@ -514,7 +546,8 @@ export default function Page404() {
                 id="description"
                 name="description"
                 className="form-control"
-                style={{ marginLeft: '7px', height: '30px' }}
+                style={{ marginLeft: '7px', height: '30px', width: '390px' }}
+                value={soHeaderDetails.description}
                 onChange={(e) => {
                   onChangeHeader(e);
                 }}
@@ -530,11 +563,32 @@ export default function Page404() {
                 name="salesPerson"
                 className="form-control"
                 style={{ marginLeft: '7px' }}
-                defaultValue={account.full_name}
+                value={account.full_name}
                 readOnly
               />
             </label>
           </div>
+          {/* <Grid container spacing={2}>
+            <Grid item xs={3}>
+              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+                <Button
+                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  onClick={saveHeader}
+                >
+                  Save
+                </Button>
+                <Button
+                  style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                  onClick={onClickDelete}
+                >
+                  Delete
+                </Button>
+                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
+                  Add Lines
+                </Button>
+              </ButtonGroup>
+            </Grid>
+          </Grid> */}
         </div>
 
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
@@ -547,11 +601,14 @@ export default function Page404() {
                       type="checkbox"
                       onChange={() => {
                         // Select or deselect all rows
-                        const allRowsSelected = selectedRows.length === rows.length;
-                        const newSelectedRows = allRowsSelected ? [] : rows.map((_, index) => index);
+                        const allRowsSelected = selectedRows.length === soLineDetails.length;
+                        const newSelectedRows = allRowsSelected ? [] : soLineDetails.map((_, index) => index);
+                        // const allRowsSelected = selectedRows.length === rows.length;
+                        // const newSelectedRows = allRowsSelected ? [] : rows.map((_, index) => index);
                         setSelectedRows(newSelectedRows);
                       }}
-                      checked={selectedRows.length === rows.length && rows.length !== 0}
+                      checked={selectedRows.length === soLineDetails.length && soLineDetails.length !== 0}
+                      //   checked={selectedRows.length === rows.length && rows.length !== 0}
                     />
                   </th>
                   {/* <th>Line Number</th> */}
@@ -569,7 +626,7 @@ export default function Page404() {
               </thead>
               <tbody>
                 {showLines &&
-                  rows.map((row, index) => (
+                  soLineDetails.map((row, index) => (
                     <tr key={index}>
                       <td>
                         <input
@@ -587,6 +644,7 @@ export default function Page404() {
                           className="form-control"
                           style={{ width: '420px' }}
                           value={row.selectedItemName}
+                          defaultValue={row.ordered_item}
                           onChange={(e) => handleInputItemChange(index, e)}
                         />
                         {row.showList && (
@@ -605,10 +663,11 @@ export default function Page404() {
                         <input
                           type="text"
                           className="form-control"
-                          name="orderQuantityUom"
-                          style={{ width: '80px', textAlign: 'center' }}
+                          name="primary_uom_code"
                           readOnly
                           value={row.selectedItem.primary_uom_code}
+                          style={{ width: '80px', textAlign: 'center' }}
+                          defaultValue={row.order_quantity_uom}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -616,7 +675,8 @@ export default function Page404() {
                         <input
                           type="number"
                           className="form-control"
-                          name="orderedQuantity"
+                          name="ordered_quantity"
+                          defaultValue={row.ordered_quantity}
                           style={{ textAlign: 'right' }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
@@ -626,7 +686,7 @@ export default function Page404() {
                           type="number"
                           className="form-control"
                           name="soldFromOrgId"
-                          style={{ textAlign: 'right' }}
+                          defaultValue={row.sold_from_org_id}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td> */}
@@ -634,9 +694,11 @@ export default function Page404() {
                         <input
                           type="number"
                           className="form-control"
-                          name="unitSellingPrice"
+                          name="unit_selling_price"
+                          defaultValue={row.unit_selling_price}
                           style={{ textAlign: 'right' }}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          readOnly
+                          //   onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td>
@@ -645,7 +707,7 @@ export default function Page404() {
                           className="form-control"
                           name="unitSellingPrice"
                           style={{ textAlign: 'right' }}
-                          value={row.orderedQuantity * row.unitSellingPrice}
+                          value={row.ordered_quantity * row.unit_selling_price}
                           readOnly
                         />
                       </td>
@@ -659,35 +721,19 @@ export default function Page404() {
           <Grid item xs={3}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
               <Button
-                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={saveHeader}
               >
                 Save
               </Button>
               <Button
-                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={onClickDelete}
               >
                 Delete
               </Button>
-              <Button
-                style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
-                onClick={handleAddRow}
-              >
+              <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
                 Add Lines
-              </Button>
-              <Button
-                style={{
-                  whiteSpace: 'nowrap',
-                  display: showApprovalButton,
-                  marginLeft: '10px',
-                  backgroundColor: 'lightgray',
-                  color: 'black',
-                }}
-                // disabled={showApprovalButton === 'none'}
-                onClick={submitRequisition}
-              >
-                Approval
               </Button>
             </ButtonGroup>
           </Grid>
