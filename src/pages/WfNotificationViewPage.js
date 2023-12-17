@@ -85,7 +85,7 @@ export default function Page404() {
     async function fetchData() {
       try {
         let soHeaderDetails = {};
-        if (wfNotifications) soHeaderDetails = await getSalesOrderHeaderService(wfNotifications.user_key); // Call your async function here
+        if (wfNotifications) soHeaderDetails = await getSalesOrderHeaderService(wfNotifications.group_id); // Call your async function here
         console.log(soHeaderDetails);
         if (soHeaderDetails.status === 200) setHeaderDetails(soHeaderDetails.data); // Set the account details in the component's state
       } catch (error) {
@@ -103,7 +103,7 @@ export default function Page404() {
     async function fetchData() {
       try {
         let soLineDetails = {};
-        if (wfNotifications) soLineDetails = await getSalesOrderLinesService(wfNotifications.user_key); // Call your async function here
+        if (wfNotifications) soLineDetails = await getSalesOrderLinesService(wfNotifications.group_id); // Call your async function here
         console.log(soLineDetails);
         if (soLineDetails.status === 200) setLineDetails(soLineDetails.data); // Set the account details in the component's state
       } catch (error) {
@@ -121,7 +121,7 @@ export default function Page404() {
     async function fetchData() {
       try {
         let soLineDetails = {};
-        if (headerDetails) soLineDetails = await getApprovalSequenceService(wfNotifications.user_key); // Call your async function here
+        if (headerDetails) soLineDetails = await getApprovalSequenceService(wfNotifications.group_id); // Call your async function here
         console.log(soLineDetails);
         if (soLineDetails.status === 200) setApprovalSequence(soLineDetails.data); // Set the account details in the component's state
       } catch (error) {
