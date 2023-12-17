@@ -17,6 +17,7 @@ import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
 import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
+import ShowAuthStatus from './pages/ShowAuthStatus';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
@@ -40,6 +41,7 @@ import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
 import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
+
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -110,6 +112,7 @@ export default function Router() {
         { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
         { path: 'manageSalesOrderForm', element: <ManageSoPage /> },
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
+        { path: 'showauthstatus', element: <ShowAuthStatus /> },
       ],
     },
 

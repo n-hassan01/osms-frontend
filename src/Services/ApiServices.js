@@ -3,10 +3,10 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://182.160.114.100:5001/';
-// const usersUrl = 'http://localhost:5001/';
+// const usersUrl = 'http://182.160.114.100:5001/';
+ const usersUrl = 'http://localhost:5001/';
 
- // const usersUrl = 'http://localhost:5001/';
+
 export const signup = async (user) => {
   try {
     return await axios.post(`${usersUrl}signup/`, user);
@@ -364,6 +364,16 @@ export const getHrLocationsIdDetails = async () => {
 export const getPerAllPeoplesDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-per-all-peoples/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAuthStatusDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-auth-status/`);
   } catch (err) {
     console.log(err.message);
 

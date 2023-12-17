@@ -8,7 +8,7 @@ import { Button, Container, Grid, MenuItem, Stack, TextField, Typography } from 
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { addUserAssign, getFndUserIds, getMenuIds } from '../Services/ApiServices';
+import { addUserAssign, getFndUserIds, getMenusDetails } from '../Services/ApiServices';
 
 // Add this import statement
 
@@ -57,8 +57,8 @@ export default function MenuCreation() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getMenuIds();
-        console.log('hhh', response.data);
+        const response = await getMenusDetails();
+        console.log('hhh', response);
         if (response) setMenuIds(response.data);
         console.log(menuids);
       } catch (error) {
@@ -73,6 +73,7 @@ export default function MenuCreation() {
   const handleMenuItemClick = (selectedItem) => {
     console.log(selectedItem);
     setUserInput(selectedItem);
+    console.log(userInput);
     setFilteredList([]);
     // const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
     // console.log(selectedUser);
