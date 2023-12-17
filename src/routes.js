@@ -17,7 +17,7 @@ import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
 import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
-import ShowAuthStatus from './pages/ShowAuthStatus';
+import ShowApprovedSalesOrders from './pages/ShowApprovedSalesOrders';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
@@ -114,7 +114,7 @@ export default function Router() {
         { path: 'manageSalesOrderForm', element: <ManageSoPage /> },
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
         { path: 'updateSalesOrderForm/:header_id', element: <UpdateSalesOrderForm /> },
-        { path: 'showauthstatus', element: <ShowAuthStatus /> },
+        { path: 'showapprovedsalesorders', element: <ShowApprovedSalesOrders /> },
 
       ],
     },

@@ -6,22 +6,22 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    Container,
-    IconButton,
-    Link,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Checkbox,
+  Container,
+  IconButton,
+  Link,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -78,7 +78,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowAuthStatus() {
+export default function ShowApprovedSalesOrders() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
