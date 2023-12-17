@@ -126,11 +126,11 @@ export default function Page404() {
           console.log(response.data);
 
           alert('saved');
-          setShowApprovalButton('block');
+          setShowApprovalButton(false);
           // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
         } else {
-          setShowApprovalButton('none');
+          setShowApprovalButton(true);
         }
       } else {
         const requestBody = {
@@ -153,11 +153,11 @@ export default function Page404() {
           console.log(response.data);
 
           alert('saved');
-          setShowApprovalButton('block');
+          setShowApprovalButton(false);
           handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
         } else {
-          setShowApprovalButton('none');
+          setShowApprovalButton(true);
         }
       }
     });
@@ -256,7 +256,7 @@ export default function Page404() {
     setRows(updatedRows);
   };
 
-  const [showApprovalButton, setShowApprovalButton] = useState('none');
+  const [showApprovalButton, setShowApprovalButton] = useState(true);
 
   const submitRequisition = async () => {
     if (confirm('Are you sure for this requisition?')) {
@@ -270,6 +270,7 @@ export default function Page404() {
 
       if (response.status === 200) {
         alert('Successfull!');
+        setShowApprovalButton(true);
         navigate('/dashboard/salesOrderForm', { replace: true });
         // window.location.reload();
       } else {
@@ -679,12 +680,12 @@ export default function Page404() {
               <Button
                 style={{
                   whiteSpace: 'nowrap',
-                  display: showApprovalButton,
+                  // display: showApprovalButton,
                   marginLeft: '10px',
                   backgroundColor: 'lightgray',
                   color: 'black',
                 }}
-                // disabled={showApprovalButton === 'none'}
+                disabled={showApprovalButton}
                 onClick={submitRequisition}
               >
                 Approval
