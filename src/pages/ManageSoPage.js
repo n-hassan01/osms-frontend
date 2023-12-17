@@ -223,14 +223,14 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { order_number, ordered_date, request_date, description } = row;
+                    const { order_number, ordered_date, request_date, description, header_id } = row;
 
                     return (
-                      <TableRow hover key={order_number} tabIndex={-1}>
+                      <TableRow hover key={header_id} tabIndex={-1}>
                         <TableCell align="left">
                           <Link
                             onClick={() => {
-                              navigate(`/dashboard/wfNotificationView/`);
+                              navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
                             }}
                             style={{ cursor: 'pointer', textDecoration: 'none' }}
                           >

@@ -6,22 +6,22 @@ import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-    // addSalesOrderHeaderService,
-    updateSalesOrderHeaderService,
-    addSalesOrderLinesService,
-    callSoApprovalService,
-    deleteSalesOrderLinesService,
-    getInventoryItemIdList,
-    getSalesOrderHeaderService,
-    getSalesOrderLinesService,
-    getUserProfileDetails,
+  addSalesOrderLinesService,
+  callSoApprovalService,
+  deleteSalesOrderLinesService,
+  getInventoryItemIdList,
+  getSalesOrderHeaderService,
+  getSalesOrderLinesService,
+  getUserProfileDetails,
+  // addSalesOrderHeaderService,
+  updateSalesOrderHeaderService,
 } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
   const navigate = useNavigate();
   const { header_id } = useParams();
-  console.log('headerId', typeof header_id);
+  console.log('headerId', header_id);
 
   function getCurrentDate() {
     const now = new Date();
