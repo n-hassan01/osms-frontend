@@ -9,7 +9,6 @@ import {
   Card,
   Checkbox,
   Container,
-  IconButton,
   Link,
   MenuItem,
   Paper,
@@ -21,7 +20,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -38,10 +37,10 @@ import { getAuthStatusDetails } from '../Services/ApiServices';
 const TABLE_HEAD = [
   // { id: 'personId', label: 'Person ID', alignRight: false },
   { id: 'orderNumber', label: 'Order Number', alignRight: false },
-  { id: 'description', label: 'Description', alignRight: false },
   { id: 'orderedDate', label: 'Ordered Date', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false },
 
-  { id: 'action', label: 'Action', alignRight: false },
+  { id: 'approvalStatus', label: 'Approval Status', alignRight: false },
 
   { id: '' },
 ];
@@ -106,7 +105,7 @@ export default function ShowApprovedSalesOrders() {
     async function fetchData() {
       try {
         const usersDetails = await getAuthStatusDetails();
- 
+
         if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -227,7 +226,7 @@ export default function ShowApprovedSalesOrders() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Authorization Details
+            List of Approved Sales Orders
           </Typography>
           {/* <div>
             <Button
@@ -283,38 +282,22 @@ export default function ShowApprovedSalesOrders() {
                         </TableCell>
 
                         {/* <TableCell align="left">{person_id}</TableCell> */}
-                        <TableCell align="left" >
-                        <Link
+                        <TableCell align="left">
+                          <Link
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              navigate(`/dashboard/wfNotificationView/${header_id}`);
+                              navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
                             }}
                           >
                             {order_number}
                           </Link>
-
                         </TableCell>
+                        <TableCell align="left">{getFormattedDate(ordered_date)}</TableCell>
 
                         <TableCell align="left">{description}</TableCell>
 
-                        <TableCell align="left">{getFormattedDate(ordered_date)}</TableCell>
-
-                        <TableCell align="right">
-                          <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={() => {
-                              const personId = header_id;
-                              navigate(`/dashboard/addperallpeoples/${personId}`);
-                            }}
-                          >
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell>
-                        {/* <TableCell align="right">
-                          <DeletePerAllPeoples person_id={person_id} />
-                        </TableCell> */}
-
+                     
+            
                         <Popover
                           open={Boolean(open)}
                           anchorEl={open}
