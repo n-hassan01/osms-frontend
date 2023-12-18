@@ -228,19 +228,7 @@ export default function ShowApprovedSalesOrders() {
           <Typography variant="h4" gutterBottom>
             List of Approved Sales Orders
           </Typography>
-          {/* <div>
-            <Button
-              variant="text"
-              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-              color="primary"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => {
-                navigate('/dashboard/addperallpeoples/null');
-              }}
-            >
-              Add PerAllPeoples
-            </Button>
-          </div> */}
+         
         </Stack>
 
         <Card>
@@ -272,6 +260,7 @@ export default function ShowApprovedSalesOrders() {
                       description,
 
                       ordered_date,
+                      authorization_status,
                     } = row;
                     const selectedUser = selected.indexOf(header_id) !== -1;
 
@@ -295,6 +284,7 @@ export default function ShowApprovedSalesOrders() {
                         <TableCell align="left">{getFormattedDate(ordered_date)}</TableCell>
 
                         <TableCell align="left">{description}</TableCell>
+                        <TableCell align="left">{authorization_status}</TableCell>
 
                      
             
