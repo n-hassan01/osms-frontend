@@ -205,6 +205,11 @@ export default function Page404() {
           <Typography variant="h4" gutterBottom style={{ width: '50%' }}>
             {wfNotifications.subject}
           </Typography>
+          <div style={{ width: '50%', textAlign: 'right' }}>
+            <Button style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }} onClick={onDone}>
+              Done
+            </Button>
+          </div>
         </Stack>
         <Stack
           direction="row"
@@ -349,7 +354,7 @@ export default function Page404() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Grid container spacing={2} style={{ width: '50%', marginTop: '10px' }}>
+        <Grid container spacing={2} style={{ marginTop: '10px' }}>
           <Grid item xs={3}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
               <Button
@@ -365,13 +370,10 @@ export default function Page404() {
                 Reject
               </Button>
               <Button
-                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={goToUpdateSO}
               >
-                Request Information
-              </Button>
-              <Button style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }} onClick={onDone}>
-                Done
+                Update Sales Order
               </Button>
             </ButtonGroup>
           </Grid>
