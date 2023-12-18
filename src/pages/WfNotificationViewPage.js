@@ -138,10 +138,10 @@ export default function Page404() {
   const TABLE_HEAD = [
     // { id: '' },
     { id: 'unit_of_measure', label: 'Line Number', alignRight: false },
-    { id: 'uom_code', label: 'Ordered Item', alignRight: false },
-    { id: 'uom_class', label: 'Uom', alignRight: false },
-    { id: 'disable_date', label: 'Ordered Quantity', alignRight: true },
-    { id: 'description', label: 'Unit Selling Price', alignRight: true },
+    { id: 'uom_code', label: 'Item', alignRight: false },
+    { id: 'uom_class', label: 'UOM', alignRight: false },
+    { id: 'disable_date', label: 'Quantity', alignRight: true },
+    { id: 'description', label: 'Unit Price', alignRight: true },
   ];
 
   const TABLE_HEAD_Approval_Seq = [
@@ -261,7 +261,7 @@ export default function Page404() {
           <div className="col-auto" style={{ width: '50%' }}>
             <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
               Sent
-              <span style={{ marginLeft: '10px' }}>{wfNotifications.sent_date}</span>
+              <span style={{ marginLeft: '10px' }}>{getFormattedDate(wfNotifications.sent_date)}</span>
             </label>
           </div>
         </div>
