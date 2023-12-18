@@ -68,8 +68,8 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    console.log(filter(array, (_user) => _user.inventory_item_id.toLowerCase().indexOf(query.toLowerCase()) !== -1));
-    return filter(array, (_user) => _user.inventory_item_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    console.log(filter(array, (_user) => _user.description.toLowerCase().indexOf(query.toLowerCase()) !== -1));
+    return filter(array, (_user) => _user.description.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -222,16 +222,16 @@ export default function UserPage() {
   // const TABLE_HEAD = Object.keys(USERLIST[0]).map((column => ({id: column, label: sentenceCase(column), alignRight: false})));
   // TABLE_HEAD.push({id: ''})
   const TABLE_HEAD = [
-    { id: 'inventory_item_id', label: sentenceCase('inventory_item_id'), alignRight: false },
-    { id: 'organization_id', label: sentenceCase('organization_id'), alignRight: false },
-    { id: 'inventory_item_code', label: sentenceCase('inventory_item_code'), alignRight: false },
+    // { id: 'inventory_item_id', label: sentenceCase('inventory_item_id'), alignRight: false },
+    { id: 'organization_id', label: 'Org ID', alignRight: false },
+    { id: 'inventory_item_code', label: sentenceCase('item_code'), alignRight: false },
     { id: 'description', label: sentenceCase('description'), alignRight: false },
-    { id: 'primary_uom_code', label: sentenceCase('primary_uom_code'), alignRight: false },
-    { id: 'primary_unit_of_measure', label: sentenceCase('primary_unit_of_measure'), alignRight: false },
-    { id: 'enabled_flag', label: sentenceCase('enabled_flag'), alignRight: false },
+    { id: 'primary_uom_code', label: 'UOM', alignRight: false },
+    // { id: 'primary_unit_of_measure', label: sentenceCase('primary_unit_of_measure'), alignRight: false },
+    { id: 'enabled_flag', label: sentenceCase('enabled'), alignRight: false },
     { id: 'start_date_active', label: sentenceCase('start_date_active'), alignRight: false },
     { id: 'end_date_active', label: sentenceCase('end_date_active'), alignRight: false },
-    { id: 'buyer_id', label: sentenceCase('buyer_id'), alignRight: false },
+    // { id: 'buyer_id', label: sentenceCase('buyer_id'), alignRight: false },
     { id: 'min_minmax_quantity', label: sentenceCase('min_minmax_quantity'), alignRight: false },
     { id: 'max_minmax_quantity', label: sentenceCase('max_minmax_quantity'), alignRight: false },
     { id: 'minimum_order_quantity', label: sentenceCase('minimum_order_quantity'), alignRight: false },
@@ -317,7 +317,7 @@ export default function UserPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Mtl System Items
+            Item Master
           </Typography>
           <Button
             variant="text"
@@ -359,11 +359,11 @@ export default function UserPage() {
                       inventory_item_code,
                       description,
                       primary_uom_code,
-                      primary_unit_of_measure,
+                      // primary_unit_of_measure,
                       enabled_flag,
                       start_date_active,
                       end_date_active,
-                      buyer_id,
+                      // buyer_id,
                       min_minmax_quantity,
                       max_minmax_quantity,
                       minimum_order_quantity,
@@ -371,16 +371,16 @@ export default function UserPage() {
                     } = row;
 
                     const rowValues = [
-                      inventory_item_id,
+                      // inventory_item_id,
                       organization_id,
                       inventory_item_code,
                       description,
                       primary_uom_code,
-                      primary_unit_of_measure,
+                      // primary_unit_of_measure,
                       enabled_flag,
                       start_date_active,
                       end_date_active,
-                      buyer_id,
+                      // buyer_id,
                       min_minmax_quantity,
                       max_minmax_quantity,
                       minimum_order_quantity,

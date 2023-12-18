@@ -396,7 +396,7 @@ export default function Page404() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Add Sales Order
+            Create Sales Order
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
@@ -685,7 +685,7 @@ export default function Page404() {
                   backgroundColor: 'lightgray',
                   color: 'black',
                 }}
-                disabled={showApprovalButton}
+                // disabled={showApprovalButton}
                 onClick={submitRequisition}
               >
                 Approval
