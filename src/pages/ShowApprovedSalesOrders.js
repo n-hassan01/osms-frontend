@@ -1,8 +1,5 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable react/jsx-key */
+/* eslint-disable no-undef */
 /* eslint-disable camelcase */
-import Button from '@mui/material/Button';
-import { sentenceCase } from 'change-case';
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -10,9 +7,12 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
+  Checkbox,
   Container,
   Link,
+  MenuItem,
   Paper,
+  Popover,
   Stack,
   Table,
   TableBody,
@@ -20,18 +20,30 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { getSalesOrderHeadersByUserService, getUserProfileDetails } from '../Services/ApiServices';
-import SoListHead from '../sections/@dashboard/salesOrders/SoListHeader';
-import SoListToolbar from '../sections/@dashboard/salesOrders/SoListToolbar';
+// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
+//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
+import { UserListHead } from '../sections/@dashboard/user';
+import PerAllPeoplesTypesList from '../sections/@dashboard/user/PerAllPeoplesTypesList';
 
+import { getAuthStatusDetails } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
+const TABLE_HEAD = [
+  // { id: 'personId', label: 'Person ID', alignRight: false },
+  { id: 'orderNumber', label: 'Order Number', alignRight: false },
+  { id: 'orderedDate', label: 'Ordered Date', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false },
+
+  { id: 'approvalStatus', label: 'Approval Status', alignRight: false },
+
+  { id: '' },
+];
 const selectedUsers = [];
 
 // ----------------------------------------------------------------------
@@ -60,13 +72,14 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.order_number.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function UserPage() {
+export default function ShowApprovedSalesOrders() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
 
@@ -82,56 +95,75 @@ export default function UserPage() {
 
   const [USERLIST, setUserList] = useState([]);
 
-  const [account, setAccount] = useState({});
+  const [isDisableApprove, setIsDisableApprove] = useState(false);
+
+  const [isDisableBan, setIsDisableBan] = useState(false);
+
+  const [selectedUserEmail, setSelectedUserEmail] = useState('');
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200)
-          setAccount(accountDetails.data); // Set the account details in the component's state
-        else navigate('/login');
+        const usersDetails = await getAuthStatusDetails();
+
+        if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
-        // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
       }
     }
 
-    fetchData(); // Call the async function when the component mounts
+    fetchData();
   }, []);
-  console.log(account);
-
-  //   const [soDetails, setsoDetails] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        let response = {};
-        if (account) response = await getSalesOrderHeadersByUserService(account.user_id); // Call your async function here
-        if (response.status === 200) setUserList(response.data);
-      } catch (error) {
-        // Handle any errors that might occur during the async operation
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData(); // Call the async function when the component mounts
-  }, [account]);
-  console.log(USERLIST);
 
   function getFormattedDate(value) {
-    const date = new Date(value);
+    const dateObject = new Date(value);
+
+    // Extract date and time components
+    const formattedDate = dateObject.toLocaleDateString();
+    const formattedTime = dateObject.toLocaleTimeString();
+    const date = new Date(formattedDate);
     const year = String(date.getFullYear()).slice(-2);
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    return `${day}/${month}/${year}`;
+    return `${day}/${month}/${year}    ${formattedTime}`;
   }
 
-  const TABLE_HEAD = [
-    { id: 'order_number', label: sentenceCase('order_number'), alignRight: false },
-    { id: 'ordered_date', label: sentenceCase('ordered_date'), alignRight: false },
-    // { id: 'request_date', label: sentenceCase('request_date'), alignRight: false },
-    { id: 'description', label: sentenceCase('description'), alignRight: false },
-    { id: 'approval_status', label: sentenceCase('approval_status'), alignRight: false },
-  ];
+  const handleOpenMenu = (event, status, email) => {
+    if (status === 'approved') setIsDisableApprove(true);
+    else setIsDisableApprove(false);
+
+    if (status === 'banned') setIsDisableBan(true);
+    else setIsDisableBan(false);
+
+    setSelectedUserEmail(email);
+
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+    window.location.reload();
+  };
+
+  const approveUser = async () => {
+    const body = {
+      status: 'approved',
+      email: selectedUserEmail,
+    };
+
+    handleCloseMenu();
+    window.location.reload();
+  };
+
+  const banUser = async () => {
+    const body = {
+      status: 'banned',
+      email: selectedUserEmail,
+    };
+
+    handleCloseMenu();
+    window.location.reload();
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -141,7 +173,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.unit_of_measure);
+      const newSelecteds = USERLIST.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -162,6 +194,7 @@ export default function UserPage() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
+    console.log(typeof selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -178,10 +211,6 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const addSo = () => {
-    navigate('/dashboard/salesOrderForm', { replace: true });
-  };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -191,27 +220,19 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> OSMS | UOM </title>
+        <title> HR Auth Status Details | OSMS </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Manage Sales Orders
+            List of Approved Sales Orders
           </Typography>
-          <Button
-            variant="text"
-            startIcon={<Iconify icon="eva:plus-fill" />}
-            color="primary"
-            onClick={addSo}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Create SO
-          </Button>
+         
         </Stack>
 
         <Card>
-          <SoListToolbar
+          <PerAllPeoplesTypesList
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -221,7 +242,7 @@ export default function UserPage() {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <SoListHead
+                <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -232,26 +253,69 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { order_number, ordered_date, request_date, description, header_id, authorization_status } =
-                      row;
+                    const {
+                      header_id,
+                      order_number,
+
+                      description,
+
+                      ordered_date,
+                      authorization_status,
+                    } = row;
+                    const selectedUser = selected.indexOf(header_id) !== -1;
 
                     return (
-                      <TableRow hover key={header_id} tabIndex={-1}>
+                      <TableRow hover key={header_id} tabIndex={-1} role="checkbox">
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, header_id)} />
+                        </TableCell>
+
+                        {/* <TableCell align="left">{person_id}</TableCell> */}
                         <TableCell align="left">
                           <Link
+                            style={{ cursor: 'pointer' }}
                             onClick={() => {
                               navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
                             }}
-                            style={{ cursor: 'pointer', textDecoration: 'none' }}
                           >
                             {order_number}
                           </Link>
                         </TableCell>
-                        {/* <TableCell align="left">{format(ordered_date.to, 'dd-MM-yyyy hh:mm:ss')}</TableCell> */}
                         <TableCell align="left">{getFormattedDate(ordered_date)}</TableCell>
-                        {/* <TableCell align="left">{request_date}</TableCell> */}
+
                         <TableCell align="left">{description}</TableCell>
                         <TableCell align="left">{authorization_status}</TableCell>
+
+                     
+            
+                        <Popover
+                          open={Boolean(open)}
+                          anchorEl={open}
+                          onClose={handleCloseMenu}
+                          anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                          PaperProps={{
+                            sx: {
+                              p: 1,
+                              width: 140,
+                              '& .MuiMenuItem-root': {
+                                px: 1,
+                                typography: 'body2',
+                                borderRadius: 0.75,
+                              },
+                            },
+                          }}
+                        >
+                          <MenuItem sx={{ color: 'success.main' }} disabled={isDisableApprove} onClick={approveUser}>
+                            <Iconify icon={'mdi:approve'} sx={{ mr: 2 }} />
+                            Appoved
+                          </MenuItem>
+
+                          <MenuItem sx={{ color: 'error.main' }} disabled={isDisableBan} onClick={banUser}>
+                            <Iconify icon={'mdi:ban'} sx={{ mr: 2 }} />
+                            Banned
+                          </MenuItem>
+                        </Popover>
                       </TableRow>
                     );
                   })}

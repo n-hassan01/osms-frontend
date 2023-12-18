@@ -17,6 +17,7 @@ import RequisitionFormPage from './pages/RequisitionFormPage';
 import RequisitionPage from './pages/RequisitionPage';
 import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
+import ShowApprovedSalesOrders from './pages/ShowApprovedSalesOrders';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowLocationsAll from './pages/ShowLocationsAll';
@@ -27,6 +28,7 @@ import ShowMtlTransactionTypes from './pages/ShowMtlTransactionTypes';
 import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import ShowWfNotifications from './pages/ShowWfNotifications';
 import SignupPage from './pages/SignupPage';
+import UpdateSalesOrderForm from './pages/UpdateSalesOrderFormPage';
 import WfNotificationView from './pages/WfNotificationViewPage';
 import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
@@ -40,6 +42,7 @@ import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
 import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
+
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 
@@ -110,6 +113,9 @@ export default function Router() {
         { path: 'salesOrderForm', element: <SalesOrderFormPage /> },
         { path: 'manageSalesOrderForm', element: <ManageSoPage /> },
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
+        { path: 'updateSalesOrderForm/:header_id', element: <UpdateSalesOrderForm /> },
+        { path: 'showapprovedsalesorders', element: <ShowApprovedSalesOrders /> },
+
       ],
     },
 

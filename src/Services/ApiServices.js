@@ -3,10 +3,10 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://182.160.114.100:5001/';
-// const usersUrl = 'http://localhost:5001/';
+// const usersUrl = 'http://182.160.114.100:5001/';
+ const usersUrl = 'http://localhost:5001/';
 
- // const usersUrl = 'http://localhost:5001/';
+
 export const signup = async (user) => {
   try {
     return await axios.post(`${usersUrl}signup/`, user);
@@ -371,6 +371,16 @@ export const getPerAllPeoplesDetails = async () => {
   }
 };
 
+export const getAuthStatusDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-auth-status/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getfnduserDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-fnd-user/`);
@@ -689,6 +699,16 @@ export const getOrganizationIdList = async () => {
   }
 };
 
+// export const getOrderNumberService = async () => {
+//   try {
+//     return await axios.get(`${usersUrl}get-hr-organization-units/list`);
+//   } catch (err) {
+//     console.log(err.message);
+
+//     return err.message;
+//   }
+// };
+
 export const addTxnRequestHeader = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}add-txn-header`, bodyInfo);
@@ -796,7 +816,7 @@ export const deleteSalesOrderHeaderService = async (headerId) => {
 
 export const updateSalesOrderHeaderService = async (headerId, headerInfo) => {
   try {
-    return await axios.put(`${usersUrl}/update/${headerId}`, headerInfo);
+    return await axios.put(`${usersUrl}update-sales-order-header/${headerId}`, headerInfo);
   } catch (err) {
     console.log(err.message);
 
@@ -867,6 +887,17 @@ export const getOrderNumberService = async (results,resultss) => {
     return err.message;
   }
 };
+
+export const updateSalesOrderLineService = async (lineId, lineInfo) => {
+  try {
+    return await axios.put(`${usersUrl}sales-order-line/update/${lineId}`, lineInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // procedure calls
 export const callSoApprovalService = async (bodyInfo) => {
   try {
@@ -902,6 +933,17 @@ export const getWfNoficationViewService = async (requestInfo) => {
 export const getApprovalSequenceService = async (requestInfo) => {
   try {
     return await axios.get(`${usersUrl}so-approval/get-approval-seq/${requestInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// call functions 
+export const createSalesOrderNumberService = async () => {
+  try {
+    return await axios.get(`${usersUrl}create-salesorder-number/`);
   } catch (err) {
     console.log(err.message);
 
