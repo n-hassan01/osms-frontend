@@ -117,11 +117,20 @@ export default function UserPage() {
   }, [account]);
   console.log(USERLIST);
 
+  function getFormattedDate(value) {
+    const date = new Date(value);
+    const year = String(date.getFullYear()).slice(-2);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}/${month}/${year}`;
+  }
+
   const TABLE_HEAD = [
     { id: 'order_number', label: sentenceCase('order_number'), alignRight: false },
     { id: 'ordered_date', label: sentenceCase('ordered_date'), alignRight: false },
-    { id: 'request_date', label: sentenceCase('request_date'), alignRight: false },
+    // { id: 'request_date', label: sentenceCase('request_date'), alignRight: false },
     { id: 'description', label: sentenceCase('description'), alignRight: false },
+    { id: 'approval_status', label: sentenceCase('approval_status'), alignRight: false },
   ];
 
   const handleRequestSort = (event, property) => {
@@ -223,7 +232,8 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { order_number, ordered_date, request_date, description, header_id } = row;
+                    const { order_number, ordered_date, request_date, description, header_id, authorization_status } =
+                      row;
 
                     return (
                       <TableRow hover key={header_id} tabIndex={-1}>
@@ -238,9 +248,10 @@ export default function UserPage() {
                           </Link>
                         </TableCell>
                         {/* <TableCell align="left">{format(ordered_date.to, 'dd-MM-yyyy hh:mm:ss')}</TableCell> */}
-                        <TableCell align="left">{ordered_date}</TableCell>
-                        <TableCell align="left">{request_date}</TableCell>
+                        <TableCell align="left">{getFormattedDate(ordered_date)}</TableCell>
+                        {/* <TableCell align="left">{request_date}</TableCell> */}
                         <TableCell align="left">{description}</TableCell>
+                        <TableCell align="left">{authorization_status}</TableCell>
                       </TableRow>
                     );
                   })}
