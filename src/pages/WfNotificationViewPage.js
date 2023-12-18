@@ -189,6 +189,11 @@ export default function Page404() {
     navigate('/dashboard/dashclone', { replace: true });
   };
 
+  const goToUpdateSO = async () => {
+    console.log(wfNotifications.group_id);
+    navigate(`/dashboard/updateSalesOrderForm/${wfNotifications.group_id}`, { replace: true });
+  };
+
   return (
     <>
       <Helmet>
@@ -200,33 +205,6 @@ export default function Page404() {
           <Typography variant="h4" gutterBottom style={{ width: '50%' }}>
             {wfNotifications.subject}
           </Typography>
-          <Grid container spacing={2} style={{ width: '50%' }}>
-            <Grid item xs={3}>
-              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button
-                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={onApprove}
-                >
-                  Approve
-                </Button>
-                <Button
-                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={onReject}
-                >
-                  Reject
-                </Button>
-                <Button
-                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  //   onClick={handleAddRow}
-                >
-                  Request Information
-                </Button>
-                <Button style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }} onClick={onDone}>
-                  Done
-                </Button>
-              </ButtonGroup>
-            </Grid>
-          </Grid>
         </Stack>
         <Stack
           direction="row"
@@ -371,6 +349,33 @@ export default function Page404() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Grid container spacing={2} style={{ width: '50%', marginTop: '10px' }}>
+          <Grid item xs={3}>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+              <Button
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={onApprove}
+              >
+                Approve
+              </Button>
+              <Button
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={onReject}
+              >
+                Reject
+              </Button>
+              <Button
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={goToUpdateSO}
+              >
+                Request Information
+              </Button>
+              <Button style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }} onClick={onDone}>
+                Done
+              </Button>
+            </ButtonGroup>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );
