@@ -81,6 +81,9 @@ export default function AccountPopover() {
     },
   ];
 
+  const userName = account.account_name || account.full_name;
+  const userId = account.account_number || account.employee_number;
+
   return (
     <>
       <IconButton
@@ -124,10 +127,12 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.full_name}
+            {/* {account.full_name} */}
+            {userName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.employee_number}
+            {/* {account.employee_number} */}
+            {userId}
           </Typography>
         </Box>
 

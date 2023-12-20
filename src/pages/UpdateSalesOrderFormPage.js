@@ -4,20 +4,37 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
-import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  ButtonGroup,
+  Container,
+  Grid,
+  MenuItem,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
+} from '@mui/material';
 import {
   addSalesOrderLinesService,
   callSoApprovalService,
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
+  getApprovalSequenceService,
   getInventoryItemIdList,
   getSalesOrderHeaderService,
   getSalesOrderLinesService,
   getUserProfileDetails,
   // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService,
+  updateSalesOrderLineService
 } from '../Services/ApiServices';
+
+// import { UserListHead } from '../sections/@dashboard/user';
+import SoListHead from '../sections/@dashboard/salesOrders/SoListHeader';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
@@ -39,6 +56,13 @@ export default function Page404() {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${day}/${month}/${year}`;
+  }
+
+  function getFormattedPrice(value) {
+    const formattedPrice = new Intl.NumberFormat().format(value);
+    console.log(parseInt(formattedPrice, 10));
+
+    return formattedPrice;
   }
 
   const [account, setAccount] = useState({});
@@ -112,6 +136,22 @@ export default function Page404() {
   }, []);
   console.log('soLineDetails', soLineDetails);
 
+  const [approvalSequenceDetails, setApprovalSequence] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getApprovalSequenceService(parseInt(header_id, 10)); // Call your async function here
+        if (response.status === 200) setApprovalSequence(response.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, []);
+  console.log(approvalSequenceDetails);
+
   const [filteredItemList, setFilteredItemList] = useState([]);
 
   //   const [headerInfo, setHeaderInfo] = useState({});
@@ -124,11 +164,22 @@ export default function Page404() {
     orderNumber: null,
   });
 
+  let sumTotalPrice = 0;
+  soLineDetails.forEach((element) => {
+    sumTotalPrice += element.unit_selling_price * element.ordered_quantity;
+  });
+  console.log(sumTotalPrice);
+
   const saveHeader = async () => {
     const requestBody = {
       lastUpdatedBy: account.user_id,
       shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
       description: soHeaderDetails.description ? soHeaderDetails.description : '',
+      shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
+      specialDiscount: soHeaderDetails.special_discount,
+      specialAdjustment: soHeaderDetails.special_adjustment,
+      // totalPrice: soHeaderDetails.total_price,
+      totalPrice: sumTotalPrice,
     };
     console.log(requestBody);
 
@@ -243,8 +294,8 @@ export default function Page404() {
     if (confirm('Are you sure for this requisition?')) {
       const requestBody = {
         pHierarchyId: 1,
-        pTransactionId: headerDetails.headerId,
-        pTransactionNum: headerDetails.orderNumber.toString(),
+        pTransactionId: soHeaderDetails.header_id,
+        pTransactionNum: soHeaderDetails.order_number.toString(),
         pAppsUsername: account.full_name,
       };
       const response = await callSoApprovalService(requestBody);
@@ -279,7 +330,9 @@ export default function Page404() {
           orderQuantityUom: lineInfo.order_quantity_uom,
           orderedQuantity: lineInfo.ordered_quantity,
           // soldFromOrgId: lineInfo.soldFromOrgId,
-          unitSellingPrice: lineInfo.unit_sellin_gprice,
+          // soldFromOrgId: lineInfo.soldFromOrgId,
+          unitSellingPrice: lineInfo.unit_selling_price,
+          totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
         };
         console.log(requestBody);
 
@@ -308,6 +361,7 @@ export default function Page404() {
           orderedQuantity: lineInfo.ordered_quantity,
           soldFromOrgId: lineInfo.sold_from_org_id,
           unitSellingPrice: lineInfo.unit_selling_price,
+          totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
         };
         console.log(requestBody);
 
@@ -474,95 +528,207 @@ export default function Page404() {
   //     console.log(rows);
   //   };
 
+  const TABLE_HEAD_Approval_Seq = [
+    // { id: '' },
+    { id: 'unit_of_measure', label: 'SL Num', alignRight: false },
+    { id: 'uom_code', label: 'Action Code', alignRight: false },
+    { id: 'uom_class', label: 'Action Date', alignRight: false },
+    { id: 'disable_date', label: 'Name', alignRight: false },
+    { id: 'description', label: 'Note', alignRight: false },
+  ];
+
+  const shipToChangable = soHeaderDetails.authorization_status === null;
+
+  // const onApprove = async () => {
+  //   const requestBody = {
+  //     pHierarchyId: 1,
+  //     pTransactionID: headerDetails.header_id,
+  //     pTransactionNum: headerDetails.order_number.toString(),
+  //     pAppsUsername: account.full_name,
+  //     pNotificationID: wfNotifications.notification_id,
+  //     pApprovalType: 'A',
+  //     pEmpid: 1,
+  //     pNote: 'A',
+  //   };
+  //   const response = await callReqApprovalFromPanelService(requestBody);
+
+  //   console.log(response);
+  // };
+
+  // const onReject = async () => {
+  //   const requestBody = {
+  //     pHierarchyId: 1,
+  //     pTransactionID: headerDetails.header_id,
+  //     pTransactionNum: headerDetails.order_number.toString(),
+  //     pAppsUsername: account.full_name,
+  //     pNotificationID: wfNotifications.notification_id,
+  //     pApprovalType: 'R',
+  //     pEmpid: 1,
+  //     pNote: 'R',
+  //   };
+  //   const response = await callReqApprovalFromPanelService(requestBody);
+
+  //   console.log(response);
+  // };
+
   return (
     <>
       <Helmet>
-        <title> OSMS | Sales Order Form </title>
+        <title> OSMS | Update Customer Order </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Update Sales Order
+            Update Customer Order
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
-          <div className="col-auto" style={{ width: '160px' }}>
-            <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Order Number
-              <input
-                type="number"
-                id="orderNumber"
-                name="orderNumber"
-                className="form-control"
-                style={{ marginLeft: '7px', width: '100px' }}
-                // value={headerDetails.orderNumber}
-                value={soHeaderDetails.order_number}
-                readOnly
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Ordered Date
-              <input
-                type="text"
-                id="orderedDate"
-                className="form-control"
-                value={getFormattedDate(soHeaderDetails.ordered_date)}
-                readOnly
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '180px' }}>
-            <label
-              htmlFor="shippingMethodCode"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '14px' }}
-            >
-              Transport Type
-              <input
-                type="text"
-                id="shippingMethodCode"
-                name="shippingMethodCode"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                defaultValue={soHeaderDetails.shipping_method_code}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '390px' }}>
-            <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Description
-              <textarea
-                id="description"
-                name="description"
-                className="form-control"
-                style={{ marginLeft: '7px', height: '30px', width: '390px' }}
-                value={soHeaderDetails.description}
-                onChange={(e) => {
-                  onChangeHeader(e);
-                }}
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '200px' }}>
-            <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Ordered By
-              <input
-                type="text"
-                id="salesPerson"
-                name="salesPerson"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                value={account.full_name}
-                readOnly
-              />
-            </label>
-          </div>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Order Number
+                <input
+                  type="number"
+                  id="orderNumber"
+                  name="orderNumber"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  // value={headerDetails.orderNumber}
+                  value={soHeaderDetails.order_number}
+                  readOnly
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Ordered Date
+                <input
+                  type="text"
+                  id="orderedDate"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  value={getFormattedDate(soHeaderDetails.ordered_date)}
+                  readOnly
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '80px', marginRight: '15px' }}>
+              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                From
+                <input
+                  type="number"
+                  id="orderedDate"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  value={soHeaderDetails.created_by}
+                  readOnly
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+              <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Total price
+                <input
+                  type="text"
+                  id="total_price"
+                  name="total_price"
+                  className="form-control"
+                  // style={{ textAlign: 'right' }}
+                  value={getFormattedPrice(sumTotalPrice)}
+                  readOnly
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '430px' }}>
+              <label htmlFor="ship_to" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Ship to
+                <input
+                  type="text"
+                  id="ship_to"
+                  name="ship_to"
+                  className="form-control"
+                  style={{ marginLeft: '5px' }}
+                  // value={account.full_name}
+                  readOnly={!shipToChangable}
+                />
+              </label>
+            </div>
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label
+                htmlFor="shipping_method_code"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Transport Type
+                <select
+                  id="shipping_method_code"
+                  name="shipping_method_code"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  defaultValue={soHeaderDetails.shipping_method_code}
+                  onChange={(e) => onChangeHeader(e)}
+                >
+                  <option value="Self">Self</option>
+                  <option value="Company">Company</option>
+                  <option value="Rental">Rental</option>
+                  <option value="Courier">Courier</option>
+                </select>
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label
+                htmlFor="special_discount"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Special Discount
+                <input
+                  type="number"
+                  id="special_discount"
+                  name="special_discount"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  defaultValue={soHeaderDetails.special_discount}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label
+                htmlFor="special_adjustment"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Special Adjustment
+                <input
+                  type="number"
+                  id="special_adjustment"
+                  name="special_adjustment"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  defaultValue={soHeaderDetails.special_adjustment}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '500px' }}>
+              <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Description
+                <textarea
+                  id="description"
+                  name="description"
+                  className="form-control"
+                  style={{ marginLeft: '7px', height: '30px', width: '390px' }}
+                  value={soHeaderDetails.description}
+                  onChange={(e) => {
+                    onChangeHeader(e);
+                  }}
+                />
+              </label>
+            </div>
+          </Stack>
         </div>
-
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-highlight">
@@ -669,22 +835,30 @@ export default function Page404() {
                           name="unit_selling_price"
                           defaultValue={row.unit_selling_price}
                           style={{ textAlign: 'right' }}
-                          readOnly
+                          // readOnly
                           //   onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td>
                         <input
-                          type="number"
+                          type="text"
                           className="form-control"
                           name="unitSellingPrice"
                           style={{ textAlign: 'right' }}
-                          value={row.ordered_quantity * row.unit_selling_price}
+                          value={getFormattedPrice(row.ordered_quantity * row.unit_selling_price)}
                           readOnly
                         />
                       </td>
                     </tr>
                   ))}
+                <tr>
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td style={{ textAlign: 'right', paddingRight: '11px' }}>{getFormattedPrice(sumTotalPrice)}</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -705,17 +879,11 @@ export default function Page404() {
                 Delete
               </Button>
               <Button
-                style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
-                onClick={handleAddRow}
-              >
-                Add Lines
-              </Button>
-              <Button
                 style={{
                   whiteSpace: 'nowrap',
-                  display: showApprovalButton,
-                  marginLeft: '10px',
+                  display: shipToChangable ? 'block' : 'none',
                   backgroundColor: 'lightgray',
+                  marginRight: '10px',
                   color: 'black',
                 }}
                 // disabled={showApprovalButton === 'none'}
@@ -723,9 +891,72 @@ export default function Page404() {
               >
                 Approval
               </Button>
+              <Button
+                style={{
+                  whiteSpace: 'nowrap',
+                  backgroundColor: 'lightgray',
+                  marginRight: '10px',
+                  color: 'black',
+                  display: shipToChangable ? 'none' : 'block',
+                }}
+                onClick={submitRequisition}
+              >
+                Approve
+              </Button>
+              <Button
+                style={{
+                  whiteSpace: 'nowrap',
+                  // display: showApprovalButton,
+                  backgroundColor: 'lightgray',
+                  marginRight: '10px',
+                  color: 'black',
+                  display: shipToChangable ? 'none' : 'block',
+                }}
+                // disabled={showApprovalButton === 'none'}
+                onClick={submitRequisition}
+              >
+                Reject
+              </Button>
+              <Button
+                style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={handleAddRow}
+              >
+                Add Lines
+              </Button>
             </ButtonGroup>
           </Grid>
         </Grid>
+
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+          style={{ marginBottom: '5px', marginTop: '40px' }}
+        >
+          <Typography variant="h5" gutterBottom>
+            Approval Sequence
+          </Typography>
+        </Stack>
+        <TableContainer sx={{ minWidth: 800 }}>
+          <Table>
+            <SoListHead headLabel={TABLE_HEAD_Approval_Seq} />
+            <TableBody>
+              {approvalSequenceDetails.map((value) => (
+                <TableRow key={value.sl} hover tabIndex={-1}>
+                  {/* <TableCell padding="checkbox">
+                    <Checkbox disabled />
+                  </TableCell> */}
+                  <TableCell>{value.sl}</TableCell>
+                  <TableCell>{value.action_code}</TableCell>
+                  <TableCell>{getFormattedDate(value.action_date)}</TableCell>
+                  <TableCell>{value.full_name}</TableCell>
+                  <TableCell>{value.note}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Container>
     </>
   );
