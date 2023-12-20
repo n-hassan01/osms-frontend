@@ -8,20 +8,20 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Card,
-  Container,
-  Link,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    Container,
+    Link,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
 // components
@@ -102,7 +102,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowWfNotifications() {
+export default function ShowAllWfNotifications() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -176,13 +176,13 @@ export default function ShowWfNotifications() {
       try {
         const usersDetailslogin = await getLoggedInUserDetails();
         console.log('user login', typeof usersDetailslogin.data.id);
-        console.log('user out', user);
-        const usersDetails = await axios.post(`http://182.160.114.100:5001/get-wf-notifications`, {
+        console.log('user out', usersDetailslogin.data.id);
+        const usersAllDetails = await axios.post(`http://182.160.114.100:5001/get-all-wf-notifications`, {
           body: usersDetailslogin.data.id,
         });
-        console.log('tutu', usersDetails);
+        console.log('tutu', usersAllDetails);
 
-        if (usersDetails) setUserList(usersDetails.data);
+        if (usersAllDetails) setUserList(usersAllDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }

@@ -20,6 +20,11 @@ import {
 
 export default function Page404() {
   const navigate = useNavigate();
+  const [transporttype, setTransporttype] = useState('');
+
+  const handleChange = (event) => {
+    setTransporttype(event.target.value);
+  };
 
   function getCurrentDate() {
     const now = new Date();
@@ -98,7 +103,7 @@ export default function Page404() {
   const onChangeHeader = (e) => {
     setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
   };
-  const [showLines, setShowLines] = useState(false);
+  const [showLines, setShowLines] = useState(true);
   const [headerDetails, setHeaderDetails] = useState({
     headerId: null,
     orderNumber: null,
@@ -117,6 +122,7 @@ export default function Page404() {
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
           orderedQuantity: lineInfo.orderedQuantity,
           unitSellingPrice: lineInfo.unitSellingPrice,
+          totalPrice: lineInfo.orderedQuantity * lineInfo.unitSellingPrice,
         };
         console.log(requestBody);
 
@@ -144,6 +150,7 @@ export default function Page404() {
           orderedQuantity: lineInfo.orderedQuantity,
           soldFromOrgId: lineInfo.soldFromOrgId,
           unitSellingPrice: lineInfo.unitSellingPrice,
+          totalPrice: lineInfo.orderedQuantity * lineInfo.unitSellingPrice,
         };
         console.log(requestBody);
 
@@ -194,6 +201,11 @@ export default function Page404() {
         // salesChannelCode: headerInfo.salesChannelCode,
         // bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
         description: headerInfo.description,
+
+        shipTo: headerInfo.shipTo,
+        specialDiscount: headerInfo.specialDiscount,
+        specialAdjustment: headerInfo.specialAdjustment,
+        totalPrice: sumTotalPrice,
       };
       console.log(requestBody);
 
@@ -220,12 +232,19 @@ export default function Page404() {
       soldFromOrgId: null,
       inventoryItemId: null,
       unitSellingPrice: null,
+      totalPrice: '',
       selectedItemName: '',
       selectedItem: {},
       showList: false,
       lineId: null,
     },
   ]);
+
+  let sumTotalPrice = 0;
+  rows.forEach((element) => {
+    sumTotalPrice += element.unitSellingPrice * element.orderedQuantity;
+  });
+  console.log(sumTotalPrice);
 
   const handleAddRow = () => {
     if (rows.length === 1) setShowLines(true);
@@ -239,6 +258,7 @@ export default function Page404() {
           soldFromOrgId: null,
           inventoryItemId: null,
           unitSellingPrice: null,
+          totalPrice: '',
           selectedItemName: '',
           selectedItem: {},
           showList: false,
@@ -396,146 +416,114 @@ export default function Page404() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Create Sales Order
+            Create Customer Order
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
-          <div className="col-auto" style={{ width: '160px' }}>
-            <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Order Number
-              <input
-                type="number"
-                id="orderNumber"
-                name="orderNumber"
-                className="form-control"
-                style={{ marginLeft: '7px', width: '100px' }}
-                value={headerDetails.orderNumber}
-                // value={salesOrderNumber}
-                readOnly
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Order Date
-              <input type="text" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
-            </label>
-          </div>
-          {/* <div className="col-auto" style={{ width: '221px' }}>
-            <label
-              htmlFor="requestDate"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '13px' }}
-              onChange={(e) => onChangeHeader(e)}
-            >
-              Request Date
-              <input
-                type="date"
-                id="requestDate"
-                name="requestDate"
-                className="form-control"
-                defaultValue={getCurrentDate()}
-              />
-            </label>
-          </div> */}
-          {/* <div className="col-auto" style={{ width: '180px' }}>
-            <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Payment Term ID
-              <input
-                type="number"
-                id="paymentTermId"
-                name="paymentTermId"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div> */}
-          <div className="col-auto" style={{ width: '180px' }}>
-            <label
-              htmlFor="shippingMethodCode"
-              className="col-form-label"
-              style={{ display: 'flex', fontSize: '14px' }}
-            >
-              Transport Type
-              <input
-                type="text"
-                id="shippingMethodCode"
-                name="shippingMethodCode"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div>
-          {/* <div className="col-auto">
-            <label htmlFor="cancelledFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Cancelled
-              <input
-                type="checkbox"
-                id="cancelledFlag"
-                name="cancelledFlag"
-                style={{ marginLeft: '7px' }}
-                onChange={(e) => onChecked(e)}
-                disabled
-              />
-            </label>
-          </div>
-          <div className="col-auto">
-            <label htmlFor="bookedFlag" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Booked
-              <input
-                type="checkbox"
-                id="bookedFlag"
-                name="bookedFlag"
-                style={{ marginLeft: '7px' }}
-                // onChange={handleRowSelect}
-                onChange={(e) => onChecked(e)}
-                disabled
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '221px' }}>
-            <label htmlFor="bookedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Booked Date
-              <input
-                type="date"
-                id="bookedDate"
-                name="bookedDate"
-                className="form-control"
-                defaultValue={getCurrentDate()}
-                onChange={(e) => onChangeHeader(e)}
-              />
-            </label>
-          </div> */}
-          <div className="col-auto" style={{ width: '390px' }}>
-            <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '14px' }}>
-              Description
-              <textarea
-                id="description"
-                name="description"
-                className="form-control"
-                style={{ marginLeft: '7px', height: '30px' }}
-                onChange={(e) => {
-                  onChangeHeader(e);
-                }}
-              />
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '200px' }}>
-            <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-              Ordered By
-              <input
-                type="text"
-                id="salesPerson"
-                name="salesPerson"
-                className="form-control"
-                style={{ marginLeft: '7px' }}
-                defaultValue={account.full_name}
-                readOnly
-              />
-            </label>
-          </div>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Order Number
+                <input
+                  type="number"
+                  id="orderNumber"
+                  name="orderNumber"
+                  className="form-control"
+                  style={{ marginLeft: '7px', width: '100px' }}
+                  value={headerDetails.orderNumber}
+                  readOnly
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Ordered Date
+                <input type="text" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
+              </label>
+            </div>
+
+            <div className="col-auto" style={{ width: '430px' }}>
+              <label htmlFor="shipTo" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Ship to
+                <input
+                  type="text"
+                  id="shipTo"
+                  name="shipTo"
+                  className="form-control"
+                  style={{ marginLeft: '5px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '180px', marginLeft: '10px' }}>
+              <label
+                htmlFor="shippingMethodCode"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Transport Type
+                <select
+                  id="shippingMethodCode"
+                  name="shippingMethodCode"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                >
+                  <option value="Self">Self</option>
+                  <option value="Company">Company</option>
+                  <option value="Rental">Rental</option>
+                  <option value="Courier">Courier</option>
+                </select>
+              </label>
+            </div>
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label htmlFor="specialDiscount" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Special discount
+                <input
+                  type="number"
+                  id="specialDiscount"
+                  name="specialDiscount"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label
+                htmlFor="specialAdjustment"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Special adjustment
+                <input
+                  type="number"
+                  id="specialAdjustment"
+                  name="specialAdjustment"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                  // value={getFormattedDate(soHeaderDetails.total_price)}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ width: '500px' }}>
+              <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Description
+                <textarea
+                  id="description"
+                  name="description"
+                  className="form-control"
+                  style={{ marginLeft: '7px', height: '30px', width: '390px' }}
+                  onChange={(e) => {
+                    onChangeHeader(e);
+                  }}
+                />
+              </label>
+            </div>
+          </Stack>
         </div>
 
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
@@ -644,14 +632,23 @@ export default function Page404() {
                         <input
                           type="number"
                           className="form-control"
-                          name="unitSellingPrice"
+                          name="totalPrice"
                           style={{ textAlign: 'right' }}
                           value={row.orderedQuantity * row.unitSellingPrice}
+                          // onClick={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           readOnly
                         />
                       </td>
                     </tr>
                   ))}
+                <tr>
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td />
+                  <td style={{ textAlign: 'right' }}>{sumTotalPrice}</td>
+                </tr>
               </tbody>
             </table>
           </div>
