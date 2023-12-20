@@ -33,16 +33,17 @@ export default function Page404() {
   const navigate = useNavigate();
   const { notification_id } = useParams();
 
-  function getCurrentDate(date) {
-    // const now = new Date();
-    const year = date.getFullYear();
+  function getFormattedDate(value) {
+    const dateObject = new Date(value);
+
+    // Extract date and time components
+    const formattedDate = dateObject.toLocaleDateString();
+    const formattedTime = dateObject.toLocaleTimeString();
+    const date = new Date(formattedDate);
+    const year = String(date.getFullYear()).slice(-2);
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-
-    const formatter = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const formattedTime = formatter.format(date);
-    console.log(formattedTime);
-    return `${year}-${month}-${day} ${formattedTime}`;
+    return `${day}/${month}/${year}    ${formattedTime}`;
   }
 
   const [account, setAccount] = useState({});
@@ -137,11 +138,10 @@ export default function Page404() {
   const TABLE_HEAD = [
     // { id: '' },
     { id: 'unit_of_measure', label: 'Line Number', alignRight: false },
-    { id: 'uom_code', label: 'Ordered Item', alignRight: false },
-    { id: 'uom_class', label: 'Order Quantity Uom', alignRight: false },
-    { id: 'disable_date', label: 'Ordered Quantity', alignRight: false },
-    { id: 'description', label: 'Sold From Org ID', alignRight: false },
-    { id: 'description', label: 'Unit Selling Price', alignRight: false },
+    { id: 'uom_code', label: 'Item', alignRight: false },
+    { id: 'uom_class', label: 'UOM', alignRight: false },
+    { id: 'disable_date', label: 'Quantity', alignRight: true },
+    { id: 'description', label: 'Unit Price', alignRight: true },
   ];
 
   const TABLE_HEAD_Approval_Seq = [
@@ -189,6 +189,11 @@ export default function Page404() {
     navigate('/dashboard/dashclone', { replace: true });
   };
 
+  const goToUpdateSO = async () => {
+    console.log(wfNotifications.group_id);
+    navigate(`/dashboard/updateSalesOrderForm/${wfNotifications.group_id}`, { replace: true });
+  };
+
   return (
     <>
       <Helmet>
@@ -200,36 +205,11 @@ export default function Page404() {
           <Typography variant="h4" gutterBottom style={{ width: '50%' }}>
             {wfNotifications.subject}
           </Typography>
-          <Grid container spacing={2} style={{ width: '50%' }}>
-            <Grid item xs={3}>
-              <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
-                <Button
-                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={onApprove}
-                >
-                  Approve
-                </Button>
-                <Button
-                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  onClick={onReject}
-                >
-                  Reject
-                </Button>
-                <Button
-                  style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                  //   onClick={handleAddRow}
-                >
-                  Request Information
-                </Button>
-                <Button
-                  style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
-                    onClick={onDone}
-                >
-                  Done
-                </Button>
-              </ButtonGroup>
-            </Grid>
-          </Grid>
+          <div style={{ width: '50%', textAlign: 'right' }}>
+            <Button style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }} onClick={onDone}>
+              Done
+            </Button>
+          </div>
         </Stack>
         <Stack
           direction="row"
@@ -264,7 +244,7 @@ export default function Page404() {
           <div className="col-auto" style={{ width: '50%' }}>
             <label htmlFor="fromUser" className="col-form-label" style={{ display: 'flex' }}>
               Sent
-              <span style={{ marginLeft: '10px' }}>{wfNotifications.sent_date}</span>
+              <span style={{ marginLeft: '10px' }}>{getFormattedDate(wfNotifications.sent_date)}</span>
             </label>
           </div>
         </div>
@@ -289,30 +269,24 @@ export default function Page404() {
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
               Ordered Date
-              <span style={{ marginLeft: '10px' }}>{headerDetails.ordered_date}</span>
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '33%' }}>
-            <label htmlFor="requestDate" className="col-form-label" style={{ display: 'flex' }}>
-              Request Date
-              <span style={{ marginLeft: '10px' }}>{headerDetails.request_date}</span>
-            </label>
-          </div>
-          <div className="col-auto" style={{ width: '33%' }}>
-            <label htmlFor="paymentTermId" className="col-form-label" style={{ display: 'flex' }}>
-              Payment Term ID
-              <span style={{ marginLeft: '10px' }}>{headerDetails.payment_term_id}</span>
+              <span style={{ marginLeft: '10px' }}>{getFormattedDate(headerDetails.ordered_date)}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="shippingMethodCode" className="col-form-label" style={{ display: 'flex' }}>
-              Shipping Method
+              Transport Type
               <span style={{ marginLeft: '10px' }}>{headerDetails.shipping_method_code}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '66%' }}>
+            <label htmlFor="description" className="col-form-label" style={{ display: 'flex' }}>
+              Description
+              <span style={{ marginLeft: '10px' }}>{headerDetails.description}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex' }}>
-              Sales Person
+              Ordered By
               <span style={{ marginLeft: '10px' }}>{headerDetails.salesrep_id}</span>
             </label>
           </div>
@@ -341,9 +315,9 @@ export default function Page404() {
                   <TableCell>{value.line_number}</TableCell>
                   <TableCell>{value.ordered_item}</TableCell>
                   <TableCell>{value.order_quantity_uom}</TableCell>
-                  <TableCell>{value.ordered_quantity}</TableCell>
-                  <TableCell>{value.sold_from_org_id}</TableCell>
-                  <TableCell>{value.unit_selling_price}</TableCell>
+                  <TableCell style={{ textAlign: 'right' }}>{value.ordered_quantity}</TableCell>
+
+                  <TableCell style={{ textAlign: 'right' }}>{value.unit_selling_price}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -372,7 +346,7 @@ export default function Page404() {
                   </TableCell>
                   <TableCell>{value.sl}</TableCell>
                   <TableCell>{value.action_code}</TableCell>
-                  <TableCell>{value.action_date}</TableCell>
+                  <TableCell>{getFormattedDate(value.action_date)}</TableCell>
                   <TableCell>{value.full_name}</TableCell>
                   <TableCell>{value.note}</TableCell>
                 </TableRow>
@@ -380,6 +354,30 @@ export default function Page404() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Grid container spacing={2} style={{ marginTop: '10px' }}>
+          <Grid item xs={3}>
+            <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
+              <Button
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={onApprove}
+              >
+                Approve
+              </Button>
+              <Button
+                style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={onReject}
+              >
+                Reject
+              </Button>
+              <Button
+                style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={goToUpdateSO}
+              >
+                Update Sales Order
+              </Button>
+            </ButtonGroup>
+          </Grid>
+        </Grid>
       </Container>
     </>
   );
