@@ -32,10 +32,11 @@ import {
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { getUserProfileDetails, getUserwiseTxnRequestHeader, updateUomDetails } from '../Services/ApiServices';
+import { getUserProfileDetails, updateUomDetails } from '../Services/ApiServices';
 // import UomListToolbar from '../sections/@dashboard/uom/UomListToolbar';
 import RequisitionListHead from '../sections/@dashboard/requisitions/RequisitionListHead';
 
+import { useUser } from '../context/UserContext';
 // ----------------------------------------------------------------------
 
 const selectedUsers = [];
@@ -89,13 +90,16 @@ export default function UserPage() {
   const [USERLIST, setUserList] = useState([]);
 
   const [account, setAccount] = useState({});
+  const { user } = useUser();
+  console.log(user);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200)
-          setAccount(accountDetails.data); // Set the account details in the component's state
-        else navigate('/login');
+        if (user) {
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        }
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -103,7 +107,8 @@ export default function UserPage() {
     }
 
     fetchData(); // Call the async function when the component mounts
-  }, []);
+  }, [user]);
+  console.log(account);
 
   // useEffect(() => {
   //   const fetchData = async () => {

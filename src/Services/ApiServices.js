@@ -45,13 +45,13 @@ export const login = async (user) => {
   }
 };
 
-export const getLoggedInUserDetails = async () => {
-  const cookie = getCookieService('jwt-token-cookie');
+export const getLoggedInUserDetails = async (loginToken) => {
+  console.log(loginToken);
 
   try {
     return await axios.get(`${usersUrl}loggedin-user/`, {
       headers: {
-        Authorization: `Bearer ${cookie}`,
+        Authorization: `Bearer ${loginToken}`,
       },
     });
   } catch (err) {
@@ -77,13 +77,13 @@ export const getAccountDetails = async (emailAddress) => {
   }
 };
 
-export const getUserProfileDetails = async () => {
-  const cookie = getCookieService('jwt-token-cookie');
+export const getUserProfileDetails = async (loginToken) => {
+  console.log(loginToken);
 
   try {
     return await axios.get(`${usersUrl}profile/`, {
       headers: {
-        Authorization: `Bearer ${cookie}`,
+        Authorization: `Bearer ${loginToken}`,
       },
     });
   } catch (err) {
