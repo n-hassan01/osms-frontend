@@ -78,13 +78,13 @@ export const getAccountDetails = async (emailAddress) => {
   }
 };
 
-export const getUserProfileDetails = async () => {
-  const cookie = getCookieService('jwt-token-cookie');
+export const getUserProfileDetails = async (loginToken) => {
+  console.log(loginToken);
 
   try {
     return await axios.get(`${usersUrl}profile/`, {
       headers: {
-        Authorization: `Bearer ${cookie}`,
+        Authorization: `Bearer ${loginToken}`,
       },
     });
   } catch (err) {
