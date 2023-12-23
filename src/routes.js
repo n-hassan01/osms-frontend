@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
+import DashClone from './pages/DashClone';
 import DashboardAppPage from './pages/DashboardAppPage';
 import LoginPage from './pages/LoginPage';
 import ManageSoPage from './pages/ManageSoPage';
@@ -20,6 +21,7 @@ import SettingsPage from './pages/SettingsPage';
 import ShowApprovedSalesOrders from './pages/ShowApprovedSalesOrders';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
+import ShowHzCustAccounts from './pages/ShowHzCustAccounts';
 import ShowLocationsAll from './pages/ShowLocationsAll';
 import ShowMainSystemMenu from './pages/ShowMainSystemMenu';
 import Showmenus from './pages/ShowMenus';
@@ -35,6 +37,7 @@ import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
 import AddFndUser from './sections/@dashboard/user/AddFndUser';
 import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
 import AddHrOrganizationUnits from './sections/@dashboard/user/AddHrOrganizationUnits';
+import AddHzCustAccounts from './sections/@dashboard/user/AddHzCustAccounts';
 import AddMtlTransactionTypes from './sections/@dashboard/user/AddMtlTransactionTypes';
 import AddPerAllPeoples from './sections/@dashboard/user/AddPerAllPeoples';
 import UpdateFndUser from './sections/@dashboard/user/UpdateFndUser';
@@ -74,7 +77,8 @@ export default function Router() {
       //  element: <DashboardLayout />,
       element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/dashclone" />, index: true },
+        { path: 'dashclone', element: <DashClone /> },
         // { path: 'dashclone', element: <DashClone /> },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'profile', element: <ProfilePage /> },
@@ -115,7 +119,8 @@ export default function Router() {
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
         { path: 'updateSalesOrderForm/:header_id', element: <UpdateSalesOrderForm /> },
         { path: 'showapprovedsalesorders', element: <ShowApprovedSalesOrders /> },
-
+        { path: 'showhzcustaccounts', element: <ShowHzCustAccounts /> },
+        { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
       ],
     },
 

@@ -67,7 +67,7 @@ export default function Header({ onOpenNav }) {
             cursor: 'pointer',
           }}
           onClick={() => {
-            navigate(`/dashboard/app`);
+            navigate(`/dashboard/dashclone`);
           }}
           color="action"
         />
