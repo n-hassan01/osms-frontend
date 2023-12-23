@@ -16,15 +16,11 @@ export default function MenuCreation() {
   const navigate = useNavigate();
   const [userInput, setUserInput] = useState('');
   const [user, setUser] = useState('');
-  const [showMenuLines, setShowMenuLines] = useState(false);
+  const [showMenuLines, setShowMenuLines] = useState(true);
 
   const [list, setList] = useState([]);
-  const [originalList, setOriginalList] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
 
-  const handleReload = () => {
-    window.location.reload();
-  };
+  const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -43,16 +39,6 @@ export default function MenuCreation() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    // Extract user_name values from the list and setOriginalList
-    setOriginalList(list.map((item) => item.user_name));
-  }, [list]);
-
-  useEffect(() => {
-    // Set filteredList initially to originalList
-    setFilteredList(originalList);
-  }, [originalList]);
-
   const [menuids, setMenuIds] = useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -69,36 +55,6 @@ export default function MenuCreation() {
     fetchData();
   }, []);
 
-  const [i, setI] = useState(false);
-  // const handleMenuItemClick = (selectedItem) => {
-  //   console.log(selectedItem);
-  //   setUserInput(selectedItem);
-  //   console.log(userInput);
-  //   setFilteredList([]);
-  //   // const selectedUser = list.find((user) => user.user_name.toLowerCase() === selectedItem.toLowerCase());
-  //   // console.log(selectedUser);
-  //   // setUserInput(selectedUser.user_name);
-  //   // console.log(userInput);
-  //   // setUser(selectedUser.user_id);
-  //   // console.log(user);
-  //   // setUserInput(selectedItem);
-
-  //   // console.log(userInput);
-  //   // setFilteredList([]);
-  // };
-
-  const handleInputChange = (e) => {
-    setI(true);
-    const input = e.target.value;
-    console.log('ela', e.target.value);
-    // setUserInput(input);
-    console.log(userInput);
-
-    // Filter the original list based on the input
-    const filtered = originalList.filter((item) => item.toLowerCase().includes(input.toLowerCase()));
-    setFilteredList(filtered);
-  };
-
   const [count, setCount] = useState(0);
   const saveSubMenus = async () => {
     console.log('menurows:', menurows.length);
@@ -108,6 +64,7 @@ export default function MenuCreation() {
     let c;
     for (c = count; c < filteredArray.length; c++) {
       const lineInfo = filteredArray[c];
+      console.log(lineInfo);
 
       const requestBody = {
         menuId: lineInfo.menuId,
@@ -123,25 +80,23 @@ export default function MenuCreation() {
     }
     setCount(c);
     alert('Successfully added');
-    // navigate('/dashboard/showmenus');
+    navigate('/dashboard/showmenus');
 
-    // window.location.reload();
+    window.location.reload();
   };
 
   const [menurows, setMenuRows] = useState([
     {
       menuId: '',
       userId: '',
-      selectedItemName: '',
-      selectedItem: {},
+      userName: '',
+
       showList: false,
     },
   ]);
   console.log(userInput);
 
   const handleAddRow = () => {
-    console.log(menurows.user);
-    setUserInput('');
     if (menurows.length === 1) setShowMenuLines(true);
     if (showMenuLines) {
       setMenuRows([
@@ -149,8 +104,8 @@ export default function MenuCreation() {
         {
           menuId: '',
           userId: '',
-          selectedItemName: '',
-          selectedItem: {},
+          userName: '',
+
           showList: false,
         },
       ]);
@@ -168,32 +123,45 @@ export default function MenuCreation() {
     setMenuRows(updatedRows);
   };
   const handleInputItemChange = (index, event) => {
+    console.log(event);
     const input = event.target.value;
-    const name = 'selectedItemName';
+
+    const username = 'userName';
+
     const show = 'showList';
 
-    const updatedRows = [...rows];
-    updatedRows[index][name] = input;
+    const updatedRows = [...menurows];
+
+    updatedRows[index][username] = input;
+
     updatedRows[index][show] = true;
-    setRows(updatedRows);
-    console.log(rows);
+
+    setMenuRows(updatedRows);
+    console.log(menurows);
 
     // Filter the original list based on the input
-    console.log(inventoryItemIds);
-    const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
-    setFilteredItemList(filtered);
+
+    const filtered = list.filter((item) => item.user_name.toLowerCase().includes(input.toLowerCase()));
+    setFilteredList(filtered);
   };
+
   const handleMenuItemClick = (index, item) => {
-    const name = 'selectedItemName';
-    const selected = 'selectedItem';
+    console.log(index);
+    console.log(item);
+    const name = 'userId';
+    const username = 'userName';
+
     const show = 'showList';
 
-    const updatedRows = [...rows];
-    updatedRows[index][name] = item.description;
-    updatedRows[index][selected] = item;
+    const updatedRows = [...menurows];
+    updatedRows[index][name] = item.user_id;
+    updatedRows[index][username] = item.user_name;
+
     updatedRows[index][show] = false;
-    setRows(updatedRows);
-    console.log(rows);
+    console.log(updatedRows);
+    setMenuRows(updatedRows);
+
+    console.log(menurows);
   };
   const handleClose = () => {
     navigate('/dashboard/menuassign');
@@ -223,17 +191,18 @@ export default function MenuCreation() {
               handleAddRow();
             }}
           >
-            Menu Assign
+            <span style={{ font: 'bold' }}>+ </span> New Menu Assign
           </Button>
 
-          <Button
-            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
-            onClick={handleClose}
-          >
+          <Button style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }} onClick={handleClose}>
             Cancel
           </Button>
         </Grid>
-        <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row' }}>
+        <Grid
+          container
+          spacing={2}
+          style={{ display: 'flex', flexDirection: 'row', marginLeft: '0px', marginTop: '10px' }}
+        >
           <div>
             <form className="form-horizontal" style={{ marginTop: '5%' }}>
               <div className="table-responsive">
@@ -254,22 +223,24 @@ export default function MenuCreation() {
                         <tr key={index}>
                           <td style={{ width: '190px' }}>
                             <input
+                              select
                               type="text"
                               name="userId"
-                              placeholder="Type User ID "
-                              value={row.selectedItemName}
+                              placeholder="Type User Name "
+                              value={row.userName}
                               onChange={(e) => handleInputItemChange(index, e)}
+                              //  onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
                               style={{ marginTop: '18px' }}
                             />
                             {row.showList && (
                               <ul style={{ marginTop: '18px' }}>
-                                {filteredList.map((item, index) => (
+                                {filteredList.map((item, itemIndex) => (
                                   <MenuItem
-                                    key={index}
-                                    value={item}
-                                    onClick={(e) => handleMenuItemClick(index,item)}
+                                    key={itemIndex}
+                                    defaultValue={item.user_name}
+                                    onClick={(e) => handleMenuItemClick(index, item)}
                                   >
-                                    {item.description}
+                                    {item.user_name}
                                   </MenuItem>
                                 ))}
                               </ul>
@@ -281,7 +252,7 @@ export default function MenuCreation() {
                               select
                               fullWidth
                               name="menuId"
-                              label="Menu Description"
+                              label="Menu Name"
                               autoComplete="given-name"
                               onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
                               InputLabelProps={{
@@ -307,15 +278,16 @@ export default function MenuCreation() {
                 </table>
               </div>
               {showMenuLines && (
-                <Grid item xs={3}>
+                <Grid item xs={2} style={{ display: 'flex', flexDirection: 'row' }}>
                   <Button
                     style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
                     onClick={saveSubMenus}
                   >
                     Submit
                   </Button>
+
                   <Button
-                    style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                    style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
                     onClick={handleClose}
                   >
                     Cancel

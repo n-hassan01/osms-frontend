@@ -7,12 +7,14 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDownloadExcel } from 'react-export-table-to-excel';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addHrLocationsDetailsService } from '../../../Services/Admin/AddHrLocations';
 import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
 
 export default function AddHrLocations() {
+  const tableref = useRef(null);
   const navigate = useNavigate();
   const { location_id } = useParams();
   console.log(location_id);
@@ -27,6 +29,12 @@ export default function AddHrLocations() {
   const [errors, setErrors] = useState({});
 
   const [clonelocation, setClonelocation] = useState([{}]);
+
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableref.current,
+    filename: 'sales_order_data',
+    sheet: 'SalesOrderData',
+  });
 
   useEffect(() => {
     async function fetchData() {
@@ -137,7 +145,7 @@ export default function AddHrLocations() {
   const handleAddRow = () => {
     console.log('ll', clonelocation.length);
     if (clonelocation.length === 1) setShowMenuLines(true);
-   
+
     console.log(clonelocation);
     if (showMenuLines) {
       console.log('dd', showMenuLines);
@@ -206,7 +214,7 @@ export default function AddHrLocations() {
         <div>
           <form className="form-horizontal" style={{ marginTop: '5%' }}>
             <div className="table-responsive">
-              <table className="table table-bordered table-striped table-highlight">
+              <table className="table table-bordered table-striped table-highlight" ref={tableref}>
                 <thead>
                   <tr>
                     <th>
@@ -349,6 +357,12 @@ export default function AddHrLocations() {
                   onClick={handleClose}
                 >
                   Cancel
+                </Button>
+                <Button
+                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={onDownload}
+                >
+                  Export
                 </Button>
               </Grid>
             )}
