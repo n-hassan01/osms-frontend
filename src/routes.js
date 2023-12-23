@@ -19,6 +19,7 @@ import RequisitionPage from './pages/RequisitionPage';
 import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
 import ShowApprovedSalesOrders from './pages/ShowApprovedSalesOrders';
+import ShowExcelFile from './pages/ShowExcelFile';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowHzCustAccounts from './pages/ShowHzCustAccounts';
@@ -45,7 +46,6 @@ import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
 import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
-
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
@@ -126,6 +126,7 @@ export default function Router() {
         { path: 'showapprovedsalesorders', element: <ShowApprovedSalesOrders /> },
         { path: 'showhzcustaccounts', element: <ShowHzCustAccounts /> },
         { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
+        { path: 'showexcelfile', element: <ShowExcelFile /> },
       ],
     },
 
