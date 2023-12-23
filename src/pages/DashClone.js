@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardAppPage from './DashboardAppPage';
-import ShowWfNotifications from './ShowWfNotifications';
+import DashboardAppPage2 from './DashboardAppPage2';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -49,18 +49,18 @@ export default function BasicTabs() {
   };
 
   return (
-    <Box >
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} style={{marginLeft:"50px"}}>
+    <Box>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} style={{ marginLeft: '50px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab {...a11yProps(0)} label="Notifications" />
-          <Tab {...a11yProps(1)} label="Dashboard" />
+          <Tab {...a11yProps(1)} label="Notifications History" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <ShowWfNotifications />
+        <DashboardAppPage />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <DashboardAppPage />
+        <DashboardAppPage2 />
       </CustomTabPanel>
     </Box>
   );
