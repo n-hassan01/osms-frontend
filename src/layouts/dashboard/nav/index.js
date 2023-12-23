@@ -13,6 +13,7 @@ import Scrollbar from '../../../components/scrollbar';
 //
 import { getLoggedInUserDetails, getUserMenuList } from '../../../Services/ApiServices';
 // import navConfig from './config';
+import { useUser } from '../../../context/UserContext';
 
 // ----------------------------------------------------------------------
 
@@ -47,14 +48,17 @@ export default function Nav({ openNav, onCloseNav }) {
   }, [pathname]);
 
   const [account, setAccount] = useState({});
+  const { user } = useUser();
+  console.log(user);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const accountDetails = await getLoggedInUserDetails();
-        if (accountDetails.status === 200) {
-          setAccount(accountDetails.data);
-        } else {
-          navigate('/login');
+        if (user) {
+          const accountDetails = await getLoggedInUserDetails(user);
+          if (accountDetails.status === 200) {
+            setAccount(accountDetails.data);
+          }
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -65,6 +69,7 @@ export default function Nav({ openNav, onCloseNav }) {
   }, []); // Empty dependency array ensures the effect runs only once on mount
 
   const userId = account.id;
+  console.log(userId);
 
   const [userMenus, setUserMenus] = useState([]);
   useEffect(() => {
