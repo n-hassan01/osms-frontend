@@ -8,20 +8,20 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
 // components
@@ -31,6 +31,7 @@ import Scrollbar from '../components/scrollbar';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 
+import { useUser } from '../context/UserContext';
 import ShowWfNotiHead from '../sections/@dashboard/user/ShowWfNotiHead';
 
 // ----------------------------------------------------------------------
@@ -126,7 +127,7 @@ export default function ShowAllWfNotifications() {
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
 
-  const [user, setUser] = useState('');
+  // const [user, setUser] = useState('');
   const currentDate = new Date();
 
   const lastTwoDigitsOfYear = String(currentDate.getFullYear()).slice(-2);
@@ -171,18 +172,20 @@ export default function ShowAllWfNotifications() {
   const generatedNumber1 = generateNumber();
   console.log(generatedNumber1);
 
+  const { user } = useUser();
+  console.log(user);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetailslogin = await getLoggedInUserDetails();
-        console.log('user login', typeof usersDetailslogin.data.id);
-        console.log('user out', usersDetailslogin.data.id);
-        const usersAllDetails = await axios.post(`http://182.160.114.100:5001/get-all-wf-notifications`, {
-          body: usersDetailslogin.data.id,
-        });
-        console.log('tutu', usersAllDetails);
+        if (user) {
+          const usersDetailslogin = await getLoggedInUserDetails(user);
+          const usersAllDetails = await axios.post(`http://182.160.114.100:5001/get-all-wf-notifications`, {
+            body: usersDetailslogin.data.id,
+          });
 
-        if (usersAllDetails) setUserList(usersAllDetails.data);
+          if (usersAllDetails) setUserList(usersAllDetails.data);
+        }
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -292,7 +295,7 @@ export default function ShowAllWfNotifications() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h5" gutterBottom>
-          List for Approval 
+            List for Approval
           </Typography>
         </Stack>
 
