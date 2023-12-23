@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
+import DashClone from './pages/DashClone';
 import DashboardAppPage from './pages/DashboardAppPage';
 import LoginPage from './pages/LoginPage';
 import ManageSoPage from './pages/ManageSoPage';
@@ -20,6 +21,7 @@ import SettingsPage from './pages/SettingsPage';
 import ShowApprovedSalesOrders from './pages/ShowApprovedSalesOrders';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
+import ShowHzCustAccounts from './pages/ShowHzCustAccounts';
 import ShowLocationsAll from './pages/ShowLocationsAll';
 import ShowMainSystemMenu from './pages/ShowMainSystemMenu';
 import Showmenus from './pages/ShowMenus';
@@ -35,6 +37,7 @@ import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
 import AddFndUser from './sections/@dashboard/user/AddFndUser';
 import AddHrLocations from './sections/@dashboard/user/AddHrLocations';
 import AddHrOrganizationUnits from './sections/@dashboard/user/AddHrOrganizationUnits';
+import AddHzCustAccounts from './sections/@dashboard/user/AddHzCustAccounts';
 import AddMtlTransactionTypes from './sections/@dashboard/user/AddMtlTransactionTypes';
 import AddPerAllPeoples from './sections/@dashboard/user/AddPerAllPeoples';
 import UpdateFndUser from './sections/@dashboard/user/UpdateFndUser';
@@ -45,20 +48,25 @@ import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTrans
 
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
+import { useUser } from './context/UserContext';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const navigate = useNavigate();
-  // const cookie = getCookieService('jwt-token-cookie');
+  
+  const { user } = useUser();
+  console.log(user);
+
   const [isAuthorized, setIsAuthorized] = useState({});
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
-        else navigate('/login');
-        // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        if (user) {
+          console.log(user);
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
+        }
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -66,7 +74,7 @@ export default function Router() {
     }
 
     fetchData();
-  }, []);
+  }, [user]);
 
   const routes = useRoutes([
     {
@@ -74,7 +82,8 @@ export default function Router() {
       //  element: <DashboardLayout />,
       element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        { element: <Navigate to="/dashboard/dashclone" />, index: true },
+        { path: 'dashclone', element: <DashClone /> },
         // { path: 'dashclone', element: <DashClone /> },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'profile', element: <ProfilePage /> },
@@ -115,7 +124,8 @@ export default function Router() {
         { path: 'wfNotificationView/:notification_id', element: <WfNotificationView /> },
         { path: 'updateSalesOrderForm/:header_id', element: <UpdateSalesOrderForm /> },
         { path: 'showapprovedsalesorders', element: <ShowApprovedSalesOrders /> },
-
+        { path: 'showhzcustaccounts', element: <ShowHzCustAccounts /> },
+        { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
       ],
     },
 

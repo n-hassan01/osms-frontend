@@ -30,10 +30,11 @@ import {
   getUserProfileDetails,
   // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService
+  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
+import { useUser } from '../context/UserContext';
 import SoListHead from '../sections/@dashboard/salesOrders/SoListHeader';
 // ----------------------------------------------------------------------
 
@@ -66,13 +67,16 @@ export default function Page404() {
   }
 
   const [account, setAccount] = useState({});
+  const { user } = useUser();
+  console.log(user);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200)
-          setAccount(accountDetails.data); // Set the account details in the component's state
-        else navigate('/login');
+        if (user) {
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        }
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -80,7 +84,7 @@ export default function Page404() {
     }
 
     fetchData(); // Call the async function when the component mounts
-  }, []);
+  }, [user]);
   console.log(account);
 
   const [inventoryItemIds, setInventoryItemIds] = useState([]);

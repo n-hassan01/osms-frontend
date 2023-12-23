@@ -1,16 +1,18 @@
-/* eslint-disable no-else-return */
 /* eslint-disable camelcase */
-import axios from 'axios';
-import { format } from 'date-fns';
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+
 // @mui
+
 import {
+  Button,
   Card,
+  Checkbox,
   Container,
-  Link,
+  IconButton,
   MenuItem,
   Paper,
   Popover,
@@ -23,25 +25,22 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
+
 // components
+import { getHzCustAccountsDetails } from '../Services/ApiServices';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-// sections
-// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
-//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-
-import { useUser } from '../context/UserContext';
-import ShowWfNotiHead from '../sections/@dashboard/user/ShowWfNotiHead';
-
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  // { id: 'notification_id', label: 'Organization ID', alignRight: false },
+  { id: 'account_number', label: 'Account Number', alignRight: false },
+  { id: 'account_name', label: 'Account Name', alignRight: false },
+  { id: 'primary_salesrep_id', label: 'Salesrep ID', alignRight: false },
+  { id: 'email_address', label: 'Email Address', alignRight: false },
+  { id: 'work_telephone', label: 'Work Telephone', alignRight: false },
+ 
 
-  { id: 'fromuser', label: 'From User', alignRight: false },
-  { id: 'message', label: 'Message', alignRight: false },
-  { id: 'sentDate', label: 'Sent Date', alignRight: false },
 
   { id: '' },
 ];
@@ -65,18 +64,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// function applySortFilter(array, comparator, query) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   if (query) {
-//     return filter(array, (_user) => _user.notification_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-//   }
-//   return stabilizedThis.map((el) => el[0]);
-// }
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -84,26 +71,13 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-
   if (query) {
-    return filter(array, (_user) => {
-      const notificationId = _user.notification_id;
-      const lowerCaseQuery = query.toLowerCase();
-
-      if (typeof notificationId === 'string') {
-        return notificationId.toLowerCase().indexOf(lowerCaseQuery) !== -1;
-      } else if (typeof notificationId === 'number') {
-        return notificationId.toString().indexOf(lowerCaseQuery) !== -1;
-      }
-
-      return false;
-    });
+    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
-
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowWfNotifications() {
+export default function ShowHzCustAccounts() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -127,87 +101,23 @@ export default function ShowWfNotifications() {
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
 
-  // const [user, setUser] = useState('');
-  const currentDate = new Date();
-
-  const lastTwoDigitsOfYear = String(currentDate.getFullYear()).slice(-2);
-  const formattedDate = format(currentDate, `dd/MM/${lastTwoDigitsOfYear}`);
-  console.log('lastTwoDigitsOfYear', lastTwoDigitsOfYear);
-  console.log('formattedDate', formattedDate);
-  function getFormattedDate(value) {
-    const dateObject = new Date(value);
-
-    // Extract date and time components
-    const formattedDate = dateObject.toLocaleDateString();
-    const formattedTime = dateObject.toLocaleTimeString();
-    const date = new Date(formattedDate);
-    const year = String(date.getFullYear()).slice(-2);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}/${month}/${year}    ${formattedTime}`;
-  }
-  const generateNumber = async () => {
-    const now = new Date();
-    const h = '0001';
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    console.log(month);
-    const months = String(now.getMonth() + 2).padStart(2, '0');
-    console.log(months);
-    const day = String(now.getDate()).padStart(2, '0');
-    console.log(day);
-
-    const results = `${day}${month}${h}`;
-    const resultss = `${day}${months}${h}`;
-    const usersDetails = await getOrderNumberService(results, resultss);
-
-    if (usersDetails.data[0].max !== null) {
-      console.log(usersDetails.data[0].max + 1);
-      return usersDetails.data[0].max + 1;
-    } else {
-      console.log(results);
-      return results;
-    }
-  };
-
-  const generatedNumber1 = generateNumber();
-  console.log(generatedNumber1);
-
-  const { user } = useUser();
-  console.log(user);
-
   useEffect(() => {
     async function fetchData() {
       try {
-        if (user) {
-          const usersDetailslogin = await getLoggedInUserDetails(user);
-          const usersDetails = await axios.post(`http://182.160.114.100:5001/get-wf-notifications`, {
-            body: usersDetailslogin.data.id,
-          });
-
-          if (usersDetails) setUserList(usersDetails.data);
-        }
+        const usersDetails = await getHzCustAccountsDetails();
+console.log(usersDetails);
+        if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
     }
 
     fetchData();
-  }, [user]);
-
-  const handleOpenMenu = (event, status, email) => {
-    if (status === 'approved') setIsDisableApprove(true);
-    else setIsDisableApprove(false);
-
-    if (status === 'banned') setIsDisableBan(true);
-    else setIsDisableBan(false);
-
-    setSelectedUserEmail(email);
-
-    setOpen(event.currentTarget);
-  };
+  }, []);
 
   const handleCloseMenu = () => {
     setOpen(null);
+    window.location.reload();
   };
 
   const approveUser = async () => {
@@ -227,6 +137,7 @@ export default function ShowWfNotifications() {
     };
 
     handleCloseMenu();
+    window.location.reload();
   };
 
   const handleRequestSort = (event, property) => {
@@ -237,10 +148,12 @@ export default function ShowWfNotifications() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.email);
+      const newSelecteds = USERLIST.map((n) => n.location_id);
       setSelected(newSelecteds);
+
       return;
     }
+    console.log('allselectedUsers : ', selectedUsers);
     setSelected([]);
   };
 
@@ -258,7 +171,7 @@ export default function ShowWfNotifications() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
-    console.log(typeof selectedUsers);
+    console.log('toselectedUsers : ', selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -275,11 +188,6 @@ export default function ShowWfNotifications() {
     setFilterName(event.target.value);
   };
 
-  // const handleClickOpen = (notification_id) => {
-
-  //   <UpdateHrOrganizationUnits notification_id={notification_id} />;
-  // };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -289,28 +197,41 @@ export default function ShowWfNotifications() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> Hz Cust Accounts | SOMS </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h5" gutterBottom>
-            List for Approval
+          <Typography variant="h4" gutterBottom>
+            Create Business Partner
           </Typography>
+          <div>
+            <Button
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              variant="text"
+              onClick={() => {
+                navigate(`/dashboard/addhzcustaccounts/null`);
+              }}
+            >
+              Add Accounts
+            </Button>
+          </div>
         </Stack>
 
         <Card>
-          {/* <OrganizationListToolbar
+          <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-          /> */}
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <ShowWfNotiHead
+                <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -322,47 +243,57 @@ export default function ShowWfNotifications() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
-                      notification_id,
+                      cust_account_id,
+                      account_number,
+                      account_name,
+                      primary_salesrep_id,
 
-                      from_user,
-                      subject,
-                      sent_date,
+                      email_address,
+                      work_telephone
+
+                      
                     } = row;
-                    const selectedUser = selected.indexOf(notification_id) !== -1;
+                    const rowValues = [
+                      cust_account_id,
+                      account_number,
+                      account_name,
+                      primary_salesrep_id,
+
+                      email_address,
+                      work_telephone
+
+                      
+                    ];
+
+                    const selectedUser = selected.indexOf(cust_account_id) !== -1;
 
                     return (
-                      <TableRow hover key={notification_id} tabIndex={-1}>
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, notification_id)} />
-                        </TableCell> */}
-
-                        {/* <TableCell align="left">{notification_id}</TableCell> */}
-
-                        <TableCell align="left">{from_user}</TableCell>
-                        <TableCell align="left">
-                          <Link
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              navigate(`/dashboard/wfNotificationView/${notification_id}`);
-                            }}
-                          >
-                            {subject}
-                          </Link>
+                      <TableRow hover key={cust_account_id} tabIndex={-1} role="checkbox">
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cust_account_id)} />
                         </TableCell>
-                        <TableCell align="left">{getFormattedDate(sent_date)}</TableCell>
 
-                        {/* <TableCell align="right">
+                        <TableCell align="left">{account_number}</TableCell>
+                        <TableCell align="left">{account_name}</TableCell>
+                        <TableCell align="left">{primary_salesrep_id}</TableCell>
+
+                        <TableCell align="left">{email_address}</TableCell>
+                        <TableCell align="left">{work_telephone}</TableCell>
+
+                        
+
+                        <TableCell align="right">
                           <IconButton
                             size="large"
                             color="primary"
                             onClick={() => {
-                              const organizationId = notification_id;
-                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
+                              const custAccountId = cust_account_id;
+                              navigate(`/dashboard/addhzcustaccounts/${custAccountId}`);
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
                           </IconButton>
-                        </TableCell> */}
+                        </TableCell>
 
                         <Popover
                           open={Boolean(open)}

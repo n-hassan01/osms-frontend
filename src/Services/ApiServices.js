@@ -4,8 +4,7 @@ import axios from 'axios';
 import getCookieService from './GetCookieService';
 
 // const usersUrl = 'http://182.160.114.100:5001/';
- const usersUrl = 'http://localhost:5001/';
-
+const usersUrl = 'http://localhost:5001/';
 
 export const signup = async (user) => {
   try {
@@ -46,13 +45,13 @@ export const login = async (user) => {
   }
 };
 
-export const getLoggedInUserDetails = async () => {
-  const cookie = getCookieService('jwt-token-cookie');
+export const getLoggedInUserDetails = async (loginToken) => {
+  console.log(loginToken);
 
   try {
     return await axios.get(`${usersUrl}loggedin-user/`, {
       headers: {
-        Authorization: `Bearer ${cookie}`,
+        Authorization: `Bearer ${loginToken}`,
       },
     });
   } catch (err) {
@@ -78,13 +77,13 @@ export const getAccountDetails = async (emailAddress) => {
   }
 };
 
-export const getUserProfileDetails = async () => {
-  const cookie = getCookieService('jwt-token-cookie');
+export const getUserProfileDetails = async (loginToken) => {
+  console.log(loginToken);
 
   try {
     return await axios.get(`${usersUrl}profile/`, {
       headers: {
-        Authorization: `Bearer ${cookie}`,
+        Authorization: `Bearer ${loginToken}`,
       },
     });
   } catch (err) {
@@ -874,13 +873,13 @@ export const getSalesOrderLinesService = async (requestInfo) => {
     return err.message;
   }
 };
-export const getOrderNumberService = async (results,resultss) => {
-  const obj={
-    start:results,
-    end:resultss
-  }
+export const getOrderNumberService = async (results, resultss) => {
+  const obj = {
+    start: results,
+    end: resultss,
+  };
   try {
-    return await axios.post(`${usersUrl}get-order-number`,obj);
+    return await axios.post(`${usersUrl}get-order-number`, obj);
   } catch (err) {
     console.log(err.message);
 
@@ -940,10 +939,51 @@ export const getApprovalSequenceService = async (requestInfo) => {
   }
 };
 
-// call functions 
+// call functions
 export const createSalesOrderNumberService = async () => {
   try {
     return await axios.get(`${usersUrl}create-salesorder-number/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPerHzCustAccountsDetailsService = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}update-item-master`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addHzCustAccountsDetails = async (location) => {
+  console.log('location for api ', location);
+  try {
+    return await axios.post(`${usersUrl}add-hz-cust-accounts/`, location);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getHzCustAccountsDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-hz-cust-accounts/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPerHzCustAccountsDetails = async (cust_account_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-per-hz-cust-accounts/${cust_account_id}`);
   } catch (err) {
     console.log(err.message);
 

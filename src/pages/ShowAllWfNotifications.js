@@ -103,7 +103,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowWfNotifications() {
+export default function ShowAllWfNotifications() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -180,11 +180,11 @@ export default function ShowWfNotifications() {
       try {
         if (user) {
           const usersDetailslogin = await getLoggedInUserDetails(user);
-          const usersDetails = await axios.post(`http://182.160.114.100:5001/get-wf-notifications`, {
+          const usersAllDetails = await axios.post(`http://182.160.114.100:5001/get-all-wf-notifications`, {
             body: usersDetailslogin.data.id,
           });
 
-          if (usersDetails) setUserList(usersDetails.data);
+          if (usersAllDetails) setUserList(usersAllDetails.data);
         }
       } catch (error) {
         console.error('Error fetching account details:', error);

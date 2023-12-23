@@ -5,14 +5,12 @@ import { LoadingButton } from '@mui/lab';
 import { IconButton, InputAdornment, Link, Stack, TextField, Typography } from '@mui/material';
 // components
 import { login } from '../../../Services/ApiServices';
-import removeCookie from '../../../Services/RemoveCookieService';
-import setCookie from '../../../Services/SetCookieService';
 import Iconify from '../../../components/iconify';
+import { useUser } from '../../../context/UserContext';
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-
   const initialUser = {
     id: '',
     password: '',
@@ -27,6 +25,9 @@ export default function LoginForm() {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const { loginUser } = useUser();
+  console.log(loginUser);
+
   const handleClick = async () => {
     try {
       console.log(user);
@@ -34,15 +35,11 @@ export default function LoginForm() {
 
       if (response.request.status === 200) {
         const token = response.data.value;
-        const cookieName = 'jwt-token-cookie';
 
-        removeCookie(cookieName);
+        loginUser();
+        loginUser(token);
 
-        const cookie = setCookie(cookieName, token);
-
-        console.log(cookie);
-
-        navigate('/dashboard/app');
+        navigate('/dashboard/dashclone');
       } else {
         alert('Authentication failed! Try again');
       }
