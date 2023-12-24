@@ -3,14 +3,19 @@ import OtpInput from 'react-otp-input';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import { LoadingButton } from '@mui/lab';
-import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import { IconButton, InputAdornment, MenuItem, Stack, TextField } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+
+// services
 import { compareOtp, sendOtp, signup } from '../../../Services/ApiServices';
 // components
 import Iconify from '../../../components/iconify';
@@ -21,8 +26,16 @@ import '../../../_css/SignupPage.css';
 
 export default function SignupForm() {
   const initialUser = {
-    id: '',
+    userName: '',
     password: '',
+    userType: 'Private',
+    name: '',
+    nid: '',
+    age: null,
+    gender: '',
+    profession: '',
+    orgaization: '',
+    address: '',
   };
   const [user, setUser] = useState(initialUser);
 
@@ -50,7 +63,20 @@ export default function SignupForm() {
       id: user.id,
       password: user.password,
     };
-    const response = await compareOtp(verifyUser);
+    const requestBody = {
+      verificationCode: otp,
+      userName: user.userName,
+      password: user.password,
+      userType: user.userType,
+      name: user.name,
+      nid: user.nid,
+      age: user.age,
+      address: user.address,
+      gender: user.gender,
+      profession: user.profession,
+      orgaization: user.orgaization,
+    };
+    const response = await compareOtp(requestBody);
 
     if (response.status === 200) {
       alert('Signup completed!');
@@ -69,7 +95,7 @@ export default function SignupForm() {
   };
 
   const handleClick = async () => {
-    const { id, password, confirmPassword } = user;
+    const { userName, password, confirmPassword } = user;
     const newErrors = {};
 
     // Validate password
@@ -85,17 +111,38 @@ export default function SignupForm() {
     // Check if there are any errors
     if (Object.keys(newErrors).length === 0) {
       try {
-        const newUser = {
-          id: user.id,
-          password: user.password,
-        };
-        const response = await signup(newUser);
+        let requestBody = {};
+        if (user.userType === 'Private') {
+          requestBody = {
+            userName: user.userName,
+            password: user.password,
+            userType: user.userType,
+          };
+        } else {
+          requestBody = {
+            userName: user.userName,
+            password: user.password,
+            userType: user.userType,
+            name: user.name,
+            nid: user.nid,
+            age: user.age,
+            address: user.address,
+            gender: user.gender,
+            profession: user.profession,
+            orgaization: user.orgaization,
+          };
+        }
+        // const newUser = {
+        //   id: user.id,
+        //   password: user.password,
+        // };
+        const response = await signup(requestBody);
 
         if (response.status === 200 || response.status === 204) {
           if (response.data.authenticationMethod.flag === 'email') {
             const reqBody = {
               email: response.data.authenticationMethod.value,
-              userId: id,
+              userId: userName,
             };
 
             const sendOtpService = await sendOtp(reqBody);
@@ -122,57 +169,176 @@ export default function SignupForm() {
     }
   };
 
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const handleChange = (event) => {
+    setUser({ ...user, [event.target.name]: event.target.value });
+
+    const display = event.target.value === 'Public' ? 'none' : 'block';
+    setSelectedValue(display);
+    // Add any additional logic you want to perform when the selection changes
+    console.log(selectedValue);
+  };
+
   return (
     <>
-      <Stack spacing={3}>
-        <TextField
-          required
-          name="id"
-          label="ID"
-          autoComplete="given-name"
-          onChange={(e) => onValueChange(e)}
-          className="hover-hint"
-        />
+      <RadioGroup
+        row
+        aria-labelledby="demo-row-radio-buttons-group-label"
+        name="userType"
+        value={user.userType}
+        onChange={handleChange}
+      >
+        <FormControlLabel value="Private" control={<Radio />} label="Private" />
+        <FormControlLabel value="Public" control={<Radio />} label="Public" />
+      </RadioGroup>
+      {user.userType === 'Private' && (
+        <Stack spacing={3} mt={1.25}>
+          <TextField
+            required
+            name="userName"
+            label="User name"
+            placeholder="Code/ID"
+            autoComplete="given-name"
+            onChange={(e) => onValueChange(e)}
+            className="hover-hint"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
 
-        <TextField
-          autoComplete="new-password"
-          required
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          onChange={(e) => onValueChange(e)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          error={!!errors.password}
-          helperText={errors.password}
-        />
-        <TextField
-          autoComplete="new-password"
-          required
-          name="confirmPassword"
-          label="Confirm Password"
-          type={showPassword ? 'text' : 'password'}
-          onChange={(e) => onValueChange(e)}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          error={!!errors.confirmPassword}
-          helperText={errors.confirmPassword}
-        />
-      </Stack>
+          <TextField
+            autoComplete="new-password"
+            required
+            name="password"
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            onChange={(e) => onValueChange(e)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            error={!!errors.password}
+            helperText={errors.password}
+          />
+          <TextField
+            autoComplete="new-password"
+            required
+            name="confirmPassword"
+            label="Confirm Password"
+            type={showPassword ? 'text' : 'password'}
+            onChange={(e) => onValueChange(e)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
+          />
+        </Stack>
+      )}
+
+      {user.userType === 'Public' && (
+        <Stack spacing={3} mt={1.25}>
+          <TextField
+            required
+            name="userName"
+            label="User name"
+            autoComplete="given-name"
+            placeholder="Phone/Email"
+            onChange={(e) => onValueChange(e)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <Stack spacing={2} direction={'row'}>
+            <TextField
+              autoComplete="new-password"
+              required
+              name="password"
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              onChange={(e) => onValueChange(e)}
+              style={{ width: '50%' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+            <TextField
+              autoComplete="new-password"
+              required
+              name="confirmPassword"
+              label="Confirm Password"
+              type={showPassword ? 'text' : 'password'}
+              onChange={(e) => onValueChange(e)}
+              style={{ width: '50%' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+            />
+          </Stack>
+          <Stack spacing={2} direction={'row'}>
+            <TextField name="name" label="Name" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+            <TextField name="nid" label="NID" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+          </Stack>
+          <TextField name="address" label="Address" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+          <Stack spacing={2} direction={'row'}>
+            <TextField
+              name="age"
+              type="number"
+              label="Age"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+            <TextField select name="gender" label="Gender" id="gender" onChange={(e) => onValueChange(e)} fullWidth>
+              <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
+              <MenuItem value="Other">Other</MenuItem>
+            </TextField>
+            {/* <TextField name="gender" label="Gender" autoComplete="given-name" onChange={(e) => onValueChange(e)} /> */}
+          </Stack>
+          <Stack spacing={2} direction={'row'}>
+            <TextField
+              name="profession"
+              label="Profession"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+            <TextField
+              name="orgaization"
+              label="Orgaization"
+              autoComplete="given-name"
+              onChange={(e) => onValueChange(e)}
+            />
+          </Stack>
+        </Stack>
+      )}
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
@@ -192,7 +358,7 @@ export default function SignupForm() {
           <DialogContentText>A code has been sent to your official email provided by Remark HB.</DialogContentText>
 
           <DialogContentText style={{ color: 'crimson', margin: '15px' }}>
-            Please enter the code to verify your signup.
+            Please enter the otp to verify your signup.
           </DialogContentText>
           <OtpInput
             value={otp}
