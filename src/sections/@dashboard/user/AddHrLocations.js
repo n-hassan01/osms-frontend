@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { useDownloadExcel } from 'react-export-table-to-excel';
+// import { useDownloadExcel } from 'react-export-table-to-excel';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addHrLocationsDetailsService } from '../../../Services/Admin/AddHrLocations';
 import { getPerHrLocationsDetailsService } from '../../../Services/Admin/GetPerHrLocation';
@@ -30,11 +30,11 @@ export default function AddHrLocations() {
 
   const [clonelocation, setClonelocation] = useState([{}]);
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableref.current,
-    filename: 'sales_order_data',
-    sheet: 'SalesOrderData',
-  });
+  // const { onDownload } = useDownloadExcel({
+  //   currentTableRef: tableref.current,
+  //   filename: 'sales_order_data',
+  //   sheet: 'SalesOrderData',
+  // });
 
   useEffect(() => {
     async function fetchData() {
@@ -358,12 +358,12 @@ export default function AddHrLocations() {
                 >
                   Cancel
                 </Button>
-                <Button
+                {/* <Button
                   style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
                   onClick={onDownload}
                 >
                   Export
-                </Button>
+                </Button> */}
               </Grid>
             )}
           </form>
