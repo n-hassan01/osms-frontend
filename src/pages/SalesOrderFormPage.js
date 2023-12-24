@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
+import { Button, ButtonGroup, Container, Grid, MenuItem, Select, Stack, Typography } from '@mui/material';
 import {
   addSalesOrderHeaderService,
   addSalesOrderLinesService,
@@ -16,6 +16,8 @@ import {
   updateSalesOrderHeaderService,
   updateSalesOrderLineService,
 } from '../Services/ApiServices';
+
+import { useUser } from '../context/UserContext';
 // ----------------------------------------------------------------------
 
 export default function Page404() {
@@ -35,6 +37,12 @@ export default function Page404() {
     // return `${year}-${month}-${day}`;
     return `${day}/${month}/${year}`;
   }
+  function getFormattedPrice(value) {
+    const formattedPrice = new Intl.NumberFormat().format(value);
+    console.log(parseInt(formattedPrice, 10));
+
+    return formattedPrice;
+  }
 
   function getFormattedDate(value) {
     const date = new Date(value);
@@ -49,13 +57,16 @@ export default function Page404() {
   const [selectedLines, setSelectedLines] = useState([]);
 
   const [account, setAccount] = useState({});
+  const { user } = useUser();
+  console.log(user);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200)
-          setAccount(accountDetails.data); // Set the account details in the component's state
-        else navigate('/login');
+        if (user) {
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        }
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -63,7 +74,7 @@ export default function Page404() {
     }
 
     fetchData(); // Call the async function when the component mounts
-  }, []);
+  }, [user]);
   console.log(account);
 
   const [salesOrderNumber, setSalesOrderNumber] = useState(null);
@@ -445,12 +456,12 @@ export default function Page404() {
             <div className="col-auto" style={{ width: '430px' }}>
               <label htmlFor="shipTo" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Ship to
-                <input
+                <textarea
                   type="text"
                   id="shipTo"
                   name="shipTo"
                   className="form-control"
-                  style={{ marginLeft: '5px' }}
+                  style={{ marginLeft: '7px', height: '30px', width: '390px' }}
                   onChange={(e) => onChangeHeader(e)}
                 />
               </label>
@@ -462,7 +473,7 @@ export default function Page404() {
                 style={{ display: 'flex', fontSize: '13px' }}
               >
                 Transport Type
-                <select
+                {/* <select
                   id="shippingMethodCode"
                   name="shippingMethodCode"
                   className="form-control"
@@ -473,7 +484,20 @@ export default function Page404() {
                   <option value="Company">Company</option>
                   <option value="Rental">Rental</option>
                   <option value="Courier">Courier</option>
-                </select>
+                </select> */}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="shippingMethodCode"
+                  style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
+                  onChange={(e) => onChangeHeader(e)}
+                  defaultValue="Self"
+                >
+                  <MenuItem value="Self">Self</MenuItem>
+                  <MenuItem value="Company">Company</MenuItem>
+                  <MenuItem value="Rental">Rental</MenuItem>
+                  <MenuItem value="Courier">Courier</MenuItem>
+                </Select>
               </label>
             </div>
           </Stack>
@@ -560,7 +584,7 @@ export default function Page404() {
                 {showLines &&
                   rows.map((row, index) => (
                     <tr key={index}>
-                      <td>
+                      <td style={{ height: '50%' }}>
                         <input
                           type="checkbox"
                           onChange={() => handleRowSelect(index, row)}
@@ -570,16 +594,23 @@ export default function Page404() {
                       {/* <td>
                         <input type="number" className="form-control" name="lineNumber" value={index + 1} readOnly />
                       </td> */}
-                      <td>
+                      <td style={{ textAlign: 'left', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
-                          style={{ width: '420px' }}
+                          style={{
+                            textAlign: 'inherit',
+                            width: '420px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           value={row.selectedItemName}
                           onChange={(e) => handleInputItemChange(index, e)}
                         />
                         {row.showList && (
-                          <ul style={{ marginTop: '18px' }}>
+                          <ul style={{ marginTop: '0px' }}>
                             {filteredItemList.map((item, itemIndex) => (
                               <>
                                 <MenuItem key={itemIndex} value={item} onClick={() => handleMenuItemClick(index, item)}>
@@ -590,23 +621,37 @@ export default function Page404() {
                           </ul>
                         )}
                       </td>
-                      <td>
+                      <td style={{ textAlign: 'center', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
                           name="orderQuantityUom"
-                          style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            height: '50%',
+                            textAlign: 'inherit',
+                            width: '80px',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           readOnly
                           value={row.selectedItem.primary_uom_code}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
-                      <td>
+                      <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
                           type="number"
                           className="form-control"
                           name="orderedQuantity"
-                          style={{ textAlign: 'right' }}
+                          style={{
+                            textAlign: 'inherit',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -619,22 +664,36 @@ export default function Page404() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td> */}
-                      <td>
+                      <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
-                          type="number"
+                          type="text"
                           className="form-control"
                           name="unitSellingPrice"
-                          style={{ textAlign: 'right' }}
+                          style={{
+                            textAlign: 'inherit',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
-                      <td>
+                      <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
-                          type="number"
+                          type="text"
                           className="form-control"
                           name="totalPrice"
-                          style={{ textAlign: 'right' }}
-                          value={row.orderedQuantity * row.unitSellingPrice}
+                          style={{
+                            textAlign: 'inherit',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          value={getFormattedPrice(row.orderedQuantity * row.unitSellingPrice)}
                           // onClick={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           readOnly
                         />
@@ -647,7 +706,22 @@ export default function Page404() {
                   <td />
                   <td />
                   <td />
-                  <td style={{ textAlign: 'right' }}>{sumTotalPrice}</td>
+                  {/* <td style={{ textAlign: 'right' ,marginRight:"55px"}}>{sumTotalPrice}</td> */}
+                  <td style={{ textAlign: 'right' }}>
+                    <input
+                      type="text"
+                      className="form-control"
+                      style={{
+                        textAlign: 'inherit',
+                        width: '100%',
+                        border: 'none',
+                        background: 'none',
+                        outline: 'none',
+                      }}
+                      value={getFormattedPrice(sumTotalPrice)}
+                      readOnly
+                    />
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -685,7 +759,7 @@ export default function Page404() {
                 // disabled={showApprovalButton}
                 onClick={submitRequisition}
               >
-                Approval
+                Approve
               </Button>
             </ButtonGroup>
           </Grid>

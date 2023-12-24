@@ -19,6 +19,7 @@ import RequisitionPage from './pages/RequisitionPage';
 import SalesOrderFormPage from './pages/SalesOrderFormPage';
 import SettingsPage from './pages/SettingsPage';
 import ShowApprovedSalesOrders from './pages/ShowApprovedSalesOrders';
+import ShowExcelFile from './pages/ShowExcelFile';
 import ShowFndUser from './pages/ShowFndUser';
 import ShowHrAllOrganizationUnits from './pages/ShowHrAllOrganizationUnits';
 import ShowHzCustAccounts from './pages/ShowHzCustAccounts';
@@ -45,23 +46,27 @@ import UpdateHrLocations from './sections/@dashboard/user/UpdateHrLocations';
 import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrganizationUnits';
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
-
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
+import { useUser } from './context/UserContext';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const navigate = useNavigate();
-  // const cookie = getCookieService('jwt-token-cookie');
+  
+  const { user } = useUser();
+  console.log(user);
+
   const [isAuthorized, setIsAuthorized] = useState({});
   useEffect(() => {
     async function fetchData() {
       try {
-        const accountDetails = await getUserProfileDetails(); // Call your async function here
-        if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
-        else navigate('/login');
-        // if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+        if (user) {
+          console.log(user);
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
+        }
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -69,7 +74,7 @@ export default function Router() {
     }
 
     fetchData();
-  }, []);
+  }, [user]);
 
   const routes = useRoutes([
     {
@@ -121,6 +126,7 @@ export default function Router() {
         { path: 'showapprovedsalesorders', element: <ShowApprovedSalesOrders /> },
         { path: 'showhzcustaccounts', element: <ShowHzCustAccounts /> },
         { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
+        { path: 'showexcelfile', element: <ShowExcelFile /> },
       ],
     },
 
