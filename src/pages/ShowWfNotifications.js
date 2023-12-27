@@ -193,6 +193,7 @@ export default function ShowWfNotifications() {
 
     fetchData();
   }, [user]);
+  console.log(USERLIST);
 
   const handleOpenMenu = (event, status, email) => {
     if (status === 'approved') setIsDisableApprove(true);
@@ -323,7 +324,7 @@ export default function ShowWfNotifications() {
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
                       notification_id,
-
+                      group_id,
                       from_user,
                       subject,
                       sent_date,
@@ -343,7 +344,7 @@ export default function ShowWfNotifications() {
                           <Link
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              navigate(`/dashboard/wfNotificationView/${notification_id}`);
+                              navigate(`/dashboard/updateSalesOrderForm/${group_id}`);
                             }}
                           >
                             {subject}

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Box, Divider, IconButton, MenuItem, Popover, Stack, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 // mocks_
-import Logout from '../../../Services/LogoutService';
 // import account from '../../../_mock/account';
 // import { getAccountDetailsService } from '../../../Services/GetAccountsDetails';
 import { getUserProfileDetails } from '../../../Services/ApiServices';
@@ -17,7 +16,7 @@ export default function AccountPopover() {
   const [open, setOpen] = useState(null);
 
   const [account, setAccount] = useState({});
-  const { user } = useUser();
+  const { user, loginUser } = useUser();
   console.log(user);
 
   useEffect(() => {
@@ -61,7 +60,8 @@ export default function AccountPopover() {
   };
 
   const logout = () => {
-    Logout();
+    loginUser();
+    // Logout();
 
     setOpen(null);
     navigate('/login');
@@ -85,8 +85,8 @@ export default function AccountPopover() {
     },
   ];
 
-  const userName = account.account_name || account.full_name;
-  const userId = account.account_number || account.employee_number;
+  const userName = account.full_name ? account.full_name : 'USER';
+  const userId = account.user_name;
 
   return (
     <>
