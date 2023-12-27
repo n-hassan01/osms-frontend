@@ -49,12 +49,13 @@ import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTrans
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
+import TestSapApiPage from './pages/TestSapApiPage';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
   const navigate = useNavigate();
-  
+
   const { user } = useUser();
   console.log(user);
 
@@ -137,6 +138,10 @@ export default function Router() {
     {
       path: 'signup',
       element: <SignupPage />,
+    },
+    {
+      path: 'sap',
+      element: <TestSapApiPage />,
     },
     {
       element: <SimpleLayout />,

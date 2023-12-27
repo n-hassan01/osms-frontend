@@ -6,6 +6,11 @@ import getCookieService from './GetCookieService';
 const usersUrl = 'http://182.160.114.100:5001/';
 // const usersUrl = 'http://localhost:5001/';
 
+const sapTokenUrl =
+  'https://my407415-api.s4hana.cloud.sap/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder?$top=1&$format=json';
+const sapCreateSoUrl = 'https://my407415-api.s4hana.cloud.sap:443/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder';
+const sapGetSoUrl = 'https://my407415-api.s4hana.cloud.sap:443/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder';
+
 export const signup = async (user) => {
   try {
     return await axios.post(`${usersUrl}signup/`, user);
@@ -984,6 +989,53 @@ export const getHzCustAccountsDetails = async () => {
 export const getPerHzCustAccountsDetails = async (cust_account_id) => {
   try {
     return await axios.get(`${usersUrl}get-per-hz-cust-accounts/${cust_account_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// SAP testing
+export const getTokenService = async () => {
+  try {
+    return await axios.get(`${sapTokenUrl}`, {
+      headers: {
+        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        'x-csrf-token': 'fetch',
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSoDetailsService = async (soNumber) => {
+  try {
+    return await axios.get(`${sapGetSoUrl}('${soNumber}')?$format=json`, {
+      headers: {
+        'x-csrf-token': 'fetch',
+        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const createSalesOrderService = async (token, requestBody) => {
+  console.log(token);
+  try {
+    return await axios.post(`${sapCreateSoUrl}`, requestBody, {
+      headers: {
+        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        'x-csrf-token': token,
+      },
+    });
   } catch (err) {
     console.log(err.message);
 
