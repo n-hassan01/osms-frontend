@@ -6,7 +6,14 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Initialize user state with the value from localStorage
     const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
+
+    try {
+      const parsedUser = JSON.parse(storedUser);
+      return parsedUser;
+    } catch (error) {
+      console.error('Error parsing user data from localStorage:', error);
+      return null;
+    }
   });
 
   const loginUser = (userInfo) => {

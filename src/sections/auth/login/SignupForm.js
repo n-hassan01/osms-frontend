@@ -58,11 +58,11 @@ export default function SignupForm() {
   };
 
   const onVerify = async () => {
-    const verifyUser = {
-      verificationCode: otp,
-      id: user.id,
-      password: user.password,
-    };
+    // const verifyUser = {
+    //   verificationCode: otp,
+    //   id: user.id,
+    //   password: user.password,
+    // };
     const requestBody = {
       verificationCode: otp,
       userName: user.userName,
@@ -89,6 +89,18 @@ export default function SignupForm() {
   };
 
   const validatePassword = (password) => password.length >= 6;
+
+  const validateEmail = (email) => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+  const validatePhoneNumber = (number) => {
+    // Regular expression for Bangladeshi phone number validation
+    const bdPhoneNumberRegex = /^(?:\+88|88)?(01[3-9]\d{8})$/;
+    return bdPhoneNumberRegex.test(number);
+  };
+
   const onValueChange = (e) => {
     if (e.target) setUser({ ...user, [e.target.name]: e.target.value });
     else setUser({ ...user, role: e.value });
@@ -97,6 +109,11 @@ export default function SignupForm() {
   const handleClick = async () => {
     const { userName, password, confirmPassword } = user;
     const newErrors = {};
+
+    // Validate userName
+    if (user.userType === 'Public' && !validateEmail(user.userName) && !validatePhoneNumber(user.userName)) {
+      newErrors.userName = !user.userName ? 'User name is required' : 'Please enter valid email or phone number';
+    }
 
     // Validate password
     if (!validatePassword(password)) {
@@ -260,6 +277,8 @@ export default function SignupForm() {
             InputLabelProps={{
               shrink: true,
             }}
+            error={!!errors.userName}
+            helperText={errors.userName}
           />
           <Stack spacing={2} direction={'row'}>
             <TextField

@@ -85,8 +85,8 @@ export default function AccountPopover() {
     },
   ];
 
-  const userName = account.account_name || account.full_name;
-  const userId = account.account_number || account.employee_number;
+  const userName = account.full_name ? account.full_name : 'USER';
+  const userId = account.user_name;
 
   return (
     <>
