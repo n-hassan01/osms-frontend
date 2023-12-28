@@ -3,7 +3,7 @@
 }
 
 .hover-hint::before {
-  content: 'Enter valid Code provided by Remark';
+  content: 'Enter your username used during registration';
   position: absolute;
   top: 100%;
   left: 0;
@@ -17,9 +17,4 @@
 
 .hover-hint:hover::before {
   display: block;
-}
-
-.height12px {
-  /* height: 12px; */
-  background-color: antiquewhite;
 }

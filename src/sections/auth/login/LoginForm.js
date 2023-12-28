@@ -8,6 +8,9 @@ import { login } from '../../../Services/ApiServices';
 import Iconify from '../../../components/iconify';
 import { useUser } from '../../../context/UserContext';
 
+// external css
+import '../../../_css/LoginPage.css';
+
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
@@ -52,9 +55,18 @@ export default function LoginForm() {
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="id" label="Code/ID" autoComplete="given-name" onChange={(e) => onValueChange(e)} />
+        {/* <TextField name="id" label="Code/ID" autoComplete="given-name" onChange={(e) => onValueChange(e)} /> */}
+        <TextField
+          required
+          className="hover-hint"
+          name="id"
+          label="User name"
+          autoComplete="given-name"
+          onChange={(e) => onValueChange(e)}
+        />
 
         <TextField
+          required
           name="password"
           label="Password"
           autoComplete="new-password"

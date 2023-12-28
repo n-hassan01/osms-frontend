@@ -4,7 +4,7 @@ import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { read, utils } from 'xlsx';
+// import { read, utils } from 'xlsx';
 // @mui
 
 import {
@@ -108,23 +108,23 @@ export default function ShowExcelFile() {
   const [isDisableBan, setIsDisableBan] = useState(false);
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
-  const file_type = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
-  const handleChange = (e) => {
-    const selected_file = e.target.files[0];
-    console.log(selected_file.type);
-    if (selected_file && file_type.includes(selected_file.type)) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const workbook = read(e.target.result);
-        const sheet = workbook.SheetNames;
-        if (sheet.length) {
-          const data = utils.sheet_to_json(workbook.Sheets[sheet[0]]);
-          setExceldata(data);
-        }
-      };
-      reader.readAsArrayBuffer(selected_file);
-    }
-  };
+  // const file_type = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+  // const handleChange = (e) => {
+  //   const selected_file = e.target.files[0];
+  //   console.log(selected_file.type);
+  //   if (selected_file && file_type.includes(selected_file.type)) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       const workbook = read(e.target.result);
+  //       const sheet = workbook.SheetNames;
+  //       if (sheet.length) {
+  //         const data = utils.sheet_to_json(workbook.Sheets[sheet[0]]);
+  //         setExceldata(data);
+  //       }
+  //     };
+  //     reader.readAsArrayBuffer(selected_file);
+  //   }
+  // };
 
   console.log(exceldata);
   useEffect(() => {
@@ -232,7 +232,7 @@ export default function ShowExcelFile() {
             Locations
           </Typography>
           <div>
-            <input type="file" onChange={handleChange} />
+            {/* <input type="file" onChange={handleChange} /> */}
 
             {/* <Button
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
