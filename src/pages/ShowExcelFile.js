@@ -1,47 +1,52 @@
-/* eslint-disable no-else-return */
 /* eslint-disable camelcase */
-import axios from 'axios';
-import { format } from 'date-fns';
+
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+// import { read, utils } from 'xlsx';
 // @mui
+
 import {
-  Card,
-  Container,
-  Link,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    Checkbox,
+    Container,
+    IconButton,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography
 } from '@mui/material';
-import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
+
 // components
+
+import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-// sections
-// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
-//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-
-import { useUser } from '../context/UserContext';
-import ShowWfNotiHead from '../sections/@dashboard/user/ShowWfNotiHead';
-
+import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  // { id: 'notification_id', label: 'Organization ID', alignRight: false },
+  { id: 'location_code', label: 'Location Code', alignRight: false },
 
-  { id: 'fromuser', label: 'From User', alignRight: false },
-  { id: 'message', label: 'Message', alignRight: false },
-  { id: 'sentDate', label: 'Sent Date', alignRight: false },
+  { id: 'description', label: 'Description', alignRight: false },
+
+  { id: 'inactive_date', label: 'Inactive Date', alignRight: false },
+  { id: 'address_line_1', label: 'Address Line1', alignRight: false },
+  { id: 'address_line_2', label: 'Address Line2', alignRight: false },
+  { id: 'address_line_3', label: 'Address Line3', alignRight: false },
+  { id: 'town_or_city', label: 'Town Or City', alignRight: false },
+  { id: 'country', label: 'Country', alignRight: false },
+  { id: 'postal_code', label: 'Postal Code', alignRight: false },
+  { id: 'telephone_number_1', label: 'Telephone Number1', alignRight: false },
+  { id: 'action', label: 'Action', alignRight: false },
 
   { id: '' },
 ];
@@ -65,18 +70,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// function applySortFilter(array, comparator, query) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   if (query) {
-//     return filter(array, (_user) => _user.notification_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-//   }
-//   return stabilizedThis.map((el) => el[0]);
-// }
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -84,26 +77,13 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-
   if (query) {
-    return filter(array, (_user) => {
-      const notificationId = _user.notification_id;
-      const lowerCaseQuery = query.toLowerCase();
-
-      if (typeof notificationId === 'string') {
-        return notificationId.toLowerCase().indexOf(lowerCaseQuery) !== -1;
-      } else if (typeof notificationId === 'number') {
-        return notificationId.toString().indexOf(lowerCaseQuery) !== -1;
-      }
-
-      return false;
-    });
+    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
-
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowWfNotifications() {
+export default function ShowExcelFile() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -121,94 +101,49 @@ export default function ShowWfNotifications() {
 
   const [USERLIST, setUserList] = useState([]);
 
+  const [exceldata, setExceldata] = useState([]);
+
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
   const [isDisableBan, setIsDisableBan] = useState(false);
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
+  // const file_type = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+  // const handleChange = (e) => {
+  //   const selected_file = e.target.files[0];
+  //   console.log(selected_file.type);
+  //   if (selected_file && file_type.includes(selected_file.type)) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       const workbook = read(e.target.result);
+  //       const sheet = workbook.SheetNames;
+  //       if (sheet.length) {
+  //         const data = utils.sheet_to_json(workbook.Sheets[sheet[0]]);
+  //         setExceldata(data);
+  //       }
+  //     };
+  //     reader.readAsArrayBuffer(selected_file);
+  //   }
+  // };
 
-  // const [user, setUser] = useState('');
-  const currentDate = new Date();
-
-  const lastTwoDigitsOfYear = String(currentDate.getFullYear()).slice(-2);
-  const formattedDate = format(currentDate, `dd/MM/${lastTwoDigitsOfYear}`);
-  console.log('lastTwoDigitsOfYear', lastTwoDigitsOfYear);
-  console.log('formattedDate', formattedDate);
-  function getFormattedDate(value) {
-    const dateObject = new Date(value);
-
-    // Extract date and time components
-    const formattedDate = dateObject.toLocaleDateString();
-    const formattedTime = dateObject.toLocaleTimeString();
-    const date = new Date(formattedDate);
-    const year = String(date.getFullYear()).slice(-2);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}/${month}/${year}    ${formattedTime}`;
-  }
-  const generateNumber = async () => {
-    const now = new Date();
-    const h = '0001';
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    console.log(month);
-    const months = String(now.getMonth() + 2).padStart(2, '0');
-    console.log(months);
-    const day = String(now.getDate()).padStart(2, '0');
-    console.log(day);
-
-    const results = `${day}${month}${h}`;
-    const resultss = `${day}${months}${h}`;
-    const usersDetails = await getOrderNumberService(results, resultss);
-
-    if (usersDetails.data[0].max !== null) {
-      console.log(usersDetails.data[0].max + 1);
-      return usersDetails.data[0].max + 1;
-    } else {
-      console.log(results);
-      return results;
-    }
-  };
-
-  const generatedNumber1 = generateNumber();
-  console.log(generatedNumber1);
-
-  const { user } = useUser();
-  console.log(user);
-
+  console.log(exceldata);
   useEffect(() => {
     async function fetchData() {
       try {
-        if (user) {
-          const usersDetailslogin = await getLoggedInUserDetails(user);
-          const usersDetails = await axios.post(`http://182.160.114.100:5001/get-wf-notifications`, {
-            body: usersDetailslogin.data.id,
-          });
-
-          if (usersDetails) setUserList(usersDetails.data);
-        }
+        const usersDetails = await getHrLocationsDetailsService();
+        console.log('Hola', usersDetails.data[0].location_id);
+        if (usersDetails) setUserList(usersDetails.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
     }
 
     fetchData();
-  }, [user]);
-  console.log(USERLIST);
-
-  const handleOpenMenu = (event, status, email) => {
-    if (status === 'approved') setIsDisableApprove(true);
-    else setIsDisableApprove(false);
-
-    if (status === 'banned') setIsDisableBan(true);
-    else setIsDisableBan(false);
-
-    setSelectedUserEmail(email);
-
-    setOpen(event.currentTarget);
-  };
+  }, []);
 
   const handleCloseMenu = () => {
     setOpen(null);
+    window.location.reload();
   };
 
   const approveUser = async () => {
@@ -228,6 +163,7 @@ export default function ShowWfNotifications() {
     };
 
     handleCloseMenu();
+    window.location.reload();
   };
 
   const handleRequestSort = (event, property) => {
@@ -238,10 +174,12 @@ export default function ShowWfNotifications() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.email);
+      const newSelecteds = USERLIST.map((n) => n.location_id);
       setSelected(newSelecteds);
+
       return;
     }
+    console.log('allselectedUsers : ', selectedUsers);
     setSelected([]);
   };
 
@@ -259,7 +197,7 @@ export default function ShowWfNotifications() {
       newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
     }
     setSelected(newSelected);
-    console.log(typeof selectedUsers);
+    console.log('toselectedUsers : ', selectedUsers);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -276,11 +214,6 @@ export default function ShowWfNotifications() {
     setFilterName(event.target.value);
   };
 
-  // const handleClickOpen = (notification_id) => {
-
-  //   <UpdateHrOrganizationUnits notification_id={notification_id} />;
-  // };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -295,23 +228,62 @@ export default function ShowWfNotifications() {
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h5" gutterBottom>
-            List for Approval
+          <Typography variant="h4" gutterBottom>
+            Locations
           </Typography>
+          <div>
+            {/* <input type="file" onChange={handleChange} /> */}
+
+            {/* <Button
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              variant="text"
+              onClick={() => {
+                navigate(`/dashboard/addhrlocations/null`);
+              }}
+            >
+              Add Location
+            </Button> */}
+          </div>
+          <div>
+            <table>
+              <thead>
+                <th>ID</th>
+                <th>AGE</th>
+                <th>NAME</th>
+                <th>VALUE</th>
+              </thead>
+              <tbody>
+                {exceldata.length ? (
+                  exceldata.map((info,index) => (
+                    <tr key={index}>
+                      <td>{info.ID}</td>
+                      <td>{info.AGE}</td>
+                      <td>{info.NAME}</td>
+                      <td>{info.VALUE}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <h2>Data Not Present</h2>
+                )}
+              </tbody>
+            </table>
+          </div>
         </Stack>
 
         <Card>
-          {/* <OrganizationListToolbar
+          <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-          /> */}
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <ShowWfNotiHead
+                <UserListHead
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -323,47 +295,69 @@ export default function ShowWfNotifications() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
-                      notification_id,
-                      group_id,
-                      from_user,
-                      subject,
-                      sent_date,
+                      location_id,
+                      location_code,
+
+                      description,
+
+                      inactive_date,
+                      address_line_1,
+                      address_line_2,
+                      address_line_3,
+                      town_or_city,
+                      country,
+                      postal_code,
+                      telephone_number_1,
                     } = row;
-                    const selectedUser = selected.indexOf(notification_id) !== -1;
+                    const rowValues = [
+                      location_id,
+                      location_code,
+
+                      description,
+
+                      inactive_date,
+                      address_line_1,
+                      address_line_2,
+                      address_line_3,
+                      town_or_city,
+                      country,
+                      postal_code,
+                      telephone_number_1,
+                    ];
+
+                    const selectedUser = selected.indexOf(location_id) !== -1;
 
                     return (
-                      <TableRow hover key={notification_id} tabIndex={-1}>
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, notification_id)} />
-                        </TableCell> */}
-
-                        {/* <TableCell align="left">{notification_id}</TableCell> */}
-
-                        <TableCell align="left">{from_user}</TableCell>
-                        <TableCell align="left">
-                          <Link
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => {
-                              navigate(`/dashboard/updateSalesOrderForm/${group_id}`);
-                            }}
-                          >
-                            {subject}
-                          </Link>
+                      <TableRow hover key={location_id} tabIndex={-1} role="checkbox">
+                        <TableCell padding="checkbox">
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_id)} />
                         </TableCell>
-                        <TableCell align="left">{getFormattedDate(sent_date)}</TableCell>
 
-                        {/* <TableCell align="right">
+                        <TableCell align="left">{location_code}</TableCell>
+
+                        <TableCell align="left">{description}</TableCell>
+
+                        <TableCell align="left">{inactive_date}</TableCell>
+                        <TableCell align="left">{address_line_1}</TableCell>
+                        <TableCell align="left">{address_line_2}</TableCell>
+                        <TableCell align="left">{address_line_3}</TableCell>
+                        <TableCell align="left">{town_or_city}</TableCell>
+                        <TableCell align="left">{country}</TableCell>
+                        <TableCell align="left">{postal_code}</TableCell>
+                        <TableCell align="left">{telephone_number_1}</TableCell>
+
+                        <TableCell align="right">
                           <IconButton
                             size="large"
                             color="primary"
                             onClick={() => {
-                              const organizationId = notification_id;
-                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
+                              const locationId = location_id;
+                              navigate(`/dashboard/addhrlocations/${locationId}`);
                             }}
                           >
                             <Iconify icon={'tabler:edit'} />
                           </IconButton>
-                        </TableCell> */}
+                        </TableCell>
 
                         <Popover
                           open={Boolean(open)}
