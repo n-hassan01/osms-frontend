@@ -3,8 +3,8 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://182.160.114.100:5001/';
-// const usersUrl = 'http://localhost:5001/';
+// const usersUrl = 'http://182.160.114.100:5001/';
+const usersUrl = 'http://localhost:5001/';
 
 const sapTokenUrl =
   'https://my407415-api.s4hana.cloud.sap/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder?$top=1&$format=json';
@@ -895,6 +895,16 @@ export const getOrderNumberService = async (results, resultss) => {
 export const updateSalesOrderLineService = async (lineId, lineInfo) => {
   try {
     return await axios.put(`${usersUrl}sales-order-line/update/${lineId}`, lineInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getCustomerListService = async () => {
+  try {
+    return await axios.get(`${usersUrl}customer-list`);
   } catch (err) {
     console.log(err.message);
 

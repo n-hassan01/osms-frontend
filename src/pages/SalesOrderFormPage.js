@@ -11,6 +11,7 @@ import {
   createSalesOrderNumberService,
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
+  getCustomerListService,
   getInventoryItemIdList,
   getUserProfileDetails,
   updateSalesOrderHeaderService,
@@ -76,6 +77,22 @@ export default function Page404() {
     fetchData(); // Call the async function when the component mounts
   }, [user]);
   console.log(account);
+
+  const [customerList, setCustomerList] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getCustomerListService(user); // Call your async function here
+        if (response.status === 200) setCustomerList(response.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, []);
+  console.log(customerList);
 
   const [salesOrderNumber, setSalesOrderNumber] = useState(null);
   useEffect(() => {
@@ -182,11 +199,13 @@ export default function Page404() {
   };
 
   const saveHeader = async () => {
+    console.log('aaa', customerRows.custAccountId);
     if (headerDetails.headerId) {
       const requestBody = {
         lastUpdatedBy: account.user_id,
         shippingMethodCode: headerInfo.shippingMethodCode,
         description: headerInfo.description,
+        distributor: customerRows.custAccountId,
       };
       console.log(requestBody);
 
@@ -217,6 +236,7 @@ export default function Page404() {
         specialDiscount: headerInfo.specialDiscount,
         specialAdjustment: headerInfo.specialAdjustment,
         totalPrice: sumTotalPrice,
+        distributor: customerRows.custAccountId,
       };
       console.log(requestBody);
 
@@ -403,6 +423,50 @@ export default function Page404() {
     setFilteredItemList(filtered);
   };
 
+  const [filteredCustomerList, setFilteredCustomerList] = useState([]);
+  const [customerRows, setCustomerRows] = useState([
+    {
+      custAccountId: null,
+      accountNumber: '',
+      accountName: '',
+
+      showList: false,
+    },
+  ]);
+
+  const handleInputCustomerChange = (event) => {
+    const input = event.target.value;
+
+    const username = 'accountNumber';
+    const show = 'showList';
+
+    const updatedRows = [...customerRows];
+    updatedRows[username] = input;
+    updatedRows[show] = true;
+
+    setCustomerRows(updatedRows);
+    console.log(customerRows);
+
+    const filtered = customerList.filter((item) => item.account_number.toLowerCase().includes(input.toLowerCase()));
+    setFilteredCustomerList(filtered);
+    console.log(filteredCustomerList);
+  };
+
+  const handleCustomerClick = (item) => {
+    console.log(item);
+    const name = 'accountNumber';
+    const selected = 'custAccountId';
+    const show = 'showList';
+
+    const updatedRows = [...customerRows];
+    updatedRows[name] = item.account_number;
+    updatedRows[selected] = item.cust_account_id;
+    updatedRows[show] = false;
+
+    setCustomerRows(updatedRows);
+    console.log(customerRows);
+  };
+
   const handleMenuItemClick = (index, item) => {
     const name = 'selectedItemName';
     const selected = 'selectedItem';
@@ -533,7 +597,7 @@ export default function Page404() {
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ width: '500px' }}>
+            {/* <div className="col-auto" style={{ width: '500px' }}>
               <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Description
                 <textarea
@@ -545,6 +609,38 @@ export default function Page404() {
                     onChangeHeader(e);
                   }}
                 />
+              </label>
+            </div> */}
+            <div className="col-auto" style={{ display: 'block' }}>
+              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Distributor
+                <input
+                  type="text"
+                  name="distributor"
+                  id="distributor"
+                  className="form-control"
+                  // style={{
+                  //   textAlign: 'inherit',
+                  //   width: '420px',
+                  //   height: '50%',
+                  //   border: 'none',
+                  //   background: 'none',
+                  //   outline: 'none',
+                  // }}
+                  value={customerRows.accountNumber}
+                  onChange={(e) => handleInputCustomerChange(e)}
+                />
+                {customerRows.showList && (
+                  <ul style={{ marginTop: '0px' }}>
+                    {filteredCustomerList.map((item, itemIndex) => (
+                      <>
+                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
+                          {item.account_number}
+                        </MenuItem>
+                      </>
+                    ))}
+                  </ul>
+                )}
               </label>
             </div>
           </Stack>
