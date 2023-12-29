@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
+
 // @mui
 import { AppBar, Box, IconButton, Stack, Toolbar } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 // utils
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
+import NavSectionClone from '../../../pages/NavSectionClone';
 import { bgBlur } from '../../../utils/cssStyles';
 // components
 import Iconify from '../../../components/iconify';
@@ -12,6 +15,7 @@ import Iconify from '../../../components/iconify';
 //
 import AccountPopover from './AccountPopover';
 import NotificationsPopover from './NotificationsPopover';
+
 // import Searchbar from './Searchbar';
 
 // ----------------------------------------------------------------------
@@ -71,6 +75,9 @@ export default function Header({ onOpenNav }) {
           }}
           color="action"
         />
+
+        <NavSectionClone />
+
 
         {/* <Searchbar /> */}
         <Box sx={{ flexGrow: 1 }} />
