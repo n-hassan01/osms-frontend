@@ -245,7 +245,11 @@ export default function UserPage() {
                         <TableCell align="left">
                           <Link
                             onClick={() => {
-                              navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
+                              if (authorization_status === 'Incomplete') {
+                                navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
+                              } else {
+                                navigate(`/dashboard/viewordersheader/${header_id}`);
+                              }
                             }}
                             style={{ cursor: 'pointer', textDecoration: 'none' }}
                           >
