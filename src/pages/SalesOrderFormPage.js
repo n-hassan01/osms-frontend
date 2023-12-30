@@ -66,7 +66,9 @@ export default function Page404() {
       try {
         if (user) {
           const accountDetails = await getUserProfileDetails(user); // Call your async function here
-          if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+          if (accountDetails.status === 200) {
+            setAccount(accountDetails.data);
+          } // Set the account details in the component's state
         }
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -77,6 +79,39 @@ export default function Page404() {
     fetchData(); // Call the async function when the component mounts
   }, [user]);
   console.log(account);
+
+  const [customerRows, setCustomerRows] = useState([
+    {
+      custAccountId: null,
+      accountNumber: '',
+      accountName: '',
+
+      showList: false,
+    },
+  ]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (account) {
+  //         setCustomerRows([
+  //           {
+  //             custAccountId: null,
+  //             accountNumber: '',
+  //             accountName: account.full_name,
+
+  //             showList: false,
+  //           },
+  //         ]);
+  //       }
+  //     } catch (error) {
+  //       // Handle any errors that might occur during the async operation
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData(); // Call the async function when the component mounts
+  // }, [account]);
+  // console.log('account', customerRows);
 
   const [customerList, setCustomerList] = useState([]);
   useEffect(() => {
@@ -439,29 +474,27 @@ export default function Page404() {
   };
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
-  const [customerRows, setCustomerRows] = useState([
-    {
-      custAccountId: account.user_id,
-      accountNumber: '',
-      accountName: account.full_name,
 
-      showList: false,
-    },
-  ]);
   // const [customerRows, setCustomerRows] = useState([
   //   {
   //     custAccountId: null,
   //     accountNumber: '',
-  //     accountName: '',
+  //     accountName: selectedCustomer,
 
   //     showList: false,
   //   },
   // ]);
+  // console.log('account', customerRows);
+
+  // const [customerRows, setCustomerRows] = useState(customer);
+  // setCustomerRows(customer);
+  console.log('customer', customerRows);
 
   const handleInputCustomerChange = (event) => {
     const input = event.target.value;
+    console.log(input);
 
-    const username = 'accountNumber';
+    const username = 'accountName';
     const show = 'showList';
 
     const updatedRows = [...customerRows];
@@ -471,19 +504,20 @@ export default function Page404() {
     setCustomerRows(updatedRows);
     console.log(customerRows);
 
-    const filtered = customerList.filter((item) => item.account_number.toLowerCase().includes(input.toLowerCase()));
+    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
     setFilteredCustomerList(filtered);
     console.log(filteredCustomerList);
   };
 
   const handleCustomerClick = (item) => {
     console.log(item);
-    const name = 'accountNumber';
+    const name = 'accountName';
     const selected = 'custAccountId';
     const show = 'showList';
 
     const updatedRows = [...customerRows];
-    updatedRows[name] = item.account_number;
+    updatedRows[name] = item.full_name;
+    // setSelectedCustomer(item.full_name);
     updatedRows[selected] = item.cust_account_id;
     updatedRows[show] = false;
 
@@ -505,6 +539,7 @@ export default function Page404() {
   };
 
   console.log(showApprovalButton);
+  // const value =
 
   return (
     <>
@@ -617,7 +652,6 @@ export default function Page404() {
                   className="form-control"
                   style={{ marginLeft: '7px' }}
                   onChange={(e) => onChangeHeader(e)}
-                  // value={getFormattedDate(soHeaderDetails.total_price)}
                 />
               </label>
             </div>
@@ -644,8 +678,8 @@ export default function Page404() {
                   id="distributor"
                   className="form-control"
                   style={{ marginLeft: '7px' }}
-                  defaultValue={account.full_name}
-                  value={customerRows.accountName}
+                  // value={selectedCustomer}
+                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
                   onChange={(e) => handleInputCustomerChange(e)}
                 />
                 {customerRows.showList && (
@@ -653,7 +687,7 @@ export default function Page404() {
                     {filteredCustomerList.map((item, itemIndex) => (
                       <>
                         <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
-                          {item.account_name}
+                          {item.full_name}
                         </MenuItem>
                       </>
                     ))}
