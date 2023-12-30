@@ -78,7 +78,7 @@ export default function Page404() {
   }, [user]);
   console.log(account);
 
-  const [customerList, setCustomerList] = useState({});
+  const [customerList, setCustomerList] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -199,13 +199,20 @@ export default function Page404() {
   };
 
   const saveHeader = async () => {
-    console.log('aaa', customerRows.custAccountId);
     if (headerDetails.headerId) {
       const requestBody = {
         lastUpdatedBy: account.user_id,
         shippingMethodCode: headerInfo.shippingMethodCode,
         description: headerInfo.description,
         distributor: customerRows.custAccountId,
+        soldToOrgId: customerRows.custAccountId,
+        shipToOrgId: customerRows.custAccountId,
+        invoiceToOrgId: customerRows.custAccountId,
+        deliverToOrgId: customerRows.custAccountId,
+        soldToContactId: customerRows.custAccountId,
+        shipToContactId: customerRows.custAccountId,
+        invoiceToContactId: customerRows.custAccountId,
+        deliverToContactId: customerRows.custAccountId,
       };
       console.log(requestBody);
 
@@ -237,6 +244,14 @@ export default function Page404() {
         specialAdjustment: headerInfo.specialAdjustment,
         totalPrice: sumTotalPrice,
         distributor: customerRows.custAccountId,
+        soldToOrgId: customerRows.custAccountId,
+        shipToOrgId: customerRows.custAccountId,
+        invoiceToOrgId: customerRows.custAccountId,
+        deliverToOrgId: customerRows.custAccountId,
+        soldToContactId: customerRows.custAccountId,
+        shipToContactId: customerRows.custAccountId,
+        invoiceToContactId: customerRows.custAccountId,
+        deliverToContactId: customerRows.custAccountId,
       };
       console.log(requestBody);
 
@@ -315,7 +330,7 @@ export default function Page404() {
         pHierarchyId: 1,
         pTransactionId: headerDetails.headerId,
         pTransactionNum: headerDetails.orderNumber.toString(),
-        pAppsUsername: account.full_name,
+        pAppsUsername: account.user_name,
       };
       const response = await callSoApprovalService(requestBody);
 
@@ -426,13 +441,22 @@ export default function Page404() {
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
   const [customerRows, setCustomerRows] = useState([
     {
-      custAccountId: null,
+      custAccountId: account.user_id,
       accountNumber: '',
-      accountName: '',
+      accountName: account.full_name,
 
       showList: false,
     },
   ]);
+  // const [customerRows, setCustomerRows] = useState([
+  //   {
+  //     custAccountId: null,
+  //     accountNumber: '',
+  //     accountName: '',
+
+  //     showList: false,
+  //   },
+  // ]);
 
   const handleInputCustomerChange = (event) => {
     const input = event.target.value;
@@ -613,21 +637,15 @@ export default function Page404() {
             </div> */}
             <div className="col-auto" style={{ display: 'block' }}>
               <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Distributor
+                Customer
                 <input
                   type="text"
                   name="distributor"
                   id="distributor"
                   className="form-control"
-                  // style={{
-                  //   textAlign: 'inherit',
-                  //   width: '420px',
-                  //   height: '50%',
-                  //   border: 'none',
-                  //   background: 'none',
-                  //   outline: 'none',
-                  // }}
-                  value={customerRows.accountNumber}
+                  style={{ marginLeft: '7px' }}
+                  defaultValue={account.full_name}
+                  value={customerRows.accountName}
                   onChange={(e) => handleInputCustomerChange(e)}
                 />
                 {customerRows.showList && (
@@ -635,7 +653,7 @@ export default function Page404() {
                     {filteredCustomerList.map((item, itemIndex) => (
                       <>
                         <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
-                          {item.account_number}
+                          {item.account_name}
                         </MenuItem>
                       </>
                     ))}
