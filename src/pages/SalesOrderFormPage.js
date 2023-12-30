@@ -575,7 +575,32 @@ export default function Page404() {
                 <input type="text" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
               </label>
             </div>
-
+            <div className="col-auto" style={{ marginRight: '15px' }}>
+              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Customer
+                <input
+                  type="text"
+                  name="distributor"
+                  id="distributor"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  // value={selectedCustomer}
+                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
+                  onChange={(e) => handleInputCustomerChange(e)}
+                />
+                {customerRows.showList && (
+                  <ul style={{ marginTop: '0px' }}>
+                    {filteredCustomerList.map((item, itemIndex) => (
+                      <>
+                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
+                          {item.full_name}
+                        </MenuItem>
+                      </>
+                    ))}
+                  </ul>
+                )}
+              </label>
+            </div>
             <div className="col-auto" style={{ width: '430px' }}>
               <label htmlFor="shipTo" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Ship to
@@ -589,7 +614,9 @@ export default function Page404() {
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ width: '180px', marginLeft: '10px' }}>
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
               <label
                 htmlFor="shippingMethodCode"
                 className="col-form-label"
@@ -623,8 +650,6 @@ export default function Page404() {
                 </Select>
               </label>
             </div>
-          </Stack>
-          <Stack direction="row" alignItems="center" justifyContent="flex-start">
             <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
               <label htmlFor="specialDiscount" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Special discount
@@ -669,32 +694,6 @@ export default function Page404() {
                 />
               </label>
             </div> */}
-            <div className="col-auto" style={{ display: 'block' }}>
-              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Customer
-                <input
-                  type="text"
-                  name="distributor"
-                  id="distributor"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  // value={selectedCustomer}
-                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
-                  onChange={(e) => handleInputCustomerChange(e)}
-                />
-                {customerRows.showList && (
-                  <ul style={{ marginTop: '0px' }}>
-                    {filteredCustomerList.map((item, itemIndex) => (
-                      <>
-                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
-                          {item.full_name}
-                        </MenuItem>
-                      </>
-                    ))}
-                  </ul>
-                )}
-              </label>
-            </div>
           </Stack>
         </div>
 
@@ -849,7 +848,7 @@ export default function Page404() {
                     </tr>
                   ))}
                 <tr>
-                  <td />
+                  <td>Total</td>
                   <td />
                   <td />
                   <td />

@@ -300,7 +300,7 @@ export default function Page404() {
         pHierarchyId: 1,
         pTransactionId: soHeaderDetails.header_id,
         pTransactionNum: soHeaderDetails.order_number.toString(),
-        pAppsUsername: account.full_name,
+        pAppsUsername: account.user_name,
       };
       const response = await callSoApprovalService(requestBody);
 
