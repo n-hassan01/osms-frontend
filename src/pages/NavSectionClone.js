@@ -2,13 +2,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 // @mui
-import { List, ListItemText } from '@mui/material';
+import { Button, List, ListItemText } from '@mui/material';
 //
 import { getLoggedInUserDetails, getUserMenuList } from '../Services/ApiServices';
 import { StyledNavItem } from '../components/nav-section/styles';
-// import navConfig from './config';
 import { useUser } from '../context/UserContext';
-
 
 // ----------------------------------------------------------------------
 
@@ -17,17 +15,16 @@ NavSectionClone.propTypes = {
 };
 
 export default function NavSectionClone() {
-    
   const [account, setAccount] = useState({});
   const { user } = useUser();
-  console.log(user);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (user) {
           const accountDetails = await getLoggedInUserDetails(user);
-          console.log("ad",accountDetails);
+          console.log("ad", accountDetails);
           if (accountDetails.status === 200) {
             setAccount(accountDetails.data);
           }
@@ -38,19 +35,17 @@ export default function NavSectionClone() {
     };
 
     fetchData();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  }, [user]);
 
   const userId = account.id;
-  console.log(userId);
 
   const [userMenus, setUserMenus] = useState([]);
   useEffect(() => {
     const fetchUserMenus = async () => {
       try {
-        // Make sure userId is available before making the second API call
         if (userId) {
           const response = await getUserMenuList(userId);
-          console.log("iID",response);
+          console.log("iID", response);
           setUserMenus(response.data);
         }
       } catch (error) {
@@ -59,19 +54,44 @@ export default function NavSectionClone() {
     };
 
     fetchUserMenus();
-  }, [userId]); // Add userId to the dependency array to trigger the effect when it changes
+  }, [userId]);
 
   console.log(userMenus);
+
+  // Define the number of items to initially show and the button text
+  const itemsToShowInitially = 6;
+  const buttonText = showAll ? 'Show Less' : 'Show More';
+
+  // Define the maximum height for the list
+  const maxListHeight = 200; // Adjust as needed
+
   return (
-    
-      <List  sx={{ p: 1 }} style={{display:"flex",flexDirection: 'row'}}>
-        {userMenus.map((item) => (
-          <NavItem style={{marginLeft:"10px"}} key={item.title} item={item} />
+    <div style={{ maxHeight: maxListHeight, overflowY: 'auto' }}>
+      <List
+        sx={{
+          p: 1,
+          display: "flex",
+          flexDirection: "row",
+          gap: 2, // Adjust the gap between items as needed
+          flexWrap: 'wrap',
+        }}
+      >
+        {userMenus.slice(0, showAll ? userMenus.length : itemsToShowInitially).map((item, index) => (
+          <NavItem
+            key={item.title}
+            item={item}
+            sx={{ marginLeft: "10px", marginBottom: '10px' }}
+          />
         ))}
       </List>
-
+      {userMenus.length > itemsToShowInitially && (
+        <Button onClick={() => setShowAll(!showAll)}>{buttonText}</Button>
+      )}
+    </div>
   );
 }
+
+
 
 // ----------------------------------------------------------------------
 
