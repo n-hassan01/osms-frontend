@@ -902,6 +902,16 @@ export const updateSalesOrderLineService = async (lineId, lineInfo) => {
   }
 };
 
+export const getCustomerListService = async () => {
+  try {
+    return await axios.get(`${usersUrl}customer-list`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // procedure calls
 export const callSoApprovalService = async (bodyInfo) => {
   try {
