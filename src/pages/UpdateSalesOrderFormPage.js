@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { useEffect, useState } from 'react';
@@ -10,6 +11,7 @@ import {
   Container,
   Grid,
   MenuItem,
+  Select,
   Stack,
   Table,
   TableBody,
@@ -300,7 +302,7 @@ export default function Page404() {
         pHierarchyId: 1,
         pTransactionId: soHeaderDetails.header_id,
         pTransactionNum: soHeaderDetails.order_number.toString(),
-        pAppsUsername: account.full_name,
+        pAppsUsername: account.user_name,
       };
       const response = await callSoApprovalService(requestBody);
 
@@ -667,19 +669,20 @@ export default function Page404() {
                 style={{ display: 'flex', fontSize: '13px' }}
               >
                 Transport Type
-                <select
+                <Select
                   id="shipping_method_code"
                   name="shipping_method_code"
                   className="form-control"
-                  style={{ marginLeft: '7px' }}
+                  // style={{ marginLeft: '7px' }}
+                  style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
                   defaultValue={soHeaderDetails.shipping_method_code}
                   onChange={(e) => onChangeHeader(e)}
                 >
-                  <option value="Self">Self</option>
-                  <option value="Company">Company</option>
-                  <option value="Rental">Rental</option>
-                  <option value="Courier">Courier</option>
-                </select>
+                  <MenuItem value="Self">Self</MenuItem>
+                  <MenuItem value="Company">Company</MenuItem>
+                  <MenuItem value="Rental">Rental</MenuItem>
+                  <MenuItem value="Courier">Courier</MenuItem>
+                </Select>
               </label>
             </div>
             <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
