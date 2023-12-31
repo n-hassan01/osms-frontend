@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -15,7 +15,7 @@ import {
   getInventoryItemIdList,
   getUserProfileDetails,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService,
+  updateSalesOrderLineService
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -23,8 +23,9 @@ import { useUser } from '../context/UserContext';
 
 export default function Page404() {
   const navigate = useNavigate();
-  const [transporttype, setTransporttype] = useState('');
+  const inputRef = useRef(null);
 
+  const [transporttype, setTransporttype] = useState('');
   const handleChange = (event) => {
     setTransporttype(event.target.value);
   };
@@ -66,7 +67,9 @@ export default function Page404() {
       try {
         if (user) {
           const accountDetails = await getUserProfileDetails(user); // Call your async function here
-          if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+          if (accountDetails.status === 200) {
+            setAccount(accountDetails.data);
+          } // Set the account details in the component's state
         }
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -78,7 +81,17 @@ export default function Page404() {
   }, [user]);
   console.log(account);
 
-  const [customerList, setCustomerList] = useState({});
+  const [customerRows, setCustomerRows] = useState([
+    {
+      custAccountId: null,
+      accountNumber: '',
+      accountName: '',
+
+      showList: false,
+    },
+  ]);
+
+  const [customerList, setCustomerList] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -111,6 +124,21 @@ export default function Page404() {
   console.log(salesOrderNumber);
 
   const [inventoryItemIds, setInventoryItemIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getInventoryItemIdList();
+        if (response) setInventoryItemIds(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  console.log(inventoryItemIds);
+
+  const [inventoryItemPrice, setInventoryItemPrice] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -199,13 +227,20 @@ export default function Page404() {
   };
 
   const saveHeader = async () => {
-    console.log('aaa', customerRows.custAccountId);
     if (headerDetails.headerId) {
       const requestBody = {
         lastUpdatedBy: account.user_id,
         shippingMethodCode: headerInfo.shippingMethodCode,
         description: headerInfo.description,
         distributor: customerRows.custAccountId,
+        soldToOrgId: customerRows.custAccountId,
+        shipToOrgId: customerRows.custAccountId,
+        invoiceToOrgId: customerRows.custAccountId,
+        deliverToOrgId: customerRows.custAccountId,
+        soldToContactId: customerRows.custAccountId,
+        shipToContactId: customerRows.custAccountId,
+        invoiceToContactId: customerRows.custAccountId,
+        deliverToContactId: customerRows.custAccountId,
       };
       console.log(requestBody);
 
@@ -237,6 +272,14 @@ export default function Page404() {
         specialAdjustment: headerInfo.specialAdjustment,
         totalPrice: sumTotalPrice,
         distributor: customerRows.custAccountId,
+        soldToOrgId: customerRows.custAccountId,
+        shipToOrgId: customerRows.custAccountId,
+        invoiceToOrgId: customerRows.custAccountId,
+        deliverToOrgId: customerRows.custAccountId,
+        soldToContactId: customerRows.custAccountId,
+        shipToContactId: customerRows.custAccountId,
+        invoiceToContactId: customerRows.custAccountId,
+        deliverToContactId: customerRows.custAccountId,
       };
       console.log(requestBody);
 
@@ -315,7 +358,7 @@ export default function Page404() {
         pHierarchyId: 1,
         pTransactionId: headerDetails.headerId,
         pTransactionNum: headerDetails.orderNumber.toString(),
-        pAppsUsername: account.full_name,
+        pAppsUsername: account.user_name,
       };
       const response = await callSoApprovalService(requestBody);
 
@@ -424,20 +467,27 @@ export default function Page404() {
   };
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
-  const [customerRows, setCustomerRows] = useState([
-    {
-      custAccountId: null,
-      accountNumber: '',
-      accountName: '',
 
-      showList: false,
-    },
-  ]);
+  // const [customerRows, setCustomerRows] = useState([
+  //   {
+  //     custAccountId: null,
+  //     accountNumber: '',
+  //     accountName: selectedCustomer,
+
+  //     showList: false,
+  //   },
+  // ]);
+  // console.log('account', customerRows);
+
+  // const [customerRows, setCustomerRows] = useState(customer);
+  // setCustomerRows(customer);
+  console.log('customer', customerRows);
 
   const handleInputCustomerChange = (event) => {
     const input = event.target.value;
+    console.log(input);
 
-    const username = 'accountNumber';
+    const username = 'accountName';
     const show = 'showList';
 
     const updatedRows = [...customerRows];
@@ -447,19 +497,20 @@ export default function Page404() {
     setCustomerRows(updatedRows);
     console.log(customerRows);
 
-    const filtered = customerList.filter((item) => item.account_number.toLowerCase().includes(input.toLowerCase()));
+    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
     setFilteredCustomerList(filtered);
     console.log(filteredCustomerList);
   };
 
   const handleCustomerClick = (item) => {
     console.log(item);
-    const name = 'accountNumber';
+    const name = 'accountName';
     const selected = 'custAccountId';
     const show = 'showList';
 
     const updatedRows = [...customerRows];
-    updatedRows[name] = item.account_number;
+    updatedRows[name] = item.full_name;
+    // setSelectedCustomer(item.full_name);
     updatedRows[selected] = item.cust_account_id;
     updatedRows[show] = false;
 
@@ -468,6 +519,7 @@ export default function Page404() {
   };
 
   const handleMenuItemClick = (index, item) => {
+    console.log(item);
     const name = 'selectedItemName';
     const selected = 'selectedItem';
     const show = 'showList';
@@ -481,6 +533,7 @@ export default function Page404() {
   };
 
   console.log(showApprovalButton);
+  // const value =
 
   return (
     <>
@@ -516,7 +569,32 @@ export default function Page404() {
                 <input type="text" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
               </label>
             </div>
-
+            <div className="col-auto" style={{ marginRight: '15px' }}>
+              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Customer
+                <input
+                  type="text"
+                  name="distributor"
+                  id="distributor"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  // value={selectedCustomer}
+                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
+                  onChange={(e) => handleInputCustomerChange(e)}
+                />
+                {customerRows.showList && (
+                  <ul style={{ marginTop: '0px' }}>
+                    {filteredCustomerList.map((item, itemIndex) => (
+                      <>
+                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
+                          {item.full_name}
+                        </MenuItem>
+                      </>
+                    ))}
+                  </ul>
+                )}
+              </label>
+            </div>
             <div className="col-auto" style={{ width: '430px' }}>
               <label htmlFor="shipTo" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Ship to
@@ -530,7 +608,9 @@ export default function Page404() {
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ width: '180px', marginLeft: '10px' }}>
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
               <label
                 htmlFor="shippingMethodCode"
                 className="col-form-label"
@@ -564,8 +644,6 @@ export default function Page404() {
                 </Select>
               </label>
             </div>
-          </Stack>
-          <Stack direction="row" alignItems="center" justifyContent="flex-start">
             <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
               <label htmlFor="specialDiscount" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Special discount
@@ -593,7 +671,6 @@ export default function Page404() {
                   className="form-control"
                   style={{ marginLeft: '7px' }}
                   onChange={(e) => onChangeHeader(e)}
-                  // value={getFormattedDate(soHeaderDetails.total_price)}
                 />
               </label>
             </div>
@@ -611,38 +688,6 @@ export default function Page404() {
                 />
               </label>
             </div> */}
-            <div className="col-auto" style={{ display: 'block' }}>
-              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Distributor
-                <input
-                  type="text"
-                  name="distributor"
-                  id="distributor"
-                  className="form-control"
-                  // style={{
-                  //   textAlign: 'inherit',
-                  //   width: '420px',
-                  //   height: '50%',
-                  //   border: 'none',
-                  //   background: 'none',
-                  //   outline: 'none',
-                  // }}
-                  value={customerRows.accountNumber}
-                  onChange={(e) => handleInputCustomerChange(e)}
-                />
-                {customerRows.showList && (
-                  <ul style={{ marginTop: '0px' }}>
-                    {filteredCustomerList.map((item, itemIndex) => (
-                      <>
-                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
-                          {item.account_number}
-                        </MenuItem>
-                      </>
-                    ))}
-                  </ul>
-                )}
-              </label>
-            </div>
           </Stack>
         </div>
 
@@ -749,6 +794,8 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          // eslint-disable-next-line jsx-a11y/no-autofocus
+                          ref={inputRef}
                         />
                       </td>
                       {/* <td>
@@ -773,6 +820,7 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
+                          value={row.selectedItem.unit_price}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -798,7 +846,7 @@ export default function Page404() {
                   ))}
                 <tr>
                   <td />
-                  <td />
+                  <td>Total</td>
                   <td />
                   <td />
                   <td />

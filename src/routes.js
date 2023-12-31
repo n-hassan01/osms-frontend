@@ -32,6 +32,7 @@ import ShowPerAllPeoples from './pages/ShowPerAllPeoples';
 import ShowWfNotifications from './pages/ShowWfNotifications';
 import SignupPage from './pages/SignupPage';
 import UpdateSalesOrderForm from './pages/UpdateSalesOrderFormPage';
+import ViewOrdersHeader from './pages/ViewOrdersHeader';
 import WfNotificationView from './pages/WfNotificationViewPage';
 import AddSystemItemsDialog from './sections/@dashboard/items/AddSystemItemsDialog';
 import AddUomDialog from './sections/@dashboard/uom/AddUomDialog';
@@ -128,6 +129,7 @@ export default function Router() {
         { path: 'showhzcustaccounts', element: <ShowHzCustAccounts /> },
         { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
         { path: 'showexcelfile', element: <ShowExcelFile /> },
+        { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
       ],
     },
 
