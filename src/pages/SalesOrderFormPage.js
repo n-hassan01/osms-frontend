@@ -15,7 +15,7 @@ import {
   getInventoryItemIdList,
   getUserProfileDetails,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService
+  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -177,17 +177,14 @@ export default function Page404() {
           orderedItem: lineInfo.selectedItem.description,
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
           orderedQuantity: lineInfo.orderedQuantity,
-          unitSellingPrice: lineInfo.unitSellingPrice,
-          totalPrice: lineInfo.orderedQuantity * lineInfo.unitSellingPrice,
+          unitSellingPrice: lineInfo.selectedItem.unit_price,
+          totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
         };
         console.log(requestBody);
 
         const response = await updateSalesOrderLineService(lineInfo.lineId, requestBody);
 
         if (response.status === 200) {
-          console.log(response.data);
-
-          alert('saved');
           setShowApprovalButton(false);
           // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
@@ -205,17 +202,14 @@ export default function Page404() {
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
           orderedQuantity: lineInfo.orderedQuantity,
           soldFromOrgId: lineInfo.soldFromOrgId,
-          unitSellingPrice: lineInfo.unitSellingPrice,
-          totalPrice: lineInfo.orderedQuantity * lineInfo.unitSellingPrice,
+          unitSellingPrice: lineInfo.selectedItem.unit_price,
+          totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
         };
         console.log(requestBody);
 
         const response = await addSalesOrderLinesService(requestBody);
 
         if (response.status === 200) {
-          console.log(response.data);
-
-          alert('saved');
           setShowApprovalButton(false);
           handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
@@ -230,7 +224,7 @@ export default function Page404() {
     if (headerDetails.headerId) {
       const requestBody = {
         lastUpdatedBy: account.user_id,
-        shippingMethodCode: headerInfo.shippingMethodCode,
+        shippingMethodCode: headerInfo.shippingMethodCode ? headerInfo.shippingMethodCode : 'Self',
         description: headerInfo.description,
         distributor: customerRows.custAccountId,
         soldToOrgId: customerRows.custAccountId,
@@ -241,8 +235,9 @@ export default function Page404() {
         shipToContactId: customerRows.custAccountId,
         invoiceToContactId: customerRows.custAccountId,
         deliverToContactId: customerRows.custAccountId,
+        totalPrice: sumTotalPrice,
       };
-      console.log(requestBody);
+      console.log('header', requestBody);
 
       const response = await updateSalesOrderHeaderService(headerDetails.headerId, requestBody);
       if (response.status === 200) {
@@ -259,7 +254,7 @@ export default function Page404() {
         createdBy: account.user_id,
         // orderTypeId: headerInfo.orderTypeId,
         lastUpdatedBy: account.user_id,
-        shippingMethodCode: headerInfo.shippingMethodCode,
+        shippingMethodCode: headerInfo.shippingMethodCode ? headerInfo.shippingMethodCode : 'Self',
         // cancelledFlag: headerInfo.cancelledFlag === true ? 'Y' : 'N',
         // bookedFlag: headerInfo.bookedFlag === true ? 'Y' : 'N',
         salesrepId: account.user_id,
@@ -281,7 +276,7 @@ export default function Page404() {
         invoiceToContactId: customerRows.custAccountId,
         deliverToContactId: customerRows.custAccountId,
       };
-      console.log(requestBody);
+      console.log('header', requestBody);
 
       const response = await addSalesOrderHeaderService(requestBody);
       if (response.status === 200) {
@@ -316,7 +311,8 @@ export default function Page404() {
 
   let sumTotalPrice = 0;
   rows.forEach((element) => {
-    sumTotalPrice += element.unitSellingPrice * element.orderedQuantity;
+    console.log(element);
+    sumTotalPrice += element.selectedItem.unit_price * element.orderedQuantity;
   });
   console.log(sumTotalPrice);
 
@@ -363,9 +359,8 @@ export default function Page404() {
       const response = await callSoApprovalService(requestBody);
 
       if (response.status === 200) {
-        alert('Successfull!');
         setShowApprovalButton(true);
-        navigate('/dashboard/salesOrderForm', { replace: true });
+        navigate('/dashboard/manageSalesOrderForm', { replace: true });
         // window.location.reload();
       } else {
         // alert('Process failed! Please try later');
@@ -837,7 +832,11 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          value={getFormattedPrice(row.orderedQuantity * row.unitSellingPrice)}
+                          value={
+                            row.selectedItem.unit_price
+                              ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
+                              : 0
+                          }
                           // onClick={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           readOnly
                         />
@@ -862,7 +861,7 @@ export default function Page404() {
                         background: 'none',
                         outline: 'none',
                       }}
-                      value={getFormattedPrice(sumTotalPrice)}
+                      value={sumTotalPrice ? getFormattedPrice(sumTotalPrice) : 0}
                       readOnly
                     />
                   </td>
