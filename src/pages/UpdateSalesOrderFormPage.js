@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import {
   addSalesOrderLinesService,
-  callSoApprovalService,
+  callReqApprovalFromPanelService,
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getApprovalSequenceService,
@@ -300,15 +300,43 @@ export default function Page404() {
     if (confirm('Are you sure for this requisition?')) {
       const requestBody = {
         pHierarchyId: 1,
-        pTransactionId: soHeaderDetails.header_id,
+        pTransactionID: soHeaderDetails.header_id,
         pTransactionNum: soHeaderDetails.order_number.toString(),
         pAppsUsername: account.user_name,
+        pNotificationID: 1,
+        pApprovalType: 'A',
+        pEmpid: 1,
+        pNote: 'test',
       };
-      const response = await callSoApprovalService(requestBody);
+      const response = await callReqApprovalFromPanelService(requestBody);
 
       if (response.status === 200) {
         alert('Successfull!');
-        navigate('/dashboard/salesOrderForm', { replace: true });
+        navigate('/dashboard/dashclone', { replace: true });
+      } else {
+        alert('Process failed! Please try later');
+      }
+      // window.location.reload();
+    }
+  };
+
+  const rejectRequisition = async () => {
+    if (confirm('Are you sure for this requisition?')) {
+      const requestBody = {
+        pHierarchyId: 1,
+        pTransactionID: soHeaderDetails.header_id,
+        pTransactionNum: soHeaderDetails.order_number.toString(),
+        pAppsUsername: account.user_name,
+        pNotificationID: 1,
+        pApprovalType: 'R',
+        pEmpid: 1,
+        pNote: 'test',
+      };
+      const response = await callReqApprovalFromPanelService(requestBody);
+
+      if (response.status === 200) {
+        alert('Successfull!');
+        navigate('/dashboard/dashclone', { replace: true });
       } else {
         alert('Process failed! Please try later');
       }
@@ -619,7 +647,7 @@ export default function Page404() {
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ width: '80px', marginRight: '15px' }}>
+            {/* <div className="col-auto" style={{ width: '80px', marginRight: '15px' }}>
               <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 From
                 <input
@@ -631,7 +659,7 @@ export default function Page404() {
                   readOnly
                 />
               </label>
-            </div>
+            </div> */}
             <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
               <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Total price
@@ -655,18 +683,18 @@ export default function Page404() {
                   name="ship_to"
                   className="form-control"
                   style={{ marginLeft: '5px' }}
-                  // value={account.full_name}
+                  value={soHeaderDetails.ship_to}
                   readOnly={!shipToChangable}
                 />
               </label>
             </div>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px', height: '38px' }}>
               <label
                 htmlFor="shipping_method_code"
                 className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
+                style={{ display: 'flex', fontSize: '13px', height: '38px' }}
               >
                 Transport Type
                 <Select
@@ -920,7 +948,7 @@ export default function Page404() {
                   display: shipToChangable ? 'none' : 'block',
                 }}
                 // disabled={showApprovalButton === 'none'}
-                onClick={submitRequisition}
+                onClick={rejectRequisition}
               >
                 Reject
               </Button>
