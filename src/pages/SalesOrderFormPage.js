@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -15,7 +15,7 @@ import {
   getInventoryItemIdList,
   getUserProfileDetails,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService,
+  updateSalesOrderLineService
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -23,8 +23,9 @@ import { useUser } from '../context/UserContext';
 
 export default function Page404() {
   const navigate = useNavigate();
-  const [transporttype, setTransporttype] = useState('');
+  const inputRef = useRef(null);
 
+  const [transporttype, setTransporttype] = useState('');
   const handleChange = (event) => {
     setTransporttype(event.target.value);
   };
@@ -89,29 +90,6 @@ export default function Page404() {
       showList: false,
     },
   ]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (account) {
-  //         setCustomerRows([
-  //           {
-  //             custAccountId: null,
-  //             accountNumber: '',
-  //             accountName: account.full_name,
-
-  //             showList: false,
-  //           },
-  //         ]);
-  //       }
-  //     } catch (error) {
-  //       // Handle any errors that might occur during the async operation
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData(); // Call the async function when the component mounts
-  // }, [account]);
-  // console.log('account', customerRows);
 
   const [customerList, setCustomerList] = useState([]);
   useEffect(() => {
@@ -146,6 +124,21 @@ export default function Page404() {
   console.log(salesOrderNumber);
 
   const [inventoryItemIds, setInventoryItemIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getInventoryItemIdList();
+        if (response) setInventoryItemIds(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  console.log(inventoryItemIds);
+
+  const [inventoryItemPrice, setInventoryItemPrice] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -526,6 +519,7 @@ export default function Page404() {
   };
 
   const handleMenuItemClick = (index, item) => {
+    console.log(item);
     const name = 'selectedItemName';
     const selected = 'selectedItem';
     const show = 'showList';
@@ -800,6 +794,8 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          // eslint-disable-next-line jsx-a11y/no-autofocus
+                          ref={inputRef}
                         />
                       </td>
                       {/* <td>
@@ -824,6 +820,7 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
+                          value={row.selectedItem.unit_price}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -848,8 +845,8 @@ export default function Page404() {
                     </tr>
                   ))}
                 <tr>
-                  <td>Total</td>
                   <td />
+                  <td>Total</td>
                   <td />
                   <td />
                   <td />
