@@ -6,32 +6,32 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    Container,
-    Link,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography
+  Card,
+  Checkbox,
+  Container,
+  Link,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
-//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
+//  import { getUsersDetailsService ,getLoggedInUserDetails} from '../Services/GetAllUsersDetails';
+import { getAuthStatusDetails, getLoggedInUserDetails } from '../Services/ApiServices';
+import { useUser } from '../context/UserContext';
 import { UserListHead } from '../sections/@dashboard/user';
 import PerAllPeoplesTypesList from '../sections/@dashboard/user/PerAllPeoplesTypesList';
-
-import { getAuthStatusDetails } from '../Services/ApiServices';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -100,6 +100,26 @@ export default function ShowApprovedSalesOrders() {
   const [isDisableBan, setIsDisableBan] = useState(false);
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
+
+  const { user } = useUser();
+  console.log(user);
+  const [loggeddata, setLoggeddata] = useState('');
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (user) {
+          const usersDetailslogin = await getLoggedInUserDetails(user);
+          console.log(usersDetailslogin.data.id);
+          setLoggeddata(usersDetailslogin.data.id);
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [user]);
 
   useEffect(() => {
     async function fetchData() {
@@ -228,7 +248,6 @@ export default function ShowApprovedSalesOrders() {
           <Typography variant="h4" gutterBottom>
             List of Approved Sales Orders
           </Typography>
-         
         </Stack>
 
         <Card>
@@ -275,7 +294,11 @@ export default function ShowApprovedSalesOrders() {
                           <Link
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
+                              if (loggeddata === 'accounts') {
+                                navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
+                              } else if (loggeddata === 'asm' || loggeddata === 'salesadmin' || loggeddata === 'hos') {
+                                navigate(`/dashboard/viewordersheader/${header_id}`);
+                              }
                             }}
                           >
                             {order_number}
@@ -286,8 +309,6 @@ export default function ShowApprovedSalesOrders() {
                         <TableCell align="left">{description}</TableCell>
                         <TableCell align="left">{authorization_status}</TableCell>
 
-                     
-            
                         <Popover
                           open={Boolean(open)}
                           anchorEl={open}
