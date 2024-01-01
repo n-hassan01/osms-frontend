@@ -5,15 +5,15 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
 import {
-  addTxnRequestHeader,
-  addTxnRequestLines,
-  deleteTxnRequestHeader,
-  deleteTxnRequestLines,
-  getInventoryItemIdList,
-  getOrganizationIdList,
-  getTransactionTypeList,
-  getUomCodeList,
-  getUserProfileDetails,
+    addTxnRequestHeader,
+    addTxnRequestLines,
+    deleteTxnRequestHeader,
+    deleteTxnRequestLines,
+    getInventoryItemIdList,
+    getOrganizationIdList,
+    getTransactionTypeList,
+    getUomCodeList,
+    getUserProfileDetails,
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -279,7 +279,7 @@ export default function Page404() {
   return (
     <>
       <Helmet>
-        <title> OSMS | Requisition </title>
+        <title> COMS | Requisition </title>
       </Helmet>
 
       <Container>

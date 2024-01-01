@@ -176,7 +176,7 @@ export default function MenuCreation() {
   return (
     <>
       <Helmet>
-        <title> OSMS | System Menu </title>
+        <title> COMS | System Menu </title>
       </Helmet>
       <Container style={{ display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>

@@ -12,21 +12,21 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Card,
-  Checkbox,
-  Container,
-  DialogTitle,
-  Grid,
-  IconButton,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    Checkbox,
+    Container,
+    DialogTitle,
+    Grid,
+    IconButton,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -252,7 +252,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> OSMS | UOM </title>
+        <title> COMS | UOM </title>
       </Helmet>
 
       <Container>

@@ -201,7 +201,7 @@ export default function Page404() {
   return (
     <>
       <Helmet>
-        <title> OSMS | Sales Order Form </title>
+        <title> COMS | Sales Order Form </title>
       </Helmet>
 
       <Container>

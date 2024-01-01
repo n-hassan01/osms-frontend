@@ -14,19 +14,19 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 // eslint-disable-next-line 
-import { addMainSystemMenuService } from '../../../osms-frontend/src/Services/Admin/AddMainSystemMenu';
+import { addMainSystemMenuService } from '../../../COMS-frontend/src/Services/Admin/AddMainSystemMenu';
 import { addSubMenusService } from "../Services/Admin/AddSubMenus";
 import { addMenusService } from "../Services/Admin/AssMenus";
 
 // eslint-disable-next-line import/order
 import {
-  Button,
-  ButtonGroup,
-  Container,
-  Grid,
-  Stack,
-  TextField,
-  Typography
+    Button,
+    ButtonGroup,
+    Container,
+    Grid,
+    Stack,
+    TextField,
+    Typography
 } from '@mui/material';
 // import {
 //   addTxnRequestHeader,
@@ -294,7 +294,7 @@ let smenuIdd;
   return (
     <>
       <Helmet>
-        <title> OSMS | User Management </title>
+        <title> COMS | User Management </title>
       </Helmet>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
