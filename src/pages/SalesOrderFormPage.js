@@ -15,7 +15,7 @@ import {
   getInventoryItemIdList,
   getUserProfileDetails,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService
+  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -86,7 +86,7 @@ export default function Page404() {
       custAccountId: null,
       accountNumber: '',
       accountName: '',
-
+      ship_to_address: '',
       showList: false,
     },
   ]);
@@ -156,7 +156,9 @@ export default function Page404() {
   const [filteredItemList, setFilteredItemList] = useState([]);
 
   const [headerInfo, setHeaderInfo] = useState({});
+
   const onChangeHeader = (e) => {
+    console.log(e.target.name, e.target.value);
     setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
   };
   const [showLines, setShowLines] = useState(true);
@@ -177,17 +179,14 @@ export default function Page404() {
           orderedItem: lineInfo.selectedItem.description,
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
           orderedQuantity: lineInfo.orderedQuantity,
-          unitSellingPrice: lineInfo.unitSellingPrice,
-          totalPrice: lineInfo.orderedQuantity * lineInfo.unitSellingPrice,
+          unitSellingPrice: lineInfo.selectedItem.unit_price,
+          totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
         };
         console.log(requestBody);
 
         const response = await updateSalesOrderLineService(lineInfo.lineId, requestBody);
 
         if (response.status === 200) {
-          console.log(response.data);
-
-          alert('saved');
           setShowApprovalButton(false);
           // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
@@ -205,17 +204,14 @@ export default function Page404() {
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
           orderedQuantity: lineInfo.orderedQuantity,
           soldFromOrgId: lineInfo.soldFromOrgId,
-          unitSellingPrice: lineInfo.unitSellingPrice,
-          totalPrice: lineInfo.orderedQuantity * lineInfo.unitSellingPrice,
+          unitSellingPrice: lineInfo.selectedItem.unit_price,
+          totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
         };
         console.log(requestBody);
 
         const response = await addSalesOrderLinesService(requestBody);
 
         if (response.status === 200) {
-          console.log(response.data);
-
-          alert('saved');
           setShowApprovalButton(false);
           handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
@@ -230,7 +226,7 @@ export default function Page404() {
     if (headerDetails.headerId) {
       const requestBody = {
         lastUpdatedBy: account.user_id,
-        shippingMethodCode: headerInfo.shippingMethodCode,
+        shippingMethodCode: headerInfo.shippingMethodCode ? headerInfo.shippingMethodCode : 'Self',
         description: headerInfo.description,
         distributor: customerRows.custAccountId,
         soldToOrgId: customerRows.custAccountId,
@@ -241,8 +237,10 @@ export default function Page404() {
         shipToContactId: customerRows.custAccountId,
         invoiceToContactId: customerRows.custAccountId,
         deliverToContactId: customerRows.custAccountId,
+        totalPrice: sumTotalPrice,
+        shipTo: headerInfo.shipTo ? headerInfo.shipTo : customerRows.ship_to_address,
       };
-      console.log(requestBody);
+      console.log('header', requestBody);
 
       const response = await updateSalesOrderHeaderService(headerDetails.headerId, requestBody);
       if (response.status === 200) {
@@ -259,15 +257,14 @@ export default function Page404() {
         createdBy: account.user_id,
         // orderTypeId: headerInfo.orderTypeId,
         lastUpdatedBy: account.user_id,
-        shippingMethodCode: headerInfo.shippingMethodCode,
+        shippingMethodCode: headerInfo.shippingMethodCode ? headerInfo.shippingMethodCode : 'Self',
         // cancelledFlag: headerInfo.cancelledFlag === true ? 'Y' : 'N',
         // bookedFlag: headerInfo.bookedFlag === true ? 'Y' : 'N',
         salesrepId: account.user_id,
         // salesChannelCode: headerInfo.salesChannelCode,
         // bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
         description: headerInfo.description,
-
-        shipTo: headerInfo.shipTo,
+        shipTo: headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address,
         specialDiscount: headerInfo.specialDiscount,
         specialAdjustment: headerInfo.specialAdjustment,
         totalPrice: sumTotalPrice,
@@ -281,7 +278,7 @@ export default function Page404() {
         invoiceToContactId: customerRows.custAccountId,
         deliverToContactId: customerRows.custAccountId,
       };
-      console.log(requestBody);
+      console.log('header', requestBody);
 
       const response = await addSalesOrderHeaderService(requestBody);
       if (response.status === 200) {
@@ -316,7 +313,8 @@ export default function Page404() {
 
   let sumTotalPrice = 0;
   rows.forEach((element) => {
-    sumTotalPrice += element.unitSellingPrice * element.orderedQuantity;
+    console.log(element);
+    sumTotalPrice += element.selectedItem.unit_price * element.orderedQuantity;
   });
   console.log(sumTotalPrice);
 
@@ -363,9 +361,8 @@ export default function Page404() {
       const response = await callSoApprovalService(requestBody);
 
       if (response.status === 200) {
-        alert('Successfull!');
         setShowApprovalButton(true);
-        navigate('/dashboard/salesOrderForm', { replace: true });
+        navigate('/dashboard/manageSalesOrderForm', { replace: true });
         // window.location.reload();
       } else {
         // alert('Process failed! Please try later');
@@ -506,15 +503,20 @@ export default function Page404() {
     console.log(item);
     const name = 'accountName';
     const selected = 'custAccountId';
+    const address = 'ship_to_address';
     const show = 'showList';
 
     const updatedRows = [...customerRows];
     updatedRows[name] = item.full_name;
     // setSelectedCustomer(item.full_name);
     updatedRows[selected] = item.cust_account_id;
+    updatedRows[address] = item.ship_to_address;
     updatedRows[show] = false;
 
     setCustomerRows(updatedRows);
+    const headerShipTo = 'shipTo';
+    setHeaderInfo({ ...headerInfo, [headerShipTo]: item.ship_to_address });
+
     console.log(customerRows);
   };
 
@@ -530,6 +532,7 @@ export default function Page404() {
     updatedRows[index][show] = false;
     setRows(updatedRows);
     console.log(rows);
+    inputRef.current.focus();
   };
 
   console.log(showApprovalButton);
@@ -604,6 +607,8 @@ export default function Page404() {
                   name="shipTo"
                   className="form-control"
                   style={{ marginLeft: '7px', height: '30px', width: '390px' }}
+                  // defaultValue={customerRows.ship_to_address ? customerRows.ship_to_address : account.ship_to_address}
+                  value={headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address}
                   onChange={(e) => onChangeHeader(e)}
                 />
               </label>
@@ -837,7 +842,11 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          value={getFormattedPrice(row.orderedQuantity * row.unitSellingPrice)}
+                          value={
+                            row.selectedItem.unit_price
+                              ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
+                              : 0
+                          }
                           // onClick={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           readOnly
                         />
@@ -862,7 +871,7 @@ export default function Page404() {
                         background: 'none',
                         outline: 'none',
                       }}
-                      value={getFormattedPrice(sumTotalPrice)}
+                      value={sumTotalPrice ? getFormattedPrice(sumTotalPrice) : 0}
                       readOnly
                     />
                   </td>
