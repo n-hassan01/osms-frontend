@@ -6,21 +6,21 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Card,
-  Checkbox,
-  Container,
-  Link,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography
+    Card,
+    Checkbox,
+    Container,
+    Link,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -220,7 +220,7 @@ export default function ShowApprovedSalesOrders() {
   return (
     <>
       <Helmet>
-        <title> HR Auth Status Details | OSMS </title>
+        <title> HR Auth Status Details | COMS </title>
       </Helmet>
 
       <Container>

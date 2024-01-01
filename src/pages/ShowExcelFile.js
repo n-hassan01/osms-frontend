@@ -223,7 +223,7 @@ export default function ShowExcelFile() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Locations | COMS </title>
       </Helmet>
 
       <Container>

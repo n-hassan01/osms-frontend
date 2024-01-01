@@ -8,22 +8,22 @@ import { useNavigate } from 'react-router-dom';
 
 // @mui
 import {
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  IconButton,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Checkbox,
+    Container,
+    IconButton,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -206,7 +206,7 @@ export default function ShowFndUser() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Locations | COMS </title>
       </Helmet>
 
       <Container>

@@ -239,7 +239,7 @@ export default function ShowMtlMaterialTransactions() {
   return (
     <>
       <Helmet>
-        <title> HR Mtl Transaction Type | OSMS </title>
+        <title> HR Mtl Transaction Type | COMS </title>
       </Helmet>
 
       <Container>

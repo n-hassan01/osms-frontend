@@ -8,22 +8,22 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 
 import {
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  IconButton,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Checkbox,
+    Container,
+    IconButton,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 
 // components
@@ -204,7 +204,7 @@ export default function ShowLocationsAll() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Locations | COMS </title>
       </Helmet>
 
       <Container>

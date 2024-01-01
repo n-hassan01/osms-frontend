@@ -106,7 +106,7 @@ export default function Nav({ openNav, onCloseNav }) {
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                Remark OSMS
+                Remark COMS
               </Typography>
             </Box>
           </StyledAccount>
