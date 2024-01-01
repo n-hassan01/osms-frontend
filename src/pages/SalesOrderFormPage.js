@@ -264,7 +264,7 @@ export default function Page404() {
         // salesChannelCode: headerInfo.salesChannelCode,
         // bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
         description: headerInfo.description,
-        shipTo: headerInfo.shipTo ? headerInfo.shipTo : customerRows.ship_to_address,
+        shipTo: headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address,
         specialDiscount: headerInfo.specialDiscount,
         specialAdjustment: headerInfo.specialAdjustment,
         totalPrice: sumTotalPrice,
