@@ -26,7 +26,7 @@ export default function DashboardAppPage2() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | OSMS </title>
+        <title> Dashboard | COMS </title>
       </Helmet>
 
       <Container maxWidth="xl">

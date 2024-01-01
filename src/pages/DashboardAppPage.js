@@ -7,14 +7,14 @@ import { useTheme } from '@mui/material/styles';
 import Iconify from '../components/iconify';
 // sections
 import {
-  AppConversionRates,
-  AppCurrentSubject,
-  AppCurrentVisits,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppTasks,
-  AppTrafficBySite,
-  AppWidgetSummary,
+    AppConversionRates,
+    AppCurrentSubject,
+    AppCurrentVisits,
+    AppNewsUpdate,
+    AppOrderTimeline,
+    AppTasks,
+    AppTrafficBySite,
+    AppWidgetSummary,
 } from '../sections/@dashboard/app';
 import ShowWfNotifications from './ShowWfNotifications';
 
@@ -26,7 +26,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | OSMS </title>
+        <title> Dashboard | COMS </title>
       </Helmet>
 
       <Container maxWidth="xl">

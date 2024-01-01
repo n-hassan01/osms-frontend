@@ -15,8 +15,8 @@
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-restricted-globals */
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
@@ -253,7 +253,7 @@ export default function Page404() {
   return (
     <>
       <Helmet>
-        <title> OSMS | System Menu </title>
+        <title> COMS | System Menu </title>
       </Helmet>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>

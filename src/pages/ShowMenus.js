@@ -9,21 +9,21 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Checkbox,
+    Container,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -34,8 +34,6 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 
 import { getMenusService } from '../Services/Admin/GetMenus';
-import DeleteMainSystemMenu from '../sections/@dashboard/user/DeleteMainSystemMenu';
-import UpdateMainSystemMenu from '../sections/@dashboard/user/UpdateMainSystemMenu';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -241,7 +239,7 @@ export default function ShowMenus() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Locations | COMS </title>
       </Helmet>
 
       <Container>
