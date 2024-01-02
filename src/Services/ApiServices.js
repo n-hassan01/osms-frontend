@@ -3,7 +3,7 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://182.160.114.100:5001/';
+ const usersUrl = 'http://182.160.114.100:5001/';
 // const usersUrl = 'http://localhost:5001/';
 
 const sapTokenUrl =
@@ -20,6 +20,7 @@ export const signup = async (user) => {
     return err.message;
   }
 };
+
 export const compareOtp = async (verifyUser) => {
   try {
     return await axios.post(`${usersUrl}compare-otp/`, verifyUser);
@@ -33,6 +34,16 @@ export const compareOtp = async (verifyUser) => {
 export const sendOtp = async (body) => {
   try {
     return await axios.post(`${usersUrl}send-otp/`, body);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const userProcess = async (userInfo) => {
+  try {
+    return await axios.post(`${usersUrl}user-signup-process/`, userInfo);
   } catch (err) {
     console.log(err.message);
 
