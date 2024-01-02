@@ -16,7 +16,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 // services
-import { compareOtp, sendOtp, signup } from '../../../Services/ApiServices';
+import { compareOtp, sendOtp, signup, userProcess } from '../../../Services/ApiServices';
 // components
 import Iconify from '../../../components/iconify';
 // external css
@@ -25,6 +25,7 @@ import '../../../_css/SignupPage.css';
 // ----------------------------------------------------------------------
 
 export default function SignupForm() {
+  
   const initialUser = {
     userName: '',
     password: '',
@@ -76,13 +77,32 @@ export default function SignupForm() {
       profession: user.profession,
       orgaization: user.orgaization,
     };
+
+    const processBody = {
+      userType: user.userType,
+      userName: user.userName,
+      userPassword: user.password,
+      custName: user.name,
+      custNid: user.nid,
+      custAddress: user.address,
+      custAge: parseInt(user.age,10),
+      custGender: user.gender,
+      custProfession: user.profession,
+      custOrganization: user.orgaization,
+    };
+
     const response = await compareOtp(requestBody);
 
     if (response.status === 200) {
-      alert('Signup completed!');
+      if (response.data.isMatched) {
+        const result = await userProcess(processBody);
+        const alertMessage = result.status === 200 ? 'Signup completed!' : 'Process Failed! Try Again';
+        alert(alertMessage);
+      }
+
       navigate('/login', { replace: true });
     } else {
-      alert('Otp Invalid!');
+      alert('Process Failed! Try Again');
     }
 
     handleClose();
@@ -107,6 +127,19 @@ export default function SignupForm() {
   };
 
   const handleClick = async () => {
+    const processBody = {
+      userType: user.userType,
+      userName: user.userName,
+      userPassword: user.password,
+      custName: user.name,
+      custNid: user.nid,
+      custAddress: user.address,
+      custAge: parseInt(user.age,10),
+      custGender: user.gender,
+      custProfession: user.profession,
+      custOrganization: user.orgaization,
+    };
+
     const { userName, password, confirmPassword } = user;
     const newErrors = {};
 
@@ -171,6 +204,8 @@ export default function SignupForm() {
               window.location.reload();
             }
           } else {
+
+            const result = await userProcess(processBody);
             alert('Plese contact with HR for your signup approval!');
             navigate('/login', { replace: true });
           }

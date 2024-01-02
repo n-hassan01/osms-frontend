@@ -5,17 +5,17 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import {
-  Card,
-  Container,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    Container,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 // components
 import Scrollbar from '../components/scrollbar';
@@ -208,7 +208,7 @@ export default function ShowFormWithTable() {
   return (
     <>
       <Helmet>
-        <title> HR Locations | OSMS </title>
+        <title> HR Locations | COMS </title>
       </Helmet>
 
       <Container>

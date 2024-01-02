@@ -6,22 +6,22 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  IconButton,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Checkbox,
+    Container,
+    IconButton,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -212,7 +212,7 @@ export default function ShowPerAllPeoples() {
   return (
     <>
       <Helmet>
-        <title> HR Per All Peoples | OSMS </title>
+        <title> HR Per All Peoples | COMS </title>
       </Helmet>
 
       <Container>

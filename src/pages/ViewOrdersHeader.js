@@ -5,28 +5,29 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    ButtonGroup,
-    Checkbox,
-    Container,
-    Grid,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Typography,
+  Button,
+  ButtonGroup,
+  Container,
+  Grid,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography
 } from '@mui/material';
 import {
-    callReqApprovalFromPanelService,
-    getApprovalSequenceService,
-    getSalesOrderHeaderService,
-    getSalesOrderLinesService,
-    getUserProfileDetails,
+  callReqApprovalFromPanelService,
+  getApprovalSequenceService,
+  getSalesOrderHeaderService,
+  getSalesOrderLinesService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
-import { UserListHead } from '../sections/@dashboard/user';
+import SoListHead from '../sections/@dashboard/user/SoListHead';
+
+
 // ----------------------------------------------------------------------
 
 export default function Page404() {
@@ -309,13 +310,13 @@ export default function Page404() {
         </Stack>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
-            <UserListHead headLabel={TABLE_HEAD} />
+            <SoListHead headLabel={TABLE_HEAD} />
             <TableBody>
               {lineDetails.map((value) => (
                 <TableRow key={value.line_id} hover tabIndex={-1}>
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox disabled />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{value.line_number}</TableCell>
                   <TableCell>{value.ordered_item}</TableCell>
                   <TableCell>{value.order_quantity_uom}</TableCell>
@@ -341,16 +342,16 @@ export default function Page404() {
         </Stack>
         <TableContainer sx={{ minWidth: 800 }}>
           <Table>
-            <UserListHead headLabel={TABLE_HEAD_Approval_Seq} />
+            <SoListHead headLabel={TABLE_HEAD_Approval_Seq} />
             <TableBody>
               {approvalSequenceDetails.map((value) => (
                 <TableRow key={value.sl} hover tabIndex={-1}>
-                  <TableCell padding="checkbox">
+                  {/* <TableCell padding="checkbox">
                     <Checkbox disabled />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{value.sl}</TableCell>
                   <TableCell>{value.action_code}</TableCell>
-                  <TableCell>{getFormattedDate(value.action_date)}</TableCell>
+                  <TableCell> {value.action_date ? getFormattedDate(value.action_date) : null}</TableCell>
                   <TableCell>{value.full_name}</TableCell>
                   <TableCell>{value.note}</TableCell>
                 </TableRow>

@@ -64,7 +64,7 @@ export default function AccountPopover() {
     // Logout();
 
     setOpen(null);
-    navigate('/login');
+    navigate('/login', { replace: true });
   };
 
   const MENU_OPTIONS = [

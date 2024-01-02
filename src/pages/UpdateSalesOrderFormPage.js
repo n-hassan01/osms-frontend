@@ -26,6 +26,7 @@ import {
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getApprovalSequenceService,
+  getCustomerListService,
   getInventoryItemIdList,
   getSalesOrderHeaderService,
   getSalesOrderLinesService,
@@ -172,8 +173,11 @@ export default function Page404() {
 
   let sumTotalPrice = 0;
   soLineDetails.forEach((element) => {
-    sumTotalPrice += element.unit_selling_price * element.ordered_quantity;
+    sumTotalPrice +=
+      (element.selectedItem.unit_price ? element.selectedItem.unit_price : element.unit_selling_price) *
+      element.ordered_quantity;
   });
+  // row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price
   console.log(sumTotalPrice);
 
   const saveHeader = async () => {
@@ -182,10 +186,19 @@ export default function Page404() {
       shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
       description: soHeaderDetails.description ? soHeaderDetails.description : '',
       shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
-      specialDiscount: soHeaderDetails.special_discount,
-      specialAdjustment: soHeaderDetails.special_adjustment,
+      specialDiscount: parseInt(soHeaderDetails.special_discount, 10),
+      specialAdjustment: parseInt(soHeaderDetails.special_adjustment, 10),
       // totalPrice: soHeaderDetails.total_price,
       totalPrice: sumTotalPrice,
+      distributor: customerRows.accountName ? customerRows.accountName : account.full_name,
+      soldToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      shipToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      invoiceToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      deliverToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      soldToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      shipToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      invoiceToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+      deliverToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
     };
     console.log(requestBody);
 
@@ -364,9 +377,12 @@ export default function Page404() {
           orderQuantityUom: lineInfo.order_quantity_uom,
           orderedQuantity: lineInfo.ordered_quantity,
           // soldFromOrgId: lineInfo.soldFromOrgId,
-          // soldFromOrgId: lineInfo.soldFromOrgId,
-          unitSellingPrice: lineInfo.unit_selling_price,
-          totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
+          unitSellingPrice: lineInfo.selectedItem.unit_price
+            ? lineInfo.selectedItem.unit_price
+            : lineInfo.unit_selling_price,
+          totalPrice:
+            (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
+            lineInfo.ordered_quantity,
         };
         console.log(requestBody);
 
@@ -605,10 +621,100 @@ export default function Page404() {
   //   console.log(response);
   // };
 
+  const [customerRows, setCustomerRows] = useState([
+    {
+      custAccountId: null,
+      accountNumber: '',
+      accountName: '',
+      ship_to_address: '',
+      showList: false,
+    },
+  ]);
+
+  const [customerList, setCustomerList] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getCustomerListService(user); // Call your async function here
+        if (response.status === 200) setCustomerList(response.data); // Set the account details in the component's state
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, []);
+  console.log(customerList);
+
+  const [filteredCustomerList, setFilteredCustomerList] = useState([]);
+
+  const handleInputCustomerChange = (event) => {
+    const input = event.target.value;
+    console.log(input);
+
+    const username = 'accountName';
+    const show = 'showList';
+
+    const updatedRows = [...customerRows];
+    updatedRows[username] = input;
+    updatedRows[show] = true;
+
+    const distributor = 'distributor';
+    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: input });
+
+    setCustomerRows(updatedRows);
+    console.log(customerRows);
+
+    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
+    setFilteredCustomerList(filtered);
+    console.log(filteredCustomerList);
+  };
+
+  const handleCustomerClick = (item) => {
+    console.log(item);
+    const name = 'accountName';
+    const selected = 'custAccountId';
+    const address = 'ship_to_address';
+    const show = 'showList';
+
+    const updatedRows = [...customerRows];
+    updatedRows[name] = item.full_name;
+    // setSelectedCustomer(item.full_name);
+    updatedRows[selected] = item.cust_account_id;
+    updatedRows[address] = item.ship_to_address;
+    updatedRows[show] = false;
+
+    setCustomerRows(updatedRows);
+    const headerShipTo = 'ship_to';
+    const deliverToContactId = 'deliver_to_contact_id';
+    const deliverToOrgId = 'deliver_to_org_id';
+    const distributor = 'distributor';
+    const invoiceToContactId = 'invoice_to_contact_id';
+    const invoiceToOrgId = 'invoice_to_org_id';
+    const shipToContactId = 'ship_to_contact_id';
+    const shipToOrgId = 'ship_to_org_id';
+    const soldToContactId = 'sold_to_contact_id';
+    const soldToOrgId = 'sold_to_org_id';
+
+    setSoHeaderDetails({ ...soHeaderDetails, [headerShipTo]: item.ship_to_address });
+    setSoHeaderDetails({ ...soHeaderDetails, [deliverToContactId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [deliverToOrgId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: item.full_name });
+    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToContactId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToOrgId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [shipToContactId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [shipToOrgId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [soldToContactId]: item.cust_account_id });
+    setSoHeaderDetails({ ...soHeaderDetails, [soldToOrgId]: item.cust_account_id });
+
+    console.log(customerRows);
+  };
+
   return (
     <>
       <Helmet>
-        <title> OSMS | Update Customer Order </title>
+        <title> COMS | Update Customer Order </title>
       </Helmet>
 
       <Container>
@@ -647,31 +753,48 @@ export default function Page404() {
                 />
               </label>
             </div>
-            {/* <div className="col-auto" style={{ width: '80px', marginRight: '15px' }}>
-              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                From
+            {/* <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label
+                htmlFor="special_discount"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Customer
                 <input
                   type="number"
-                  id="orderedDate"
+                  id="special_discount"
+                  name="special_discount"
                   className="form-control"
                   style={{ marginLeft: '7px' }}
-                  value={soHeaderDetails.created_by}
+                  defaultValue={soHeaderDetails.distributor}
                   readOnly
                 />
               </label>
             </div> */}
-            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
-              <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Total price
+            <div className="col-auto" style={{ marginRight: '15px' }}>
+              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Customer
                 <input
                   type="text"
-                  id="total_price"
-                  name="total_price"
+                  name="distributor"
+                  id="distributor"
                   className="form-control"
-                  // style={{ textAlign: 'right' }}
-                  value={getFormattedPrice(sumTotalPrice)}
-                  readOnly
+                  style={{ marginLeft: '7px' }}
+                  // value={soHeaderDetails.distributor}
+                  value={customerRows.accountName ? customerRows.accountName : soHeaderDetails.distributor}
+                  onChange={(e) => handleInputCustomerChange(e)}
                 />
+                {customerRows.showList && (
+                  <ul style={{ marginTop: '0px' }}>
+                    {filteredCustomerList.map((item, itemIndex) => (
+                      <>
+                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
+                          {item.full_name}
+                        </MenuItem>
+                      </>
+                    ))}
+                  </ul>
+                )}
               </label>
             </div>
             <div className="col-auto" style={{ width: '430px' }}>
@@ -683,14 +806,15 @@ export default function Page404() {
                   name="ship_to"
                   className="form-control"
                   style={{ marginLeft: '5px' }}
-                  value={soHeaderDetails.ship_to}
-                  readOnly={!shipToChangable}
+                  // value={soHeaderDetails.ship_to ship_to_address}
+                  value={customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to}
+                  // readOnly={!shipToChangable}
                 />
               </label>
             </div>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ width: '180px', marginRight: '15px', height: '38px' }}>
+            {/* <div className="col-auto" style={{ width: '180px', marginRight: '15px', height: '38px' }}>
               <label
                 htmlFor="shipping_method_code"
                 className="col-form-label"
@@ -705,6 +829,41 @@ export default function Page404() {
                   style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
                   defaultValue={soHeaderDetails.shipping_method_code}
                   onChange={(e) => onChangeHeader(e)}
+                >
+                  <MenuItem value="Self">Self</MenuItem>
+                  <MenuItem value="Company">Company</MenuItem>
+                  <MenuItem value="Rental">Rental</MenuItem>
+                  <MenuItem value="Courier">Courier</MenuItem>
+                </Select>
+              </label>
+            </div> */}
+            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
+              <label
+                htmlFor="shippingMethodCode"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px' }}
+              >
+                Transport Type
+                {/* <select
+                  id="shippingMethodCode"
+                  name="shippingMethodCode"
+                  className="form-control"
+                  style={{ marginLeft: '7px' }}
+                  onChange={(e) => onChangeHeader(e)}
+                >
+                  <option value="Self">Self</option>
+                  <option value="Company">Company</option>
+                  <option value="Rental">Rental</option>
+                  <option value="Courier">Courier</option>
+                </select> */}
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="shipping_method_code"
+                  style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
+                  onChange={(e) => onChangeHeader(e)}
+                  // defaultValue="Self"
+                  value={soHeaderDetails.shipping_method_code || ''}
                 >
                   <MenuItem value="Self">Self</MenuItem>
                   <MenuItem value="Company">Company</MenuItem>
@@ -747,7 +906,7 @@ export default function Page404() {
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ width: '500px' }}>
+            {/* <div className="col-auto" style={{ width: '500px' }}>
               <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Description
                 <textarea
@@ -759,6 +918,20 @@ export default function Page404() {
                   onChange={(e) => {
                     onChangeHeader(e);
                   }}
+                />
+              </label>
+            </div> */}
+            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+              <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
+                Total price
+                <input
+                  type="text"
+                  id="total_price"
+                  name="total_price"
+                  className="form-control"
+                  // style={{ textAlign: 'right' }}
+                  value={getFormattedPrice(sumTotalPrice)}
+                  readOnly
                 />
               </label>
             </div>
@@ -868,9 +1041,9 @@ export default function Page404() {
                           type="number"
                           className="form-control"
                           name="unit_selling_price"
-                          defaultValue={row.unit_selling_price}
+                          value={row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price}
                           style={{ textAlign: 'right' }}
-                          // readOnly
+                          readOnly
                           //   onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -880,7 +1053,10 @@ export default function Page404() {
                           className="form-control"
                           name="unitSellingPrice"
                           style={{ textAlign: 'right' }}
-                          value={getFormattedPrice(row.ordered_quantity * row.unit_selling_price)}
+                          value={getFormattedPrice(
+                            row.ordered_quantity *
+                              (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)
+                          )}
                           readOnly
                         />
                       </td>

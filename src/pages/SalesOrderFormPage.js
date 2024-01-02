@@ -158,7 +158,6 @@ export default function Page404() {
   const [headerInfo, setHeaderInfo] = useState({});
 
   const onChangeHeader = (e) => {
-    console.log(e.target.name, e.target.value);
     setHeaderInfo({ ...headerInfo, [e.target.name]: e.target.value });
   };
   const [showLines, setShowLines] = useState(true);
@@ -228,7 +227,8 @@ export default function Page404() {
         lastUpdatedBy: account.user_id,
         shippingMethodCode: headerInfo.shippingMethodCode ? headerInfo.shippingMethodCode : 'Self',
         description: headerInfo.description,
-        distributor: customerRows.custAccountId,
+        // distributor: customerRows.custAccountId ? customerRows.custAccountId : account.user_id,
+        distributor: customerRows.accountName ? customerRows.accountName : account.full_name,
         soldToOrgId: customerRows.custAccountId,
         shipToOrgId: customerRows.custAccountId,
         invoiceToOrgId: customerRows.custAccountId,
@@ -239,6 +239,8 @@ export default function Page404() {
         deliverToContactId: customerRows.custAccountId,
         totalPrice: sumTotalPrice,
         shipTo: headerInfo.shipTo ? headerInfo.shipTo : customerRows.ship_to_address,
+        specialDiscount: parseInt(headerInfo.specialDiscount, 10),
+        specialAdjustment: parseInt(headerInfo.specialAdjustment, 10),
       };
       console.log('header', requestBody);
 
@@ -265,10 +267,11 @@ export default function Page404() {
         // bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
         description: headerInfo.description,
         shipTo: headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address,
-        specialDiscount: headerInfo.specialDiscount,
-        specialAdjustment: headerInfo.specialAdjustment,
+        specialDiscount: parseInt(headerInfo.specialDiscount, 10),
+        specialAdjustment: parseInt(headerInfo.specialAdjustment, 10),
         totalPrice: sumTotalPrice,
-        distributor: customerRows.custAccountId,
+        // distributor: customerRows.custAccountId ? customerRows.custAccountId : account.user_id,
+        distributor: customerRows.accountName ? customerRows.accountName : account.full_name,
         soldToOrgId: customerRows.custAccountId,
         shipToOrgId: customerRows.custAccountId,
         invoiceToOrgId: customerRows.custAccountId,
@@ -541,7 +544,7 @@ export default function Page404() {
   return (
     <>
       <Helmet>
-        <title> OSMS | Sales Order Form </title>
+        <title> COMS | Sales Order Form </title>
       </Helmet>
 
       <Container>

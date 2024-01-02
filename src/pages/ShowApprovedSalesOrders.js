@@ -240,7 +240,7 @@ export default function ShowApprovedSalesOrders() {
   return (
     <>
       <Helmet>
-        <title> HR Auth Status Details | OSMS </title>
+        <title> HR Auth Status Details | COMS </title>
       </Helmet>
 
       <Container>
