@@ -79,7 +79,7 @@ export default function SignupForm() {
     };
 
     const processBody = {
-      userType: user.userType,
+      userType: 'PUBLIC',
       userName: user.userName,
       userPassword: user.password,
       custName: user.name,
