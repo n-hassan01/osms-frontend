@@ -15,7 +15,7 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 import {
   callReqApprovalFromPanelService,
@@ -26,7 +26,6 @@ import {
 } from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 import SoListHead from '../sections/@dashboard/user/SoListHead';
-
 
 // ----------------------------------------------------------------------
 
@@ -267,31 +266,55 @@ export default function Page404() {
         <div className="row g-3 align-items-center">
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
-              Order Number
+              Order Number : 
               <span style={{ marginLeft: '10px' }}>{headerDetails.order_number}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
-              Ordered Date
+              Ordered Date :
               <span style={{ marginLeft: '10px' }}>{getFormattedDate(headerDetails.ordered_date)}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex' }}>
+              Customer :
+              <span style={{ marginLeft: '10px' }}>{headerDetails.distributor}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="ship_to" className="col-form-label" style={{ display: 'flex' }}>
+              Ship to :
+              <span style={{ marginLeft: '10px' }}>{headerDetails.ship_to}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="shippingMethodCode" className="col-form-label" style={{ display: 'flex' }}>
-              Transport Type
+              Transport Type :
               <span style={{ marginLeft: '10px' }}>{headerDetails.shipping_method_code}</span>
             </label>
           </div>
-          <div className="col-auto" style={{ width: '66%' }}>
-            <label htmlFor="description" className="col-form-label" style={{ display: 'flex' }}>
-              Description
-              <span style={{ marginLeft: '10px' }}>{headerDetails.description}</span>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="special_discount" className="col-form-label" style={{ display: 'flex' }}>
+              Special Discount :
+              <span style={{ marginLeft: '10px' }}>{headerDetails.special_discount}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="special_adjustment" className="col-form-label" style={{ display: 'flex' }}>
+              Special Adjustment :
+              <span style={{ marginLeft: '10px' }}>{headerDetails.special_adjustment}</span>
+            </label>
+          </div>
+          <div className="col-auto" style={{ width: '33%' }}>
+            <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex' }}>
+              Total price :
+              <span style={{ marginLeft: '10px' }}>{headerDetails.total_price}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex' }}>
-              Ordered By
+              Ordered By :
               <span style={{ marginLeft: '10px' }}>{headerDetails.salesrep_id}</span>
             </label>
           </div>

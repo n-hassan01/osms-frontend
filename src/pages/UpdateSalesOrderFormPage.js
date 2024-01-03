@@ -1160,7 +1160,7 @@ export default function Page404() {
                   </TableCell> */}
                   <TableCell>{value.sl}</TableCell>
                   <TableCell>{value.action_code}</TableCell>
-                  <TableCell>{getFormattedDate(value.action_date)}</TableCell>
+                  <TableCell>{value.action_date ? getFormattedDate(value.action_date) : null}</TableCell>
                   <TableCell>{value.full_name}</TableCell>
                   <TableCell>{value.note}</TableCell>
                 </TableRow>

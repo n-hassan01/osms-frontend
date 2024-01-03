@@ -9,18 +9,18 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -257,7 +257,7 @@ export default function UserPage() {
                           </Link>
                         </TableCell>
                         {/* <TableCell align="left">{format(ordered_date.to, 'dd-MM-yyyy hh:mm:ss')}</TableCell> */}
-                        <TableCell align="left">{getFormattedDate(ordered_date)}</TableCell>
+                        <TableCell align="left">{ordered_date ? getFormattedDate(ordered_date) : null}</TableCell>
                         {/* <TableCell align="left">{request_date}</TableCell> */}
                         <TableCell align="left">{description}</TableCell>
                         <TableCell align="left">{authorization_status}</TableCell>
