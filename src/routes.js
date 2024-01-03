@@ -67,7 +67,7 @@ export default function Router() {
         if (user) {
           console.log(user);
           const accountDetails = await getUserProfileDetails(user); // Call your async function here
-          if (accountDetails.status === 200) setIsAuthorized(accountDetails.status === 200);
+          setIsAuthorized(accountDetails.status === 200);
         }
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -77,12 +77,13 @@ export default function Router() {
 
     fetchData();
   }, [user]);
+  console.log(isAuthorized);
 
   const routes = useRoutes([
     {
       path: '/dashboard',
       //  element: <DashboardLayout />,
-      element: isAuthorized ? <DashboardLayout /> : <Navigate to="/login" />,
+      element: user ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
         { element: <Navigate to="/dashboard/dashclone" />, index: true },
         { path: 'dashclone', element: <DashClone /> },
