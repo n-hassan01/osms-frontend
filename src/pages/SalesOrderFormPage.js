@@ -583,13 +583,18 @@ export default function Page404() {
                   name="distributor"
                   id="distributor"
                   className="form-control"
-                  style={{ marginLeft: '7px' }}
+                  style={{ marginLeft: '7px',
+                  height: '30px', // Set a fixed height for the input field
+                  boxSizing: 'border-box', }}
                   // value={selectedCustomer}
                   value={customerRows.accountName ? customerRows.accountName : account.full_name}
                   onChange={(e) => handleInputCustomerChange(e)}
                 />
                 {customerRows.showList && (
-                  <ul style={{ marginTop: '0px' }}>
+                  <ul   style={{
+                     
+                    zIndex: 1, // Ensure the dropdown is above other content
+                  }}>
                     {filteredCustomerList.map((item, itemIndex) => (
                       <>
                         <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
