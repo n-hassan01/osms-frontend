@@ -4,19 +4,7 @@ import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
-import {
-  Button,
-  ButtonGroup,
-  Container,
-  Grid,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-} from '@mui/material';
+import { Container, Stack, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
 import {
   callReqApprovalFromPanelService,
   getApprovalSequenceService,
@@ -260,62 +248,53 @@ export default function Page404() {
           style={{ marginBottom: '2px', marginTop: '10px' }}
         >
           <Typography variant="h5" gutterBottom>
-            SO Headers
+            Order Headers
           </Typography>
         </Stack>
-        <div className="row g-3 align-items-center">
+        <div className="row g-3 align-items-center" style={{ boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
-              Order Number : 
-              <span style={{ marginLeft: '10px' }}>{headerDetails.order_number}</span>
+              Order Number :<span style={{ marginLeft: '10px' }}>{headerDetails.order_number}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
-              Ordered Date :
-              <span style={{ marginLeft: '10px' }}>{getFormattedDate(headerDetails.ordered_date)}</span>
+              Ordered Date :<span style={{ marginLeft: '10px' }}>{getFormattedDate(headerDetails.ordered_date)}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex' }}>
-              Customer :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.distributor}</span>
+              Customer :<span style={{ marginLeft: '10px' }}>{headerDetails.distributor}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="ship_to" className="col-form-label" style={{ display: 'flex' }}>
-              Ship to :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.ship_to}</span>
+              Ship to :<span style={{ marginLeft: '10px' }}>{headerDetails.ship_to}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="shippingMethodCode" className="col-form-label" style={{ display: 'flex' }}>
-              Transport Type :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.shipping_method_code}</span>
+              Transport Type :<span style={{ marginLeft: '10px' }}>{headerDetails.shipping_method_code}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="special_discount" className="col-form-label" style={{ display: 'flex' }}>
-              Special Discount :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.special_discount}</span>
+              Special Discount :<span style={{ marginLeft: '10px' }}>{headerDetails.special_discount}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="special_adjustment" className="col-form-label" style={{ display: 'flex' }}>
-              Special Adjustment :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.special_adjustment}</span>
+              Special Adjustment :<span style={{ marginLeft: '10px' }}>{headerDetails.special_adjustment}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex' }}>
-              Total price :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.total_price}</span>
+              Total price :<span style={{ marginLeft: '10px' }}>{headerDetails.total_price}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex' }}>
-              Ordered By :
-              <span style={{ marginLeft: '10px' }}>{headerDetails.salesrep_id}</span>
+              Ordered By :<span style={{ marginLeft: '10px' }}>{headerDetails.salesrep_id}</span>
             </label>
           </div>
         </div>
@@ -328,10 +307,10 @@ export default function Page404() {
           style={{ marginBottom: '5px', marginTop: '10px' }}
         >
           <Typography variant="h5" gutterBottom>
-            SO Lines
+            Order Lines
           </Typography>
         </Stack>
-        <TableContainer sx={{ minWidth: 800 }}>
+        <TableContainer sx={{ minWidth: 800 }} style={{ boxShadow: '0 4px 2px -2px rgba(0, 0, 0, 0.2)' }}>
           <Table>
             <SoListHead headLabel={TABLE_HEAD} />
             <TableBody>
@@ -382,7 +361,7 @@ export default function Page404() {
             </TableBody>
           </Table>
         </TableContainer>
-        <Grid container spacing={2} style={{ marginTop: '10px' }}>
+        {/* <Grid container spacing={2} style={{ marginTop: '10px' }}>
           <Grid item xs={3}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
               <Button
@@ -405,7 +384,7 @@ export default function Page404() {
               </Button>
             </ButtonGroup>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Container>
     </>
   );
