@@ -25,7 +25,6 @@ import '../../../_css/SignupPage.css';
 // ----------------------------------------------------------------------
 
 export default function SignupForm() {
-  
   const initialUser = {
     userName: '',
     password: '',
@@ -39,6 +38,7 @@ export default function SignupForm() {
     address: '',
   };
   const [user, setUser] = useState(initialUser);
+  const [selectedType, setSelectedType] = useState('');
 
   const navigate = useNavigate();
 
@@ -78,23 +78,24 @@ export default function SignupForm() {
       orgaization: user.orgaization,
     };
 
-    const processBody = {
-      userType: 'PUBLIC',
-      userName: user.userName,
-      userPassword: user.password,
-      custName: user.name,
-      custNid: user.nid,
-      custAddress: user.address,
-      custAge: parseInt(user.age,10),
-      custGender: user.gender,
-      custProfession: user.profession,
-      custOrganization: user.orgaization,
-    };
-
     const response = await compareOtp(requestBody);
 
     if (response.status === 200) {
       if (response.data.isMatched) {
+        // const type = user.userType === 'Public' ?
+        const processBody = {
+          userType: selectedType,
+          userName: user.userName,
+          userPassword: user.password,
+          custName: user.name ? user.name : '',
+          custNid: user.nid ? user.nid : '',
+          custAddress: user.address ? user.address : '',
+          custAge: user.age ? parseInt(user.age, 10) : 0,
+          custGender: user.gender ? user.gender : '',
+          custProfession: user.profession ? user.profession : '',
+          custOrganization: user.orgaization ? user.orgaization : '',
+        };
+
         const result = await userProcess(processBody);
         const alertMessage = result.status === 200 ? 'Signup completed!' : 'Process Failed! Try Again';
         alert(alertMessage);
@@ -127,19 +128,6 @@ export default function SignupForm() {
   };
 
   const handleClick = async () => {
-    const processBody = {
-      userType: user.userType,
-      userName: user.userName,
-      userPassword: user.password,
-      custName: user.name,
-      custNid: user.nid,
-      custAddress: user.address,
-      custAge: parseInt(user.age,10),
-      custGender: user.gender,
-      custProfession: user.profession,
-      custOrganization: user.orgaization,
-    };
-
     const { userName, password, confirmPassword } = user;
     const newErrors = {};
 
@@ -189,6 +177,8 @@ export default function SignupForm() {
         const response = await signup(requestBody);
 
         if (response.status === 200 || response.status === 204) {
+          setSelectedType(response.data.user);
+
           if (response.data.authenticationMethod.flag === 'email') {
             const reqBody = {
               email: response.data.authenticationMethod.value,
@@ -204,9 +194,26 @@ export default function SignupForm() {
               window.location.reload();
             }
           } else {
+            const processBody = {
+              userType: selectedType,
+              userName: user.userName,
+              userPassword: user.password,
+              custName: user.name ? user.name : '',
+              custNid: user.nid ? user.nid : '',
+              custAddress: user.address ? user.address : '',
+              custAge: user.age ? parseInt(user.age, 10) : 0,
+              custGender: user.gender ? user.gender : '',
+              custProfession: user.profession ? user.profession : '',
+              custOrganization: user.orgaization ? user.orgaization : '',
+            };
 
             const result = await userProcess(processBody);
-            alert('Plese contact with HR for your signup approval!');
+            const alertMessage =
+              result.status === 200
+                ? 'Signup completed!! Plese contact with HR for your signup approval'
+                : 'Signup failed! Try again';
+            // alert('Plese contact with HR for your signup approval!');
+            alert(alertMessage);
             navigate('/login', { replace: true });
           }
         } else {
