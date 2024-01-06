@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
@@ -43,6 +43,8 @@ import SoListHead from '../sections/@dashboard/salesOrders/SoListHeader';
 
 export default function Page404() {
   const navigate = useNavigate();
+  const inputRef = useRef(null);
+
   const { header_id } = useParams();
   console.log('headerId', header_id);
 
@@ -185,7 +187,8 @@ export default function Page404() {
       lastUpdatedBy: account.user_id,
       shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
       description: soHeaderDetails.description ? soHeaderDetails.description : '',
-      shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
+      // shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
+      shipTo: customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to,
       specialDiscount: parseInt(soHeaderDetails.special_discount, 10),
       specialAdjustment: parseInt(soHeaderDetails.special_adjustment, 10),
       // totalPrice: soHeaderDetails.total_price,
@@ -370,10 +373,14 @@ export default function Page404() {
         const requestBody = {
           // headerId: headerDetails.headerId,
           // lineNumber: index + 1,
-          inventoryItemId: lineInfo.inventory_item_id,
+          // inventoryItemId: lineInfo.inventory_item_id,
+          inventoryItemId: lineInfo.selectedItem.inventory_item_id
+            ? lineInfo.selectedItem.inventory_item_id
+            : lineInfo.inventory_item_id,
           // creationDate: getCurrentDate(),
           // createdBy: account.user_id,
-          orderedItem: lineInfo.ordered_item,
+          // orderedItem: lineInfo.ordered_item,
+          orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.ordered_item,
           orderQuantityUom: lineInfo.order_quantity_uom,
           orderedQuantity: lineInfo.ordered_quantity,
           // soldFromOrgId: lineInfo.soldFromOrgId,
@@ -399,19 +406,29 @@ export default function Page404() {
           setShowApprovalButton(false);
         }
       } else {
-        console.log(soHeaderDetails.header_id);
+        console.log(lineInfo);
         const requestBody = {
           headerId: soHeaderDetails.header_id,
           lineNumber: index + 1,
           inventoryItemId: lineInfo.selectedItem.inventory_item_id,
+          // inventoryItemId: lineInfo.selectedItem.inventory_item_id
+          //   ? lineInfo.selectedItem.inventory_item_id
+          //   : lineInfo.inventory_item_id,
           // creationDate: getCurrentDate(),
           createdBy: account.user_id,
           orderedItem: lineInfo.selectedItem.description,
+          // orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.description,
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code,
           orderedQuantity: lineInfo.ordered_quantity,
           soldFromOrgId: lineInfo.sold_from_org_id,
-          unitSellingPrice: lineInfo.unit_selling_price,
-          totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
+          // unitSellingPrice: lineInfo.unit_selling_price,
+          // totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
+          unitSellingPrice: lineInfo.selectedItem.unit_price
+            ? lineInfo.selectedItem.unit_price
+            : lineInfo.unit_selling_price,
+          totalPrice:
+            (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
+            lineInfo.ordered_quantity,
         };
         console.log(requestBody);
 
@@ -563,6 +580,7 @@ export default function Page404() {
     updatedRows[index][show] = false;
     setSoLineDetails(updatedRows);
     console.log(soLineDetails);
+    inputRef.current.focus();
   };
 
   //   const handleMenuItemClick = (index, item) => {
@@ -886,6 +904,7 @@ export default function Page404() {
                   className="form-control"
                   style={{ marginLeft: '7px' }}
                   defaultValue={soHeaderDetails.special_discount}
+                  onChange={(e) => onChangeHeader(e)}
                 />
               </label>
             </div>
@@ -903,6 +922,7 @@ export default function Page404() {
                   className="form-control"
                   style={{ marginLeft: '7px' }}
                   defaultValue={soHeaderDetails.special_adjustment}
+                  onChange={(e) => onChangeHeader(e)}
                 />
               </label>
             </div>
@@ -1025,6 +1045,7 @@ export default function Page404() {
                           defaultValue={row.ordered_quantity}
                           style={{ textAlign: 'right' }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          ref={inputRef}
                         />
                       </td>
                       {/* <td>
