@@ -813,9 +813,13 @@ export const getUserMenuList = async (userInfo, loginToken) => {
 
 // sales order module services
 // sales order headers
-export const addSalesOrderHeaderService = async (bodyInfo) => {
+export const addSalesOrderHeaderService = async (bodyInfo, loginToken) => {
   try {
-    return await axios.post(`${usersUrl}add-sales-order-header`, bodyInfo);
+    return await axios.post(`${usersUrl}add-sales-order-header`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
   } catch (err) {
     console.log(err.message);
 
