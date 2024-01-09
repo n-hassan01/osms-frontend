@@ -24,7 +24,7 @@ export default function NavSectionClone() {
       try {
         if (user) {
           const accountDetails = await getLoggedInUserDetails(user);
-          console.log("ad", accountDetails);
+          console.log('ad', accountDetails);
           if (accountDetails.status === 200) {
             setAccount(accountDetails.data);
           }
@@ -43,9 +43,9 @@ export default function NavSectionClone() {
   useEffect(() => {
     const fetchUserMenus = async () => {
       try {
-        if (userId) {
-          const response = await getUserMenuList(userId);
-          console.log("iID", response);
+        if (user) {
+          const response = await getUserMenuList(userId, user);
+          console.log('iID', response);
           setUserMenus(response.data);
         }
       } catch (error) {
@@ -54,7 +54,7 @@ export default function NavSectionClone() {
     };
 
     fetchUserMenus();
-  }, [userId]);
+  }, [user]);
 
   console.log(userMenus);
 
@@ -70,28 +70,20 @@ export default function NavSectionClone() {
       <List
         sx={{
           p: 1,
-          display: "flex",
-          flexDirection: "row",
+          display: 'flex',
+          flexDirection: 'row',
           gap: 2, // Adjust the gap between items as needed
           flexWrap: 'wrap',
         }}
       >
         {userMenus.slice(0, showAll ? userMenus.length : itemsToShowInitially).map((item, index) => (
-          <NavItem
-            key={item.title}
-            item={item}
-            sx={{ marginLeft: "10px", marginBottom: '10px' }}
-          />
+          <NavItem key={item.title} item={item} sx={{ marginLeft: '10px', marginBottom: '10px' }} />
         ))}
       </List>
-      {userMenus.length > itemsToShowInitially && (
-        <Button onClick={() => setShowAll(!showAll)}>{buttonText}</Button>
-      )}
+      {userMenus.length > itemsToShowInitially && <Button onClick={() => setShowAll(!showAll)}>{buttonText}</Button>}
     </div>
   );
 }
-
-
 
 // ----------------------------------------------------------------------
 
@@ -102,7 +94,7 @@ NavItem.propTypes = {
 function NavItem({ item }) {
   console.log(item);
   const { title, path, info } = item;
-  const icon = '/assets/icons/navbar/ic_analytics.svg'
+  const icon = '/assets/icons/navbar/ic_analytics.svg';
 
   return (
     <StyledNavItem
@@ -113,12 +105,12 @@ function NavItem({ item }) {
           color: 'text.primary',
           bgcolor: 'action.selected',
           fontWeight: 'fontWeightBold',
-          marginLeft:"10px"
+          marginLeft: '10px',
         },
       }}
     >
       {/* <StyledNavItemIcon>{icon && icon}</StyledNavItemIcon> */}
-       {/* <StyledNavItemIcon><SvgColor src={icon} sx={{ width: 1, height: 1 }} /></StyledNavItemIcon> */}
+      {/* <StyledNavItemIcon><SvgColor src={icon} sx={{ width: 1, height: 1 }} /></StyledNavItemIcon> */}
 
       <ListItemText disableTypography primary={title} />
 

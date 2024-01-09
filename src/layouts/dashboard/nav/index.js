@@ -76,8 +76,8 @@ export default function Nav({ openNav, onCloseNav }) {
     const fetchUserMenus = async () => {
       try {
         // Make sure userId is available before making the second API call
-        if (userId) {
-          const response = await getUserMenuList(userId);
+        if (user) {
+          const response = await getUserMenuList(userId, user);
           setUserMenus(response.data);
         }
       } catch (error) {
@@ -86,7 +86,7 @@ export default function Nav({ openNav, onCloseNav }) {
     };
 
     fetchUserMenus();
-  }, [userId]); // Add userId to the dependency array to trigger the effect when it changes
+  }, [user]); // Add userId to the dependency array to trigger the effect when it changes
 
   console.log(userMenus);
 
