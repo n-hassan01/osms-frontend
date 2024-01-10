@@ -283,7 +283,7 @@ export default function Page404() {
       };
       console.log('header', requestBody);
 
-      const response = await addSalesOrderHeaderService(requestBody);
+      const response = await addSalesOrderHeaderService(requestBody, user);
       if (response.status === 200) {
         setHeaderDetails({
           headerId: response.data.headerInfo[0].header_id,
