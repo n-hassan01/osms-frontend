@@ -23,6 +23,7 @@ import {
 import {
   addSalesOrderLinesService,
   callReqApprovalFromPanelService,
+  callSoApprovalService,
   deleteSalesOrderHeaderService,
   deleteSalesOrderLinesService,
   getApprovalSequenceService,
@@ -314,24 +315,45 @@ export default function Page404() {
 
   const submitRequisition = async () => {
     if (confirm('Are you sure for this requisition?')) {
-      const requestBody = {
-        pHierarchyId: 1,
-        pTransactionID: soHeaderDetails.header_id,
-        pTransactionNum: soHeaderDetails.order_number.toString(),
-        pAppsUsername: account.user_name,
-        pNotificationID: 1,
-        pApprovalType: 'A',
-        pEmpid: 1,
-        pNote: 'test',
-      };
-      const response = await callReqApprovalFromPanelService(requestBody);
+      if (soHeaderDetails.authorization_status === 'Incomplete') {
+        const requestBody = {
+          pHierarchyId: 1,
+          pTransactionId: soHeaderDetails.header_id,
+          pTransactionNum: soHeaderDetails.order_number.toString(),
+          pAppsUsername: account.user_name,
+          pNotificationId: 1,
+          pApprovalType: 'A',
+          pEmpid: 1,
+          pNote: 'A',
+          pAuthorizationStatus: soHeaderDetails.authorization_status,
+        };
+        const response = await callSoApprovalService(requestBody);
 
-      if (response.status === 200) {
-        alert('Successfull!');
-        navigate('/dashboard/dashclone', { replace: true });
+        if (response.status === 200) {
+          navigate('/dashboard/dashclone', { replace: true });
+        } else {
+          alert('Process failed! Please try later');
+        }
       } else {
-        alert('Process failed! Please try later');
+        const requestBody = {
+          pHierarchyId: 1,
+          pTransactionID: soHeaderDetails.header_id,
+          pTransactionNum: soHeaderDetails.order_number.toString(),
+          pAppsUsername: account.user_name,
+          pNotificationID: 1,
+          pApprovalType: 'A',
+          pEmpid: 1,
+          pNote: 'test',
+        };
+        const response = await callReqApprovalFromPanelService(requestBody);
+
+        if (response.status === 200) {
+          navigate('/dashboard/dashclone', { replace: true });
+        } else {
+          alert('Process failed! Please try later');
+        }
       }
+
       // window.location.reload();
     }
   };
@@ -1155,6 +1177,7 @@ export default function Page404() {
                 }}
                 // disabled={showApprovalButton === 'none'}
                 onClick={rejectRequisition}
+                disabled={soHeaderDetails.authorization_status === 'Incomplete'}
               >
                 Reject
               </Button>
