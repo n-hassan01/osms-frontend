@@ -315,7 +315,10 @@ export default function Page404() {
 
   const submitRequisition = async () => {
     if (confirm('Are you sure for this requisition?')) {
-      if (soHeaderDetails.authorization_status === 'Incomplete') {
+      if (
+        soHeaderDetails.authorization_status === 'Incomplete' ||
+        soHeaderDetails.authorization_status === 'APPROVED'
+      ) {
         const requestBody = {
           pHierarchyId: 1,
           pTransactionId: soHeaderDetails.header_id,
