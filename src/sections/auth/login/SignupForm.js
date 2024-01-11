@@ -83,7 +83,6 @@ export default function SignupForm() {
     if (response.status === 200) {
       if (response.data.isMatched) {
         // const type = user.userType === 'Public' ?
-        console.log(selectedType);
         const processBody = {
           userType: selectedType,
           userName: user.userName,
@@ -116,7 +115,8 @@ export default function SignupForm() {
 
   const validateEmail = (email) => {
     // Regular expression for basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   };
   const validatePhoneNumber = (number) => {
