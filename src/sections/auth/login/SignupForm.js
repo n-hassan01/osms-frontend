@@ -83,6 +83,7 @@ export default function SignupForm() {
     if (response.status === 200) {
       if (response.data.isMatched) {
         // const type = user.userType === 'Public' ?
+        console.log(selectedType);
         const processBody = {
           userType: selectedType,
           userName: user.userName,
@@ -99,6 +100,8 @@ export default function SignupForm() {
         const result = await userProcess(processBody);
         const alertMessage = result.status === 200 ? 'Signup completed!' : 'Process Failed! Try Again';
         alert(alertMessage);
+      } else {
+        alert('OTP does not match! Try Again');
       }
 
       navigate('/login', { replace: true });
@@ -177,7 +180,9 @@ export default function SignupForm() {
         const response = await signup(requestBody);
 
         if (response.status === 200 || response.status === 204) {
+          console.log(response.data.user);
           setSelectedType(response.data.user);
+          console.log(selectedType);
 
           if (response.data.authenticationMethod.flag === 'email') {
             const reqBody = {
@@ -195,7 +200,8 @@ export default function SignupForm() {
             }
           } else {
             const processBody = {
-              userType: selectedType,
+              // userType: selectedType,
+              userType: response.data.user,
               userName: user.userName,
               userPassword: user.password,
               custName: user.name ? user.name : '',
