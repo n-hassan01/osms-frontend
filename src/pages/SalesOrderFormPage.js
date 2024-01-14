@@ -181,6 +181,11 @@ export default function Page404() {
           orderedQuantity: lineInfo.orderedQuantity,
           unitSellingPrice: lineInfo.selectedItem.unit_price,
           totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
+          offerQuantity: lineInfo.offerQuantity,
+          totalQuantity: parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10),
+          unitOfferPrice:
+            (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
+            (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
         };
         console.log(requestBody);
 
@@ -206,6 +211,11 @@ export default function Page404() {
           soldFromOrgId: lineInfo.soldFromOrgId,
           unitSellingPrice: lineInfo.selectedItem.unit_price,
           totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
+          offerQuantity: lineInfo.offerQuantity,
+          totalQuantity: parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10),
+          unitOfferPrice:
+            (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
+            (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
         };
         console.log(requestBody);
 
@@ -739,8 +749,11 @@ export default function Page404() {
                   <th style={{ textAlign: 'right' }}>
                     Quantity <span style={{ color: 'red' }}>*</span>
                   </th>
+                  <th style={{ textAlign: 'right' }}>Offer Quantity</th>
+                  <th style={{ textAlign: 'right' }}>Total Quantity</th>
                   {/* <th>Sold From Org ID</th> */}
                   <th style={{ textAlign: 'right' }}>Unit Price</th>
+                  <th style={{ textAlign: 'right' }}>Unit Offer Price</th>
                   <th style={{ textAlign: 'right' }}>Total Price</th>
                 </tr>
               </thead>
@@ -830,6 +843,42 @@ export default function Page404() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td> */}
+                      <td>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="offerQuantity"
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="totalQuantity"
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          value={
+                            row.offerQuantity ? parseInt(row.orderedQuantity, 10) + parseInt(row.offerQuantity, 10) : 0
+                          }
+                          readOnly
+                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
                           type="text"
@@ -844,6 +893,31 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           value={row.selectedItem.unit_price}
+                          readOnly
+                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td style={{ textAlign: 'right', height: '50%' }}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="unitOfferPrice"
+                          style={{
+                            textAlign: 'inherit',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // value={row.selectedItem.unit_price / row.totalQuantity}
+                          value={
+                            row.selectedItem.unit_price
+                              ? getFormattedPrice(
+                                  (row.orderedQuantity * row.selectedItem.unit_price) / row.totalQuantity
+                                )
+                              : 0
+                          }
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -874,6 +948,9 @@ export default function Page404() {
                 <tr>
                   <td />
                   <td>Total</td>
+                  <td />
+                  <td />
+                  <td />
                   <td />
                   <td />
                   <td />
