@@ -173,6 +173,7 @@ export default function Page404() {
     console.log(filteredArray);
 
     filteredArray.forEach(async (lineInfo, index) => {
+      const offerQuantityValue = lineInfo.offerQuantity ? lineInfo.offerQuantity : 0;
       if (lineInfo.lineId) {
         const requestBody = {
           inventoryItemId: lineInfo.selectedItem.inventory_item_id,
@@ -181,11 +182,11 @@ export default function Page404() {
           orderedQuantity: lineInfo.orderedQuantity,
           unitSellingPrice: lineInfo.selectedItem.unit_price,
           totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
-          offerQuantity: lineInfo.offerQuantity,
-          totalQuantity: parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10),
+          offerQuantity: offerQuantityValue,
+          totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
           unitOfferPrice:
             (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
-            (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
+            (parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10)),
         };
         console.log(requestBody);
 
@@ -211,11 +212,11 @@ export default function Page404() {
           soldFromOrgId: lineInfo.soldFromOrgId,
           unitSellingPrice: lineInfo.selectedItem.unit_price,
           totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
-          offerQuantity: lineInfo.offerQuantity,
-          totalQuantity: parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10),
+          offerQuantity: offerQuantityValue,
+          totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
           unitOfferPrice:
             (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
-            (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
+            (parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10)),
         };
         console.log(requestBody);
 
@@ -914,7 +915,8 @@ export default function Page404() {
                           value={
                             row.selectedItem.unit_price
                               ? getFormattedPrice(
-                                  (row.orderedQuantity * row.selectedItem.unit_price) / row.totalQuantity
+                                  (row.orderedQuantity * row.selectedItem.unit_price) /
+                                    (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
                                 )
                               : 0
                           }
