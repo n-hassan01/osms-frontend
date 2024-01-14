@@ -164,6 +164,7 @@ export default function Page404() {
   const [headerDetails, setHeaderDetails] = useState({
     headerId: null,
     orderNumber: null,
+    authorizationStatus: '',
   });
 
   const saveLines = async (value) => {
@@ -283,11 +284,12 @@ export default function Page404() {
       };
       console.log('header', requestBody);
 
-      const response = await addSalesOrderHeaderService(requestBody);
+      const response = await addSalesOrderHeaderService(requestBody, user);
       if (response.status === 200) {
         setHeaderDetails({
           headerId: response.data.headerInfo[0].header_id,
           orderNumber: response.data.headerInfo[0].order_number,
+          authorizationStatus: response.data.headerInfo[0].authorization_status,
           // orderNumber: response.data.headerInfo[0].order_number,
         });
         console.log(response.data);
@@ -360,6 +362,11 @@ export default function Page404() {
         pTransactionId: headerDetails.headerId,
         pTransactionNum: headerDetails.orderNumber.toString(),
         pAppsUsername: account.user_name,
+        pNotificationId: 1,
+        pApprovalType: 'A',
+        pEmpid: 1,
+        pNote: 'A',
+        pAuthorizationStatus: headerDetails.authorizationStatus,
       };
       const response = await callSoApprovalService(requestBody);
 
@@ -583,18 +590,21 @@ export default function Page404() {
                   name="distributor"
                   id="distributor"
                   className="form-control"
-                  style={{ marginLeft: '7px',
-                  height: '30px', // Set a fixed height for the input field
-                  boxSizing: 'border-box', }}
+                  style={{
+                    marginLeft: '7px',
+                    height: '30px', // Set a fixed height for the input field
+                    boxSizing: 'border-box',
+                  }}
                   // value={selectedCustomer}
                   value={customerRows.accountName ? customerRows.accountName : account.full_name}
                   onChange={(e) => handleInputCustomerChange(e)}
                 />
                 {customerRows.showList && (
-                  <ul   style={{
-                     
-                    zIndex: 1, // Ensure the dropdown is above other content
-                  }}>
+                  <ul
+                    style={{
+                      zIndex: 1, // Ensure the dropdown is above other content
+                    }}
+                  >
                     {filteredCustomerList.map((item, itemIndex) => (
                       <>
                         <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
