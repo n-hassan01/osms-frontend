@@ -184,12 +184,13 @@ export default function Page404() {
   console.log(sumTotalPrice);
 
   const saveHeader = async () => {
+    const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
     const requestBody = {
       lastUpdatedBy: account.user_id,
       shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
       description: soHeaderDetails.description ? soHeaderDetails.description : '',
       // shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
-      shipTo: customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to,
+      shipTo: customerRows.ship_to_address ? customerRows.ship_to_address : shipToValue,
       specialDiscount: parseInt(soHeaderDetails.special_discount, 10),
       specialAdjustment: parseInt(soHeaderDetails.special_adjustment, 10),
       // totalPrice: soHeaderDetails.total_price,
@@ -302,6 +303,7 @@ export default function Page404() {
     const updatedRows = [...soLineDetails];
     updatedRows[index][name] = value;
     setSoLineDetails(updatedRows);
+    console.log(soLineDetails);
   };
 
   //   const handleInputChange = (index, name, value) => {
@@ -415,6 +417,15 @@ export default function Page404() {
           totalPrice:
             (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
             lineInfo.ordered_quantity,
+          offerQuantity: lineInfo.offer_quantity,
+          totalQuantity: parseInt(lineInfo.offer_quantity, 10) + parseInt(lineInfo.ordered_quantity, 10),
+          // unitOfferPrice:
+          //   (lineInfo.ordered_quantity * lineInfo.selectedItem.unit_price) /
+          //   (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
+          unitOfferPrice:
+            (lineInfo.ordered_quantity *
+              (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price)) /
+            (parseInt(lineInfo.offer_quantity, 10) + parseInt(lineInfo.ordered_quantity, 10)),
         };
         console.log(requestBody);
 
@@ -1019,8 +1030,11 @@ export default function Page404() {
                   <th style={{ textAlign: 'right' }}>
                     Quantity <span style={{ color: 'red' }}>*</span>
                   </th>
+                  <th style={{ textAlign: 'right' }}>Offer Quantity</th>
+                  <th style={{ textAlign: 'right' }}>Total Quantity</th>
                   {/* <th>Sold From Org ID</th> */}
                   <th style={{ textAlign: 'right' }}>Unit Price</th>
+                  <th style={{ textAlign: 'right' }}>Unit Offer Price</th>
                   <th style={{ textAlign: 'right' }}>Total Price</th>
                 </tr>
               </thead>
@@ -1042,7 +1056,15 @@ export default function Page404() {
                         <input
                           type="text"
                           className="form-control"
-                          style={{ width: '420px' }}
+                          // style={{ width: '420px' }}
+                          style={{
+                            textAlign: 'left',
+                            width: '420px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           value={row.selectedItemName}
                           defaultValue={row.ordered_item}
                           onChange={(e) => handleInputItemChange(index, e)}
@@ -1066,7 +1088,15 @@ export default function Page404() {
                           name="primary_uom_code"
                           readOnly
                           value={row.selectedItem.primary_uom_code}
-                          style={{ width: '80px', textAlign: 'center' }}
+                          // style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            textAlign: 'center',
+                            width: '80px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           defaultValue={row.order_quantity_uom}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
@@ -1077,7 +1107,15 @@ export default function Page404() {
                           className="form-control"
                           name="ordered_quantity"
                           defaultValue={row.ordered_quantity}
-                          style={{ textAlign: 'right' }}
+                          // style={{ textAlign: 'right' }}
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           ref={inputRef}
                         />
@@ -1095,11 +1133,83 @@ export default function Page404() {
                         <input
                           type="number"
                           className="form-control"
+                          name="offer_quantity"
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          defaultValue={row.offer_quantity}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          className="form-control"
+                          name="totalQuantity"
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // value={row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price}
+                          value={parseInt(row.offer_quantity, 10) + parseInt(row.ordered_quantity, 10)}
+                          readOnly
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          className="form-control"
                           name="unit_selling_price"
                           value={row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price}
-                          style={{ textAlign: 'right' }}
+                          // style={{ textAlign: 'right' }}
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           readOnly
                           //   onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td style={{ textAlign: 'right', height: '50%' }}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="unitOfferPrice"
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // defaultValue={row.unit_offer_price}
+                          // value={getFormattedPrice(
+                          //   (row.ordered_quantity *
+                          //     (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)) /
+                          //     parseInt(row.totalQuantity, 10)
+                          // )}
+                          value={getFormattedPrice(
+                            (row.ordered_quantity *
+                              (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)) /
+                              (parseInt(row.offer_quantity, 10) + parseInt(row.ordered_quantity, 10))
+                          )}
+                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          readOnly
                         />
                       </td>
                       <td>
@@ -1107,7 +1217,15 @@ export default function Page404() {
                           type="text"
                           className="form-control"
                           name="unitSellingPrice"
-                          style={{ textAlign: 'right' }}
+                          // style={{ textAlign: 'right' }}
+                          style={{
+                            textAlign: 'right',
+                            width: '100%',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
                           value={getFormattedPrice(
                             row.ordered_quantity *
                               (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)
@@ -1118,6 +1236,9 @@ export default function Page404() {
                     </tr>
                   ))}
                 <tr>
+                  <td />
+                  <td>Total</td>
+                  <td />
                   <td />
                   <td />
                   <td />
