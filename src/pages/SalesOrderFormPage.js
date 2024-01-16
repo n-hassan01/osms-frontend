@@ -900,7 +900,7 @@ export default function Page404() {
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
-                          type="text"
+                          type="number"
                           className="form-control"
                           name="unitOfferPrice"
                           style={{
@@ -911,14 +911,19 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          // value={row.selectedItem.unit_price / row.totalQuantity}
                           value={
-                            row.selectedItem.unit_price
-                              ? getFormattedPrice(
-                                  (row.orderedQuantity * row.selectedItem.unit_price) /
+                            // row.selectedItem.unit_price
+                            //   ? getFormattedPrice(
+                            //       (row.orderedQuantity * row.selectedItem.unit_price) /
+                            //         (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
+                            //     )
+                            //   : 0
+                            getFormattedPrice(
+                              row.orderedQuantity
+                                ? (row.orderedQuantity * row.selectedItem.unit_price) /
                                     (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
-                                )
-                              : 0
+                                : row.selectedItem.unit_price
+                            )
                           }
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
@@ -937,11 +942,11 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           value={
-                            row.selectedItem.unit_price
-                              ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
-                              : 0
+                            // row.selectedItem.unit_price
+                            //   ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
+                            //   : 0
+                            getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
                           }
-                          // onClick={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           readOnly
                         />
                       </td>
