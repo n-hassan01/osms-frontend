@@ -877,7 +877,7 @@ export default function Page404() {
                             row.offerQuantity ? parseInt(row.orderedQuantity, 10) + parseInt(row.offerQuantity, 10) : 0
                           }
                           readOnly
-                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
@@ -895,12 +895,12 @@ export default function Page404() {
                           }}
                           value={row.selectedItem.unit_price}
                           readOnly
-                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
-                          type="text"
+                          type="number"
                           className="form-control"
                           name="unitOfferPrice"
                           style={{
@@ -911,14 +911,19 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          // value={row.selectedItem.unit_price / row.totalQuantity}
                           value={
-                            row.selectedItem.unit_price
-                              ? getFormattedPrice(
-                                  (row.orderedQuantity * row.selectedItem.unit_price) /
-                                    (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
-                                )
-                              : 0
+                            // row.selectedItem.unit_price
+                            //   ? getFormattedPrice(
+                            //       (row.orderedQuantity * row.selectedItem.unit_price) /
+                            //         (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
+                            //     )
+                            //   : 0
+                            getFormattedPrice(
+                              row.orderedQuantity
+                                ? (row.orderedQuantity * row.selectedItem.unit_price) /
+                                (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
+                                : row.selectedItem.unit_price
+                            )
                           }
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
@@ -940,8 +945,8 @@ export default function Page404() {
                             row.selectedItem.unit_price
                               ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
                               : 0
+                            // getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
                           }
-                          // onClick={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           readOnly
                         />
                       </td>
