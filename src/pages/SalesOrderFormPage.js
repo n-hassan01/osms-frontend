@@ -877,7 +877,7 @@ export default function Page404() {
                             row.offerQuantity ? parseInt(row.orderedQuantity, 10) + parseInt(row.offerQuantity, 10) : 0
                           }
                           readOnly
-                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
@@ -895,7 +895,7 @@ export default function Page404() {
                           }}
                           value={row.selectedItem.unit_price}
                           readOnly
-                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
@@ -921,7 +921,7 @@ export default function Page404() {
                             getFormattedPrice(
                               row.orderedQuantity
                                 ? (row.orderedQuantity * row.selectedItem.unit_price) /
-                                    (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
+                                (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
                                 : row.selectedItem.unit_price
                             )
                           }
@@ -942,10 +942,10 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           value={
-                            // row.selectedItem.unit_price
-                            //   ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
-                            //   : 0
-                            getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
+                            row.selectedItem.unit_price
+                              ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
+                              : 0
+                            // getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
                           }
                           readOnly
                         />
