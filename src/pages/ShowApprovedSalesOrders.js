@@ -294,7 +294,7 @@ export default function ShowApprovedSalesOrders() {
                           <Link
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              if (loggeddata === 'accounts') {
+                              if (loggeddata === 'M503') {
                                 navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
                               } else if (loggeddata === 'asm' || loggeddata === 'salesadmin' || loggeddata === 'hos') {
                                 navigate(`/dashboard/viewordersheader/${header_id}`);
