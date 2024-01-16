@@ -1197,18 +1197,18 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          // defaultValue={row.unit_offer_price}
-                          // value={getFormattedPrice(
-                          //   (row.ordered_quantity *
-                          //     (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)) /
-                          //     parseInt(row.totalQuantity, 10)
-                          // )}
-                          value={getFormattedPrice(
-                            (row.ordered_quantity *
-                              (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)) /
-                              (parseInt(row.offer_quantity, 10) + parseInt(row.ordered_quantity, 10))
-                          )}
-                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          value={
+                            row.ordered_quantity
+                              ? getFormattedPrice(
+                                  (row.ordered_quantity *
+                                    (row.selectedItem.unit_price
+                                      ? row.selectedItem.unit_price
+                                      : row.unit_selling_price)) /
+                                    (parseInt(row.offer_quantity ? row.offer_quantity : 0, 10) +
+                                      parseInt(row.ordered_quantity, 10))
+                                )
+                              : ''
+                          }
                           readOnly
                         />
                       </td>
