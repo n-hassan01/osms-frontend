@@ -746,7 +746,7 @@ export default function Page404() {
                   <th style={{ width: '420px' }}>
                     Item <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th style={{ width: '80px', textAlign: 'center' }}>UOM</th>
+                  <th style={{ width: '50px', textAlign: 'center' }}>UOM</th>
                   <th style={{ textAlign: 'right' }}>
                     Quantity <span style={{ color: 'red' }}>*</span>
                   </th>
@@ -807,7 +807,7 @@ export default function Page404() {
                           style={{
                             height: '50%',
                             textAlign: 'inherit',
-                            width: '80px',
+                            width: '50px',
                             border: 'none',
                             background: 'none',
                             outline: 'none',
@@ -824,7 +824,7 @@ export default function Page404() {
                           name="orderedQuantity"
                           style={{
                             textAlign: 'inherit',
-                            width: '100%',
+                            width: '78px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -857,6 +857,7 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
+                          defaultValue={0}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -874,10 +875,12 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           value={
-                            row.offerQuantity ? parseInt(row.orderedQuantity, 10) + parseInt(row.offerQuantity, 10) : 0
+                            // row.offerQuantity ? parseInt(row.orderedQuantity, 10) + parseInt(row.offerQuantity, 10) : 0
+                            parseInt(row.orderedQuantity ? row.orderedQuantity : 0, 10) +
+                            parseInt(row.offerQuantity ? row.offerQuantity : 0, 10)
                           }
                           readOnly
-                        // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
@@ -887,7 +890,7 @@ export default function Page404() {
                           name="unitSellingPrice"
                           style={{
                             textAlign: 'inherit',
-                            width: '100%',
+                            width: '90px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -895,7 +898,7 @@ export default function Page404() {
                           }}
                           value={row.selectedItem.unit_price}
                           readOnly
-                        // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td style={{ textAlign: 'right', height: '50%' }}>
@@ -905,7 +908,7 @@ export default function Page404() {
                           name="unitOfferPrice"
                           style={{
                             textAlign: 'inherit',
-                            width: '100%',
+                            width: '100px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -921,7 +924,8 @@ export default function Page404() {
                             getFormattedPrice(
                               row.orderedQuantity
                                 ? (row.orderedQuantity * row.selectedItem.unit_price) /
-                                (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
+                                    (parseInt(row.offerQuantity ? row.offerQuantity : 0, 10) +
+                                      parseInt(row.orderedQuantity, 10))
                                 : row.selectedItem.unit_price
                             )
                           }
@@ -935,7 +939,7 @@ export default function Page404() {
                           name="totalPrice"
                           style={{
                             textAlign: 'inherit',
-                            width: '100%',
+                            width: '100px',
                             height: '50%',
                             border: 'none',
                             background: 'none',

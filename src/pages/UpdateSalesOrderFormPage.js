@@ -1026,7 +1026,7 @@ export default function Page404() {
                   <th style={{ width: '420px' }}>
                     Item <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th style={{ width: '80px', textAlign: 'center' }}>UOM</th>
+                  <th style={{ width: '50px', textAlign: 'center' }}>UOM</th>
                   <th style={{ textAlign: 'right' }}>
                     Quantity <span style={{ color: 'red' }}>*</span>
                   </th>
@@ -1091,7 +1091,7 @@ export default function Page404() {
                           // style={{ width: '80px', textAlign: 'center' }}
                           style={{
                             textAlign: 'center',
-                            width: '80px',
+                            width: '50px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -1110,7 +1110,7 @@ export default function Page404() {
                           // style={{ textAlign: 'right' }}
                           style={{
                             textAlign: 'right',
-                            width: '100%',
+                            width: '78px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -1142,7 +1142,7 @@ export default function Page404() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          defaultValue={row.offer_quantity}
+                          defaultValue={row.offer_quantity ? row.ordered_quantity : 0}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -1160,7 +1160,11 @@ export default function Page404() {
                             outline: 'none',
                           }}
                           // value={row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price}
-                          value={parseInt(row.offer_quantity, 10) + parseInt(row.ordered_quantity, 10)}
+                          value={
+                            parseInt(row.offer_quantity ? row.offer_quantity : 0, 10) +
+                            parseInt(row.ordered_quantity ? row.ordered_quantity : 0, 10)
+                          }
+                          // value={parseInt(row.offer_quantity, 10) + parseInt(row.ordered_quantity, 10)}
                           readOnly
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
@@ -1174,7 +1178,7 @@ export default function Page404() {
                           // style={{ textAlign: 'right' }}
                           style={{
                             textAlign: 'right',
-                            width: '100%',
+                            width: '90px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -1191,13 +1195,19 @@ export default function Page404() {
                           name="unitOfferPrice"
                           style={{
                             textAlign: 'right',
-                            width: '100%',
+                            width: '100px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
                             outline: 'none',
                           }}
                           value={
+                            // getFormattedPrice(
+                            //   (row.ordered_quantity *
+                            //     (row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price)) /
+                            //     (parseInt(row.offer_quantity ? row.offer_quantity : 0, 10) +
+                            //       parseInt(row.ordered_quantity ? row.ordered_quantity : 0, 10))
+                            // )
                             row.ordered_quantity
                               ? getFormattedPrice(
                                   (row.ordered_quantity *
@@ -1207,7 +1217,9 @@ export default function Page404() {
                                     (parseInt(row.offer_quantity ? row.offer_quantity : 0, 10) +
                                       parseInt(row.ordered_quantity, 10))
                                 )
-                              : ''
+                              : row.selectedItem.unit_price
+                              ? row.selectedItem.unit_price
+                              : 0
                           }
                           readOnly
                         />
@@ -1220,7 +1232,7 @@ export default function Page404() {
                           // style={{ textAlign: 'right' }}
                           style={{
                             textAlign: 'right',
-                            width: '100%',
+                            width: '100px',
                             height: '50%',
                             border: 'none',
                             background: 'none',

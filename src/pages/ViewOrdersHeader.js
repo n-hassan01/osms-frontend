@@ -132,8 +132,12 @@ export default function Page404() {
     { id: 'unit_of_measure', label: 'Line Number', alignRight: false },
     { id: 'uom_code', label: 'Item', alignRight: false },
     { id: 'uom_class', label: 'UOM', alignRight: false },
-    { id: 'disable_date', label: 'Quantity', alignRight: true },
-    { id: 'description', label: 'Unit Price', alignRight: true },
+    { id: 'disable_date', label: 'Quantity', alignRight: false },
+    { id: 'offer_quantity', label: 'Offer Quantity', alignRight: false },
+    { id: 'total_quantity', label: 'Total Quantity', alignRight: false },
+    { id: 'description', label: 'Unit Price', alignRight: false },
+    { id: 'unit_offer_price', label: 'Unit Offer Price', alignRight: false },
+    { id: 'total_price', label: 'Total Price', alignRight: false },
   ];
 
   const TABLE_HEAD_Approval_Seq = [
@@ -322,9 +326,12 @@ export default function Page404() {
                   <TableCell>{value.line_number}</TableCell>
                   <TableCell>{value.ordered_item}</TableCell>
                   <TableCell>{value.order_quantity_uom}</TableCell>
-                  <TableCell style={{ textAlign: 'right' }}>{value.ordered_quantity}</TableCell>
-
-                  <TableCell style={{ textAlign: 'right' }}>{value.unit_selling_price}</TableCell>
+                  <TableCell>{value.ordered_quantity}</TableCell>
+                  <TableCell>{value.offer_quantity}</TableCell>
+                  <TableCell>{value.total_quantity}</TableCell>
+                  <TableCell>{value.unit_selling_price}</TableCell>
+                  <TableCell>{value.unit_offer_price}</TableCell>
+                  <TableCell>{value.total_price}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
