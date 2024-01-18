@@ -296,7 +296,7 @@ export default function ShowApprovedSalesOrders() {
                             onClick={() => {
                               if (loggeddata === 'M503') {
                                 navigate(`/dashboard/updateSalesOrderForm/${header_id}`);
-                              } else if (loggeddata === 'M1008' || loggeddata === 'M1001' || loggeddata === 'M992') {
+                              } else {
                                 navigate(`/dashboard/viewordersheader/${header_id}`);
                               }
                             }}
