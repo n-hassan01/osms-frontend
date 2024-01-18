@@ -133,8 +133,6 @@ export default function Router() {
         { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
         { path: 'showexcelfile', element: <ShowExcelFile /> },
         { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
-        { path: 'privacypolicypage', element: <PrivacyPolicyPage /> },
-        { path: 'termsconditionpage', element: <TermsConditionPage /> },
       ],
     },
 
@@ -150,6 +148,8 @@ export default function Router() {
       path: 'sap',
       element: <TestSapApiPage />,
     },
+    { path: 'privacypolicypage', element: <PrivacyPolicyPage /> },
+    { path: 'termsconditionpage', element: <TermsConditionPage /> },
     {
       element: <SimpleLayout />,
       children: [
