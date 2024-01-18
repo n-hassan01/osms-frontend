@@ -50,6 +50,8 @@ import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTrans
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
 
 // ----------------------------------------------------------------------
@@ -131,6 +133,8 @@ export default function Router() {
         { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
         { path: 'showexcelfile', element: <ShowExcelFile /> },
         { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
+        { path: 'privacypolicypage', element: <PrivacyPolicyPage /> },
+        { path: 'termsconditionpage', element: <TermsConditionPage /> },
       ],
     },
 
