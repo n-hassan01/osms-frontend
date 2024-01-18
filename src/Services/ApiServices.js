@@ -921,9 +921,14 @@ export const updateSalesOrderLineService = async (lineId, lineInfo) => {
   }
 };
 
-export const getCustomerListService = async () => {
+export const getCustomerListService = async (token) => {
+  console.log(token);
   try {
-    return await axios.get(`${usersUrl}customer-list`);
+    return await axios.get(`${usersUrl}customer-list/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   } catch (err) {
     console.log(err.message);
 
