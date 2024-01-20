@@ -133,6 +133,7 @@ export default function Router() {
         { path: 'addhzcustaccounts/:cust_account_id', element: <AddHzCustAccounts /> },
         { path: 'showexcelfile', element: <ShowExcelFile /> },
         { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
+        { path: 'settings', element: <TermsConditionPage /> },
       ],
     },
 

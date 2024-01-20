@@ -181,7 +181,7 @@ export default function Page404() {
           orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
           orderedQuantity: lineInfo.orderedQuantity,
           unitSellingPrice: lineInfo.selectedItem.unit_price,
-          totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
+          // totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
           offerQuantity: offerQuantityValue,
           totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
           unitOfferPrice:
@@ -211,7 +211,7 @@ export default function Page404() {
           orderedQuantity: lineInfo.orderedQuantity,
           soldFromOrgId: lineInfo.soldFromOrgId,
           unitSellingPrice: lineInfo.selectedItem.unit_price,
-          totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
+          // totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
           offerQuantity: offerQuantityValue,
           totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
           unitOfferPrice:
