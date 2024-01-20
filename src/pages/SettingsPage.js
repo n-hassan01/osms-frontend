@@ -1,29 +1,27 @@
 import { LoadingButton } from '@mui/lab';
-import { IconButton, InputAdornment, Stack, TextField } from '@mui/material';
+import { Container, IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import { MDBAccordion, MDBAccordionItem } from 'mdb-react-ui-kit';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Select from 'react-select';
 // component
 import { comparePassword, updatePassword, updateProfileDetails, updateUsername } from '../Services/ApiServices';
-import { getAccountDetailsService } from '../Services/GetAccountsDetails';
 import Iconify from '../components/iconify';
 
 export default function SettingsPage() {
   const [user, setUser] = useState({});
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const accountDetails = await getAccountDetailsService();
-        setUser(accountDetails);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const accountDetails = await getAccountDetailsService();
+  //       setUser(accountDetails);
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
 
   const navigate = useNavigate();
 
@@ -183,8 +181,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <MDBAccordion initialActive={1}>
-      <MDBAccordionItem collapseId={1} headerTitle="Profile Settings">
+    <Container>
+      <MDBAccordion initialActive={1}>
+        {/* <MDBAccordionItem collapseId={1} headerTitle="Profile Settings">
         <Stack spacing={3}>
           <TextField
             name="profession"
@@ -221,74 +220,76 @@ export default function SettingsPage() {
             Update
           </LoadingButton>
         </Stack>
-      </MDBAccordionItem>
-      <MDBAccordionItem collapseId={2} headerTitle="Security Settings">
-        <Stack spacing={3}>
-          <TextField
-            autoComplete="new-password"
-            required
-            name="oldPassword"
-            label="Old Password"
-            type={showPassword ? 'text' : 'password'}
-            onChange={(e) => onValueChangeOldPassword(e)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            error={!!errors.oldPassword}
-            helperText={errors.oldPassword}
-          />
-          <TextField
-            autoComplete="new-password"
-            required
-            name="password"
-            label="New Password"
-            type={showPassword ? 'text' : 'password'}
-            onChange={(e) => onValueChangeSecurityDetails(e)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-          <TextField
-            autoComplete="new-password"
-            required
-            name="confirmPassword"
-            label="Confirm Password"
-            type={showPassword ? 'text' : 'password'}
-            onChange={(e) => onValueChangeSecurityDetails(e)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword}
-          />
-        </Stack>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={updateSecurityDetails}>
-            Update
-          </LoadingButton>
-        </Stack>
-      </MDBAccordionItem>
-      <MDBAccordionItem collapseId={3} headerTitle="Account Settings">
+      </MDBAccordionItem> */}
+        <Container>
+          <MDBAccordionItem collapseId={2} headerTitle="Security Settings">
+            <Stack spacing={3}>
+              <TextField
+                autoComplete="new-password"
+                required
+                name="oldPassword"
+                label="Old Password"
+                type={showPassword ? 'text' : 'password'}
+                onChange={(e) => onValueChangeOldPassword(e)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                error={!!errors.oldPassword}
+                helperText={errors.oldPassword}
+              />
+              <TextField
+                autoComplete="new-password"
+                required
+                name="password"
+                label="New Password"
+                type={showPassword ? 'text' : 'password'}
+                onChange={(e) => onValueChangeSecurityDetails(e)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                error={!!errors.password}
+                helperText={errors.password}
+              />
+              <TextField
+                autoComplete="new-password"
+                required
+                name="confirmPassword"
+                label="Confirm Password"
+                type={showPassword ? 'text' : 'password'}
+                onChange={(e) => onValueChangeSecurityDetails(e)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword}
+              />
+            </Stack>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+              <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={updateSecurityDetails}>
+                Update
+              </LoadingButton>
+            </Stack>
+          </MDBAccordionItem>
+        </Container>
+        {/* <MDBAccordionItem collapseId={3} headerTitle="Account Settings">
         <Stack spacing={3}>
           <TextField name="name" label="Name" value={user.name} onChange={(e) => onValueChangeAccountDetails(e)} />
         </Stack>
@@ -297,7 +298,8 @@ export default function SettingsPage() {
             Update
           </LoadingButton>
         </Stack>
-      </MDBAccordionItem>
-    </MDBAccordion>
+      </MDBAccordionItem> */}
+      </MDBAccordion>
+    </Container>
   );
 }
