@@ -1,8 +1,9 @@
-import Link from "@mui/material/Link";
+import Link from '@mui/material/Link';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 // hooks
 // components
 // sections
@@ -31,6 +32,7 @@ const StyledContent = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   return (
     <>
       <Helmet>
@@ -38,14 +40,21 @@ export default function LoginPage() {
       </Helmet>
 
       <StyledRoot>
-        <Container maxWidth="sm" style={{backgroundColor: 'white'}}>
+        <Container maxWidth="sm" style={{ backgroundColor: 'white' }}>
           <StyledContent>
-            <Typography variant="h4" gutterBottom style={{textAlign: 'center'}}>
+            <Typography variant="h4" gutterBottom style={{ textAlign: 'center' }}>
               Welcome to Remark COMS
             </Typography>
 
             <SignupForm />
-
+            <Link
+              style={{ cursor: 'pointer', marginLeft: '25%', marginBottom: '20px' }}
+              onClick={() => {
+                navigate(`/login`);
+              }}
+            >
+              Already have account? <span > Sign In </span>
+            </Link>
             <Typography variant="body2" color="text.secondary" align="center">
               {'Copyright © '}
               <Link color="inherit" target="_blank" href="https://n-hassan01.github.io/PortfolioWebsite/">

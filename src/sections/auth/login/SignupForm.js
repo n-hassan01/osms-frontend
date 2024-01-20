@@ -41,7 +41,7 @@ export default function SignupForm() {
   const [selectedType, setSelectedType] = useState('');
 
   const navigate = useNavigate();
-
+  const [responseInfo, setResponseInfo] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [otp, setOtp] = useState('');
@@ -130,6 +130,28 @@ export default function SignupForm() {
     else setUser({ ...user, role: e.value });
   };
 
+  const handleResend = async () => {
+    try {
+      const reqBody = {
+        email: responseInfo.email,
+        userId: responseInfo.userId,
+      };
+
+      const sendOtpService = await sendOtp(reqBody);
+
+      if (sendOtpService.status === 200) {
+        // Update the resendAttempts count
+
+        alert('OTP resent successfully!');
+      } else {
+        alert('Resend failed! Try again');
+      }
+    } catch (error) {
+      console.error('Error resending OTP:', error);
+      alert('Resend failed! Try again');
+    }
+  };
+
   const handleClick = async () => {
     const { userName, password, confirmPassword } = user;
     const newErrors = {};
@@ -189,6 +211,8 @@ export default function SignupForm() {
               email: response.data.authenticationMethod.value,
               userId: userName,
             };
+            console.log(reqBody);
+            setResponseInfo(reqBody);
 
             const sendOtpService = await sendOtp(reqBody);
 
@@ -438,8 +462,21 @@ export default function SignupForm() {
             renderInput={(props) => <input {...props} className="otp-input" />}
           />
 
-          <DialogContentText style={{ margin: '5px' }}>
-            Didn't get the code? <span style={{ color: 'crimson' }}>Resend</span>
+          <DialogContentText style={{ margin: '5px' , cursor: 'pointer' }} >
+            Didn't get the code?{' '}
+            <span
+              style={{ color: 'crimson' }}
+              onClick={handleResend}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleResend();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              Resend{' '}
+            </span>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
