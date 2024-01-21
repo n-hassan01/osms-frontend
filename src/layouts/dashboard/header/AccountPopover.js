@@ -59,6 +59,11 @@ export default function AccountPopover() {
     setOpen(null);
   };
 
+  const openChangePasswordPage = () => {
+    navigate('/dashboard/settings');
+    setOpen(null);
+  };
+
   const logout = () => {
     loginUser();
     // Logout();
@@ -73,15 +78,20 @@ export default function AccountPopover() {
       icon: 'eva:home-fill',
       method: openDashboardPage,
     },
+    // {
+    //   label: 'Profile',
+    //   icon: 'eva:person-fill',
+    //   method: openProfilePage,
+    // },
+    // {
+    //   label: 'Settings',
+    //   icon: 'eva:settings-2-fill',
+    //   method: openSettingsPage,
+    // },
     {
-      label: 'Profile',
-      icon: 'eva:person-fill',
-      method: openProfilePage,
-    },
-    {
-      label: 'Settings',
+      label: 'Change password',
       icon: 'eva:settings-2-fill',
-      method: openSettingsPage,
+      method: openChangePasswordPage,
     },
   ];
 
