@@ -1,6 +1,6 @@
 import { LoadingButton } from '@mui/lab';
 import { Container, IconButton, InputAdornment, Stack, TextField } from '@mui/material';
-import { MDBAccordion, MDBAccordionItem } from 'mdb-react-ui-kit';
+import { MDBAccordion } from 'mdb-react-ui-kit';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // component
@@ -246,72 +246,72 @@ export default function SettingsPage() {
         </Stack>
       </MDBAccordionItem> */}
         <Container>
-          <MDBAccordionItem collapseId={2} headerTitle="Security Settings">
-            <Stack spacing={3}>
-              <TextField
-                autoComplete="new-password"
-                required
-                name="oldPassword"
-                label="Old Password"
-                type={showPassword ? 'text' : 'password'}
-                onChange={(e) => onValueChangeOldPassword(e)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                error={!!errors.oldPassword}
-                helperText={errors.oldPassword}
-              />
-              <TextField
-                autoComplete="new-password"
-                required
-                name="password"
-                label="New Password"
-                type={showPassword ? 'text' : 'password'}
-                onChange={(e) => onValueChangeSecurityDetails(e)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                error={!!errors.password}
-                helperText={errors.password}
-              />
-              <TextField
-                autoComplete="new-password"
-                required
-                name="confirmPassword"
-                label="Confirm Password"
-                type={showPassword ? 'text' : 'password'}
-                onChange={(e) => onValueChangeSecurityDetails(e)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                        <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-              />
-            </Stack>
-            <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-              <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={updateSecurityDetails}>
-                Update
-              </LoadingButton>
-            </Stack>
-          </MDBAccordionItem>
+          {/* <MDBAccordionItem collapseId={2} headerTitle="Security Settings"> */}
+          <Stack spacing={3} mt={3}>
+            <TextField
+              autoComplete="new-password"
+              required
+              name="oldPassword"
+              label="Old Password"
+              type={showPassword ? 'text' : 'password'}
+              onChange={(e) => onValueChangeOldPassword(e)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={!!errors.oldPassword}
+              helperText={errors.oldPassword}
+            />
+            <TextField
+              autoComplete="new-password"
+              required
+              name="password"
+              label="New Password"
+              type={showPassword ? 'text' : 'password'}
+              onChange={(e) => onValueChangeSecurityDetails(e)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+            <TextField
+              autoComplete="new-password"
+              required
+              name="confirmPassword"
+              label="Confirm Password"
+              type={showPassword ? 'text' : 'password'}
+              onChange={(e) => onValueChangeSecurityDetails(e)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+            />
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+            <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={updateSecurityDetails}>
+              Update
+            </LoadingButton>
+          </Stack>
+          {/* </MDBAccordionItem> */}
         </Container>
         {/* <MDBAccordionItem collapseId={3} headerTitle="Account Settings">
         <Stack spacing={3}>
