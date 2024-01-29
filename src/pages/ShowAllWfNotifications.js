@@ -1,6 +1,5 @@
 /* eslint-disable no-else-return */
 /* eslint-disable camelcase */
-import axios from 'axios';
 import { format } from 'date-fns';
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -8,22 +7,22 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
-import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
+import { getAllWfNotificationsService, getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -180,9 +179,10 @@ export default function ShowAllWfNotifications() {
       try {
         if (user) {
           const usersDetailslogin = await getLoggedInUserDetails(user);
-          const usersAllDetails = await axios.post(`http://182.160.114.100:5001/get-all-wf-notifications`, {
-            body: usersDetailslogin.data.id,
-          });
+          const requestbody = {
+            userId: usersDetailslogin.data.id,
+          };
+          const usersAllDetails = await getAllWfNotificationsService(requestbody);
 
           if (usersAllDetails) setUserList(usersAllDetails.data);
         }
