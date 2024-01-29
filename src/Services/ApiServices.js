@@ -1126,3 +1126,55 @@ export const createSalesOrderService = async (token, requestBody) => {
     return err.message;
   }
 };
+
+export const getAllWfNotificationsService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}get-all-wf-notifications`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getWfNotificationsService = async (bodyInfo) => {
+  try {
+    console.log(bodyInfo);
+    return await axios.post(`${usersUrl}get-wf-notifications`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const uploadImageService = async (user, bodyInfo) => {
+  try {
+    console.log(bodyInfo);
+    console.log(user);
+    return await axios.post(`${usersUrl}upload-image`, bodyInfo,{
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getImageService = async (user) => {
+  try {
+    
+    return await axios.get(`${usersUrl}promotion-list`,{
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
