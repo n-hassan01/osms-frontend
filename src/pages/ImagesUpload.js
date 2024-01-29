@@ -102,23 +102,6 @@ const UploadImages = () => {
           </ul>
         </div>
       )}
-
-      {/* {imageInfos.length > 0 && (
-        <div className="card mt-3">
-          <div className="card-header">List of Images</div>
-          <ul className="list-group list-group-flush">
-            {imageInfos &&
-              imageInfos.map((img, index) => (
-                <li className="list-group-item" key={index}>
-                  <p>
-                    <a href={img.url}>{img.name}</a>
-                  </p>
-                  <img src={img.url} alt={img.name} height="80px" />
-                </li>
-              ))}
-          </ul>
-        </div>
-      )} */}
     </div>
   );
 };
