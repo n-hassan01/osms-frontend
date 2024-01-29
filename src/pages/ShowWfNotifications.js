@@ -26,9 +26,6 @@ import { getLoggedInUserDetails, getWfNotificationsService } from '../Services/A
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
-// sections
-// import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
-//  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 
 import { useUser } from '../context/UserContext';
 import ShowWfNotiHead from '../sections/@dashboard/user/ShowWfNotiHead';
@@ -64,18 +61,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// function applySortFilter(array, comparator, query) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   if (query) {
-//     return filter(array, (_user) => _user.notification_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-//   }
-//   return stabilizedThis.map((el) => el[0]);
-// }
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -145,31 +130,6 @@ export default function ShowWfNotifications() {
     const day = String(date.getDate()).padStart(2, '0');
     return `${day}/${month}/${year}    ${formattedTime}`;
   }
-  // const generateNumber = async () => {
-  //   const now = new Date();
-  //   const h = '0001';
-  //   const month = String(now.getMonth() + 1).padStart(2, '0');
-  //   console.log(month);
-  //   const months = String(now.getMonth() + 2).padStart(2, '0');
-  //   console.log(months);
-  //   const day = String(now.getDate()).padStart(2, '0');
-  //   console.log(day);
-
-  //   const results = `${day}${month}${h}`;
-  //   const resultss = `${day}${months}${h}`;
-  //   const usersDetails = await getOrderNumberService(results, resultss);
-
-  //   if (usersDetails.data[0].max !== null) {
-  //     console.log(usersDetails.data[0].max + 1);
-  //     return usersDetails.data[0].max + 1;
-  //   } else {
-  //     console.log(results);
-  //     return results;
-  //   }
-  // };
-
-  // const generatedNumber1 = generateNumber();
-  // console.log(generatedNumber1);
 
   const { user } = useUser();
   console.log(user);
@@ -347,19 +307,6 @@ export default function ShowWfNotifications() {
                           </Link>
                         </TableCell>
                         <TableCell align="left">{getFormattedDate(sent_date)}</TableCell>
-
-                        {/* <TableCell align="right">
-                          <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={() => {
-                              const organizationId = notification_id;
-                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
-                            }}
-                          >
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}
