@@ -52,6 +52,16 @@ export const userProcess = async (userInfo) => {
   }
 };
 
+export const getUserEmailAddress = async (userInfo) => {
+  try {
+    return await axios.get(`${usersUrl}get-email-address/${userInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const login = async (user) => {
   try {
     return await axios.post(`${usersUrl}login/`, user);
@@ -92,6 +102,7 @@ export const comparePasswordService = async (loginToken, requestBody) => {
   }
 };
 
+// change and forget password service
 export const changePasswordService = async (loginToken, requestBody) => {
   try {
     return await axios.put(`${usersUrl}change-password/`, requestBody, {
@@ -99,6 +110,16 @@ export const changePasswordService = async (loginToken, requestBody) => {
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const forgetPasswordService = async (requestBody) => {
+  try {
+    return await axios.put(`${usersUrl}forget-password/`, requestBody);
   } catch (err) {
     console.log(err.message);
 

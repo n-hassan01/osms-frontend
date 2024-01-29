@@ -53,6 +53,7 @@ import { useUser } from './context/UserContext';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
+import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
 
@@ -144,6 +145,10 @@ export default function Router() {
     {
       path: 'signup',
       element: <SignupPage />,
+    },
+    {
+      path: 'forgetPassword',
+      element: <ForgetPassword />,
     },
     {
       path: 'sap',
