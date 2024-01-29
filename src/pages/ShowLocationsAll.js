@@ -23,7 +23,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import ImagesUpload from '../components/ImagesUpload';
+import ImagesUpload from './ImagesUpload';
 
 // components
 import Iconify from '../components/iconify';
