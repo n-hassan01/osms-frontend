@@ -1178,3 +1178,27 @@ export const getImageService = async (user) => {
     return err.message;
   }
 };
+
+export const addbankfromheaderService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbanks/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addbankFormLinesService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbankbranches/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
