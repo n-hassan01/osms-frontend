@@ -1,6 +1,5 @@
 /* eslint-disable no-else-return */
 /* eslint-disable camelcase */
-import axios from 'axios';
 import { format } from 'date-fns';
 import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -8,22 +7,22 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
-import { getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
+import { getAllWfNotificationsService, getLoggedInUserDetails, getOrderNumberService } from '../Services/ApiServices';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -65,18 +64,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// function applySortFilter(array, comparator, query) {
-//   const stabilizedThis = array.map((el, index) => [el, index]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) return order;
-//     return a[1] - b[1];
-//   });
-//   if (query) {
-//     return filter(array, (_user) => _user.notification_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-//   }
-//   return stabilizedThis.map((el) => el[0]);
-// }
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -180,9 +167,10 @@ export default function ShowAllWfNotifications() {
       try {
         if (user) {
           const usersDetailslogin = await getLoggedInUserDetails(user);
-          const usersAllDetails = await axios.post(`http://182.160.114.100:5001/get-all-wf-notifications`, {
-            body: usersDetailslogin.data.id,
-          });
+          const requestbody = {
+            userId: usersDetailslogin.data.id,
+          };
+          const usersAllDetails = await getAllWfNotificationsService(requestbody);
 
           if (usersAllDetails) setUserList(usersAllDetails.data);
         }
@@ -275,11 +263,6 @@ export default function ShowAllWfNotifications() {
     setFilterName(event.target.value);
   };
 
-  // const handleClickOpen = (notification_id) => {
-
-  //   <UpdateHrOrganizationUnits notification_id={notification_id} />;
-  // };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -300,13 +283,6 @@ export default function ShowAllWfNotifications() {
         </Stack>
 
         <Card>
-          {/* <OrganizationListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-            selectedUsers={selected}
-          /> */}
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -332,12 +308,6 @@ export default function ShowAllWfNotifications() {
 
                     return (
                       <TableRow hover key={notification_id} tabIndex={-1}>
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, notification_id)} />
-                        </TableCell> */}
-
-                        {/* <TableCell align="left">{notification_id}</TableCell> */}
-
                         <TableCell align="left">{from_user}</TableCell>
                         <TableCell align="left">
                           <Link
@@ -350,19 +320,6 @@ export default function ShowAllWfNotifications() {
                           </Link>
                         </TableCell>
                         <TableCell align="left">{getFormattedDate(sent_date)}</TableCell>
-
-                        {/* <TableCell align="right">
-                          <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={() => {
-                              const organizationId = notification_id;
-                              navigate(`/dashboard/updatehrorganizationunits/${organizationId}`);
-                            }}
-                          >
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}

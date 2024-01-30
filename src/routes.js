@@ -55,6 +55,8 @@ import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
 import ForgetPassword from './pages/forgetPassword';
 
+import ImageGallery from './pages/ShowImages';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -135,6 +137,7 @@ export default function Router() {
         { path: 'showexcelfile', element: <ShowExcelFile /> },
         { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
         { path: 'settings', element: <TermsConditionPage /> },
+        { path: 'showimages', element: <ImageGallery /> },
       ],
     },
 
