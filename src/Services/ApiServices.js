@@ -1202,3 +1202,41 @@ export const addbankFormLinesService = async (bodyInfo) => {
     return err.message;
   }
 };
+export const getBankAllService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankHeaderService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankLinesService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const updateBankOrderLineService = async (lineId, lineInfo) => {
+  try {
+    return await axios.put(`${usersUrl}mrlprodbankbranches/update/${lineId}`, lineInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
