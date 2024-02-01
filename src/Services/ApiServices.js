@@ -1178,3 +1178,65 @@ export const getImageService = async (user) => {
     return err.message;
   }
 };
+
+export const addbankfromheaderService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbanks/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addbankFormLinesService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbankbranches/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getBankAllService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankHeaderService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankLinesService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const updateBankOrderLineService = async (lineId, lineInfo) => {
+  try {
+    return await axios.put(`${usersUrl}mrlprodbankbranches/update/${lineId}`, lineInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
