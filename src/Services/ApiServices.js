@@ -1240,3 +1240,13 @@ export const updateBankOrderLineService = async (lineId, lineInfo) => {
     return err.message;
   }
 };
+
+export const deleteBankFormLinesService = async (lineId) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankbranches/delete/${lineId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

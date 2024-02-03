@@ -5,15 +5,14 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
 import {
-    addbankFormLinesService,
-    addbankfromheaderService,
-    callSoApprovalService,
-    createSalesOrderNumberService,
-    deleteSalesOrderHeaderService,
-    deleteSalesOrderLinesService,
-    getCustomerListService,
-    getInventoryItemIdList,
-    getUserProfileDetails,
+  addbankFormLinesService,
+  addbankfromheaderService,
+  callSoApprovalService,
+  createSalesOrderNumberService,
+  deleteBankFormLinesService,
+  getCustomerListService,
+  getInventoryItemIdList,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -312,7 +311,7 @@ export default function BankFormPage() {
 
       const response = await addbankfromheaderService(requestBody, user);
       if (response.status === 200) {
-        responseValue=response.data.headerInfo[0].bank_id;
+        responseValue = response.data.headerInfo[0].bank_id;
         setHeaderDetails({
           bankId: response.data.headerInfo[0].bank_id,
           // orderNumber: response.data.headerInfo[0].order_number,
@@ -322,12 +321,10 @@ export default function BankFormPage() {
         console.log(response.data);
         saveLines(response.data.headerInfo[0].bank_id);
       } else {
-       
         alert('Process failed! Try again');
       }
-    }
-    else{
-        saveLines(responseValue);
+    } else {
+      saveLines(responseValue);
     }
     // }
   };
@@ -442,7 +439,7 @@ export default function BankFormPage() {
     console.log(selectedLines);
     selectedLines.forEach(async (line) => {
       console.log(line);
-      await deleteSalesOrderLinesService(line);
+      await deleteBankFormLinesService(line);
     });
     setSelectedLines([]);
   };
@@ -463,7 +460,7 @@ export default function BankFormPage() {
       alert('Please select lines to delete');
     } else if (selectedLines.length === 0 && rows.length === 0) {
       if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(headerDetails.orderNumber);
+        await deleteBankFormLinesService(headerDetails.bankId);
         window.location.reload();
       }
     } else if (selectedLines.length > 0 && rows.length > 0) {
@@ -638,7 +635,7 @@ export default function BankFormPage() {
             </div> */}
             <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
               <label htmlFor="bankName" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Bank Name
+                Bank Name <span style={{ marginLeft:"0px", color: 'red' }}>*</span>
                 <input
                   type="text"
                   id="bankName"
@@ -651,7 +648,7 @@ export default function BankFormPage() {
             </div>
             <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
               <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Description
+                Description <span style={{marginLeft:'10px', color: 'red' }}>*</span>
                 <input
                   type="text"
                   id="description"
@@ -698,7 +695,7 @@ export default function BankFormPage() {
                 </Select>
               </label>
             </div> */}
-            <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
+            {/*     <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
               <label htmlFor="addressLine1" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
                 Address Line 1
                 <input
