@@ -9,11 +9,10 @@ import {
   addbankfromheaderService,
   callSoApprovalService,
   createSalesOrderNumberService,
-  deleteSalesOrderHeaderService,
-  deleteSalesOrderLinesService,
+  deleteBankFormLinesService,
   getCustomerListService,
   getInventoryItemIdList,
-  getUserProfileDetails,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -440,7 +439,7 @@ export default function BankFormPage() {
     console.log(selectedLines);
     selectedLines.forEach(async (line) => {
       console.log(line);
-      await deleteSalesOrderLinesService(line);
+      await deleteBankFormLinesService(line);
     });
     setSelectedLines([]);
   };
@@ -461,7 +460,7 @@ export default function BankFormPage() {
       alert('Please select lines to delete');
     } else if (selectedLines.length === 0 && rows.length === 0) {
       if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(headerDetails.orderNumber);
+        await deleteBankFormLinesService(headerDetails.bankId);
         window.location.reload();
       }
     } else if (selectedLines.length > 0 && rows.length > 0) {
