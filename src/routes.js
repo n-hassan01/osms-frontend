@@ -50,9 +50,13 @@ import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTrans
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
+import BankFormPage from './pages/BankFormPage';
+import ManageBankFormPage from './pages/ManageBankFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import ImageGallery from './pages/ShowImages';
 import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
+import UpdateBankFormPage from './pages/UpdateBankFormPage';
 import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
@@ -135,6 +139,10 @@ export default function Router() {
         { path: 'showexcelfile', element: <ShowExcelFile /> },
         { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
         { path: 'settings', element: <TermsConditionPage /> },
+        { path: 'showimages', element: <ImageGallery /> },
+        { path: 'bankformpage', element: <BankFormPage /> },
+        { path: 'managebankformpage', element: <ManageBankFormPage /> },
+        { path: 'updatebankformpage/:bank_id', element: <UpdateBankFormPage /> },
       ],
     },
 
