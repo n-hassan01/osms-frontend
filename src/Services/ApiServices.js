@@ -4,8 +4,8 @@ import axios from 'axios';
 import getCookieService from './GetCookieService';
 
 // const usersUrl = 'http://182.160.114.100:5001/';
-const usersUrl = 'http://182.160.114.100:5003/';
-// const usersUrl = 'http://localhost:5003/';
+// const usersUrl = 'http://182.160.114.100:5003/';
+ const usersUrl = 'http://localhost:5001/';
 
 const sapTokenUrl =
   'https://my407415-api.s4hana.cloud.sap/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder?$top=1&$format=json';
@@ -897,6 +897,16 @@ export const updateSalesOrderHeaderService = async (headerId, headerInfo) => {
   }
 };
 
+export const updateAccountsService = async (headerId, headerInfo) => {
+  try {
+    return await axios.put(`${usersUrl}mrlprodbankaccounts/update/${headerId}`, headerInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getSalesOrderHeaderService = async (requestInfo) => {
   try {
     return await axios.get(`${usersUrl}get-sales-order-header/${requestInfo}`);
@@ -1152,7 +1162,7 @@ export const uploadImageService = async (user, bodyInfo) => {
   try {
     console.log(bodyInfo);
     console.log(user);
-    return await axios.post(`${usersUrl}upload-image`, bodyInfo,{
+    return await axios.post(`${usersUrl}upload-image`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${user}`,
       },
@@ -1166,8 +1176,7 @@ export const uploadImageService = async (user, bodyInfo) => {
 
 export const getImageService = async (user) => {
   try {
-    
-    return await axios.get(`${usersUrl}promotion-list`,{
+    return await axios.get(`${usersUrl}promotion-list`, {
       headers: {
         Authorization: `Bearer ${user}`,
       },
@@ -1182,6 +1191,19 @@ export const getImageService = async (user) => {
 export const addbankfromheaderService = async (bodyInfo, loginToken) => {
   try {
     return await axios.post(`${usersUrl}mrlprodbanks/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const addaccountsfromService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbankaccounts/add`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
@@ -1211,6 +1233,24 @@ export const getBankAllService = async () => {
     return err.message;
   }
 };
+export const getAccountService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankaccounts/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getBankBranchAllService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 
 export const getBankHeaderService = async (bank_id) => {
   try {
@@ -1222,6 +1262,15 @@ export const getBankHeaderService = async (bank_id) => {
   }
 };
 
+export const getAccountsService = async (bank_account_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankaccounts/get/${bank_account_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
 export const getBankLinesService = async (bank_id) => {
   try {
     return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_id}`);
