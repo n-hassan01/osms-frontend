@@ -3,22 +3,23 @@ import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
+import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-  addbankFormLinesService,
-  addbankfromheaderService,
-  callSoApprovalService,
-  createSalesOrderNumberService,
-  deleteBankFormLinesService,
-  getCustomerListService,
-  getInventoryItemIdList,
-  getUserProfileDetails,
+    addaccountsfromService,
+    addbankFormLinesService,
+    callSoApprovalService,
+    createSalesOrderNumberService,
+    deleteBankFormLinesService,
+    getBankBranchAllService,
+    getCustomerListService,
+    getInventoryItemIdList,
+    getUserProfileDetails,
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
 // ----------------------------------------------------------------------
 
-export default function BankFormPage() {
+export default function AccountFormPage() {
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
@@ -152,6 +153,21 @@ export default function BankFormPage() {
 
   const [filteredItemList, setFilteredItemList] = useState([]);
 
+  const [bankBranchIds, setBankBranchIds] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getBankBranchAllService();
+        if (response) setBankBranchIds(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  console.log(bankBranchIds);
+
   const [headerInfo, setHeaderInfo] = useState({});
 
   const onChangeHeader = (e) => {
@@ -165,14 +181,41 @@ export default function BankFormPage() {
   });
 
   const saveLines = async (value) => {
-    console.log(typeof value);
+    console.log(value);
     const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
     console.log(filteredArray);
 
     filteredArray.forEach(
       async (lineInfo, index) => {
+        //   const offerQuantityValue = lineInfo.offerQuantity ? lineInfo.offerQuantity : 0;
+        //   if (lineInfo.lineId) {
+        //     const requestBody = {
+        //       inventoryItemId: lineInfo.selectedItem.inventory_item_id,
+        //       orderedItem: lineInfo.selectedItem.description,
+        //       orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
+        //       orderedQuantity: lineInfo.orderedQuantity,
+        //       unitSellingPrice: lineInfo.selectedItem.unit_price,
+        //       // totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
+        //       offerQuantity: offerQuantityValue,
+        //       totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
+        //       unitOfferPrice:
+        //         (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
+        //         (parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10)),
+        //     };
+        //     console.log(requestBody);
+
+        //     const response = await updateSalesOrderLineService(lineInfo.lineId, requestBody);
+
+        //     if (response.status === 200) {
+        //       setShowApprovalButton(false);
+        //       // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
+        //       // setShowSaveLine(true);
+        //     } else {
+        //       setShowApprovalButton(true);
+        //     }
+        //   } else {
         const requestBody = {
-          bankId: value,
+          bankId: parseInt(headerDetails.bankId, 10),
           bankBranchName: lineInfo.bankBranchName,
           description: lineInfo.description,
           addressLine1: lineInfo.addressLine1,
@@ -183,9 +226,21 @@ export default function BankFormPage() {
           lastUpdateLogin: account.user_id,
           creationDate: date,
           createdBy: account.user_id,
-        };
+          // creationDate: getCurrentDate(),
 
-        console.log(typeof requestBody.bankId);
+          //   orderedItem: lineInfo.selectedItem.description,
+          //   orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
+          //   orderedQuantity: lineInfo.orderedQuantity,
+          //   soldFromOrgId: lineInfo.soldFromOrgId,
+          //   unitSellingPrice: lineInfo.selectedItem.unit_price,
+          // totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
+          //   offerQuantity: offerQuantityValue,
+          //   totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
+          //   unitOfferPrice:
+          //     (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
+          //     (parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10)),
+        };
+        console.log(requestBody);
 
         const response = await addbankFormLinesService(requestBody);
 
@@ -203,49 +258,48 @@ export default function BankFormPage() {
   const date = new Date();
   let responseValue;
   const saveHeader = async () => {
-  console.log(headerDetails);
-    
+    console.log(rows);
+    rows.forEach(async (lineInfo, index) => {
       const requestBody = {
-        bankName: headerInfo.bankName,
-        description: headerInfo.description,
-        addressLine1: headerInfo.addressLine1,
-        city: headerInfo.city,
+        bankAccountName: lineInfo.bankAccountName,
+        bankBranchId: lineInfo.bankBranchId,
+        bankId: parseInt(lineInfo.bankId, 10),
+        accountClassification: lineInfo.accountClassification,
         lastUpdateDate: date,
         lastUpdatedBy: account.user_id,
         lastUpdateLogin: account.user_id,
         creationDate: date,
         createdBy: account.user_id,
-      
       };
-      console.log('header', requestBody);
+      console.log('accounts', requestBody);
 
-      const response = await addbankfromheaderService(requestBody, user);
+      const response = await addaccountsfromService(requestBody, user);
       if (response.status === 200) {
-        alert("Data Saved");
-       // saveLines(response.data.headerInfo[0].bank_id);
-        responseValue = response.data.headerInfo[0].bank_id;
-        setHeaderDetails({
-          bankId: response.data.headerInfo[0].bank_id,
-          // orderNumber: response.data.headerInfo[0].order_number,
-          // authorizationStatus: response.data.headerInfo[0].authorization_status,
-          // orderNumber: response.data.headerInfo[0].order_number,
-        });
-        console.log(response.data);
-        saveLines(response.data.headerInfo[0].bank_id);
+        // responseValue = response.data.headerInfo[0].bank_id;
+        // setHeaderDetails({
+        //   bankId: response.data.headerInfo[0].bank_id,
+        //   // orderNumber: response.data.headerInfo[0].order_number,
+        //   // authorizationStatus: response.data.headerInfo[0].authorization_status,
+        //   // orderNumber: response.data.headerInfo[0].order_number,
+        // });
+        // console.log(response.data);
+        alert('Data Saved!');
+        // saveLines(response.data.headerInfo[0].bank_id);
       } else {
         alert('Process failed! Try again');
       }
-
-    // }
+    });
   };
 
   const [rows, setRows] = useState([
     {
-      bankBranchName: '',
-      description: '',
-      addressLine1: '',
-      city: '',
-      bankAdminEmail: '',
+      bankAccountName: '',
+      bankBranchId: '',
+      bankId: '',
+      accountClassification: '',
+      selectedItemName: '',
+      selectedItem: {},
+      showList: false,
     },
   ]);
 
@@ -262,11 +316,13 @@ export default function BankFormPage() {
       setRows([
         ...rows,
         {
-          bankBranchName: '',
-          description: '',
-          addressLine1: '',
-          city: '',
-          bankAdminEmail: '',
+          bankAccountName: '',
+          bankBranchId: '',
+          bankId: '',
+          accountClassification: '',
+          selectedItemName: '',
+          selectedItem: {},
+          showList: false,
         },
       ]);
     }
@@ -395,8 +451,8 @@ export default function BankFormPage() {
     console.log(rows);
 
     // Filter the original list based on the input
-    console.log(inventoryItemIds);
-    const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
+    console.log(bankBranchIds);
+    const filtered = bankBranchIds.filter((item) => item.bank_branch_name.toLowerCase().includes(input.toLowerCase()));
     setFilteredItemList(filtered);
   };
 
@@ -461,11 +517,15 @@ export default function BankFormPage() {
     console.log(item);
     const name = 'selectedItemName';
     const selected = 'selectedItem';
+    const branchId = 'bankBranchId';
+    const bankId = 'bankId';
     const show = 'showList';
 
     const updatedRows = [...rows];
-    updatedRows[index][name] = item.description;
+    updatedRows[index][name] = item.bank_branch_name;
     updatedRows[index][selected] = item;
+    updatedRows[index][branchId] = item.bank_branch_id;
+    updatedRows[index][bankId] = item.bank_id;
     updatedRows[index][show] = false;
     setRows(updatedRows);
     console.log(rows);
@@ -478,179 +538,15 @@ export default function BankFormPage() {
   return (
     <>
       <Helmet>
-        <title> COMS | Bank Form </title>
+        <title> COMS | Account Form </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Create Bank Form
+            Create Account Form
           </Typography>
         </Stack>
-        <div className="row g-3 align-items-center">
-          <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            {/* <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
-              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Order Number
-                <input
-                  type="number"
-                  id="orderNumber"
-                  name="orderNumber"
-                  className="form-control"
-                  style={{ marginLeft: '7px', width: '100px' }}
-                  value={headerDetails.orderNumber}
-                  readOnly
-                />
-              </label>
-            </div> */}
-            {/* <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
-              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Ordered Date
-                <input type="text" id="orderedDate" className="form-control" defaultValue={getCurrentDate()} readOnly />
-              </label>
-            </div> */}
-            {/* <div className="col-auto" style={{ marginRight: '15px' }}>
-              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Customer
-                <input
-                  type="text"
-                  name="distributor"
-                  id="distributor"
-                  className="form-control"
-                  style={{
-                    marginLeft: '7px',
-                    height: '30px', // Set a fixed height for the input field
-                    boxSizing: 'border-box',
-                  }}
-                  // value={selectedCustomer}
-                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
-                  onChange={(e) => handleInputCustomerChange(e)}
-                />
-                {customerRows.showList && (
-                  <ul
-                    style={{
-                      zIndex: 1, // Ensure the dropdown is above other content
-                    }}
-                  >
-                    {filteredCustomerList.map((item, itemIndex) => (
-                      <>
-                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
-                          {item.full_name}
-                        </MenuItem>
-                      </>
-                    ))}
-                  </ul>
-                )}
-              </label>
-            </div> */}
-            <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
-              <label htmlFor="bankName" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Bank Name <span style={{ marginLeft: '0px', color: 'red' }}>*</span>
-                <input
-                  type="text"
-                  id="bankName"
-                  name="bankName"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
-              <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Description <span style={{ marginLeft: '10px', color: 'red' }}>*</span>
-                <input
-                  type="text"
-                  id="description"
-                  name="description"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-          </Stack>
-          <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            {/* <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
-              <label
-                htmlFor="shippingMethodCode"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-              >
-                Transport Type */}
-            {/* <select
-                  id="shippingMethodCode"
-                  name="shippingMethodCode"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                >
-                  <option value="Self">Self</option>
-                  <option value="Company">Company</option>
-                  <option value="Rental">Rental</option>
-                  <option value="Courier">Courier</option>
-                </select> */}
-            {/* <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="shippingMethodCode"
-                  style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
-                  onChange={(e) => onChangeHeader(e)}
-                  defaultValue="Self"
-                >
-                  <MenuItem value="Self">Self</MenuItem>
-                  <MenuItem value="Company">Company</MenuItem>
-                  <MenuItem value="Rental">Rental</MenuItem>
-                  <MenuItem value="Courier">Courier</MenuItem>
-                </Select>
-              </label>
-            </div> */}
-            {/*     <div className="col-auto" style={{ width: '400px', marginRight: '15px' }}>
-              <label htmlFor="addressLine1" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Address Line 1
-                <input
-                  type="text"
-                  id="addressLine1"
-                  name="addressLine1"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '300px', marginRight: '15px' }}>
-              <label
-                htmlFor="specialAdjustment"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-              >
-                City
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            {/* <div className="col-auto" style={{ width: '500px' }}>
-              <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Description
-                <textarea
-                  id="description"
-                  name="description"
-                  className="form-control"
-                  style={{ marginLeft: '7px', height: '30px', width: '390px' }}
-                  onChange={(e) => {
-                    onChangeHeader(e);
-                  }}
-                />
-              </label>
-            </div> */}
-          </Stack>
-        </div>
 
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
           <div className="table-responsive">
@@ -671,12 +567,12 @@ export default function BankFormPage() {
                   </th>
                   {/* <th>Line Number</th> */}
                   <th style={{ width: '420px' }}>
-                    Bank Branch Name <span style={{ color: 'red' }}>*</span>
+                    Account Name <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th style={{ width: '50px', textAlign: 'right' }}>Description</th>
-                  <th style={{ textAlign: 'right' }}>Address Line 1</th>
-                  <th style={{ textAlign: 'right' }}>City</th>
-                  <th style={{ textAlign: 'right' }}>Bank Admin Email</th>
+                  <th style={{ width: '50px', textAlign: 'right' }}>Bank Branch ID</th>
+                  <th style={{ textAlign: 'right' }}>Account Classification</th>
+                  {/* <th style={{ textAlign: 'right' }}>City</th>
+                  <th style={{ textAlign: 'right' }}>Bank Admin Email</th> */}
                   {/* <th>Sold From Org ID</th> */}
                   {/* <th style={{ textAlign: 'right' }}>Unit Price</th>
                   <th style={{ textAlign: 'right' }}>Unit Offer Price</th>
@@ -697,39 +593,11 @@ export default function BankFormPage() {
                       {/* <td>
                         <input type="number" className="form-control" name="lineNumber" value={index + 1} readOnly />
                       </td> */}
-                      <td style={{ textAlign: 'left', height: '50%' }}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="bankBranchName"
-                          style={{
-                            textAlign: 'inherit',
-                            width: '280px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          // value={row.selectedItemName}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                        {/* {row.showList && (
-                          <ul style={{ marginTop: '0px' }}>
-                            {filteredItemList.map((item, itemIndex) => (
-                              <>
-                                <MenuItem key={itemIndex} value={item} onClick={() => handleMenuItemClick(index, item)}>
-                                  {item.description}
-                                </MenuItem>
-                              </>
-                            ))}
-                          </ul>
-                        )} */}
-                      </td>
                       <td style={{ textAlign: 'center', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
-                          name="description"
+                          name="bankAccountName"
                           style={{
                             height: '50%',
                             textAlign: 'inherit',
@@ -742,7 +610,51 @@ export default function BankFormPage() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
+                      <td style={{ textAlign: 'left', height: '50%' }}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          style={{
+                            textAlign: 'inherit',
+                            width: '420px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          value={row.selectedItemName}
+                          onChange={(e) => handleInputItemChange(index, e)}
+                        />
+                        {row.showList && (
+                          <ul style={{ marginTop: '0px' }}>
+                            {filteredItemList.map((item, itemIndex) => (
+                              <>
+                                <MenuItem key={itemIndex} value={item} onClick={() => handleMenuItemClick(index, item)}>
+                                  {item.bank_branch_name}
+                                </MenuItem>
+                              </>
+                            ))}
+                          </ul>
+                        )}
+                      </td>
                       <td style={{ textAlign: 'center', height: '50%' }}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="accountClassification"
+                          style={{
+                            height: '50%',
+                            textAlign: 'inherit',
+                            width: '200px',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          //   value={row.selectedItem.primary_uom_code}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      {/* <td style={{ textAlign: 'center', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
@@ -758,7 +670,7 @@ export default function BankFormPage() {
                           //   value={row.selectedItem.primary_uom_code}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
-                      </td>
+                      </td> */}
                       {/* <td>
                         <input
                           type="number"
@@ -768,7 +680,7 @@ export default function BankFormPage() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td> */}
-                      <td style={{ textAlign: 'center', height: '50%' }}>
+                      {/* <td style={{ textAlign: 'center', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
@@ -784,8 +696,8 @@ export default function BankFormPage() {
                           //   value={row.selectedItem.primary_uom_code}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
-                      </td>
-                      <td style={{ textAlign: 'center', height: '50%' }}>
+                      </td> */}
+                      {/* <td style={{ textAlign: 'center', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
@@ -801,7 +713,7 @@ export default function BankFormPage() {
                           //   value={row.selectedItem.primary_uom_code}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
-                      </td>
+                      </td> */}
                       {/* <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
                           type="text"
