@@ -52,6 +52,7 @@ import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
 import BankFormPage from './pages/BankFormPage';
+import DepositEntryForm from './pages/DepositEntryForm';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -149,6 +150,7 @@ export default function Router() {
         { path: 'accountformpage', element: <AccountFormPage /> },
         { path: 'manageaccountpage', element: <ManageAccountPage /> },
         { path: 'updateaccountpage/:bank_account_id', element: <UpdateAccountPage /> },
+        { path: 'depositEntryForm', element: <DepositEntryForm /> },
       ],
     },
 
