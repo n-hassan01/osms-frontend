@@ -1090,6 +1090,105 @@ export const getPerHzCustAccountsDetails = async (cust_account_id) => {
   }
 };
 
+// Bank deposit services
+export const getBankListService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get/list`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDepositTypesService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/type-list`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchListService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchesService = async (loginToken, bankId) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list/${bankId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankAccountsViewService = async (loginToken, bankId) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/company-bank-account/view`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const uploadBankDepositAttachmentService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/upload`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // SAP testing
 export const getTokenService = async () => {
   try {
