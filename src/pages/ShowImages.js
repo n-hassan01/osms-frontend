@@ -52,8 +52,8 @@ const ShowImages = () => {
           {imageList.map((image, index) => (
             <div key={index} className="image-item">
               <img
-                // src={require(`../../../../OSMS/osms-frontend/src/Resources/Images/${image}`)}
-                src={require(`../../src/resources/img/${image}`)}
+                src={require(`../../../../OSMS/osms-frontend/src/Resources/Images/${image}`)}
+                // src={require(`../../src/resources/img/${image}`)}
                 alt={'Promotion'}
               />
             </div>
