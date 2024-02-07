@@ -50,12 +50,15 @@ import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTrans
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
+import AccountFormPage from './pages/AccountFormPage';
 import BankFormPage from './pages/BankFormPage';
+import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ImageGallery from './pages/ShowImages';
 import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
+import UpdateAccountPage from './pages/UpdateAccountPage';
 import UpdateBankFormPage from './pages/UpdateBankFormPage';
 import ForgetPassword from './pages/forgetPassword';
 
@@ -143,6 +146,9 @@ export default function Router() {
         { path: 'bankformpage', element: <BankFormPage /> },
         { path: 'managebankformpage', element: <ManageBankFormPage /> },
         { path: 'updatebankformpage/:bank_id', element: <UpdateBankFormPage /> },
+        { path: 'accountformpage', element: <AccountFormPage /> },
+        { path: 'manageaccountpage', element: <ManageAccountPage /> },
+        { path: 'updateaccountpage/:bank_account_id', element: <UpdateAccountPage /> },
       ],
     },
 
