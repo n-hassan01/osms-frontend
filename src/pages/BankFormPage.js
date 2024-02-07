@@ -204,38 +204,37 @@ export default function BankFormPage() {
   const date = new Date();
   let responseValue;
   const saveHeader = async () => {
-  console.log(headerDetails);
-    
-      const requestBody = {
-        bankName: headerInfo.bankName,
-        description: headerInfo.description,
-        addressLine1: headerInfo.addressLine1,
-        city: headerInfo.city,
-        lastUpdateDate: date,
-        lastUpdatedBy: account.user_id,
-        lastUpdateLogin: account.user_id,
-        creationDate: date,
-        createdBy: account.user_id,
-      
-      };
-      console.log('header', requestBody);
+    console.log(headerDetails);
 
-      const response = await addbankfromheaderService(requestBody, user);
-      if (response.status === 200) {
-        alert("Data Saved");
-       // saveLines(response.data.headerInfo[0].bank_id);
-        responseValue = response.data.headerInfo[0].bank_id;
-        setHeaderDetails({
-          bankId: response.data.headerInfo[0].bank_id,
-          // orderNumber: response.data.headerInfo[0].order_number,
-          // authorizationStatus: response.data.headerInfo[0].authorization_status,
-          // orderNumber: response.data.headerInfo[0].order_number,
-        });
-        console.log(response.data);
-        saveLines(response.data.headerInfo[0].bank_id);
-      } else {
-        alert('Process failed! Try again');
-      }
+    const requestBody = {
+      bankName: headerInfo.bankName,
+      description: headerInfo.description,
+      addressLine1: headerInfo.addressLine1,
+      city: headerInfo.city,
+      lastUpdateDate: date,
+      lastUpdatedBy: account.user_id,
+      lastUpdateLogin: account.user_id,
+      creationDate: date,
+      createdBy: account.user_id,
+    };
+    console.log('header', requestBody);
+
+    const response = await addbankfromheaderService(requestBody, user);
+    if (response.status === 200) {
+      alert('Data Saved');
+      // saveLines(response.data.headerInfo[0].bank_id);
+      responseValue = response.data.headerInfo[0].bank_id;
+      setHeaderDetails({
+        bankId: response.data.headerInfo[0].bank_id,
+        // orderNumber: response.data.headerInfo[0].order_number,
+        // authorizationStatus: response.data.headerInfo[0].authorization_status,
+        // orderNumber: response.data.headerInfo[0].order_number,
+      });
+      console.log(response.data);
+      saveLines(response.data.headerInfo[0].bank_id);
+    } else {
+      alert('Process failed! Try again');
+    }
 
     // }
   };

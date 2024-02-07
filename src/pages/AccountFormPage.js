@@ -5,15 +5,15 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-    addaccountsfromService,
-    addbankFormLinesService,
-    callSoApprovalService,
-    createSalesOrderNumberService,
-    deleteBankFormLinesService,
-    getBankBranchAllService,
-    getCustomerListService,
-    getInventoryItemIdList,
-    getUserProfileDetails,
+  addaccountsfromService,
+  addbankFormLinesService,
+  callSoApprovalService,
+  createSalesOrderNumberService,
+  deleteBankFormLinesService,
+  getBankBranchAllService,
+  getCustomerListService,
+  getInventoryItemIdList,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -284,6 +284,7 @@ export default function AccountFormPage() {
         // });
         // console.log(response.data);
         alert('Data Saved!');
+        navigate(`/dashboard/manageaccountpage`);
         // saveLines(response.data.headerInfo[0].bank_id);
       } else {
         alert('Process failed! Try again');
