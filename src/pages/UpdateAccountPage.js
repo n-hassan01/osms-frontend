@@ -7,19 +7,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
 import {
-    addbankFormLinesService,
-    callReqApprovalFromPanelService,
-    callSoApprovalService,
-    deleteSalesOrderHeaderService,
-    deleteSalesOrderLinesService,
-    getAccountsService,
-    getApprovalSequenceService,
-    getBankLinesService,
-    getCustomerListService,
-    getInventoryItemIdList,
-    getUserProfileDetails,
-    updateAccountsService,
-    updateBankOrderLineService
+  addbankFormLinesService,
+  callReqApprovalFromPanelService,
+  callSoApprovalService,
+  deleteSalesOrderHeaderService,
+  deleteSalesOrderLinesService,
+  getAccountsService,
+  getApprovalSequenceService,
+  getBankHeaderService,
+  getBankLinesService,
+  getCustomerListService,
+  getUserProfileDetails,
+  updateAccountsService,
+  updateBankOrderLineService,
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
@@ -32,29 +32,6 @@ export default function UpdateAccountPage() {
 
   const { bank_account_id } = useParams();
   console.log('bankId', bank_account_id);
-
-  function getCurrentDate() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  function getFormattedDate(value) {
-    const date = new Date(value);
-    const year = String(date.getFullYear()).slice(-2);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${day}/${month}/${year}`;
-  }
-
-  function getFormattedPrice(value) {
-    const formattedPrice = new Intl.NumberFormat().format(value);
-    console.log(parseInt(formattedPrice, 10));
-
-    return formattedPrice;
-  }
 
   const [account, setAccount] = useState({});
   const { user } = useUser();
@@ -77,21 +54,6 @@ export default function UpdateAccountPage() {
   }, [user]);
   console.log(account);
 
-  const [inventoryItemIds, setInventoryItemIds] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getInventoryItemIdList();
-        if (response) setInventoryItemIds(response.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, []);
-  console.log(inventoryItemIds);
-
   const [soHeaderDetails, setSoHeaderDetails] = useState({});
 
   useEffect(() => {
@@ -109,32 +71,42 @@ export default function UpdateAccountPage() {
     }
 
     fetchData();
-  }, []);
+  }, [bank_account_id]);
   console.log('soHeaderDetails', soHeaderDetails);
 
-  const [soLineDetails, setSoLineDetails] = useState([]);
+  const [soLineDetails, setSoLineDetails] = useState({});
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getBankLinesService(bank_account_id);
+        const response = await getBankLinesService(soHeaderDetails.bank_branch_id);
         console.log(response);
-        // const updatedData = response.data.map((line) => ({
-        //   ...line,
-        //   selectedItemName: line.ordered_item,
-        //   selectedItem: {},
-        //   showList: false,
-        // }));
-        // console.log(updatedData);
-        // if (response) setSoLineDetails(response.data);
-        if (response) setSoLineDetails(response.data);
+
+        if (response && response.data) setSoLineDetails(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
     }
 
     fetchData();
-  }, []);
+  }, [soHeaderDetails.bank_branch_id]);
   console.log('soLineDetails', soLineDetails);
+
+  const [soLinesDetails, setSoLinesDetails] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await getBankHeaderService(soHeaderDetails.bank_id);
+        console.log(response);
+
+        if (response && response.data) setSoLinesDetails(response.data);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [soHeaderDetails.bank_id]);
+  console.log('soLineDetails', soLinesDetails);
 
   const [approvalSequenceDetails, setApprovalSequence] = useState([]);
   useEffect(() => {
@@ -155,32 +127,17 @@ export default function UpdateAccountPage() {
   const [filteredItemList, setFilteredItemList] = useState([]);
 
   //   const [headerInfo, setHeaderInfo] = useState({});
-  const onChangeHeader = (e) => {
-    setSoHeaderDetails({ ...soHeaderDetails, [e.target.name]: e.target.value });
-  };
+
   const onValueChange = (e) => {
     setSoHeaderDetails({ ...soHeaderDetails, [e.target.name]: e.target.value });
   };
   const [showLines, setShowLines] = useState(true);
-  const [headerDetails, setHeaderDetails] = useState({
-    headerId: null,
-    orderNumber: null,
-  });
-
-  //   let sumTotalPrice = 0;
-  //   soLineDetails.forEach((element) => {
-  //     sumTotalPrice +=
-  //       (element.selectedItem.unit_price ? element.selectedItem.unit_price : element.unit_selling_price) *
-  //       element.ordered_quantity;
-  //   });
-  //   // row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price
-  //   console.log(sumTotalPrice);
 
   const saveHeader = async () => {
     // const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
     const requestBody = {
       bankAccountName: soHeaderDetails.bank_account_name,
-      bankBranchId: soHeaderDetails.bank_branch_name,
+      bankBranchId: soHeaderDetails.bank_branch_id,
       bankId: parseInt(soHeaderDetails.bank_id, 10),
       accountClassification: soHeaderDetails.account_classification,
       lastUpdateDate: date,
@@ -188,8 +145,6 @@ export default function UpdateAccountPage() {
       lastUpdateLogin: account.user_id,
       creationDate: date,
       createdBy: account.user_id,
-
-
     };
     console.log(requestBody);
 
@@ -197,7 +152,8 @@ export default function UpdateAccountPage() {
     if (response.status === 200) {
       console.log(response.data);
       alert('Data Updated');
-    //   saveLines();
+      navigate(`/dashboard/manageaccountpage`);
+      //   saveLines();
     } else {
       alert('Process failed! Try again');
     }
@@ -319,34 +275,6 @@ export default function UpdateAccountPage() {
       if (lineInfo.bank_branch_id) {
         console.log(lineInfo);
         const requestBody = {
-          // headerId: headerDetails.headerId,
-          // lineNumber: index + 1,
-          // inventoryItemId: lineInfo.inventory_item_id,
-          //   inventoryItemId: lineInfo.selectedItem.inventory_item_id
-          //     ? lineInfo.selectedItem.inventory_item_id
-          //     : lineInfo.inventory_item_id,
-          // creationDate: getCurrentDate(),
-          // createdBy: account.user_id,
-          // orderedItem: lineInfo.ordered_item,
-          //   orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.ordered_item,
-          //   orderQuantityUom: lineInfo.order_quantity_uom,
-          //   orderedQuantity: lineInfo.ordered_quantity,
-          //   // soldFromOrgId: lineInfo.soldFromOrgId,
-          //   unitSellingPrice: lineInfo.selectedItem.unit_price
-          //     ? lineInfo.selectedItem.unit_price
-          //     : lineInfo.unit_selling_price,
-          //   totalPrice:
-          //     (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
-          //     lineInfo.ordered_quantity,
-          //   offerQuantity: lineInfo.offer_quantity,
-          //   totalQuantity: parseInt(lineInfo.offer_quantity, 10) + parseInt(lineInfo.ordered_quantity, 10),
-          //   // unitOfferPrice:
-          //   //   (lineInfo.ordered_quantity * lineInfo.selectedItem.unit_price) /
-          //   //   (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
-          //   unitOfferPrice:
-          //     (lineInfo.ordered_quantity *
-          //       (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price)) /
-          //     (parseInt(lineInfo.offer_quantity, 10) + parseInt(lineInfo.ordered_quantity, 10)),
           bankId: soHeaderDetails.bank_id,
           bankBranchName: lineInfo.bank_branch_name,
           description: lineInfo.description,
@@ -367,36 +295,12 @@ export default function UpdateAccountPage() {
         if (response.status === 200) {
           console.log(response.data);
           navigate(`/dashboard/managebankformpage`);
-          // setShowApprovalButton(true);
-          // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-          // setShowSaveLine(true);
         } else {
           setShowApprovalButton(false);
         }
       } else {
         console.log(lineInfo);
         const requestBody = {
-          //   headerId: soHeaderDetails.header_id,
-          //   lineNumber: index + 1,
-          //   inventoryItemId: lineInfo.selectedItem.inventory_item_id,
-          //   // inventoryItemId: lineInfo.selectedItem.inventory_item_id
-          //   //   ? lineInfo.selectedItem.inventory_item_id
-          //   //   : lineInfo.inventory_item_id,
-          //   // creationDate: getCurrentDate(),
-          //   createdBy: account.user_id,
-          //   orderedItem: lineInfo.selectedItem.description,
-          //   // orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.description,
-          //   orderQuantityUom: lineInfo.selectedItem.primary_uom_code,
-          //   orderedQuantity: lineInfo.ordered_quantity,
-          //   soldFromOrgId: lineInfo.sold_from_org_id,
-          //   // unitSellingPrice: lineInfo.unit_selling_price,
-          //   // totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
-          //   unitSellingPrice: lineInfo.selectedItem.unit_price
-          //     ? lineInfo.selectedItem.unit_price
-          //     : lineInfo.unit_selling_price,
-          //   totalPrice:
-          //     (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
-          //     lineInfo.ordered_quantity,
           bankId: soHeaderDetails.bank_id,
           bankBranchName: lineInfo.bank_branch_name,
           description: lineInfo.description,
@@ -513,112 +417,6 @@ export default function UpdateAccountPage() {
     }
   };
 
-  // const [isReadOnly, setIsReadOnly] = useState(false);
-
-  const handleInputItemChange = (index, event) => {
-    const input = event.target.value;
-    const name = 'selectedItemName';
-    const show = 'showList';
-
-    const updatedRows = [...soLineDetails];
-    updatedRows[index][name] = input;
-    updatedRows[index][show] = true;
-    setSoLineDetails(updatedRows);
-    console.log(soLineDetails);
-
-    // Filter the original list based on the input
-    console.log(inventoryItemIds);
-    const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
-    setFilteredItemList(filtered);
-  };
-
-  //   const handleInputItemChange = (index, event) => {
-  //     const input = event.target.value;
-  //     const name = 'selectedItemName';
-  //     const show = 'showList';
-
-  //     const updatedRows = [...rows];
-  //     updatedRows[index][name] = input;
-  //     updatedRows[index][show] = true;
-  //     setRows(updatedRows);
-  //     console.log(rows);
-
-  //     // Filter the original list based on the input
-  //     console.log(inventoryItemIds);
-  //     const filtered = inventoryItemIds.filter((item) => item.description.toLowerCase().includes(input.toLowerCase()));
-  //     setFilteredItemList(filtered);
-  //   };
-
-  const handleMenuItemClick = (index, item) => {
-    const name = 'selectedItemName';
-    const selected = 'selectedItem';
-    const show = 'showList';
-
-    const updatedRows = [...soLineDetails];
-    updatedRows[index][name] = item.description;
-    updatedRows[index][selected] = item;
-    updatedRows[index][show] = false;
-    setSoLineDetails(updatedRows);
-    console.log(soLineDetails);
-    inputRef.current.focus();
-  };
-
-  //   const handleMenuItemClick = (index, item) => {
-  //     const name = 'selectedItemName';
-  //     const selected = 'selectedItem';
-  //     const show = 'showList';
-
-  //     const updatedRows = [...rows];
-  //     updatedRows[index][name] = item.description;
-  //     updatedRows[index][selected] = item;
-  //     updatedRows[index][show] = false;
-  //     setRows(updatedRows);
-  //     console.log(rows);
-  //   };
-
-  const TABLE_HEAD_Approval_Seq = [
-    // { id: '' },
-    { id: 'unit_of_measure', label: 'SL Num', alignRight: false },
-    { id: 'uom_code', label: 'Action Code', alignRight: false },
-    { id: 'uom_class', label: 'Action Date', alignRight: false },
-    { id: 'disable_date', label: 'Name', alignRight: false },
-    { id: 'description', label: 'Note', alignRight: false },
-  ];
-
-  const shipToChangable = soHeaderDetails.authorization_status === null;
-
-  // const onApprove = async () => {
-  //   const requestBody = {
-  //     pHierarchyId: 1,
-  //     pTransactionID: headerDetails.header_id,
-  //     pTransactionNum: headerDetails.order_number.toString(),
-  //     pAppsUsername: account.full_name,
-  //     pNotificationID: wfNotifications.notification_id,
-  //     pApprovalType: 'A',
-  //     pEmpid: 1,
-  //     pNote: 'A',
-  //   };
-  //   const response = await callReqApprovalFromPanelService(requestBody);
-
-  //   console.log(response);
-  // };
-
-  // const onReject = async () => {
-  //   const requestBody = {
-  //     pHierarchyId: 1,
-  //     pTransactionID: headerDetails.header_id,
-  //     pTransactionNum: headerDetails.order_number.toString(),
-  //     pAppsUsername: account.full_name,
-  //     pNotificationID: wfNotifications.notification_id,
-  //     pApprovalType: 'R',
-  //     pEmpid: 1,
-  //     pNote: 'R',
-  //   };
-  //   const response = await callReqApprovalFromPanelService(requestBody);
-
-  //   console.log(response);
-  // };
-
   const [customerRows, setCustomerRows] = useState([
     {
       custAccountId: null,
@@ -647,68 +445,6 @@ export default function UpdateAccountPage() {
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
 
-  const handleInputCustomerChange = (event) => {
-    const input = event.target.value;
-    console.log(input);
-
-    const username = 'accountName';
-    const show = 'showList';
-
-    const updatedRows = [...customerRows];
-    updatedRows[username] = input;
-    updatedRows[show] = true;
-
-    const distributor = 'distributor';
-    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: input });
-
-    setCustomerRows(updatedRows);
-    console.log(customerRows);
-
-    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
-    setFilteredCustomerList(filtered);
-    console.log(filteredCustomerList);
-  };
-
-  const handleCustomerClick = (item) => {
-    console.log(item);
-    const name = 'accountName';
-    const selected = 'custAccountId';
-    const address = 'ship_to_address';
-    const show = 'showList';
-
-    const updatedRows = [...customerRows];
-    updatedRows[name] = item.full_name;
-    // setSelectedCustomer(item.full_name);
-    updatedRows[selected] = item.cust_account_id;
-    updatedRows[address] = item.ship_to_address;
-    updatedRows[show] = false;
-
-    setCustomerRows(updatedRows);
-    const headerShipTo = 'ship_to';
-    const deliverToContactId = 'deliver_to_contact_id';
-    const deliverToOrgId = 'deliver_to_org_id';
-    const distributor = 'distributor';
-    const invoiceToContactId = 'invoice_to_contact_id';
-    const invoiceToOrgId = 'invoice_to_org_id';
-    const shipToContactId = 'ship_to_contact_id';
-    const shipToOrgId = 'ship_to_org_id';
-    const soldToContactId = 'sold_to_contact_id';
-    const soldToOrgId = 'sold_to_org_id';
-
-    setSoHeaderDetails({ ...soHeaderDetails, [headerShipTo]: item.ship_to_address });
-    setSoHeaderDetails({ ...soHeaderDetails, [deliverToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [deliverToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: item.full_name });
-    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [shipToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [shipToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [soldToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [soldToOrgId]: item.cust_account_id });
-
-    console.log(customerRows);
-  };
-
   return (
     <>
       <Helmet>
@@ -721,74 +457,7 @@ export default function UpdateAccountPage() {
             Update Account Form
           </Typography>
         </Stack>
-        <div className="row g-3 align-items-center">
-          {/* <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ width: '360px', marginRight: '15px' }}>
-              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Bank Name
-                <input
-                  type="text"
-                  id="bankName"
-                  name="bankName"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  // value={headerDetails.orderNumber}
-                  value={soHeaderDetails.bank_name}
-                  readOnly
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '460px', marginRight: '15px' }}>
-              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Description
-                <input
-                  type="text"
-                  id="description"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  value={soHeaderDetails.description}
-                  readOnly
-                />
-              </label>
-            </div>
-          </Stack> */}
-          {/* <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ width: '430px' }}>
-              <label htmlFor="ship_to" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Address Line 1
-                <input
-                  type="text"
-                  id="address_line1"
-                  name="address_line1"
-                  className="form-control"
-                  style={{ marginLeft: '5px' }}
-                  // value={soHeaderDetails.ship_to ship_to_address}
-                  value={soHeaderDetails.address_line1}
-                  readOnly
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '430px' }}>
-              <label
-                htmlFor="ship_to"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px', marginLeft: '10px' }}
-              >
-                City
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  className="form-control"
-                  style={{ marginLeft: '5px' }}
-                  // value={soHeaderDetails.ship_to ship_to_address}
-                  value={soHeaderDetails.city}
-                  readOnly
-                />
-              </label>
-            </div>
-          </Stack> */}
-        </div>
+
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
           <div className="table-responsive">
             <table className="table table-bordered table-striped table-highlight">
@@ -810,12 +479,10 @@ export default function UpdateAccountPage() {
                     />
                   </th> */}
                   {/* <th>Line Number</th> */}
-                  <th style={{ width: '220px' }}>
-                    Bank Account Name <span style={{ color: 'red' }}>*</span>
-                  </th>
+                  <th style={{ width: '220px' }}>Bank Account Name</th>
                   <th style={{ width: '50px', textAlign: 'right' }}>Bank Branch Name</th>
                   <th style={{ textAlign: 'right', width: '220px' }}>Bank Name</th>
-                  <th style={{ textAlign: 'right' }}>Account Classification</th>
+                  <th style={{ width: '200px', textAlign: 'right' }}>Account Classification</th>
                 </tr>
               </thead>
               <tbody>
@@ -853,7 +520,7 @@ export default function UpdateAccountPage() {
                           type="text"
                           className="form-control"
                           name="bank_branch_id"
-                          value={soHeaderDetails.bank_branch_id}
+                          value={soLineDetails.bank_branch_name}
                           style={{
                             textAlign: 'center',
                             width: '200px',
@@ -862,8 +529,8 @@ export default function UpdateAccountPage() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          onChange={(e) => onValueChange(e)}
-                          //   onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          readOnly
+                          // onChange={(e) => onValueChange(e)}
                         />
                       </td>
                       <td>
@@ -871,7 +538,7 @@ export default function UpdateAccountPage() {
                           type="text"
                           className="form-control"
                           name="bank_id"
-                          value={soHeaderDetails.bank_id}
+                          value={soLinesDetails.bank_name}
                           style={{
                             textAlign: 'center',
                             width: '200px',
@@ -880,7 +547,8 @@ export default function UpdateAccountPage() {
                             background: 'none',
                             outline: 'none',
                           }}
-                          onChange={(e) => onValueChange(e)}
+                          // onChange={(e) => onValueChange(e)}
+                          readOnly
                           //   onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                         />
                       </td>
@@ -892,7 +560,7 @@ export default function UpdateAccountPage() {
                           value={soHeaderDetails.account_classification}
                           style={{
                             textAlign: 'center',
-                            width: '200px',
+                            width: '400px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -902,103 +570,6 @@ export default function UpdateAccountPage() {
                           //   onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                         />
                       </td>
-
-                      {/* <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="bank_account_name"
-                          value={row.bank_account_name}
-                          // style={{ width: '80px', textAlign: 'center' }}
-                          style={{
-                            textAlign: 'center',
-                            width: '200px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          // defaultValue={row.order_quantity_uom}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="bank_branch_id"
-                          value={row.bank_branch_id}
-                          // style={{ width: '80px', textAlign: 'center' }}
-                          style={{
-                            textAlign: 'center',
-                            width: '200px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          // defaultValue={row.order_quantity_uom}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-
-                      {/* <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="bank_id"
-                          value={row.bank_id}
-                          // style={{ width: '80px', textAlign: 'center' }}
-                          style={{
-                            textAlign: 'center',
-                            width: '200px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          // defaultValue={row.order_quantity_uom}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="account_classification"
-                          value={row.account_classification}
-                          // style={{ width: '80px', textAlign: 'center' }}
-                          style={{
-                            textAlign: 'center',
-                            width: '200px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          // defaultValue={row.order_quantity_uom}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="bank_admin_email"
-                          value={row.bank_admin_email}
-                          // style={{ width: '80px', textAlign: 'center' }}
-                          style={{
-                            textAlign: 'center',
-                            width: '200px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          // defaultValue={row.order_quantity_uom}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
                     </tr>
                   )
                   //   ))

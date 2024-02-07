@@ -1370,9 +1370,9 @@ export const getAccountsService = async (bank_account_id) => {
     return err.message;
   }
 };
-export const getBankLinesService = async (bank_id) => {
+export const getBankLinesService = async (bank_branch_id) => {
   try {
-    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_id}`);
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_branch_id}`);
   } catch (err) {
     console.log(err.message);
 
