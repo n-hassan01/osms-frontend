@@ -9,18 +9,18 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -135,8 +135,8 @@ export default function ManageBankFormPage() {
   
     // { id: 'request_date', label: sentenceCase('request_date'), alignRight: false },
     { id: 'description', label: sentenceCase('description'), alignRight: false },
-    { id: 'address_line1', label: sentenceCase('address_line1'), alignRight: false },
-    { id: 'city', label: sentenceCase('city'), alignRight: false },
+    // { id: 'address_line1', label: sentenceCase('address_line1'), alignRight: false },
+    // { id: 'city', label: sentenceCase('city'), alignRight: false },
   ];
 
   const handleRequestSort = (event, property) => {
@@ -244,8 +244,7 @@ export default function ManageBankFormPage() {
                         {/* <TableCell align="left">{ordered_date ? getFormattedDate(ordered_date) : null}</TableCell> */}
                         {/* <TableCell align="left">{request_date}</TableCell> */}
                         <TableCell align="left">{description}</TableCell>
-                        <TableCell align="left">{address_line1}</TableCell>
-                        <TableCell align="left">{city}</TableCell>
+                       
                       </TableRow>
                     );
                   })}

@@ -1370,9 +1370,9 @@ export const getAccountsService = async (bank_account_id) => {
     return err.message;
   }
 };
-export const getBankLinesService = async (bank_id) => {
+export const getBankLinesService = async (bank_branch_id) => {
   try {
-    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_id}`);
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_branch_id}`);
   } catch (err) {
     console.log(err.message);
 
@@ -1392,6 +1392,15 @@ export const updateBankOrderLineService = async (lineId, lineInfo) => {
 export const deleteBankFormLinesService = async (lineId) => {
   try {
     return await axios.delete(`${usersUrl}mrlprodbankbranches/delete/${lineId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const deleteAccountsService = async (bank_account_id) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankaccounts/delete/${bank_account_id}`);
   } catch (err) {
     console.log(err.message);
 

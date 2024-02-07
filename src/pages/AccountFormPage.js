@@ -5,15 +5,15 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Button, ButtonGroup, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import {
-    addaccountsfromService,
-    addbankFormLinesService,
-    callSoApprovalService,
-    createSalesOrderNumberService,
-    deleteBankFormLinesService,
-    getBankBranchAllService,
-    getCustomerListService,
-    getInventoryItemIdList,
-    getUserProfileDetails,
+  addaccountsfromService,
+  addbankFormLinesService,
+  callSoApprovalService,
+  createSalesOrderNumberService,
+  deleteBankFormLinesService,
+  getBankBranchAllService,
+  getCustomerListService,
+  getInventoryItemIdList,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 
 import { useUser } from '../context/UserContext';
@@ -187,33 +187,7 @@ export default function AccountFormPage() {
 
     filteredArray.forEach(
       async (lineInfo, index) => {
-        //   const offerQuantityValue = lineInfo.offerQuantity ? lineInfo.offerQuantity : 0;
-        //   if (lineInfo.lineId) {
-        //     const requestBody = {
-        //       inventoryItemId: lineInfo.selectedItem.inventory_item_id,
-        //       orderedItem: lineInfo.selectedItem.description,
-        //       orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
-        //       orderedQuantity: lineInfo.orderedQuantity,
-        //       unitSellingPrice: lineInfo.selectedItem.unit_price,
-        //       // totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
-        //       offerQuantity: offerQuantityValue,
-        //       totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
-        //       unitOfferPrice:
-        //         (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
-        //         (parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10)),
-        //     };
-        //     console.log(requestBody);
-
-        //     const response = await updateSalesOrderLineService(lineInfo.lineId, requestBody);
-
-        //     if (response.status === 200) {
-        //       setShowApprovalButton(false);
-        //       // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-        //       // setShowSaveLine(true);
-        //     } else {
-        //       setShowApprovalButton(true);
-        //     }
-        //   } else {
+    
         const requestBody = {
           bankId: parseInt(headerDetails.bankId, 10),
           bankBranchName: lineInfo.bankBranchName,
@@ -226,19 +200,7 @@ export default function AccountFormPage() {
           lastUpdateLogin: account.user_id,
           creationDate: date,
           createdBy: account.user_id,
-          // creationDate: getCurrentDate(),
-
-          //   orderedItem: lineInfo.selectedItem.description,
-          //   orderQuantityUom: lineInfo.selectedItem.primary_uom_code ? lineInfo.selectedItem.primary_uom_code : '',
-          //   orderedQuantity: lineInfo.orderedQuantity,
-          //   soldFromOrgId: lineInfo.soldFromOrgId,
-          //   unitSellingPrice: lineInfo.selectedItem.unit_price,
-          // totalPrice: lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price,
-          //   offerQuantity: offerQuantityValue,
-          //   totalQuantity: parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10),
-          //   unitOfferPrice:
-          //     (lineInfo.orderedQuantity * lineInfo.selectedItem.unit_price) /
-          //     (parseInt(offerQuantityValue, 10) + parseInt(lineInfo.orderedQuantity, 10)),
+       
         };
         console.log(requestBody);
 
@@ -262,6 +224,7 @@ export default function AccountFormPage() {
     rows.forEach(async (lineInfo, index) => {
       const requestBody = {
         bankAccountName: lineInfo.bankAccountName,
+        bankAccountNum: lineInfo.bankAccountNum,
         bankBranchId: lineInfo.bankBranchId,
         bankId: parseInt(lineInfo.bankId, 10),
         accountClassification: lineInfo.accountClassification,
@@ -275,16 +238,8 @@ export default function AccountFormPage() {
 
       const response = await addaccountsfromService(requestBody, user);
       if (response.status === 200) {
-        // responseValue = response.data.headerInfo[0].bank_id;
-        // setHeaderDetails({
-        //   bankId: response.data.headerInfo[0].bank_id,
-        //   // orderNumber: response.data.headerInfo[0].order_number,
-        //   // authorizationStatus: response.data.headerInfo[0].authorization_status,
-        //   // orderNumber: response.data.headerInfo[0].order_number,
-        // });
-        // console.log(response.data);
         alert('Data Saved!');
-        // saveLines(response.data.headerInfo[0].bank_id);
+        navigate(`/dashboard/manageaccountpage`);
       } else {
         alert('Process failed! Try again');
       }
@@ -294,6 +249,7 @@ export default function AccountFormPage() {
   const [rows, setRows] = useState([
     {
       bankAccountName: '',
+      bankAccountNum: '',
       bankBranchId: '',
       bankId: '',
       accountClassification: '',
@@ -303,13 +259,6 @@ export default function AccountFormPage() {
     },
   ]);
 
-  //   let sumTotalPrice = 0;
-  //   rows.forEach((element) => {
-  //     console.log(element);
-  //     sumTotalPrice += element.selectedItem.unit_price * element.orderedQuantity;
-  //   });
-  //   console.log(sumTotalPrice);
-
   const handleAddRow = () => {
     if (rows.length === 1) setShowLines(true);
     if (showLines) {
@@ -317,6 +266,7 @@ export default function AccountFormPage() {
         ...rows,
         {
           bankAccountName: '',
+          bankAccountNum: '',
           bankBranchId: '',
           bankId: '',
           accountClassification: '',
@@ -569,6 +519,9 @@ export default function AccountFormPage() {
                   <th style={{ width: '420px' }}>
                     Account Name <span style={{ color: 'red' }}>*</span>
                   </th>
+                  <th style={{ width: '150px', textAlign: 'right' }}>
+                    Bank Account Number <span style={{ color: 'red' }}>*</span>
+                  </th>
                   <th style={{ width: '50px', textAlign: 'right' }}>Bank Branch ID</th>
                   <th style={{ textAlign: 'right' }}>Account Classification</th>
                   {/* <th style={{ textAlign: 'right' }}>City</th>
@@ -610,13 +563,30 @@ export default function AccountFormPage() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
+                      <td style={{ textAlign: 'center', height: '50%' }}>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="bankAccountNum"
+                          style={{
+                            height: '50%',
+                            textAlign: 'inherit',
+                            width: '300px',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          //   value={row.selectedItem.primary_uom_code}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
                       <td style={{ textAlign: 'left', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
                           style={{
                             textAlign: 'inherit',
-                            width: '420px',
+                            width: '320px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
@@ -645,7 +615,7 @@ export default function AccountFormPage() {
                           style={{
                             height: '50%',
                             textAlign: 'inherit',
-                            width: '200px',
+                            width: '250px',
                             border: 'none',
                             background: 'none',
                             outline: 'none',
@@ -654,137 +624,6 @@ export default function AccountFormPage() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
-                      {/* <td style={{ textAlign: 'center', height: '50%' }}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="addressLine1"
-                          style={{
-                            height: '50%',
-                            textAlign: 'inherit',
-                            width: '200px',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          //   value={row.selectedItem.primary_uom_code}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="soldFromOrgId"
-                          style={{ textAlign: 'right' }}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td style={{ textAlign: 'center', height: '50%' }}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="city"
-                          style={{
-                            height: '50%',
-                            textAlign: 'inherit',
-                            width: '200px',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          //   value={row.selectedItem.primary_uom_code}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td style={{ textAlign: 'center', height: '50%' }}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="bankAdminEmail"
-                          style={{
-                            height: '50%',
-                            textAlign: 'inherit',
-                            width: '150px',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          //   value={row.selectedItem.primary_uom_code}
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td style={{ textAlign: 'right', height: '50%' }}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="unitSellingPrice"
-                          style={{
-                            textAlign: 'inherit',
-                            width: '90px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          value={row.selectedItem.unit_price}
-                          readOnly
-                          // onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td style={{ textAlign: 'right', height: '50%' }}>
-                        <input
-                          type="number"
-                          className="form-control"
-                          name="unitOfferPrice"
-                          style={{
-                            textAlign: 'inherit',
-                            width: '100px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          value={
-                            // row.selectedItem.unit_price
-                            //   ? getFormattedPrice(
-                            //       (row.orderedQuantity * row.selectedItem.unit_price) /
-                            //         (parseInt(row.offerQuantity, 10) + parseInt(row.orderedQuantity, 10))
-                            //     )
-                            //   : 0
-                            getFormattedPrice(
-                              row.orderedQuantity
-                                ? (row.orderedQuantity * row.selectedItem.unit_price) /
-                                    (parseInt(row.offerQuantity ? row.offerQuantity : 0, 10) +
-                                      parseInt(row.orderedQuantity, 10))
-                                : row.selectedItem.unit_price
-                            )
-                          }
-                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                        />
-                      </td> */}
-                      {/* <td style={{ textAlign: 'right', height: '50%' }}>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="totalPrice"
-                          style={{
-                            textAlign: 'inherit',
-                            width: '100px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          value={
-                            row.selectedItem.unit_price
-                              ? getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
-                              : 0
-                            // getFormattedPrice(row.orderedQuantity * row.selectedItem.unit_price)
-                          }
-                          readOnly
-                        />
-                      </td> */}
                     </tr>
                   ))}
               </tbody>

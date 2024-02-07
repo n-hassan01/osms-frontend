@@ -18,7 +18,7 @@ import {
   getCustomerListService,
   getInventoryItemIdList,
   getUserProfileDetails,
-  updateBankOrderLineService
+  updateBankOrderLineService,
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
@@ -130,7 +130,6 @@ export default function UpdateBankFormPage() {
     fetchData();
   }, []);
   console.log('soLineDetails', soLineDetails);
-
 
   const [approvalSequenceDetails, setApprovalSequence] = useState([]);
   useEffect(() => {
@@ -347,9 +346,8 @@ export default function UpdateBankFormPage() {
         } else {
           setShowApprovalButton(false);
         }
-       
       } else {
-         console.log(lineInfo);
+        console.log(lineInfo);
         const requestBody = {
           //   headerId: soHeaderDetails.header_id,
           //   lineNumber: index + 1,
@@ -398,7 +396,6 @@ export default function UpdateBankFormPage() {
         } else {
           setShowApprovalButton(false);
         }
-        
       }
     });
   };
@@ -623,8 +620,6 @@ export default function UpdateBankFormPage() {
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
 
-  
-  
   return (
     <>
       <Helmet>

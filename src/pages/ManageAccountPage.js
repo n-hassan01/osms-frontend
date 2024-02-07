@@ -9,18 +9,18 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -62,7 +62,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.bank_name.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.bank_account_name.toString().toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
