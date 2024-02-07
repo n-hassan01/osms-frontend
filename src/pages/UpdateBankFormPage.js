@@ -131,6 +131,7 @@ export default function UpdateBankFormPage() {
   }, []);
   console.log('soLineDetails', soLineDetails);
 
+
   const [approvalSequenceDetails, setApprovalSequence] = useState([]);
   useEffect(() => {
     async function fetchData() {
@@ -315,11 +316,12 @@ export default function UpdateBankFormPage() {
 
     filteredArray.forEach(async (lineInfo, index) => {
       console.log(lineInfo);
-      if (soLineDetails.bank_branch_id) {
-        console.log(lineInfo);
+
+      if (lineInfo.bank_branch_id) {
+        console.log(lineInfo.bank_branch_id);
         const requestBody = {
-          bankId: soHeaderDetails.bank_id,
-          bankBranchId: soLineDetails.bank_branch_id,
+          bankId: lineInfo.bank_id,
+          bankBranchId: lineInfo.bank_branch_id,
           bankBranchName: lineInfo.bank_branch_name,
           description: lineInfo.description,
           addressLine1: lineInfo.address_line1,
@@ -332,9 +334,9 @@ export default function UpdateBankFormPage() {
           createdBy: account.user_id,
         };
         console.log(requestBody);
-
+        console.log(soLineDetails.bank_branch_id);
         // const response = await addSalesOrderLinesService(requestBody);
-        const response = await updateBankOrderLineService(lineInfo.bank_account_id, requestBody);
+        const response = await updateBankOrderLineService(lineInfo.bank_branch_id, requestBody);
 
         if (response.status === 200) {
           console.log(response.data);
@@ -345,8 +347,9 @@ export default function UpdateBankFormPage() {
         } else {
           setShowApprovalButton(false);
         }
+       
       } else {
-        console.log(lineInfo);
+         console.log(lineInfo);
         const requestBody = {
           //   headerId: soHeaderDetails.header_id,
           //   lineNumber: index + 1,
@@ -395,6 +398,7 @@ export default function UpdateBankFormPage() {
         } else {
           setShowApprovalButton(false);
         }
+        
       }
     });
   };
@@ -619,68 +623,8 @@ export default function UpdateBankFormPage() {
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
 
-  const handleInputCustomerChange = (event) => {
-    const input = event.target.value;
-    console.log(input);
-
-    const username = 'accountName';
-    const show = 'showList';
-
-    const updatedRows = [...customerRows];
-    updatedRows[username] = input;
-    updatedRows[show] = true;
-
-    const distributor = 'distributor';
-    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: input });
-
-    setCustomerRows(updatedRows);
-    console.log(customerRows);
-
-    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
-    setFilteredCustomerList(filtered);
-    console.log(filteredCustomerList);
-  };
-
-  const handleCustomerClick = (item) => {
-    console.log(item);
-    const name = 'accountName';
-    const selected = 'custAccountId';
-    const address = 'ship_to_address';
-    const show = 'showList';
-
-    const updatedRows = [...customerRows];
-    updatedRows[name] = item.full_name;
-    // setSelectedCustomer(item.full_name);
-    updatedRows[selected] = item.cust_account_id;
-    updatedRows[address] = item.ship_to_address;
-    updatedRows[show] = false;
-
-    setCustomerRows(updatedRows);
-    const headerShipTo = 'ship_to';
-    const deliverToContactId = 'deliver_to_contact_id';
-    const deliverToOrgId = 'deliver_to_org_id';
-    const distributor = 'distributor';
-    const invoiceToContactId = 'invoice_to_contact_id';
-    const invoiceToOrgId = 'invoice_to_org_id';
-    const shipToContactId = 'ship_to_contact_id';
-    const shipToOrgId = 'ship_to_org_id';
-    const soldToContactId = 'sold_to_contact_id';
-    const soldToOrgId = 'sold_to_org_id';
-
-    setSoHeaderDetails({ ...soHeaderDetails, [headerShipTo]: item.ship_to_address });
-    setSoHeaderDetails({ ...soHeaderDetails, [deliverToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [deliverToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: item.full_name });
-    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [shipToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [shipToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [soldToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [soldToOrgId]: item.cust_account_id });
-
-    console.log(customerRows);
-  };
-
+  
+  
   return (
     <>
       <Helmet>

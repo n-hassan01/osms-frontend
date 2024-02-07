@@ -190,6 +190,7 @@ export default function BankFormPage() {
         const response = await addbankFormLinesService(requestBody);
 
         if (response.status === 200) {
+          navigate(`/dashboard/managebankformpage`);
           setShowApprovalButton(false);
           handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
