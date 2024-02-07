@@ -53,7 +53,7 @@ const ShowImages = () => {
             <div key={index} className="image-item">
               <img
                 // src={require(`../../../../OSMS/osms-frontend/src/Resources/Images/${image}`)}
-                src={require(`../../src/Resources/Images/${image}`)}
+                src={require(`../../src/resources/img/${image}`)}
                 alt={'Promotion'}
               />
             </div>
