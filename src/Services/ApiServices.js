@@ -1398,3 +1398,12 @@ export const deleteBankFormLinesService = async (lineId) => {
     return err.message;
   }
 };
+export const deleteAccountsService = async (bank_account_id) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankaccounts/delete/${bank_account_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

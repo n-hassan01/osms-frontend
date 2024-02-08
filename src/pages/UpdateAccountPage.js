@@ -10,7 +10,7 @@ import {
   addbankFormLinesService,
   callReqApprovalFromPanelService,
   callSoApprovalService,
-  deleteSalesOrderHeaderService,
+  deleteAccountsService,
   deleteSalesOrderLinesService,
   getAccountsService,
   getApprovalSequenceService,
@@ -137,6 +137,7 @@ export default function UpdateAccountPage() {
     // const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
     const requestBody = {
       bankAccountName: soHeaderDetails.bank_account_name,
+      bankAccountNum:soHeaderDetails.bank_account_num,
       bankBranchId: soHeaderDetails.bank_branch_id,
       bankId: parseInt(soHeaderDetails.bank_id, 10),
       accountClassification: soHeaderDetails.account_classification,
@@ -182,13 +183,6 @@ export default function UpdateAccountPage() {
     setSoLineDetails(updatedRows);
     console.log(soLineDetails);
   };
-
-  //   const handleInputChange = (index, name, value) => {
-  //     setShowSaveLine(false);
-  //     const updatedRows = [...rows];
-  //     updatedRows[index][name] = value;
-  //     setRows(updatedRows);
-  //   };
 
   const [showApprovalButton, setShowApprovalButton] = useState(false);
 
@@ -318,7 +312,7 @@ export default function UpdateAccountPage() {
         const response = await addbankFormLinesService(requestBody);
 
         if (response.status === 200) {
-          navigate(`/dashboard/managebankformpage`);
+          navigate(`/dashboard/manageaccountpage`);
           console.log(response.data);
 
           //   setShowApprovalButton(true);
@@ -329,6 +323,17 @@ export default function UpdateAccountPage() {
         }
       }
     });
+  };
+
+  const onClickDelete = async () => {
+    const response = await deleteAccountsService(bank_account_id);
+    if (response.status === 200) {
+      alert('Data Deleted');
+      navigate(`/dashboard/manageaccountpage`);
+      console.log(response.data);
+    } else {
+      alert('Process Failed');
+    }
   };
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -373,16 +378,6 @@ export default function UpdateAccountPage() {
     setSelectedRows([]);
   };
 
-  //   const handleDeleteRows = () => {
-  //     const updatedRows = rows.filter((_, index) => !selectedRows.includes(index));
-  //     setRows(updatedRows);
-  //     setSelectedRows([]);
-  //   };
-
-  //   const onChecked = (event) => {
-  //     setHeaderInfo({ ...headerInfo, [event.target.name]: event.target.checked });
-  //   };
-
   const handleDeleteLines = () => {
     console.log(selectedLines);
     selectedLines.forEach(async (line) => {
@@ -390,31 +385,6 @@ export default function UpdateAccountPage() {
       await deleteSalesOrderLinesService(line);
     });
     setSelectedLines([]);
-  };
-
-  const onClickDelete = async () => {
-    // const isEmptyObject =
-    //   Object.values(soLineDetails[0]).every((value) => value === null || value === '') &&
-    //   !Object.values(headerDetails).every((value) => value === null);
-    // console.log(isEmptyObject);
-
-    if (
-      selectedLines.length === 0 &&
-      soLineDetails.length > 0 &&
-      !Object.values(soLineDetails[0]).every((value) => value === null || value === '')
-    ) {
-      alert('Please select lines to delete');
-    } else if (selectedLines.length === 0 && soLineDetails.length === 0) {
-      if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(soHeaderDetails.order_number);
-        window.location.reload();
-      }
-    } else if (selectedLines.length > 0 && soLineDetails.length > 0) {
-      if (confirm('Are you sure to delete the lines?')) {
-        handleDeleteLines();
-        handleDeleteRows();
-      }
-    }
   };
 
   const [customerRows, setCustomerRows] = useState([
@@ -635,9 +605,9 @@ export default function UpdateAccountPage() {
               </Button> */}
               <Button
                 style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
-                onClick={handleAddRow}
+                onClick={onClickDelete}
               >
-                Add Lines
+                Delete Account
               </Button>
             </ButtonGroup>
           </Grid>
