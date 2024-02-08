@@ -1370,7 +1370,17 @@ export const getAccountsService = async (bank_account_id) => {
     return err.message;
   }
 };
-export const getBankLinesService = async (bank_branch_id) => {
+export const getBankLinesService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchService = async (bank_branch_id) => {
   try {
     return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_branch_id}`);
   } catch (err) {
@@ -1379,6 +1389,7 @@ export const getBankLinesService = async (bank_branch_id) => {
     return err.message;
   }
 };
+
 export const updateBankOrderLineService = async (lineId, lineInfo) => {
   try {
     return await axios.put(`${usersUrl}mrlprodbankbranches/update/${lineId}`, lineInfo);
