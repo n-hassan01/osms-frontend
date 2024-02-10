@@ -14,8 +14,8 @@ import {
   deleteSalesOrderLinesService,
   getAccountsService,
   getApprovalSequenceService,
+  getBankBranchService,
   getBankHeaderService,
-  getBankLinesService,
   getCustomerListService,
   getUserProfileDetails,
   updateAccountsService,
@@ -78,7 +78,7 @@ export default function UpdateAccountPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getBankLinesService(soHeaderDetails.bank_branch_id);
+        const response = await getBankBranchService(soHeaderDetails.bank_branch_id);
         console.log(response);
 
         if (response && response.data) setSoLineDetails(response.data);
