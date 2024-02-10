@@ -102,6 +102,7 @@ export default function AccountPopover() {
     <>
       <IconButton
         onClick={handleOpen}
+        style={{ width: 'fit-content', borderRadius: '5%', height: '50px' }}
         sx={{
           p: 0,
           ...(open && {
@@ -110,13 +111,17 @@ export default function AccountPopover() {
               content: "''",
               width: '100%',
               height: '100%',
-              borderRadius: '50%',
+              borderRadius: '5%',
+              // padding: '30px',
               position: 'absolute',
               bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
             },
           }),
         }}
       >
+        <Typography variant="h6" style={{ color: 'black', marginRight: '5px', fontSize: '15px', whiteSpace: 'nowrap' }}>
+          {userName}
+        </Typography>
         <Avatar src={'https://us.remarkhb.com/wp-content/uploads/2022/01/remark-200x190.png'} alt="display photo" />
       </IconButton>
 
