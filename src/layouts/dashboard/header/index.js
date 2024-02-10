@@ -14,7 +14,7 @@ import Iconify from '../../../components/iconify';
 
 //
 import AccountPopover from './AccountPopover';
-import NotificationsPopover from './NotificationsPopover';
+// import NotificationsPopover from './NotificationsPopover';
 
 // import Searchbar from './Searchbar';
 
@@ -78,7 +78,6 @@ export default function Header({ onOpenNav }) {
 
         <NavSectionClone />
 
-
         {/* <Searchbar /> */}
         <Box sx={{ flexGrow: 1 }} />
 
@@ -91,7 +90,7 @@ export default function Header({ onOpenNav }) {
           }}
         >
           {/* <LanguagePopover /> */}
-          <NotificationsPopover />
+          {/* <NotificationsPopover /> */}
           <AccountPopover />
         </Stack>
       </StyledToolbar>
