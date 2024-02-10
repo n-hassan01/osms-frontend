@@ -116,7 +116,7 @@ export default function Page404() {
               Deposit Attachment :
               <span style={{ marginLeft: '10px' }}>
                 <img
-                  src="../../../../frontend/osms-frontend/src/Resources/Images/Deposits/deposit_wallpaperflare.com_wallpaper (1).jpg"
+                  src="https://us.remarkhb.com/wp-content/uploads/2022/01/remark-200x190.png"
                   alt="deposit attachment"
                 />
               </span>
