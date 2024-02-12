@@ -147,7 +147,7 @@ export default function LoginForm() {
         depositType: deposit.depositType,
         remarks: deposit.remarks,
         lastUpdatedBy: account.user_id,
-        createdBy: deposit.user_id,
+        createdBy: account.user_id,
       };
       console.log(requestBody);
 
