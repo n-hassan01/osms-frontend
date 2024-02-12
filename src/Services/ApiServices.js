@@ -1176,6 +1176,21 @@ export const getBankDepositViewService = async (loginToken, userId) => {
   }
 };
 
+export const getBankDepositDetailsViewService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/view/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBankDepositDetailsService = async (loginToken, userId) => {
   try {
     console.log(userId);
