@@ -93,12 +93,12 @@ export default function Page404() {
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
-              Depositor Bank :<span style={{ marginLeft: '10px' }}>{depositDetails.bank_name}</span>
+              Depositor Bank :<span style={{ marginLeft: '10px' }}>{depositDetails.depositor_bank}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex' }}>
-              Depositor Branch :<span style={{ marginLeft: '10px' }}>{depositDetails.bank_branch_name}</span>
+              Depositor Branch :<span style={{ marginLeft: '10px' }}>{depositDetails.customer_bank_branch_id}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
@@ -135,12 +135,12 @@ export default function Page404() {
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex' }}>
-              Bank Name :<span style={{ marginLeft: '10px' }}>{depositDetails.depositor_bank}</span>
+              Bank Name :<span style={{ marginLeft: '10px' }}>{depositDetails.bank_name}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="salesPerson" className="col-form-label" style={{ display: 'flex' }}>
-              Company Name :<span style={{ marginLeft: '10px' }}>{depositDetails.legal_entity_id}</span>
+              Company Name :<span style={{ marginLeft: '10px' }}>{depositDetails.company_name}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>

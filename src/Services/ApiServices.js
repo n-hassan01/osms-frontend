@@ -1238,8 +1238,12 @@ export const addBankDepositService = async (loginToken, bodyInfo) => {
 export const getTokenService = async () => {
   try {
     return await axios.get(`${sapTokenUrl}`, {
+      auth: {
+        username: 'TEST_SALES_ORDER_0109',
+        password: 'RwBznSbrjcngKNhxQXD8lfSuDginJkWDHXuK=HUp',
+      },
       headers: {
-        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        // Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
         'x-csrf-token': 'fetch',
       },
     });
@@ -1269,8 +1273,12 @@ export const createSalesOrderService = async (token, requestBody) => {
   console.log(token);
   try {
     return await axios.post(`${sapCreateSoUrl}`, requestBody, {
+      auth: {
+        username: 'TEST_SALES_ORDER_0109',
+        password: 'RwBznSbrjcngKNhxQXD8lfSuDginJkWDHXuK=HUp',
+      },
       headers: {
-        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        // Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
         'x-csrf-token': token,
       },
     });
