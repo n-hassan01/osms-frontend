@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { Container, Stack, Typography } from '@mui/material';
-import { getBankDepositDetailsService } from '../Services/ApiServices';
+import { getBankDepositDetailsViewService } from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 
 // ----------------------------------------------------------------------
@@ -54,7 +54,7 @@ export default function Page404() {
       try {
         console.log(cash_receipt_id);
         if (cash_receipt_id) {
-          const response = await getBankDepositDetailsService(user, cash_receipt_id); // Call your async function here
+          const response = await getBankDepositDetailsViewService(user, cash_receipt_id); // Call your async function here
           if (response.status === 200) setDepositDetails(response.data); // Set the account details in the component's state
         }
       } catch (error) {
@@ -93,12 +93,12 @@ export default function Page404() {
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
-              Depositor Bank :<span style={{ marginLeft: '10px' }}>{depositDetails.depositor_bank}</span>
+              Depositor Bank :<span style={{ marginLeft: '10px' }}>{depositDetails.bank_name}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex' }}>
-              Depositor Branch :<span style={{ marginLeft: '10px' }}>{depositDetails.customer_bank_branch_id}</span>
+              Depositor Branch :<span style={{ marginLeft: '10px' }}>{depositDetails.bank_branch_name}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
@@ -130,8 +130,7 @@ export default function Page404() {
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
             <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex' }}>
-              Company Bank Account :
-              <span style={{ marginLeft: '10px' }}>{depositDetails.customer_bank_account_id}</span>
+              Company Bank Account :<span style={{ marginLeft: '10px' }}>{depositDetails.bank_account_num}</span>
             </label>
           </div>
           <div className="col-auto" style={{ width: '33%' }}>
