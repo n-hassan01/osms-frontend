@@ -839,7 +839,8 @@ export default function Page404() {
                     boxSizing: 'border-box',
                   }}
                   // value={selectedCustomer}
-                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
+                  value={soHeaderDetails.distributor}
+                  // value={customerRows.accountName ? customerRows.accountName : account.full_name}
                   onChange={(e) => handleInputCustomerChange(e)}
                 />
                 {customerRows.showList && (
