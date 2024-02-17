@@ -1,3 +1,4 @@
+
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
@@ -10,7 +11,7 @@ import {
   addbankFormLinesService,
   callReqApprovalFromPanelService,
   callSoApprovalService,
-  deleteSalesOrderHeaderService,
+  deleteBankBranchService,
   deleteSalesOrderLinesService,
   getApprovalSequenceService,
   getBankHeaderService,
@@ -462,6 +463,7 @@ export default function UpdateBankFormPage() {
   };
 
   const onClickDelete = async () => {
+    console.log(soLineDetails);
     // const isEmptyObject =
     //   Object.values(soLineDetails[0]).every((value) => value === null || value === '') &&
     //   !Object.values(headerDetails).every((value) => value === null);
@@ -475,7 +477,8 @@ export default function UpdateBankFormPage() {
       alert('Please select lines to delete');
     } else if (selectedLines.length === 0 && soLineDetails.length === 0) {
       if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(soHeaderDetails.order_number);
+        console.log(soLineDetails.bank_branch_id);
+        await deleteBankBranchService(parseInt(soLineDetails.bank_branch_id, 10));
         window.location.reload();
       }
     } else if (selectedLines.length > 0 && soLineDetails.length > 0) {
@@ -998,12 +1001,12 @@ export default function UpdateBankFormPage() {
               >
                 Save
               </Button>
-              {/* <Button
+              <Button
                 style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={onClickDelete}
               >
                 Delete
-              </Button> */}
+              </Button>
               {/* <Button
                 style={{
                   whiteSpace: 'nowrap',
