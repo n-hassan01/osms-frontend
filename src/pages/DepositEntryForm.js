@@ -20,6 +20,7 @@ import {
   getBankAccountsViewService,
   getBankBranchesService,
   getBankListService,
+  getCustomerListService,
   getDepositTypesService,
   getUserProfileDetails,
   uploadBankDepositAttachmentService,
@@ -31,7 +32,12 @@ import {
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
-  const [deposit, setDeposit] = useState({ depositorBank: {}, depositorBranch: {}, companyBankAccount: {} });
+  const [deposit, setDeposit] = useState({
+    depositorBank: {},
+    depositorBranch: {},
+    companyBankAccount: {},
+    payFromCustomer: {},
+  });
 
   const navigate = useNavigate();
 
@@ -57,6 +63,34 @@ export default function LoginForm() {
     fetchData(); // Call the async function when the component mounts
   }, [user]);
   console.log(account);
+
+  const [customerList, setCustomerList] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (account) {
+          const response = await getCustomerListService(user); // Call your async function here
+          console.log(account.user_name);
+
+          const self = {
+            account_number: account.user_name,
+            cust_account_id: account.user_id,
+            full_name: account.full_name,
+            ship_to_address: account.ship_to_address,
+          };
+          response.data.push(self);
+
+          if (response.status === 200) setCustomerList(response.data); // Set the account details in the component's state
+        }
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [account]);
+  console.log(customerList);
 
   const [bankList, setBankList] = useState([]);
   useEffect(() => {
@@ -147,7 +181,9 @@ export default function LoginForm() {
         depositType: deposit.depositType,
         remarks: deposit.remarks,
         lastUpdatedBy: account.user_id,
-        createdBy: deposit.user_id,
+        createdBy: account.user_id,
+        payFromCustomer: deposit.payFromCustomer.cust_account_id,
+        depositor: deposit.depositor,
       };
       console.log(requestBody);
 
@@ -167,6 +203,7 @@ export default function LoginForm() {
   const [showBankList, setShowBankList] = useState(false);
   const [showList, setShowList] = useState(false);
   const [showAccountList, setAccountShowList] = useState(false);
+  const [showCustomerList, setCustomerShowList] = useState(false);
 
   // select depositor bank service required methods
   const [filteredBankList, setFilteredBankList] = useState([]);
@@ -185,6 +222,26 @@ export default function LoginForm() {
 
     setDeposit({ ...deposit, [name1]: item });
     setShowBankList(false);
+  };
+
+  // select pay from customer service required methods
+  const [filteredCustomerList, setFilteredCustomerList] = useState([]);
+  const handleInputCustomerChange = (event) => {
+    const input = event.target.value;
+    setCustomerShowList(true);
+
+    setDeposit({ ...deposit, [event.target.name]: { full_name: event.target.value } });
+
+    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
+    console.log(filtered);
+    setFilteredCustomerList(filtered);
+  };
+
+  const handleCustomerClick = (index, item) => {
+    const name1 = 'payFromCustomer';
+
+    setDeposit({ ...deposit, [name1]: item });
+    setCustomerShowList(false);
   };
 
   // select depositor bank branch service required methods
@@ -270,6 +327,48 @@ export default function LoginForm() {
               onChange={(e) => onValueChange(e)}
               InputLabelProps={{ shrink: true }}
             />
+
+            <TextField
+              required
+              name="payFromCustomer"
+              label="Pay From Customer"
+              autoComplete="given-name"
+              fullWidth
+              style={{ backgroundColor: 'white' }}
+              onChange={(e) => handleInputCustomerChange(e)}
+              value={deposit.payFromCustomer.full_name ? deposit.payFromCustomer.full_name : ''}
+              InputLabelProps={{ shrink: true }}
+            />
+            {showCustomerList && (
+              <ul
+                style={{
+                  // position: 'absolute',
+                  // top: '100%',
+                  // left: 0,
+                  // width: '100%',
+                  backgroundColor: 'white',
+                  border: '1px solid #ccc',
+                  zIndex: 1,
+                }}
+              >
+                {filteredCustomerList.map((suggestion, index) => (
+                  <MenuItem key={index} onClick={() => handleCustomerClick(index, suggestion)}>
+                    {suggestion.full_name}
+                  </MenuItem>
+                ))}
+              </ul>
+            )}
+
+            <TextField
+              name="depositor"
+              label="Depositor"
+              autoComplete="given-name"
+              fullWidth
+              style={{ backgroundColor: 'white' }}
+              onChange={(e) => onValueChange(e)}
+              InputLabelProps={{ shrink: true }}
+            />
+
             <TextField
               required
               name="depositorBank"

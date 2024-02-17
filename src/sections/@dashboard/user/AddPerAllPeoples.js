@@ -93,7 +93,7 @@ export default function AddPerAllPeoples() {
   const handleClick = async () => {
     try {
       console.log('clone', people.person_id);
-console.log(people);
+      console.log(people);
       const filteredArray = people.filter((item) => Object.values(item).some((value) => value !== ''));
 
       let c;
@@ -141,7 +141,7 @@ console.log(people);
           //  handleClose();
         }
       }
-     // setPeople([]);
+      // setPeople([]);
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');
@@ -173,8 +173,9 @@ console.log(people);
   };
 
   const handleClose = () => {
-    navigate('/dashboard/showperallpeoples');
-    window.location.reload();
+    navigate('/dashboard/showperallpeoples', { replace: true });
+    // navigate('/dashboard/showperallpeoples');
+    // window.location.reload();
     setOpen(false);
   };
 

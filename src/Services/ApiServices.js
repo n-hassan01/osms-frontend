@@ -1161,6 +1161,51 @@ export const getBankAccountsViewService = async (loginToken, bankId) => {
   }
 };
 
+export const getBankDepositViewService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/get/view/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankDepositDetailsViewService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/view/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankDepositDetailsService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/get/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const uploadBankDepositAttachmentService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}bank-deposit/upload`, bodyInfo, {
@@ -1193,8 +1238,12 @@ export const addBankDepositService = async (loginToken, bodyInfo) => {
 export const getTokenService = async () => {
   try {
     return await axios.get(`${sapTokenUrl}`, {
+      auth: {
+        username: 'TEST_SALES_ORDER_0109',
+        password: 'RwBznSbrjcngKNhxQXD8lfSuDginJkWDHXuK=HUp',
+      },
       headers: {
-        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        // Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
         'x-csrf-token': 'fetch',
       },
     });
@@ -1224,8 +1273,12 @@ export const createSalesOrderService = async (token, requestBody) => {
   console.log(token);
   try {
     return await axios.post(`${sapCreateSoUrl}`, requestBody, {
+      auth: {
+        username: 'TEST_SALES_ORDER_0109',
+        password: 'RwBznSbrjcngKNhxQXD8lfSuDginJkWDHXuK=HUp',
+      },
       headers: {
-        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        // Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
         'x-csrf-token': token,
       },
     });
@@ -1370,7 +1423,17 @@ export const getAccountsService = async (bank_account_id) => {
     return err.message;
   }
 };
-export const getBankLinesService = async (bank_branch_id) => {
+export const getBankLinesService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchService = async (bank_branch_id) => {
   try {
     return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_branch_id}`);
   } catch (err) {
@@ -1379,6 +1442,7 @@ export const getBankLinesService = async (bank_branch_id) => {
     return err.message;
   }
 };
+
 export const updateBankOrderLineService = async (lineId, lineInfo) => {
   try {
     return await axios.put(`${usersUrl}mrlprodbankbranches/update/${lineId}`, lineInfo);
