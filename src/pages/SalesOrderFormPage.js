@@ -95,8 +95,20 @@ export default function Page404() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getCustomerListService(user); // Call your async function here
-        if (response.status === 200) setCustomerList(response.data); // Set the account details in the component's state
+        if (account) {
+          const response = await getCustomerListService(user); // Call your async function here
+          console.log(account.user_name);
+
+          const self = {
+            account_number: account.user_name,
+            cust_account_id: account.user_id,
+            full_name: account.full_name,
+            ship_to_address: account.ship_to_address,
+          };
+          response.data.push(self);
+
+          if (response.status === 200) setCustomerList(response.data); // Set the account details in the component's state
+        }
       } catch (error) {
         // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
@@ -104,7 +116,7 @@ export default function Page404() {
     }
 
     fetchData(); // Call the async function when the component mounts
-  }, []);
+  }, [account]);
   console.log(customerList);
 
   const [salesOrderNumber, setSalesOrderNumber] = useState(null);
@@ -606,8 +618,8 @@ export default function Page404() {
                     height: '30px', // Set a fixed height for the input field
                     boxSizing: 'border-box',
                   }}
-                  // value={selectedCustomer}
-                  value={customerRows.accountName ? customerRows.accountName : account.full_name}
+                  // value={customerRows.accountName ? customerRows.accountName : account.full_name}
+                  value={customerRows.accountName}
                   onChange={(e) => handleInputCustomerChange(e)}
                 />
                 {customerRows.showList && (
@@ -637,7 +649,8 @@ export default function Page404() {
                   className="form-control"
                   style={{ marginLeft: '7px', height: '30px', width: '390px' }}
                   // defaultValue={customerRows.ship_to_address ? customerRows.ship_to_address : account.ship_to_address}
-                  value={headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address}
+                  // value={headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address}
+                  value={headerInfo.shipTo}
                   onChange={(e) => onChangeHeader(e)}
                 />
               </label>
