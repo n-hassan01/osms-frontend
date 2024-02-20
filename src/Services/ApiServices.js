@@ -1234,6 +1234,21 @@ export const addBankDepositService = async (loginToken, bodyInfo) => {
   }
 };
 
+export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/download`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+      responseType: 'arraybuffer',
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // SAP testing
 export const getTokenService = async () => {
   try {

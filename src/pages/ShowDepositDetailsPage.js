@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
+import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
 import { Container, Stack, Typography } from '@mui/material';
-import { getBankDepositDetailsViewService } from '../Services/ApiServices';
+import { dowloadBankDepositReceiptService, getBankDepositDetailsViewService } from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 
 // ----------------------------------------------------------------------
@@ -67,6 +68,32 @@ export default function Page404() {
   }, [cash_receipt_id]);
   console.log(depositDetails);
 
+  const dowloadBankDepositReceipt = async () => {
+    try {
+      const filename = depositDetails.uploaded_filename;
+      console.log(filename);
+
+      const requestBody = {
+        fileName: filename,
+      };
+      const response = await dowloadBankDepositReceiptService(user, requestBody);
+
+      if (response.status === 200) {
+        const byteArray = response.data;
+        const contentType = response.headers['content-type'];
+
+        const blob = new Blob([byteArray], { type: contentType });
+        console.log(blob);
+
+        saveAs(blob, filename);
+      } else {
+        console.log('Image download failed. Server returned status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -115,10 +142,11 @@ export default function Page404() {
             <label htmlFor="special_discount" className="col-form-label" style={{ display: 'flex' }}>
               Deposit Attachment :
               <span style={{ marginLeft: '10px' }}>
-                <img
+                {/* <img
                   src="https://us.remarkhb.com/wp-content/uploads/2022/01/remark-200x190.png"
                   alt="deposit attachment"
-                />
+                /> */}
+                <button onClick={dowloadBankDepositReceipt}>download attachment</button>
               </span>
               {/* Deposit Attachment :<span style={{ marginLeft: '10px' }}><img src='../Resources/Images/Deposits/deposit_13-fotor-bg-remover-20230919163920.png' alt='deposit attachment'></img> {depositDetails.uploaded_filename}</span> */}
             </label>
