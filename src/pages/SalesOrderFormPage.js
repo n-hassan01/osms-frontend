@@ -262,7 +262,11 @@ export default function Page404() {
         invoiceToContactId: customerRows.custAccountId,
         deliverToContactId: customerRows.custAccountId,
         // totalPrice: sumTotalPrice,
-        shipTo: headerInfo.shipTo ? headerInfo.shipTo : customerRows.ship_to_address,
+        shipTo: headerInfo.shipTo
+          ? headerInfo.shipTo
+          : customerRows.ship_to_address
+          ? customerRows.ship_to_address
+          : '',
         specialDiscount: parseInt(headerInfo.specialDiscount, 10),
         specialAdjustment: parseInt(headerInfo.specialAdjustment, 10),
       };
@@ -290,7 +294,7 @@ export default function Page404() {
         // salesChannelCode: headerInfo.salesChannelCode,
         // bookedDate: headerInfo.bookedDate ? headerInfo.bookedDate : getCurrentDate(),
         description: headerInfo.description,
-        shipTo: headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address,
+        shipTo: headerInfo.shipTo ? headerInfo.shipTo : account.ship_to_address ? account.ship_to_address : '',
         specialDiscount: parseInt(headerInfo.specialDiscount, 10),
         specialAdjustment: parseInt(headerInfo.specialAdjustment, 10),
         // totalPrice: sumTotalPrice,
