@@ -6,13 +6,13 @@ import { Container, Grid, Stack, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import axios from 'axios';
 import { sentenceCase } from 'change-case';
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addPerAllPeopleService } from '../../../Services/Admin/AddPerAllPeople';
 import { getperPerAllPeoplesService } from '../../../Services/Admin/GetperPerAllPeoples';
+import { updatePerAllPeoplesDetails } from '../../../Services/ApiServices';
 
 export default function AddPerAllPeoples() {
   const navigate = useNavigate();
@@ -133,15 +133,12 @@ export default function AddPerAllPeoples() {
             originalDateOfHire: lineInfo.original_date_of_hire,
           };
           console.log(requestBody);
-          const response = await axios.put(
-            `http://182.160.114.100:5001/update-per-all-peoples/${person_id}`,
-            requestBody
-          );
+          const response = await updatePerAllPeoplesDetails(requestBody, person_id);
+          console.log(response);
           console.log('Pass to home after request ');
-          //  handleClose();
+          handleClose();
         }
       }
-      // setPeople([]);
     } catch (err) {
       console.log(err.message);
       alert('Process failed! Try again later');

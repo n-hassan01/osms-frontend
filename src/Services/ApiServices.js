@@ -1486,3 +1486,25 @@ export const deleteAccountsService = async (bank_account_id) => {
     return err.message;
   }
 };
+
+export const deleteBankBranchService = async (bank_branch_id) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankbranches/delete/${bank_branch_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updatePerAllPeoplesDetails = async (requestBody, person_id) => {
+  console.log(requestBody);
+
+  try {
+    return await axios.put(`${usersUrl}update-per-all-peoples/${person_id}`, requestBody);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
