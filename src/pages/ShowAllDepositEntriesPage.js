@@ -283,10 +283,10 @@ export default function UserPage() {
     { id: 'customer', label: sentenceCase('customer'), alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: false },
-    { id: 'deposit_bank', label: 'Deposit Bank', alignRight: false },
-    { id: 'deposit_bank_branch', label: 'Deposit Branch', alignRight: false },
-    { id: 'deposit_bank_account', label: 'Deposit Account', alignRight: false },
-    { id: 'company_bank_name', label: 'Company Bank Name', alignRight: false },
+    { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
+    { id: 'deposit_bank_account', label: 'Deposit From Account', alignRight: false },
+    { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
+    { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     // { id: '' },
   ];
@@ -442,10 +442,13 @@ export default function UserPage() {
                         <TableCell align="left">{full_name}</TableCell>
                         <TableCell align="left">{getFormattedDate(deposit_date)}</TableCell>
                         <TableCell align="left">{amount}</TableCell>
-                        <TableCell align="left">{customer_bank_name}</TableCell>
-                        <TableCell align="left">{customer_bank_branch_name}</TableCell>
-                        <TableCell align="left">{bank_account_name}</TableCell>
                         <TableCell align="left">{company_bank_name}</TableCell>
+                        <TableCell align="left">{bank_account_name}</TableCell>
+                        {/* <TableCell align="left">{customer_bank_name}</TableCell> */}
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {customer_bank_name}
+                        </TableCell>
+                        <TableCell align="left">{customer_bank_branch_name}</TableCell>
                         <TableCell align="left">{status}</TableCell>
                         {/* <TableCell align="left">
                           <Link
