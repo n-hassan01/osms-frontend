@@ -1176,6 +1176,20 @@ export const getBankDepositViewService = async (loginToken, userId) => {
   }
 };
 
+export const getAllBankDepositsForAccountsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBankDepositDetailsViewService = async (loginToken, userId) => {
   try {
     console.log(userId);
@@ -1223,6 +1237,20 @@ export const uploadBankDepositAttachmentService = async (loginToken, bodyInfo) =
 export const addBankDepositService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}bank-deposit/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const approveBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}bank-deposit/approve`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },

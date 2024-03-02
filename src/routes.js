@@ -56,6 +56,7 @@ import DepositEntryForm from './pages/DepositEntryForm';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import ShowAllDeposits from './pages/ShowAllDepositEntriesPage';
 import ShowDepositDetailsPage from './pages/ShowDepositDetailsPage';
 import ShowDepositHistoryPage from './pages/ShowDepositHistoryPage';
 import ImageGallery from './pages/ShowImages';
@@ -153,9 +154,10 @@ export default function Router() {
         { path: 'manageaccountpage', element: <ManageAccountPage /> },
         { path: 'updateaccountpage/:bank_account_id', element: <UpdateAccountPage /> },
         { path: 'depositEntryForm', element: <DepositEntryForm /> },
-        { path: 'depositEntryForm', element: <DepositEntryForm /> },
+        // { path: 'depositEntryForm', element: <DepositEntryForm /> },
         { path: 'showDeposits', element: <ShowDepositHistoryPage /> },
         { path: 'showDepositDetails/:cash_receipt_id', element: <ShowDepositDetailsPage /> },
+        { path: 'allDeposits', element: <ShowAllDeposits /> },
       ],
     },
 
