@@ -50,9 +50,21 @@ import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTrans
 // import getCookieService from './Services/GetCookieService';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
+import AccountFormPage from './pages/AccountFormPage';
+import BankFormPage from './pages/BankFormPage';
+import DepositEntryForm from './pages/DepositEntryForm';
+import ManageAccountPage from './pages/ManageAccountPage';
+import ManageBankFormPage from './pages/ManageBankFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import ShowAllDeposits from './pages/ShowAllDepositEntriesPage';
+import ShowDepositDetailsPage from './pages/ShowDepositDetailsPage';
+import ShowDepositHistoryPage from './pages/ShowDepositHistoryPage';
+import ImageGallery from './pages/ShowImages';
 import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
+import UpdateAccountPage from './pages/UpdateAccountPage';
+import UpdateBankFormPage from './pages/UpdateBankFormPage';
+import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
 
@@ -134,6 +146,18 @@ export default function Router() {
         { path: 'showexcelfile', element: <ShowExcelFile /> },
         { path: 'viewordersheader/:header_id', element: <ViewOrdersHeader /> },
         { path: 'settings', element: <TermsConditionPage /> },
+        { path: 'showimages', element: <ImageGallery /> },
+        { path: 'bankformpage', element: <BankFormPage /> },
+        { path: 'managebankformpage', element: <ManageBankFormPage /> },
+        { path: 'updatebankformpage/:bank_id', element: <UpdateBankFormPage /> },
+        { path: 'accountformpage', element: <AccountFormPage /> },
+        { path: 'manageaccountpage', element: <ManageAccountPage /> },
+        { path: 'updateaccountpage/:bank_account_id', element: <UpdateAccountPage /> },
+        { path: 'depositEntryForm', element: <DepositEntryForm /> },
+        // { path: 'depositEntryForm', element: <DepositEntryForm /> },
+        { path: 'showDeposits', element: <ShowDepositHistoryPage /> },
+        { path: 'showDepositDetails/:cash_receipt_id', element: <ShowDepositDetailsPage /> },
+        { path: 'allDeposits', element: <ShowAllDeposits /> },
       ],
     },
 
@@ -144,6 +168,10 @@ export default function Router() {
     {
       path: 'signup',
       element: <SignupPage />,
+    },
+    {
+      path: 'forgetPassword',
+      element: <ForgetPassword />,
     },
     {
       path: 'sap',
