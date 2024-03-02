@@ -52,6 +52,16 @@ export const userProcess = async (userInfo) => {
   }
 };
 
+export const getUserEmailAddress = async (userInfo) => {
+  try {
+    return await axios.get(`${usersUrl}get-email-address/${userInfo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const login = async (user) => {
   try {
     return await axios.post(`${usersUrl}login/`, user);
@@ -92,6 +102,7 @@ export const comparePasswordService = async (loginToken, requestBody) => {
   }
 };
 
+// change and forget password service
 export const changePasswordService = async (loginToken, requestBody) => {
   try {
     return await axios.put(`${usersUrl}change-password/`, requestBody, {
@@ -99,6 +110,16 @@ export const changePasswordService = async (loginToken, requestBody) => {
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const forgetPasswordService = async (requestBody) => {
+  try {
+    return await axios.put(`${usersUrl}forget-password/`, requestBody);
   } catch (err) {
     console.log(err.message);
 
@@ -876,6 +897,16 @@ export const updateSalesOrderHeaderService = async (headerId, headerInfo) => {
   }
 };
 
+export const updateAccountsService = async (headerId, headerInfo) => {
+  try {
+    return await axios.put(`${usersUrl}mrlprodbankaccounts/update/${headerId}`, headerInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getSalesOrderHeaderService = async (requestInfo) => {
   try {
     return await axios.get(`${usersUrl}get-sales-order-header/${requestInfo}`);
@@ -1059,12 +1090,203 @@ export const getPerHzCustAccountsDetails = async (cust_account_id) => {
   }
 };
 
+// Bank deposit services
+export const getBankListService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get/list`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDepositTypesService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/type-list`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchListService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchesService = async (loginToken, bankId) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list/${bankId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankAccountsViewService = async (loginToken, bankId) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/company-bank-account/view`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankDepositViewService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/get/view/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllBankDepositsForAccountsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankDepositDetailsViewService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/view/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankDepositDetailsService = async (loginToken, userId) => {
+  try {
+    console.log(userId);
+    return await axios.get(`${usersUrl}bank-deposit/get/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const uploadBankDepositAttachmentService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/upload`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const approveBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}bank-deposit/approve`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/download`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+      responseType: 'arraybuffer',
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // SAP testing
 export const getTokenService = async () => {
   try {
     return await axios.get(`${sapTokenUrl}`, {
+      auth: {
+        username: 'TEST_SALES_ORDER_0109',
+        password: 'RwBznSbrjcngKNhxQXD8lfSuDginJkWDHXuK=HUp',
+      },
       headers: {
-        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        // Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
         'x-csrf-token': 'fetch',
       },
     });
@@ -1094,11 +1316,220 @@ export const createSalesOrderService = async (token, requestBody) => {
   console.log(token);
   try {
     return await axios.post(`${sapCreateSoUrl}`, requestBody, {
+      auth: {
+        username: 'TEST_SALES_ORDER_0109',
+        password: 'RwBznSbrjcngKNhxQXD8lfSuDginJkWDHXuK=HUp',
+      },
       headers: {
-        Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
+        // Authorization: 'Basic VEVTVF9TQUxFU19PUkRFUl8wMTA5OlJ3QnpuU2JyamNuZ0tOaHhRWEQ4bGZTdURnaW5Ka1dESFh1Sz1IVXA=',
         'x-csrf-token': token,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllWfNotificationsService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}get-all-wf-notifications`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getWfNotificationsService = async (bodyInfo) => {
+  try {
+    console.log(bodyInfo);
+    return await axios.post(`${usersUrl}get-wf-notifications`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const uploadImageService = async (user, bodyInfo) => {
+  try {
+    console.log(bodyInfo);
+    console.log(user);
+    return await axios.post(`${usersUrl}upload-image`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getImageService = async (user) => {
+  try {
+    return await axios.get(`${usersUrl}promotion-list`, {
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addbankfromheaderService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbanks/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const addaccountsfromService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbankaccounts/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addbankFormLinesService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}mrlprodbankbranches/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getBankAllService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getAccountService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankaccounts/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getBankBranchAllService = async () => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankHeaderService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbanks/get/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAccountsService = async (bank_account_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankaccounts/get/${bank_account_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getBankLinesService = async (bank_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/list/${bank_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBankBranchService = async (bank_branch_id) => {
+  try {
+    return await axios.get(`${usersUrl}mrlprodbankbranches/get/${bank_branch_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateBankOrderLineService = async (lineId, lineInfo) => {
+  try {
+    return await axios.put(`${usersUrl}mrlprodbankbranches/update/${lineId}`, lineInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteBankFormLinesService = async (lineId) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankbranches/delete/${lineId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const deleteAccountsService = async (bank_account_id) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankaccounts/delete/${bank_account_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteBankBranchService = async (bank_branch_id) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankbranches/delete/${bank_branch_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updatePerAllPeoplesDetails = async (requestBody, person_id) => {
+  console.log(requestBody);
+
+  try {
+    return await axios.put(`${usersUrl}update-per-all-peoples/${person_id}`, requestBody);
   } catch (err) {
     console.log(err.message);
 

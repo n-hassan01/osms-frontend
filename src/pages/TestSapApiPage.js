@@ -16,6 +16,7 @@ export default function TestSapApiPage() {
   const handleClick = async () => {
     try {
       const responseToken = await getTokenService();
+      console.log(responseToken);
       console.log('token', responseToken.headers['x-csrf-token']);
       const token = responseToken.headers['x-csrf-token'];
 
@@ -58,6 +59,44 @@ export default function TestSapApiPage() {
             },
           ],
         };
+        // const requestBody = {
+        //   SalesOrderType: 'OR',
+        //   SalesOrganization: '6110',
+        //   DistributionChannel: '10',
+        //   OrganizationDivision: '00',
+        //   SoldToParty: '1000003',
+        //   PurchaseOrderByCustomer: 'Created via OData Service',
+        //   CustomerPaymentTerms: '',
+        //   to_Partner: [
+        //     {
+        //       PartnerFunction: 'SH',
+        //       Customer: '61100001',
+        //       Personnel: '0',
+        //     },
+        //   ],
+        //   to_Text: [
+        //     {
+        //       Language: 'EN',
+        //       LongTextID: 'TX01',
+        //       LongText: 'Long text of LongTextID TX01',
+        //     },
+        //   ],
+        //   to_Item: [
+        //     {
+        //       Material: 'TG11',
+        //       RequestedQuantity: '100',
+        //       to_PricingElement: [
+        //         {
+        //           ConditionType: 'ZPR0',
+        //           ConditionRateValue: '10',
+        //           ConditionCurrency: 'USD',
+        //           ConditionQuantity: '100',
+        //           ConditionQuantityUnit: 'PC',
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // };
 
         console.log(token);
         const responseCreateSo = await createSalesOrderService(token, requestBody);

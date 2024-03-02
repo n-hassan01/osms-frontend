@@ -28,6 +28,10 @@ export default function LoginForm() {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
+  const naviateToForgetPassword = () => {
+    navigate('/forgetPassword', { replace: true });
+  };
+
   const { loginUser } = useUser();
   console.log(loginUser);
 
@@ -42,7 +46,7 @@ export default function LoginForm() {
         loginUser();
         loginUser(token);
 
-        navigate('/dashboard/dashclone');
+        navigate('/dashboard/dashclone', { replace: true });
       } else {
         alert('Authentication failed! Try again');
       }
@@ -84,7 +88,13 @@ export default function LoginForm() {
         />
       </Stack>
 
-      <Stack alignItems="end" justifyContent="space-between" sx={{ my: 2 }}>
+      <Stack
+        alignItems="end"
+        justifyContent="space-between"
+        sx={{ my: 2 }}
+        style={{ cursor: 'pointer' }}
+        onClick={naviateToForgetPassword}
+      >
         <Link variant="subtitle2" underline="hover">
           Forgot password?
         </Link>

@@ -1,3 +1,4 @@
+
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
@@ -5,49 +6,32 @@ import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
+import { Button, ButtonGroup, Container, Grid, Stack, Typography } from '@mui/material';
 import {
-  Button,
-  ButtonGroup,
-  Container,
-  Grid,
-  MenuItem,
-  Select,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography,
-} from '@mui/material';
-import {
-  addSalesOrderLinesService,
+  addbankFormLinesService,
   callReqApprovalFromPanelService,
   callSoApprovalService,
-  deleteSalesOrderHeaderService,
+  deleteBankBranchService,
   deleteSalesOrderLinesService,
   getApprovalSequenceService,
+  getBankHeaderService,
+  getBankLinesService,
   getCustomerListService,
   getInventoryItemIdList,
-  getSalesOrderHeaderService,
-  getSalesOrderLinesService,
   getUserProfileDetails,
-  // addSalesOrderHeaderService,
-  updateSalesOrderHeaderService,
-  updateSalesOrderLineService,
+  updateBankOrderLineService,
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
 import { useUser } from '../context/UserContext';
-import SoListHead from '../sections/@dashboard/salesOrders/SoListHeader';
 // ----------------------------------------------------------------------
 
-export default function Page404() {
+export default function UpdateBankFormPage() {
   const navigate = useNavigate();
   const inputRef = useRef(null);
 
-  const { header_id } = useParams();
-  console.log('headerId', header_id);
+  const { bank_id } = useParams();
+  console.log('bankId', bank_id);
 
   function getCurrentDate() {
     const now = new Date();
@@ -112,7 +96,8 @@ export default function Page404() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getSalesOrderHeaderService(parseInt(header_id, 10));
+        const response = await getBankHeaderService(parseInt(bank_id, 10));
+        console.log(response);
         if (response) setSoHeaderDetails(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -127,16 +112,17 @@ export default function Page404() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getSalesOrderLinesService(parseInt(header_id, 10));
-        const updatedData = response.data.map((line) => ({
-          ...line,
-          selectedItemName: line.ordered_item,
-          selectedItem: {},
-          showList: false,
-        }));
-        console.log(updatedData);
+        const response = await getBankLinesService(bank_id);
+        console.log(response);
+        // const updatedData = response.data.map((line) => ({
+        //   ...line,
+        //   selectedItemName: line.ordered_item,
+        //   selectedItem: {},
+        //   showList: false,
+        // }));
+        // console.log(updatedData);
         // if (response) setSoLineDetails(response.data);
-        if (response) setSoLineDetails(updatedData);
+        if (response) setSoLineDetails(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -150,7 +136,7 @@ export default function Page404() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getApprovalSequenceService(parseInt(header_id, 10)); // Call your async function here
+        const response = await getApprovalSequenceService(parseInt(bank_id, 10)); // Call your async function here
         if (response.status === 200) setApprovalSequence(response.data); // Set the account details in the component's state
       } catch (error) {
         // Handle any errors that might occur during the async operation
@@ -174,47 +160,47 @@ export default function Page404() {
     orderNumber: null,
   });
 
-  let sumTotalPrice = 0;
-  soLineDetails.forEach((element) => {
-    sumTotalPrice +=
-      (element.selectedItem.unit_price ? element.selectedItem.unit_price : element.unit_selling_price) *
-      element.ordered_quantity;
-  });
-  // row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price
-  console.log(sumTotalPrice);
+  //   let sumTotalPrice = 0;
+  //   soLineDetails.forEach((element) => {
+  //     sumTotalPrice +=
+  //       (element.selectedItem.unit_price ? element.selectedItem.unit_price : element.unit_selling_price) *
+  //       element.ordered_quantity;
+  //   });
+  //   // row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price
+  //   console.log(sumTotalPrice);
 
-  const saveHeader = async () => {
-    const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
-    const requestBody = {
-      lastUpdatedBy: account.user_id,
-      shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
-      description: soHeaderDetails.description ? soHeaderDetails.description : '',
-      // shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
-      shipTo: customerRows.ship_to_address ? customerRows.ship_to_address : shipToValue,
-      specialDiscount: parseInt(soHeaderDetails.special_discount, 10),
-      specialAdjustment: parseInt(soHeaderDetails.special_adjustment, 10),
-      // totalPrice: soHeaderDetails.total_price,
-      totalPrice: sumTotalPrice,
-      distributor: customerRows.accountName ? customerRows.accountName : account.full_name,
-      soldToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      shipToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      invoiceToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      deliverToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      soldToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      shipToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      invoiceToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-      deliverToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
-    };
-    console.log(requestBody);
+  // const saveHeader = async () => {
+  //   const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
+  //   const requestBody = {
+  //     lastUpdatedBy: account.user_id,
+  //     shippingMethodCode: soHeaderDetails.shipping_method_code ? soHeaderDetails.shipping_method_code : '',
+  //     description: soHeaderDetails.description ? soHeaderDetails.description : '',
+  //     // shipTo: soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '',
+  //     shipTo: customerRows.ship_to_address ? customerRows.ship_to_address : shipToValue,
+  //     specialDiscount: parseInt(soHeaderDetails.special_discount, 10),
+  //     specialAdjustment: parseInt(soHeaderDetails.special_adjustment, 10),
+  //     // totalPrice: soHeaderDetails.total_price,
+  //     // totalPrice: sumTotalPrice,
+  //     distributor: customerRows.accountName ? customerRows.accountName : account.full_name,
+  //     soldToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     shipToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     invoiceToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     deliverToOrgId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     soldToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     shipToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     invoiceToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //     deliverToContactId: customerRows.custAccountId ? customerRows.custAccountId : account.ship_to_org_id,
+  //   };
+  //   console.log(requestBody);
 
-    const response = await updateSalesOrderHeaderService(soHeaderDetails.header_id, requestBody);
-    if (response.status === 200) {
-      console.log(response.data);
-      saveLines();
-    } else {
-      alert('Process failed! Try again');
-    }
-  };
+  //   const response = await updateSalesOrderHeaderService(soHeaderDetails.header_id, requestBody);
+  //   if (response.status === 200) {
+  //     console.log(response.data);
+  //     saveLines();
+  //   } else {
+  //     alert('Process failed! Try again');
+  //   }
+  // };
 
   const handleAddRow = () => {
     // if (rows.length === 1) setShowLines(true);
@@ -222,77 +208,11 @@ export default function Page404() {
       setSoLineDetails([
         ...soLineDetails,
         {
-          line_id: null,
-          org_id: null,
-          header_id: null,
-          line_type_id: null,
-          line_number: null,
-          ordered_item: '',
-          request_date: null,
-          promise_date: null,
-          schedule_ship_date: null,
-          order_quantity_uom: '',
-          pricing_quantity: null,
-          pricing_quantity_uom: null,
-          cancelled_quantity: null,
-          shipped_quantity: null,
-          ordered_quantity: null,
-          fulfilled_quantity: null,
-          shipping_quantity: null,
-          shipping_quantity_uom: null,
-          delivery_lead_time: null,
-          tax_exempt_flag: null,
-          tax_exempt_number: null,
-          tax_exempt_reason_code: null,
-          ship_from_org_id: null,
-          ship_to_org_id: null,
-          invoice_to_org_id: null,
-          deliver_to_org_id: null,
-          ship_to_contact_id: null,
-          deliver_to_contact_id: null,
-          invoice_to_contact_id: null,
-          sold_from_org_id: null,
-          sold_to_org_id: null,
-          cust_po_number: null,
-          inventory_item_id: null,
-          tax_date: null,
-          tax_code: null,
-          tax_rate: null,
-          price_list_id: null,
-          pricing_date: null,
-          shipment_number: null,
-          agreement_id: null,
-          shipment_priority_code: null,
-          shipping_method_code: null,
-          freight_carrier_code: null,
-          freight_terms_code: null,
-          fob_point_code: null,
-          tax_point_code: null,
-          payment_term_id: null,
-          invoicing_rule_id: null,
-          accounting_rule_id: null,
-          source_document_type_id: null,
-          source_document_id: null,
-          source_document_line_id: null,
-          item_revision: null,
-          unit_selling_price: null,
-          unit_list_price: null,
-          tax_value: null,
-          creation_date: '',
-          created_by: null,
-          last_update_date: null,
-          last_updated_by: null,
-          last_update_login: null,
-          sort_order: null,
-          item_type_code: null,
-          cancelled_flag: null,
-          open_flag: '',
-          booked_flag: '',
-          salesrep_id: null,
-          order_source_id: null,
-          selectedItemName: '',
-          selectedItem: {},
-          showList: false,
+          bankBranchName: '',
+          description: '',
+          addressLine1: '',
+          city: '',
+          bankAdminEmail: '',
         },
       ]);
     }
@@ -386,55 +306,41 @@ export default function Page404() {
       // window.location.reload();
     }
   };
+  const date = new Date();
 
   const saveLines = async () => {
+    console.log(soLineDetails);
     // const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== ''));
     const filteredArray = soLineDetails.filter((item) => Object.values(item).some((value) => value !== ''));
     console.log(filteredArray);
 
     filteredArray.forEach(async (lineInfo, index) => {
-      console.log(lineInfo.line_id);
       console.log(lineInfo);
-      if (lineInfo.line_id) {
-        console.log(lineInfo);
+
+      if (lineInfo.bank_branch_id) {
+        console.log(lineInfo.bank_branch_id);
         const requestBody = {
-          // headerId: headerDetails.headerId,
-          // lineNumber: index + 1,
-          // inventoryItemId: lineInfo.inventory_item_id,
-          inventoryItemId: lineInfo.selectedItem.inventory_item_id
-            ? lineInfo.selectedItem.inventory_item_id
-            : lineInfo.inventory_item_id,
-          // creationDate: getCurrentDate(),
-          // createdBy: account.user_id,
-          // orderedItem: lineInfo.ordered_item,
-          orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.ordered_item,
-          orderQuantityUom: lineInfo.order_quantity_uom,
-          orderedQuantity: lineInfo.ordered_quantity,
-          // soldFromOrgId: lineInfo.soldFromOrgId,
-          unitSellingPrice: lineInfo.selectedItem.unit_price
-            ? lineInfo.selectedItem.unit_price
-            : lineInfo.unit_selling_price,
-          totalPrice:
-            (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
-            lineInfo.ordered_quantity,
-          offerQuantity: lineInfo.offer_quantity,
-          totalQuantity: parseInt(lineInfo.offer_quantity, 10) + parseInt(lineInfo.ordered_quantity, 10),
-          // unitOfferPrice:
-          //   (lineInfo.ordered_quantity * lineInfo.selectedItem.unit_price) /
-          //   (parseInt(lineInfo.offerQuantity, 10) + parseInt(lineInfo.orderedQuantity, 10)),
-          unitOfferPrice:
-            (lineInfo.ordered_quantity *
-              (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price)) /
-            (parseInt(lineInfo.offer_quantity, 10) + parseInt(lineInfo.ordered_quantity, 10)),
+          bankId: lineInfo.bank_id,
+          bankBranchId: lineInfo.bank_branch_id,
+          bankBranchName: lineInfo.bank_branch_name,
+          description: lineInfo.description,
+          addressLine1: lineInfo.address_line1,
+          city: lineInfo.city,
+          bankAdminEmail: lineInfo.bank_admin_email,
+          lastUpdateDate: date,
+          lastUpdatedBy: account.user_id,
+          lastUpdateLogin: account.user_id,
+          creationDate: date,
+          createdBy: account.user_id,
         };
         console.log(requestBody);
-
+        console.log(soLineDetails.bank_branch_id);
         // const response = await addSalesOrderLinesService(requestBody);
-        const response = await updateSalesOrderLineService(lineInfo.line_id, requestBody);
+        const response = await updateBankOrderLineService(lineInfo.bank_branch_id, requestBody);
 
         if (response.status === 200) {
           console.log(response.data);
-
+          navigate(`/dashboard/managebankformpage`);
           // setShowApprovalButton(true);
           // handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
           // setShowSaveLine(true);
@@ -444,38 +350,50 @@ export default function Page404() {
       } else {
         console.log(lineInfo);
         const requestBody = {
-          headerId: soHeaderDetails.header_id,
-          lineNumber: index + 1,
-          inventoryItemId: lineInfo.selectedItem.inventory_item_id,
-          // inventoryItemId: lineInfo.selectedItem.inventory_item_id
-          //   ? lineInfo.selectedItem.inventory_item_id
-          //   : lineInfo.inventory_item_id,
-          // creationDate: getCurrentDate(),
+          //   headerId: soHeaderDetails.header_id,
+          //   lineNumber: index + 1,
+          //   inventoryItemId: lineInfo.selectedItem.inventory_item_id,
+          //   // inventoryItemId: lineInfo.selectedItem.inventory_item_id
+          //   //   ? lineInfo.selectedItem.inventory_item_id
+          //   //   : lineInfo.inventory_item_id,
+          //   // creationDate: getCurrentDate(),
+          //   createdBy: account.user_id,
+          //   orderedItem: lineInfo.selectedItem.description,
+          //   // orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.description,
+          //   orderQuantityUom: lineInfo.selectedItem.primary_uom_code,
+          //   orderedQuantity: lineInfo.ordered_quantity,
+          //   soldFromOrgId: lineInfo.sold_from_org_id,
+          //   // unitSellingPrice: lineInfo.unit_selling_price,
+          //   // totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
+          //   unitSellingPrice: lineInfo.selectedItem.unit_price
+          //     ? lineInfo.selectedItem.unit_price
+          //     : lineInfo.unit_selling_price,
+          //   totalPrice:
+          //     (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
+          //     lineInfo.ordered_quantity,
+          bankId: soHeaderDetails.bank_id,
+          bankBranchName: lineInfo.bank_branch_name,
+          description: lineInfo.description,
+          addressLine1: lineInfo.address_line1,
+          city: lineInfo.city,
+          bankAdminEmail: lineInfo.bank_admin_email,
+          lastUpdateDate: date,
+          lastUpdatedBy: account.user_id,
+          lastUpdateLogin: account.user_id,
+          creationDate: date,
           createdBy: account.user_id,
-          orderedItem: lineInfo.selectedItem.description,
-          // orderedItem: lineInfo.selectedItem.description ? lineInfo.selectedItem.description : lineInfo.description,
-          orderQuantityUom: lineInfo.selectedItem.primary_uom_code,
-          orderedQuantity: lineInfo.ordered_quantity,
-          soldFromOrgId: lineInfo.sold_from_org_id,
-          // unitSellingPrice: lineInfo.unit_selling_price,
-          // totalPrice: lineInfo.unit_selling_price * lineInfo.ordered_quantity,
-          unitSellingPrice: lineInfo.selectedItem.unit_price
-            ? lineInfo.selectedItem.unit_price
-            : lineInfo.unit_selling_price,
-          totalPrice:
-            (lineInfo.selectedItem.unit_price ? lineInfo.selectedItem.unit_price : lineInfo.unit_selling_price) *
-            lineInfo.ordered_quantity,
         };
         console.log(requestBody);
 
-        const response = await addSalesOrderLinesService(requestBody);
+        const response = await addbankFormLinesService(requestBody);
 
         if (response.status === 200) {
+          navigate(`/dashboard/managebankformpage`);
           console.log(response.data);
 
-          setShowApprovalButton(true);
-          handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
-          setShowSaveLine(true);
+          //   setShowApprovalButton(true);
+          //   handleInputChange(index, 'lineId', response.data.headerInfo[0].line_id);
+          //   setShowSaveLine(true);
         } else {
           setShowApprovalButton(false);
         }
@@ -545,6 +463,7 @@ export default function Page404() {
   };
 
   const onClickDelete = async () => {
+    console.log(soLineDetails);
     // const isEmptyObject =
     //   Object.values(soLineDetails[0]).every((value) => value === null || value === '') &&
     //   !Object.values(headerDetails).every((value) => value === null);
@@ -558,7 +477,8 @@ export default function Page404() {
       alert('Please select lines to delete');
     } else if (selectedLines.length === 0 && soLineDetails.length === 0) {
       if (confirm('Are you sure to delete the requisition?')) {
-        await deleteSalesOrderHeaderService(soHeaderDetails.order_number);
+        console.log(soLineDetails.bank_branch_id);
+        await deleteBankBranchService(parseInt(soLineDetails.bank_branch_id, 10));
         window.location.reload();
       }
     } else if (selectedLines.length > 0 && soLineDetails.length > 0) {
@@ -703,305 +623,85 @@ export default function Page404() {
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
 
-  const handleInputCustomerChange = (event) => {
-    const input = event.target.value;
-    console.log(input);
-
-    const username = 'accountName';
-    const show = 'showList';
-
-    const updatedRows = [...customerRows];
-    updatedRows[username] = input;
-    updatedRows[show] = true;
-
-    const distributor = 'distributor';
-    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: input });
-
-    setCustomerRows(updatedRows);
-    console.log(customerRows);
-
-    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
-    setFilteredCustomerList(filtered);
-    console.log(filteredCustomerList);
-  };
-
-  const handleCustomerClick = (item) => {
-    console.log(item);
-    const name = 'accountName';
-    const selected = 'custAccountId';
-    const address = 'ship_to_address';
-    const show = 'showList';
-
-    const updatedRows = [...customerRows];
-    updatedRows[name] = item.full_name;
-    // setSelectedCustomer(item.full_name);
-    updatedRows[selected] = item.cust_account_id;
-    updatedRows[address] = item.ship_to_address;
-    updatedRows[show] = false;
-
-    setCustomerRows(updatedRows);
-    const headerShipTo = 'ship_to';
-    const deliverToContactId = 'deliver_to_contact_id';
-    const deliverToOrgId = 'deliver_to_org_id';
-    const distributor = 'distributor';
-    const invoiceToContactId = 'invoice_to_contact_id';
-    const invoiceToOrgId = 'invoice_to_org_id';
-    const shipToContactId = 'ship_to_contact_id';
-    const shipToOrgId = 'ship_to_org_id';
-    const soldToContactId = 'sold_to_contact_id';
-    const soldToOrgId = 'sold_to_org_id';
-
-    setSoHeaderDetails({ ...soHeaderDetails, [headerShipTo]: item.ship_to_address });
-    setSoHeaderDetails({ ...soHeaderDetails, [deliverToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [deliverToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [distributor]: item.full_name });
-    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [invoiceToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [shipToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [shipToOrgId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [soldToContactId]: item.cust_account_id });
-    setSoHeaderDetails({ ...soHeaderDetails, [soldToOrgId]: item.cust_account_id });
-
-    console.log(customerRows);
-  };
-
   return (
     <>
       <Helmet>
-        <title> COMS | Update Customer Order </title>
+        <title> COMS | Update Bank Form </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Update Customer Order
+            Update Bank Form
           </Typography>
         </Stack>
         <div className="row g-3 align-items-center">
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+            <div className="col-auto" style={{ width: '360px', marginRight: '15px' }}>
               <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Order Number
+                Bank Name
                 <input
-                  type="number"
-                  id="orderNumber"
-                  name="orderNumber"
+                  type="text"
+                  id="bankName"
+                  name="bankName"
                   className="form-control"
                   style={{ marginLeft: '7px' }}
                   // value={headerDetails.orderNumber}
-                  value={soHeaderDetails.order_number}
+                  value={soHeaderDetails.bank_name}
                   readOnly
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
+            <div className="col-auto" style={{ width: '460px', marginRight: '15px' }}>
               <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Ordered Date
+                Description
                 <input
                   type="text"
-                  id="orderedDate"
+                  id="description"
                   className="form-control"
                   style={{ marginLeft: '7px' }}
-                  value={getFormattedDate(soHeaderDetails.ordered_date)}
+                  value={soHeaderDetails.description}
                   readOnly
                 />
               </label>
             </div>
-            {/* <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
-              <label
-                htmlFor="special_discount"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-              >
-                Customer
-                <input
-                  type="number"
-                  id="special_discount"
-                  name="special_discount"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  defaultValue={soHeaderDetails.distributor}
-                  readOnly
-                />
-              </label>
-            </div> */}
-            <div className="col-auto" style={{ marginRight: '15px' }}>
-              <label htmlFor="distributor" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Customer
-                <input
-                  type="text"
-                  name="distributor"
-                  id="distributor"
-                  className="form-control"
-                  style={{
-                    marginLeft: '7px',
-                    height: '30px', // Set a fixed height for the input field
-                    boxSizing: 'border-box',
-                  }}
-                  // value={selectedCustomer}
-                  value={soHeaderDetails.distributor}
-                  // value={customerRows.accountName ? customerRows.accountName : account.full_name}
-                  onChange={(e) => handleInputCustomerChange(e)}
-                />
-                {customerRows.showList && (
-                  <ul
-                    style={{
-                      zIndex: 1, // Ensure the dropdown is above other content
-                    }}
-                  >
-                    {filteredCustomerList.map((item, itemIndex) => (
-                      <>
-                        <MenuItem key={itemIndex} value={item} onClick={() => handleCustomerClick(item)}>
-                          {item.full_name}
-                        </MenuItem>
-                      </>
-                    ))}
-                  </ul>
-                )}
-              </label>
-            </div>
-
+          </Stack>
+          {/* <Stack direction="row" alignItems="center" justifyContent="flex-start">
             <div className="col-auto" style={{ width: '430px' }}>
               <label htmlFor="ship_to" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Ship to
+                Address Line 1
                 <input
                   type="text"
-                  id="ship_to"
-                  name="ship_to"
+                  id="address_line1"
+                  name="address_line1"
                   className="form-control"
                   style={{ marginLeft: '5px' }}
                   // value={soHeaderDetails.ship_to ship_to_address}
-                  value={customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to}
-                  // readOnly={!shipToChangable}
-                />
-              </label>
-            </div>
-          </Stack>
-          <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            {/* <div className="col-auto" style={{ width: '180px', marginRight: '15px', height: '38px' }}>
-              <label
-                htmlFor="shipping_method_code"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px', height: '38px' }}
-              >
-                Transport Type
-                <Select
-                  id="shipping_method_code"
-                  name="shipping_method_code"
-                  className="form-control"
-                  // style={{ marginLeft: '7px' }}
-                  style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
-                  defaultValue={soHeaderDetails.shipping_method_code}
-                  onChange={(e) => onChangeHeader(e)}
-                >
-                  <MenuItem value="Self">Self</MenuItem>
-                  <MenuItem value="Company">Company</MenuItem>
-                  <MenuItem value="Rental">Rental</MenuItem>
-                  <MenuItem value="Courier">Courier</MenuItem>
-                </Select>
-              </label>
-            </div> */}
-            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
-              <label
-                htmlFor="shippingMethodCode"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-              >
-                Transport Type
-                {/* <select
-                  id="shippingMethodCode"
-                  name="shippingMethodCode"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  onChange={(e) => onChangeHeader(e)}
-                >
-                  <option value="Self">Self</option>
-                  <option value="Company">Company</option>
-                  <option value="Rental">Rental</option>
-                  <option value="Courier">Courier</option>
-                </select> */}
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="shipping_method_code"
-                  style={{ marginLeft: '7px', height: '38px', width: '390px', backgroundColor: 'white' }}
-                  onChange={(e) => onChangeHeader(e)}
-                  // defaultValue="Self"
-                  value={soHeaderDetails.shipping_method_code || ''}
-                >
-                  <MenuItem value="Self">Self</MenuItem>
-                  <MenuItem value="Company">Company</MenuItem>
-                  <MenuItem value="Rental">Rental</MenuItem>
-                  <MenuItem value="Courier">Courier</MenuItem>
-                </Select>
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
-              <label
-                htmlFor="special_discount"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-              >
-                Special Discount
-                <input
-                  type="number"
-                  id="special_discount"
-                  name="special_discount"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  defaultValue={soHeaderDetails.special_discount}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            <div className="col-auto" style={{ width: '180px', marginRight: '15px' }}>
-              <label
-                htmlFor="special_adjustment"
-                className="col-form-label"
-                style={{ display: 'flex', fontSize: '13px' }}
-              >
-                Special Adjustment
-                <input
-                  type="number"
-                  id="special_adjustment"
-                  name="special_adjustment"
-                  className="form-control"
-                  style={{ marginLeft: '7px' }}
-                  defaultValue={soHeaderDetails.special_adjustment}
-                  onChange={(e) => onChangeHeader(e)}
-                />
-              </label>
-            </div>
-            {/* <div className="col-auto" style={{ width: '500px' }}>
-              <label htmlFor="description" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Description
-                <textarea
-                  id="description"
-                  name="description"
-                  className="form-control"
-                  style={{ marginLeft: '7px', height: '30px', width: '390px' }}
-                  value={soHeaderDetails.description}
-                  onChange={(e) => {
-                    onChangeHeader(e);
-                  }}
-                />
-              </label>
-            </div> */}
-            <div className="col-auto" style={{ width: '160px', marginRight: '15px' }}>
-              <label htmlFor="total_price" className="col-form-label" style={{ display: 'flex', fontSize: '13px' }}>
-                Total price
-                <input
-                  type="text"
-                  id="total_price"
-                  name="total_price"
-                  className="form-control"
-                  // style={{ textAlign: 'right' }}
-                  value={getFormattedPrice(sumTotalPrice)}
+                  value={soHeaderDetails.address_line1}
                   readOnly
                 />
               </label>
             </div>
-          </Stack>
+            <div className="col-auto" style={{ width: '430px' }}>
+              <label
+                htmlFor="ship_to"
+                className="col-form-label"
+                style={{ display: 'flex', fontSize: '13px', marginLeft: '10px' }}
+              >
+                City
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  className="form-control"
+                  style={{ marginLeft: '5px' }}
+                  // value={soHeaderDetails.ship_to ship_to_address}
+                  value={soHeaderDetails.city}
+                  readOnly
+                />
+              </label>
+            </div>
+          </Stack> */}
         </div>
         <form className="form-horizontal" style={{ marginTop: '20px' }}>
           <div className="table-responsive">
@@ -1024,19 +724,13 @@ export default function Page404() {
                     />
                   </th>
                   {/* <th>Line Number</th> */}
-                  <th style={{ width: '420px' }}>
-                    Item <span style={{ color: 'red' }}>*</span>
+                  <th style={{ width: '220px' }}>
+                    Bank Branch Name <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th style={{ width: '50px', textAlign: 'center' }}>UOM</th>
-                  <th style={{ textAlign: 'right' }}>
-                    Quantity <span style={{ color: 'red' }}>*</span>
-                  </th>
-                  <th style={{ textAlign: 'right' }}>Offer Quantity</th>
-                  <th style={{ textAlign: 'right' }}>Total Quantity</th>
-                  {/* <th>Sold From Org ID</th> */}
-                  <th style={{ textAlign: 'right' }}>Unit Price</th>
-                  <th style={{ textAlign: 'right' }}>Unit Offer Price</th>
-                  <th style={{ textAlign: 'right' }}>Total Price</th>
+                  <th style={{ width: '50px', textAlign: 'right' }}>Description</th>
+                  <th style={{ textAlign: 'right', width: '220px' }}>Address Line 1</th>
+                  <th style={{ textAlign: 'right' }}>City</th>
+                  <th style={{ textAlign: 'right' }}>Bank Admin Email</th>
                 </tr>
               </thead>
               <tbody>
@@ -1050,59 +744,105 @@ export default function Page404() {
                           checked={selectedRows.includes(index)}
                         />
                       </td>
-                      {/* <td>
-                        <input type="number" className="form-control" name="lineNumber" value={index + 1} readOnly />
-                      </td> */}
+
                       <td>
                         <input
                           type="text"
                           className="form-control"
-                          // style={{ width: '420px' }}
-                          style={{
-                            textAlign: 'left',
-                            width: '420px',
-                            height: '50%',
-                            border: 'none',
-                            background: 'none',
-                            outline: 'none',
-                          }}
-                          value={row.selectedItemName}
-                          defaultValue={row.ordered_item}
-                          onChange={(e) => handleInputItemChange(index, e)}
-                        />
-                        {row.showList && (
-                          <ul style={{ marginTop: '18px' }}>
-                            {filteredItemList.map((item, itemIndex) => (
-                              <>
-                                <MenuItem key={itemIndex} value={item} onClick={() => handleMenuItemClick(index, item)}>
-                                  {item.description}
-                                </MenuItem>
-                              </>
-                            ))}
-                          </ul>
-                        )}
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          className="form-control"
-                          name="primary_uom_code"
-                          readOnly
-                          value={row.selectedItem.primary_uom_code}
+                          name="bank_branch_name"
+                          value={row.bank_branch_name}
                           // style={{ width: '80px', textAlign: 'center' }}
                           style={{
                             textAlign: 'center',
-                            width: '50px',
+                            width: '200px',
                             height: '50%',
                             border: 'none',
                             background: 'none',
                             outline: 'none',
                           }}
-                          defaultValue={row.order_quantity_uom}
+                          // defaultValue={row.order_quantity_uom}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td>
                       <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="description"
+                          value={row.description}
+                          // style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            textAlign: 'center',
+                            width: '200px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // defaultValue={row.order_quantity_uom}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="address_line1"
+                          value={row.address_line1}
+                          // style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            textAlign: 'center',
+                            width: '200px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // defaultValue={row.order_quantity_uom}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="city"
+                          value={row.city}
+                          // style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            textAlign: 'center',
+                            width: '200px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // defaultValue={row.order_quantity_uom}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="bank_admin_email"
+                          value={row.bank_admin_email}
+                          // style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            textAlign: 'center',
+                            width: '200px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          // defaultValue={row.order_quantity_uom}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
+                      </td>
+
+                      {/* <td>
                         <input
                           type="number"
                           className="form-control"
@@ -1120,7 +860,7 @@ export default function Page404() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                           ref={inputRef}
                         />
-                      </td>
+                      </td> */}
                       {/* <td>
                         <input
                           type="number"
@@ -1130,7 +870,7 @@ export default function Page404() {
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
                       </td> */}
-                      <td>
+                      {/* <td>
                         <input
                           type="number"
                           className="form-control"
@@ -1146,8 +886,8 @@ export default function Page404() {
                           defaultValue={row.offer_quantity ? row.ordered_quantity : 0}
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
-                      </td>
-                      <td>
+                      </td> */}
+                      {/* <td>
                         <input
                           type="number"
                           className="form-control"
@@ -1169,8 +909,8 @@ export default function Page404() {
                           readOnly
                           onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
-                      </td>
-                      <td>
+                      </td> */}
+                      {/* <td>
                         <input
                           type="number"
                           className="form-control"
@@ -1188,8 +928,8 @@ export default function Page404() {
                           readOnly
                           //   onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                         />
-                      </td>
-                      <td style={{ textAlign: 'right', height: '50%' }}>
+                      </td> */}
+                      {/* <td style={{ textAlign: 'right', height: '50%' }}>
                         <input
                           type="text"
                           className="form-control"
@@ -1224,8 +964,8 @@ export default function Page404() {
                           }
                           readOnly
                         />
-                      </td>
-                      <td>
+                      </td> */}
+                      {/* <td>
                         <input
                           type="text"
                           className="form-control"
@@ -1245,30 +985,19 @@ export default function Page404() {
                           )}
                           readOnly
                         />
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
-                <tr>
-                  <td />
-                  <td>Total</td>
-                  <td />
-                  <td />
-                  <td />
-                  <td />
-                  <td />
-                  <td />
-                  <td style={{ textAlign: 'right', paddingRight: '11px' }}>{getFormattedPrice(sumTotalPrice)}</td>
-                </tr>
               </tbody>
             </table>
           </div>
         </form>
         <Grid container spacing={2}>
-          <Grid item xs={3}>
+          <Grid item xs={3} style={{ marginTop: '10px' }}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
               <Button
                 style={{ whiteSpace: 'nowrap', marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                onClick={saveHeader}
+                onClick={saveLines}
               >
                 Save
               </Button>
@@ -1278,7 +1007,7 @@ export default function Page404() {
               >
                 Delete
               </Button>
-              <Button
+              {/* <Button
                 style={{
                   whiteSpace: 'nowrap',
                   display: shipToChangable ? 'block' : 'none',
@@ -1290,8 +1019,8 @@ export default function Page404() {
                 onClick={submitRequisition}
               >
                 Approval
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 style={{
                   whiteSpace: 'nowrap',
                   backgroundColor: 'lightgray',
@@ -1302,8 +1031,8 @@ export default function Page404() {
                 onClick={submitRequisition}
               >
                 Approve
-              </Button>
-              <Button
+              </Button> */}
+              {/* <Button
                 style={{
                   whiteSpace: 'nowrap',
                   // display: showApprovalButton,
@@ -1317,7 +1046,7 @@ export default function Page404() {
                 disabled={soHeaderDetails.authorization_status === 'Incomplete'}
               >
                 Reject
-              </Button>
+              </Button> */}
               <Button
                 style={{ whiteSpace: 'nowrap', backgroundColor: 'lightgray', color: 'black' }}
                 onClick={handleAddRow}
@@ -1327,37 +1056,6 @@ export default function Page404() {
             </ButtonGroup>
           </Grid>
         </Grid>
-
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          mb={3}
-          style={{ marginBottom: '5px', marginTop: '40px' }}
-        >
-          <Typography variant="h5" gutterBottom>
-            Approval Sequence
-          </Typography>
-        </Stack>
-        <TableContainer sx={{ minWidth: 800 }}>
-          <Table>
-            <SoListHead headLabel={TABLE_HEAD_Approval_Seq} />
-            <TableBody>
-              {approvalSequenceDetails.map((value) => (
-                <TableRow key={value.sl} hover tabIndex={-1}>
-                  {/* <TableCell padding="checkbox">
-                    <Checkbox disabled />
-                  </TableCell> */}
-                  <TableCell>{value.sl}</TableCell>
-                  <TableCell>{value.action_code}</TableCell>
-                  <TableCell>{value.action_date ? getFormattedDate(value.action_date) : null}</TableCell>
-                  <TableCell>{value.full_name}</TableCell>
-                  <TableCell>{value.note}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
       </Container>
     </>
   );
