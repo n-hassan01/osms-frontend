@@ -284,7 +284,14 @@ export default function ShowWfNotifications() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { notification_id, group_id, from_user, subject, sent_date } = row;
+                    const {
+                      notification_id,
+                      group_id,
+                      from_user,
+                      subject,
+                      sent_date,
+                      authorization_status
+                    } = row;
                     const selectedUser = selected.indexOf(notification_id) !== -1;
 
                     return (
@@ -300,7 +307,12 @@ export default function ShowWfNotifications() {
                           <Link
                             style={{ cursor: 'pointer' }}
                             onClick={() => {
-                              navigate(`/dashboard/updateSalesOrderForm/${group_id}`);
+                              // navigate(`/dashboard/updateSalesOrderForm/${group_id}`);
+                              if (authorization_status === 'In Process') {
+                                navigate(`/dashboard/updateSalesOrderForm/${group_id}`);
+                              } else {
+                                navigate(`/dashboard/viewordersheader/${group_id}`);
+                              }
                             }}
                           >
                             {subject}
