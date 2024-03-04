@@ -11,19 +11,19 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    CircularProgress,
-    Container,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Checkbox,
+  CircularProgress,
+  Container,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 
 import { useUser } from '../../../context/UserContext';
@@ -32,10 +32,10 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-    approveBankDepositService,
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getUserProfileDetails,
+  approveBankDepositService,
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -186,6 +186,8 @@ export default function UserPage() {
   };
 
   const TABLE_HEAD = [
+    { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
+    { id: 'status', label: 'Status', alignRight: false },
     { id: 'customer', label: sentenceCase('customer'), alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: false },
@@ -195,11 +197,9 @@ export default function UserPage() {
     { id: 'company_name', label: 'Company Name', alignRight: false },
     { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
-    { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
-    { id: 'status', label: 'Status', alignRight: false },
     // { id: '' },
   ];
 
@@ -289,7 +289,7 @@ export default function UserPage() {
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collection List
           </Typography> */}
@@ -300,7 +300,7 @@ export default function UserPage() {
             onClick={() => approveDeposits(selected)}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
           >
-            RECONCILE
+            Reconcile
           </Button>
         </Stack>
 
@@ -357,6 +357,14 @@ export default function UserPage() {
                           />
                         </TableCell>
 
+                        <TableCell align="left">
+                          <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
+                            view
+                          </button>
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {status}
+                        </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {full_name}
                         </TableCell>
@@ -378,12 +386,6 @@ export default function UserPage() {
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {depositor_branch}
                         </TableCell>
-                        {/* <TableCell align="left">{uploaded_filename}</TableCell> */}
-                        <TableCell align="left">
-                          <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
-                            view
-                          </button>
-                        </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {receipt_number}
                         </TableCell>
@@ -392,9 +394,6 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {status}
                         </TableCell>
                       </TableRow>
                     );
