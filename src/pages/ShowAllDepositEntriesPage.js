@@ -52,15 +52,15 @@ export default function BasicTabs() {
 
   return (
     <Box>
-      <Box style={{ marginLeft: '50px' }} mb={3}>
+      <Box style={{ marginLeft: '50px' }} mb={1}>
         <Typography variant="h4" gutterBottom>
           Deposit Collection List
         </Typography>
       </Box>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }} style={{ marginLeft: '50px' }}>
+      <Box style={{ marginLeft: '50px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab {...a11yProps(0)} label="Notifications" />
-          <Tab {...a11yProps(1)} label="Notifications History" />
+          <Tab {...a11yProps(0)} label="New Deposits" />
+          <Tab {...a11yProps(1)} label="Reconciled Deposits" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
