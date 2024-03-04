@@ -41,8 +41,6 @@ const TABLE_HEAD = [
   { id: 'description', label: 'Description', alignRight: false },
 
   { id: 'approvalStatus', label: 'Approval Status', alignRight: false },
-
-  { id: '' },
 ];
 const selectedUsers = [];
 
