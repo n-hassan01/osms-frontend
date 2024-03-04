@@ -59,6 +59,7 @@ export default function UserListHead({
               hideSortIcon
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
+              style={{ whiteSpace: 'nowrap' }}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}

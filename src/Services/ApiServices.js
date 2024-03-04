@@ -1176,6 +1176,20 @@ export const getBankDepositViewService = async (loginToken, userId) => {
   }
 };
 
+export const getAllBankDepositsForAccountsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBankDepositDetailsViewService = async (loginToken, userId) => {
   try {
     console.log(userId);
@@ -1226,6 +1240,35 @@ export const addBankDepositService = async (loginToken, bodyInfo) => {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const approveBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}bank-deposit/approve`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/download`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+      responseType: 'arraybuffer',
     });
   } catch (err) {
     console.log(err.message);
@@ -1465,6 +1508,28 @@ export const deleteBankFormLinesService = async (lineId) => {
 export const deleteAccountsService = async (bank_account_id) => {
   try {
     return await axios.delete(`${usersUrl}mrlprodbankaccounts/delete/${bank_account_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const deleteBankBranchService = async (bank_branch_id) => {
+  try {
+    return await axios.delete(`${usersUrl}mrlprodbankbranches/delete/${bank_branch_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updatePerAllPeoplesDetails = async (requestBody, person_id) => {
+  console.log(requestBody);
+
+  try {
+    return await axios.put(`${usersUrl}update-per-all-peoples/${person_id}`, requestBody);
   } catch (err) {
     console.log(err.message);
 
