@@ -41,8 +41,6 @@ const TABLE_HEAD = [
   { id: 'fromuser', label: 'From User', alignRight: false },
   { id: 'message', label: 'Message', alignRight: false },
   { id: 'sentDate', label: 'Sent Date', alignRight: false },
-
-  { id: '' },
 ];
 const selectedUsers = [];
 

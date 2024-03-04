@@ -38,8 +38,6 @@ const TABLE_HEAD = [
   { id: 'fromuser', label: 'From User', alignRight: false },
   { id: 'message', label: 'Message', alignRight: false },
   { id: 'sentDate', label: 'Sent Date', alignRight: false },
-
-  { id: '' },
 ];
 const selectedUsers = [];
 
@@ -263,13 +261,6 @@ export default function ShowWfNotifications() {
         </Stack>
 
         <Card>
-          {/* <OrganizationListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-            selectedUsers={selected}
-          /> */}
-
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -284,14 +275,7 @@ export default function ShowWfNotifications() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      notification_id,
-                      group_id,
-                      from_user,
-                      subject,
-                      sent_date,
-                      authorization_status
-                    } = row;
+                    const { notification_id, group_id, from_user, subject, sent_date, authorization_status } = row;
                     const selectedUser = selected.indexOf(notification_id) !== -1;
 
                     return (
