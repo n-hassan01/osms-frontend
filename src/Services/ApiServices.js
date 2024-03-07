@@ -1410,6 +1410,20 @@ export const addaccountsfromService = async (bodyInfo, loginToken) => {
   }
 };
 
+export const addmtlcategoriesfromService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}addmtlcategories/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addbankFormLinesService = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}mrlprodbankbranches/add`, bodyInfo);
@@ -1422,6 +1436,15 @@ export const addbankFormLinesService = async (bodyInfo) => {
 export const getBankAllService = async () => {
   try {
     return await axios.get(`${usersUrl}mrlprodbanks/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getMTLCategoriesService = async () => {
+  try {
+    return await axios.get(`${usersUrl}addmtlcategories/get`);
   } catch (err) {
     console.log(err.message);
 
