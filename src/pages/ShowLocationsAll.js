@@ -1,7 +1,9 @@
-/* eslint-disable camelcase */
+/* eslint-disable new-cap */
 
+/* eslint-disable camelcase */
+import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -51,7 +53,50 @@ const TABLE_HEAD = [
   { id: '' },
 ];
 const selectedUsers = [];
-
+const styles = StyleSheet.create({
+  page: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff'
+  },
+  section: {
+    margin: 10,
+    padding: 10,
+    flexGrow: 1
+  },
+  header: {
+    fontSize: 20,
+    marginBottom: 10
+  },
+  row: {
+    flexDirection: 'row'
+  },
+  cell: {
+    padding: 5
+  }
+});
+const PDFDocument = ({ users }) => (
+  <Document>
+    <Page size="A4" style={styles.page}>
+      <View style={styles.section}>
+        <Text style={styles.header}>Locations</Text>
+        <View style={styles.row}>
+          <Text style={styles.cell}>Location Code</Text>
+          <Text style={styles.cell}>Description</Text>
+          <Text style={styles.cell}>Inactive Date</Text>
+          {/* Add more headers here */}
+        </View>
+        {users.map(user => (
+          <View key={user.location_id} style={styles.row}>
+            <Text style={styles.cell}>{user.location_code}</Text>
+            <Text style={styles.cell}>{user.description}</Text>
+            <Text style={styles.cell}>{user.inactive_date}</Text>
+            {/* Add more user data cells here */}
+          </View>
+        ))}
+      </View>
+    </Page>
+  </Document>
+);
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -84,6 +129,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function ShowLocationsAll() {
+  const pdfRef = useRef();
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
@@ -120,7 +166,14 @@ export default function ShowLocationsAll() {
 
     fetchData();
   }, []);
-
+  const downloadPDF = () => {
+    const pdfData = (
+      <PDFDocument users={USERLIST} />
+    );
+    const blob = new Blob([pdfData], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    window.open(url);
+  };
   const handleCloseMenu = () => {
     setOpen(null);
     window.location.reload();
@@ -163,6 +216,60 @@ export default function ShowLocationsAll() {
     setSelected([]);
   };
 
+  // const downloadPDF = () => {
+  //   const input = pdfRef.current;
+  
+  //   html2canvas(input).then((canvas) => {
+  //     const imgData = canvas.toDataURL('image/png');
+  
+  //     const pdf = new jsPDF('p', 'mm', '04', true);
+  
+  //     const pdfwidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = pdf.internal.pageSize.getHeight();
+  
+  //     const imgWidth = canvas.width;
+  
+  //     const imgHeight = canvas.height;
+  
+  //     const ratio = Math.min(pdfwidth / imgWidth, pdfHeight / imgHeight);
+  
+  //     const imgx = (pdfwidth - imgWidth * ratio) / 2;
+  
+  //     const imgy = 30;
+  
+  //     pdf.addImage(imgData, 'PNG', imgx, imgy, imgWidth * ratio, imgHeight * ratio);
+  
+  //     pdf.save('invoice.pdf');
+  //   });
+  // };
+  
+
+  // const downloadPDF = () => {
+  //   const input = pdfRef.current;
+
+  //   html2canvas(input).then((canvas) => {
+  //     const imgData = canvas.toDataURL('image/png');
+
+  //     const pdf = new jsPDF('p', 'mm', '04', true);
+
+  //     const pdfwidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = pdf.internal.pageSize.getHeight();
+
+  //     const imgWidth = canvas.width;
+
+  //     const imgHeight = canvas.height;
+
+  //     const ratio = Math.min(pdfwidth / imgWidth, pdfHeight / imgHeight);
+
+  //     const imgx = (pdfwidth - imgWidth * ratio) / 2;
+
+  //     const imgy = 30;
+
+  //     pdf.addImage(imgData, 'PNG', imgx, imgy, imgWidth * ratio, imgHeight * ratio);
+
+  //     pdf.save('invoice.pdf');
+  //   });
+  // };
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
     selectedUsers.push(name);
@@ -206,7 +313,7 @@ export default function ShowLocationsAll() {
         <title> HR Locations | COMS </title>
       </Helmet>
 
-      <Container>
+      <Container ref={pdfRef}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             Locations
@@ -282,11 +389,11 @@ export default function ShowLocationsAll() {
                     const selectedUser = selected.indexOf(location_id) !== -1;
 
                     return (
-                      <TableRow hover key={location_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={location_id} tabIndex={-1} role="checkbox" >
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, location_id)} />
                         </TableCell>
-
+                      
                         <TableCell align="left">{location_code}</TableCell>
 
                         <TableCell align="left">{description}</TableCell>
@@ -388,6 +495,12 @@ export default function ShowLocationsAll() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
+        <Button
+          style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+          onClick={downloadPDF}
+        >
+          Download PDF
+        </Button>
         <ImagesUpload />
       </Container>
     </>
