@@ -1410,6 +1410,20 @@ export const addaccountsfromService = async (bodyInfo, loginToken) => {
   }
 };
 
+export const addmtlcategoriesfromService = async (bodyInfo, loginToken) => {
+  try {
+    return await axios.post(`${usersUrl}addmtlcategories/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addbankFormLinesService = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}mrlprodbankbranches/add`, bodyInfo);
@@ -1422,6 +1436,15 @@ export const addbankFormLinesService = async (bodyInfo) => {
 export const getBankAllService = async () => {
   try {
     return await axios.get(`${usersUrl}mrlprodbanks/get`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getMTLCategoriesService = async () => {
+  try {
+    return await axios.get(`${usersUrl}addmtlcategories/get`);
   } catch (err) {
     console.log(err.message);
 
@@ -1530,6 +1553,38 @@ export const updatePerAllPeoplesDetails = async (requestBody, person_id) => {
 
   try {
     return await axios.put(`${usersUrl}update-per-all-peoples/${person_id}`, requestBody);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const updateMtlCategory = async (category_id,mtlcategories) => {
+ 
+  try {
+    // eslint-disable-next-line camelcase
+    return await axios.put(`${usersUrl}addmtlcategories/update/${category_id}`, mtlcategories);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const deleteMtlCategory = async (category_id) => {
+ 
+  try {
+    // eslint-disable-next-line camelcase
+    return await axios.delete(`${usersUrl}addmtlcategories/delete/${category_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPerMtlCategoriesDetails = async (category_id) => {
+  try {
+    return await axios.get(`${usersUrl}addmtlcategories/get/${category_id}`);
   } catch (err) {
     console.log(err.message);
 

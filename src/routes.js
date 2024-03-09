@@ -55,6 +55,8 @@ import BankFormPage from './pages/BankFormPage';
 import DepositEntryForm from './pages/DepositEntryForm';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
+import ManageMtlCategoriesB from './pages/ManageMtlCategoriesB';
+import MtlCategoriesFormPage from './pages/MtlCategoriesFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ShowAllDeposits from './pages/ShowAllDepositEntriesPage';
 import ShowDepositDetailsPage from './pages/ShowDepositDetailsPage';
@@ -64,6 +66,7 @@ import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
 import UpdateAccountPage from './pages/UpdateAccountPage';
 import UpdateBankFormPage from './pages/UpdateBankFormPage';
+import UpdateMtlCategories from './pages/UpdateMtlCategories';
 import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
@@ -125,6 +128,7 @@ export default function Router() {
         { path: 'addhrlocations/:location_id', element: <AddHrLocations /> },
         { path: 'showfnduser', element: <ShowFndUser /> },
         { path: 'updatefnduser/:user_id', element: <UpdateFndUser /> },
+        { path: 'updatemtlcategories/:category_id', element: <UpdateMtlCategories /> },
         { path: 'addfnduser', element: <AddFndUser /> },
         { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
         { path: 'addmtltransactiontypes', element: <AddMtlTransactionTypes /> },
@@ -149,6 +153,7 @@ export default function Router() {
         { path: 'showimages', element: <ImageGallery /> },
         { path: 'bankformpage', element: <BankFormPage /> },
         { path: 'managebankformpage', element: <ManageBankFormPage /> },
+        { path: 'managemtlcategoriesb', element: <ManageMtlCategoriesB /> },
         { path: 'updatebankformpage/:bank_id', element: <UpdateBankFormPage /> },
         { path: 'accountformpage', element: <AccountFormPage /> },
         { path: 'manageaccountpage', element: <ManageAccountPage /> },
@@ -158,6 +163,7 @@ export default function Router() {
         { path: 'showDeposits', element: <ShowDepositHistoryPage /> },
         { path: 'showDepositDetails/:cash_receipt_id', element: <ShowDepositDetailsPage /> },
         { path: 'allDeposits', element: <ShowAllDeposits /> },
+        { path: 'mtlcategoriesformpage', element: <MtlCategoriesFormPage /> },
       ],
     },
 
