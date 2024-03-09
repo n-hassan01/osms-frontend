@@ -55,6 +55,8 @@ import BankFormPage from './pages/BankFormPage';
 import DepositEntryForm from './pages/DepositEntryForm';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
+import ManageMtlCategoriesB from './pages/ManageMtlCategoriesB';
+import MtlCategoriesFormPage from './pages/MtlCategoriesFormPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import ShowAllDeposits from './pages/ShowAllDepositEntriesPage';
 import ShowDepositDetailsPage from './pages/ShowDepositDetailsPage';
@@ -149,6 +151,7 @@ export default function Router() {
         { path: 'showimages', element: <ImageGallery /> },
         { path: 'bankformpage', element: <BankFormPage /> },
         { path: 'managebankformpage', element: <ManageBankFormPage /> },
+        { path: 'managemtlcategoriesb', element: <ManageMtlCategoriesB /> },
         { path: 'updatebankformpage/:bank_id', element: <UpdateBankFormPage /> },
         { path: 'accountformpage', element: <AccountFormPage /> },
         { path: 'manageaccountpage', element: <ManageAccountPage /> },
@@ -158,6 +161,7 @@ export default function Router() {
         { path: 'showDeposits', element: <ShowDepositHistoryPage /> },
         { path: 'showDepositDetails/:cash_receipt_id', element: <ShowDepositDetailsPage /> },
         { path: 'allDeposits', element: <ShowAllDeposits /> },
+        { path: 'mtlcategoriesformpage', element: <MtlCategoriesFormPage /> },
       ],
     },
 
