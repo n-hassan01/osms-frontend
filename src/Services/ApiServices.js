@@ -1559,3 +1559,35 @@ export const updatePerAllPeoplesDetails = async (requestBody, person_id) => {
     return err.message;
   }
 };
+export const updateMtlCategory = async (category_id,mtlcategories) => {
+ 
+  try {
+    // eslint-disable-next-line camelcase
+    return await axios.put(`${usersUrl}addmtlcategories/update/${category_id}`, mtlcategories);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const deleteMtlCategory = async (category_id) => {
+ 
+  try {
+    // eslint-disable-next-line camelcase
+    return await axios.delete(`${usersUrl}addmtlcategories/delete/${category_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPerMtlCategoriesDetails = async (category_id) => {
+  try {
+    return await axios.get(`${usersUrl}addmtlcategories/get/${category_id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

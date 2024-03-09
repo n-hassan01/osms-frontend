@@ -66,6 +66,7 @@ import TermsConditionPage from './pages/TermsConditionPage';
 import TestSapApiPage from './pages/TestSapApiPage';
 import UpdateAccountPage from './pages/UpdateAccountPage';
 import UpdateBankFormPage from './pages/UpdateBankFormPage';
+import UpdateMtlCategories from './pages/UpdateMtlCategories';
 import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
@@ -127,6 +128,7 @@ export default function Router() {
         { path: 'addhrlocations/:location_id', element: <AddHrLocations /> },
         { path: 'showfnduser', element: <ShowFndUser /> },
         { path: 'updatefnduser/:user_id', element: <UpdateFndUser /> },
+        { path: 'updatemtlcategories/:category_id', element: <UpdateMtlCategories /> },
         { path: 'addfnduser', element: <AddFndUser /> },
         { path: 'showmtltransactiontypes', element: <ShowMtlTransactionTypes /> },
         { path: 'addmtltransactiontypes', element: <AddMtlTransactionTypes /> },
