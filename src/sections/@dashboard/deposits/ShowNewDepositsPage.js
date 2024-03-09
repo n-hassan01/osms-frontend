@@ -134,7 +134,7 @@ export default function UserPage() {
           const response = await getAllBankDepositsForAccountsService(user);
 
           if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'NEW');
+            const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
             setUserList(filteredList);
           }
         }
@@ -190,7 +190,7 @@ export default function UserPage() {
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'customer', label: sentenceCase('customer'), alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-    { id: 'amount', label: sentenceCase('amount'), alignRight: false },
+    { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'type', label: 'Deposit Type', alignRight: false },
     { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
     { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
@@ -276,10 +276,7 @@ export default function UserPage() {
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-  console.log(filteredUsers);
-
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
@@ -325,7 +322,7 @@ export default function UserPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {USERLIST.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
                       amount,
                       cash_receipt_id,
