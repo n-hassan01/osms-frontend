@@ -9,18 +9,18 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Container,
-    Link,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Container,
+  Link,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -219,21 +219,21 @@ export default function ManageMtlCategoriesB() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { category_id, segment1, segment2 } = row;
+                    const { category_id, description, segment1, segment2 } = row;
 
                     return (
                       <TableRow hover key={category_id} tabIndex={-1}>
                         <TableCell align="left">
                           <Link
                             onClick={() => {
-                            //  navigate(`/dashboard/updatebankformpage/${category_id}`);
+                                navigate(`/dashboard/updatemtlcategories/${category_id}`);
                             }}
                             style={{ cursor: 'pointer', textDecoration: 'none' }}
                           >
                             {category_id}
                           </Link>
                         </TableCell>
-
+                        {/* <TableCell align="left">{description}</TableCell> */}
                         <TableCell align="left">{segment1}</TableCell>
                         <TableCell align="left">{segment2}</TableCell>
                       </TableRow>
