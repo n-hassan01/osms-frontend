@@ -6,7 +6,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useDownloadExcel } from 'react-export-table-to-excel';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -72,8 +73,8 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    console.log(filter(array, (_user) => _user.full_name.toLowerCase().indexOf(query.toLowerCase()) !== -1));
-    return filter(array, (_user) => _user.full_name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    console.log(filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1));
+    return filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -87,6 +88,8 @@ function getFormattedDate(value) {
 }
 
 export default function UserPage() {
+  const tableref = useRef(null);
+
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
@@ -184,6 +187,12 @@ export default function UserPage() {
       setOpen(true); // This will be executed regardless of success or failure
     }
   };
+
+  const { onDownload } = useDownloadExcel({
+    currentTableRef: tableref.current,
+    filename: 'sales_order_data',
+    sheet: 'SalesOrderData',
+  });
 
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
@@ -299,6 +308,13 @@ export default function UserPage() {
           >
             Back to New
           </Button>
+          <Button
+            startIcon={<Iconify icon="mdi-chevron-double-down" />}
+            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
+            onClick={onDownload}
+          >
+            Export
+          </Button>
         </Stack>
 
         <Card>
@@ -311,7 +327,7 @@ export default function UserPage() {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
+              <Table ref={tableref}>
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
