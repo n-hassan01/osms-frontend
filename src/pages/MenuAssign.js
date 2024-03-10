@@ -6,21 +6,43 @@
 
 import { Button, Container, Grid, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { addUserAssign, getFndUserIds, getMenusDetails } from '../Services/ApiServices';
+import { useUser } from '../context/UserContext';
 
 // Add this import statement
 
 export default function MenuCreation() {
   const navigate = useNavigate();
+  const { user } = useUser();
   const [userInput, setUserInput] = useState('');
-  const [user, setUser] = useState('');
+  // const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(true);
 
   const [list, setList] = useState([]);
 
   const [filteredList, setFilteredList] = useState([]);
+  const [account, setAccount] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (user) {
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) {
+            setAccount(accountDetails.data);
+          } // Set the account details in the component's state
+        }
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [user]);
+  console.log(account);
 
   useEffect(() => {
     async function fetchData() {
@@ -43,7 +65,7 @@ export default function MenuCreation() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getMenusDetails();
+        const response = await getMenusDetails(user);
         console.log('hhh', response);
         if (response) setMenuIds(response.data);
         console.log(menuids);
@@ -80,7 +102,7 @@ export default function MenuCreation() {
     }
     setCount(c);
     alert('Successfully added');
-    navigate('/dashboard/showmenus');
+    navigate('/dashboard/dashclone');
 
     window.location.reload();
   };
