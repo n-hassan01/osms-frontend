@@ -209,6 +209,8 @@ export default function UserPage() {
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
+    { id: 'employee_name', label: 'Employee Name', alignRight: false },
     // { id: '' },
   ];
 
@@ -267,14 +269,9 @@ export default function UserPage() {
             cashReceiptId: element,
           };
           const response = await approveBankDepositService(user, requestBody);
-
-          const alertMessage =
-            response.status === 200 ? `${element} ${response.data.message}` : 'Process failed! Try again';
-          alert(alertMessage);
         });
 
         await Promise.all(approvalPromises);
-
         window.location.reload();
       } catch (error) {
         console.error('Error during deposit approval:', error);
@@ -308,6 +305,15 @@ export default function UserPage() {
           >
             Reconcile
           </Button>
+          {/* <Button
+            variant="text"
+            startIcon={<Iconify icon="mdi:approve" />}
+            color="primary"
+            onClick={() => approveDeposits(selected)}
+            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+          >
+            Reject
+          </Button> */}
           <Button
             startIcon={<Iconify icon="mdi-chevron-double-down" />}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
@@ -323,6 +329,8 @@ export default function UserPage() {
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
+            enableDelete
+            user={user}
           />
 
           <Scrollbar>
@@ -355,6 +363,8 @@ export default function UserPage() {
                       remarks,
                       status,
                       uploaded_filename,
+                      user_name,
+                      employee_name,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -407,6 +417,12 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {user_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {employee_name}
                         </TableCell>
                       </TableRow>
                     );
