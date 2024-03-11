@@ -12,19 +12,19 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Card,
-  Checkbox,
-  CircularProgress,
-  Container,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    Checkbox,
+    CircularProgress,
+    Container,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 
 import { useUser } from '../../../context/UserContext';
@@ -33,10 +33,10 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-  approveBankDepositService,
-  dowloadBankDepositReceiptService,
-  getAllBankDepositsForAccountsService,
-  getUserProfileDetails,
+    approveBankDepositService,
+    dowloadBankDepositReceiptService,
+    getAllBankDepositsForAccountsService,
+    getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -137,7 +137,7 @@ export default function UserPage() {
           const response = await getAllBankDepositsForAccountsService(user);
 
           if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+            const filteredList = response.data.filter((item) => item.status === 'REJECTED');
             setUserList(filteredList);
           }
         }
@@ -265,7 +265,7 @@ export default function UserPage() {
       try {
         const approvalPromises = deposits.map(async (element) => {
           const requestBody = {
-            action: 'REVERSED',
+            action: 'NEW',
             cashReceiptId: element,
           };
           const response = await approveBankDepositService(user, requestBody);
