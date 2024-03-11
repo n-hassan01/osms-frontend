@@ -3,8 +3,8 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-// const usersUrl = 'http://182.160.114.100:5001/';
-const usersUrl = 'http://182.160.114.100:5003/';
+const usersUrl = 'http://182.160.114.100:5001/';
+// const usersUrl = 'http://182.160.114.100:5003/';
 // const usersUrl = 'http://localhost:5003/';
 
 const sapTokenUrl =
@@ -500,9 +500,14 @@ export const getMenuIds = async () => {
     return err.message;
   }
 };
-export const getMenusDetails = async () => {
+
+export const getMenusDetails = async (user) => {
   try {
-    return await axios.get(`${usersUrl}get-menus/`);
+    return await axios.get(`${usersUrl}get-menus/`, {
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
   } catch (err) {
     console.log(err.message);
 
@@ -1559,8 +1564,7 @@ export const updatePerAllPeoplesDetails = async (requestBody, person_id) => {
     return err.message;
   }
 };
-export const updateMtlCategory = async (category_id,mtlcategories) => {
- 
+export const updateMtlCategory = async (category_id, mtlcategories) => {
   try {
     // eslint-disable-next-line camelcase
     return await axios.put(`${usersUrl}addmtlcategories/update/${category_id}`, mtlcategories);
@@ -1571,7 +1575,6 @@ export const updateMtlCategory = async (category_id,mtlcategories) => {
   }
 };
 export const deleteMtlCategory = async (category_id) => {
- 
   try {
     // eslint-disable-next-line camelcase
     return await axios.delete(`${usersUrl}addmtlcategories/delete/${category_id}`);
