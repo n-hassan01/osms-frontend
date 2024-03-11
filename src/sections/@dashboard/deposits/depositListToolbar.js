@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 // @mui
-import { InputAdornment, OutlinedInput, Toolbar, Typography } from '@mui/material';
+import { IconButton, InputAdornment, OutlinedInput, Toolbar, Tooltip, Typography } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 // component
 import Iconify from '../../../components/iconify';
-import { disableSystemItems } from '../../../Services/ApiServices';
+import { approveBankDepositService } from '../../../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
@@ -38,28 +38,28 @@ UserListToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   selectedUsers: PropTypes.array,
+  enableDelete: PropTypes.bool,
+  user: PropTypes.object,
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers }) {
-  console.log(selectedUsers);
-  console.log(filterName);
+export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers, enableDelete, user }) {
   const deleteSelectedUser = async () => {
-    const result = selectedUsers.map(async (element) => {
-      try {
+    try {
+      const approvalPromises = selectedUsers.map(async (element) => {
         const requestBody = {
-          inventoryItemId: element.itemId,
-          organizationId: element.orgId,
+          action: 'REJECTED',
+          cashReceiptId: element,
         };
+        const response = await approveBankDepositService(user, requestBody);
+      });
 
-        const response = await disableSystemItems(requestBody);
+      await Promise.all(approvalPromises);
 
-        const alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
-        alert(alertMessage);
-        window.location.reload();
-      } catch (err) {
-        console.log(err.message);
-      }
-    });
+      console.log('Successfully rejected!');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during deposit approval:', error);
+    }
   };
 
   return (
@@ -88,10 +88,11 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         />
       )}
 
-      {/* {numSelected > 0 ? (
-        <Tooltip title="Delete">
+      {enableDelete && numSelected > 0 ? (
+        <Tooltip title="Reject" style={{ color: 'crimson' }}>
           <IconButton onClick={deleteSelectedUser}>
             <Iconify icon="eva:trash-2-fill" />
+            <span style={{ fontSize: '20px' }}>Reject</span>
           </IconButton>
         </Tooltip>
       ) : (
@@ -100,7 +101,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
             <Iconify icon="ic:round-filter-list" />
           </IconButton>
         </Tooltip>
-      )} */}
+      )}
     </StyledRoot>
   );
 }
