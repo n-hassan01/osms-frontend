@@ -1267,6 +1267,20 @@ export const approveBankDepositService = async (loginToken, bodyInfo) => {
   }
 };
 
+export const rejectBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}bank-deposit/reject`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}bank-deposit/download`, bodyInfo, {

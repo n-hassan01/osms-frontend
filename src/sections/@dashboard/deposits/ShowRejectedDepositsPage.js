@@ -137,7 +137,7 @@ export default function UserPage() {
           const response = await getAllBankDepositsForAccountsService(user);
 
           if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+            const filteredList = response.data.filter((item) => item.status === 'REJECTED');
             setUserList(filteredList);
           }
         }
@@ -198,7 +198,6 @@ export default function UserPage() {
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'customer', label: sentenceCase('customer'), alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'type', label: 'Deposit Type', alignRight: false },
@@ -210,8 +209,9 @@ export default function UserPage() {
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
-    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-    // { id: 'employee_name', label: 'Employee Name', alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
+    { id: 'employee_name', label: 'Employee Name', alignRight: false },
+    { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
     // { id: '' },
   ];
 
@@ -266,7 +266,7 @@ export default function UserPage() {
       try {
         const approvalPromises = deposits.map(async (element) => {
           const requestBody = {
-            action: 'RECONCILED',
+            action: 'NEW',
             cashReceiptId: element,
           };
           const response = await approveBankDepositService(user, requestBody);
@@ -299,22 +299,13 @@ export default function UserPage() {
           </Typography> */}
           <Button
             variant="text"
-            startIcon={<Iconify icon="mdi:approve" />}
+            startIcon={<Iconify icon="icon-park:reject" />}
             color="primary"
             onClick={() => approveDeposits(selected)}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
           >
-            Reconcile
+            Back to New
           </Button>
-          {/* <Button
-            variant="text"
-            startIcon={<Iconify icon="mdi:approve" />}
-            color="primary"
-            onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Reject
-          </Button> */}
           <Button
             startIcon={<Iconify icon="mdi-chevron-double-down" />}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
@@ -330,8 +321,6 @@ export default function UserPage() {
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-            enableDelete
-            user={user}
           />
 
           <Scrollbar>
@@ -366,20 +355,15 @@ export default function UserPage() {
                       uploaded_filename,
                       user_name,
                       employee_name,
-                      invoice_number,
+                      reject_reason,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
-                    // const selectedUser = selected.findIndex((object) => object.itemId === cash_receipt_id) !== -1;
 
                     return (
                       <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox
-                            checked={selectedUser}
-                            onChange={(event) => handleClick(event, cash_receipt_id)}
-                            // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
-                          />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cash_receipt_id)} />
                         </TableCell>
 
                         <TableCell align="left">
@@ -391,10 +375,7 @@ export default function UserPage() {
                           {status}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {employee_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {user_name}
+                          {full_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {getFormattedDate(deposit_date)}
@@ -430,14 +411,14 @@ export default function UserPage() {
                           {remarks}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {invoice_number}
-                        </TableCell>
-                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {user_name}
-                        </TableCell> */}
-                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {employee_name}
-                        </TableCell> */}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {reject_reason}
+                        </TableCell>
                       </TableRow>
                     );
                   })}

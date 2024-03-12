@@ -1,10 +1,24 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 // @mui
-import { InputAdornment, OutlinedInput, Toolbar, Typography } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  InputAdornment,
+  OutlinedInput,
+  Stack,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 // component
 import Iconify from '../../../components/iconify';
-import { disableSystemItems } from '../../../Services/ApiServices';
+import { approveBankDepositService, rejectBankDepositService } from '../../../Services/ApiServices';
 
 // ----------------------------------------------------------------------
 
@@ -38,28 +52,75 @@ UserListToolbar.propTypes = {
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
   selectedUsers: PropTypes.array,
+  enableDelete: PropTypes.bool,
+  user: PropTypes.object,
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers }) {
-  console.log(selectedUsers);
-  console.log(filterName);
-  const deleteSelectedUser = async () => {
-    const result = selectedUsers.map(async (element) => {
-      try {
+export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers, enableDelete, user }) {
+  const [open, setOpen] = useState(false);
+  const [rowData, setRowData] = useState({});
+
+  const onValueChange = (e) => {
+    setRowData({ ...rowData, [e.target.name]: e.target.value });
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // const deleteSelectedUser = async () => {
+  //   setReject(true);
+  //   try {
+  //     const approvalPromises = selectedUsers.map(async (element) => {
+  //       const requestBody = {
+  //         action: 'REJECTED',
+  //         cashReceiptId: element,
+  //       };
+  //       const response = await approveBankDepositService(user, requestBody);
+
+  //       const rejectRequestBody = {
+  //         rejectReason: 'REJECTED',
+  //         cashReceiptId: element,
+  //       };
+  //       const rejectResponse = await approveBankDepositService(user, rejectRequestBody);
+  //     });
+
+  //     await Promise.all(approvalPromises);
+
+  //     console.log('Successfully rejected!');
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.error('Error during deposit approval:', error);
+  //   }
+  // };
+
+  const rejectDeposits = async () => {
+    try {
+      const approvalPromises = selectedUsers.map(async (element) => {
         const requestBody = {
-          inventoryItemId: element.itemId,
-          organizationId: element.orgId,
+          action: 'REJECTED',
+          cashReceiptId: element,
         };
+        const response = await approveBankDepositService(user, requestBody);
 
-        const response = await disableSystemItems(requestBody);
+        const rejectRequestBody = {
+          rejectReason: rowData.reason,
+          cashReceiptId: element,
+        };
+        const rejectResponse = await rejectBankDepositService(user, rejectRequestBody);
+      });
 
-        const alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
-        alert(alertMessage);
-        window.location.reload();
-      } catch (err) {
-        console.log(err.message);
-      }
-    });
+      await Promise.all(approvalPromises);
+
+      console.log('Successfully rejected!');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during deposit approval:', error);
+    }
   };
 
   return (
@@ -88,10 +149,11 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         />
       )}
 
-      {/* {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton onClick={deleteSelectedUser}>
+      {enableDelete && numSelected > 0 ? (
+        <Tooltip title="Reject" style={{ color: 'crimson' }}>
+          <IconButton onClick={handleClickOpen}>
             <Iconify icon="eva:trash-2-fill" />
+            <span style={{ fontSize: '20px' }}>Reject</span>
           </IconButton>
         </Tooltip>
       ) : (
@@ -100,7 +162,46 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
             <Iconify icon="ic:round-filter-list" />
           </IconButton>
         </Tooltip>
-      )} */}
+      )}
+
+      {/* {reject && ( */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle style={{ color: 'crimson' }}>Are you sure to reject the deposits?</DialogTitle>
+        <Stack />
+        <DialogContent>
+          <Stack spacing={1} direction="row" alignItems="center">
+            <div style={{ display: 'flex', alignItems: 'center', textAlign: 'center', width: '100%' }}>
+              {/* <label htmlFor="reason">Reason: </label> */}
+              <textarea
+                id="reason"
+                name="reason"
+                placeholder="Specify a reason for your rejection.."
+                style={{ width: '100%' }}
+                value={rowData.reason}
+                onChange={(e) => onValueChange(e)}
+              />
+            </div>
+          </Stack>
+
+          <Grid container spacing={2} style={{ marginTop: '5px' }}>
+            <Grid item xs={3} style={{ display: 'flex' }}>
+              <Button
+                style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={rejectDeposits}
+              >
+                Submit
+              </Button>
+              <Button
+                style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
+        </DialogContent>
+      </Dialog>
+      {/* )} */}
     </StyledRoot>
   );
 }
