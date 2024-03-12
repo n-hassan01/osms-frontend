@@ -12,19 +12,19 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    CircularProgress,
-    Container,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Checkbox,
+  CircularProgress,
+  Container,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 
 import { useUser } from '../../../context/UserContext';
@@ -33,10 +33,10 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-    approveBankDepositService,
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getUserProfileDetails,
+  approveBankDepositService,
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -211,6 +211,7 @@ export default function UserPage() {
     { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'employee_name', label: 'Employee Name', alignRight: false },
+    { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
     // { id: '' },
   ];
 
@@ -354,6 +355,7 @@ export default function UserPage() {
                       uploaded_filename,
                       user_name,
                       employee_name,
+                      reject_reason,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -375,9 +377,15 @@ export default function UserPage() {
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {full_name}
                         </TableCell>
-                        <TableCell align="left">{getFormattedDate(deposit_date)}</TableCell>
-                        <TableCell align="right">{getFormattedPrice(amount)}</TableCell>
-                        <TableCell align="left">{deposit_type_name}</TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedDate(deposit_date)}
+                        </TableCell>
+                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedPrice(amount)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {deposit_type_name}
+                        </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_bank}
                         </TableCell>
@@ -407,6 +415,9 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {employee_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {reject_reason}
                         </TableCell>
                       </TableRow>
                     );

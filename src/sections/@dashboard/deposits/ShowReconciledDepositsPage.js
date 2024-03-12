@@ -198,6 +198,7 @@ export default function UserPage() {
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'customer', label: sentenceCase('customer'), alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'type', label: 'Deposit Type', alignRight: false },
@@ -209,8 +210,8 @@ export default function UserPage() {
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
-    { id: 'employee_name', label: 'Employee Name', alignRight: false },
+    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
+    // { id: 'employee_name', label: 'Employee Name', alignRight: false },
     // { id: '' },
   ];
 
@@ -354,6 +355,7 @@ export default function UserPage() {
                       uploaded_filename,
                       user_name,
                       employee_name,
+                      invoice_number,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -373,11 +375,20 @@ export default function UserPage() {
                           {status}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {full_name}
+                          {employee_name}
                         </TableCell>
-                        <TableCell align="left">{getFormattedDate(deposit_date)}</TableCell>
-                        <TableCell align="right">{getFormattedPrice(amount)}</TableCell>
-                        <TableCell align="left">{deposit_type_name}</TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {user_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedDate(deposit_date)}
+                        </TableCell>
+                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedPrice(amount)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {deposit_type_name}
+                        </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_bank}
                         </TableCell>
@@ -403,11 +414,14 @@ export default function UserPage() {
                           {remarks}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {invoice_number}
+                        </TableCell>
+                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {user_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        </TableCell> */}
+                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {employee_name}
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     );
                   })}
