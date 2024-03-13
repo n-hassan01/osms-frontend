@@ -197,7 +197,6 @@ export default function UserPage() {
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
-    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'type', label: 'Deposit Type', alignRight: false },
@@ -207,10 +206,11 @@ export default function UserPage() {
     { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
+    { id: 'customer_name', label: sentenceCase('customer'), alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
+    { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
-    { id: 'employee_name', label: 'Employee Name', alignRight: false },
     { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
     // { id: '' },
   ];
@@ -266,7 +266,7 @@ export default function UserPage() {
       try {
         const approvalPromises = deposits.map(async (element) => {
           const requestBody = {
-            action: 'NEW',
+            action: 'REVERSED',
             cashReceiptId: element,
           };
           const response = await approveBankDepositService(user, requestBody);
@@ -356,6 +356,7 @@ export default function UserPage() {
                       user_name,
                       employee_name,
                       reject_reason,
+                      customer_name,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -373,9 +374,6 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {status}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {full_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {getFormattedDate(deposit_date)}
@@ -405,16 +403,19 @@ export default function UserPage() {
                           {receipt_number}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {depositor_name}
+                          {customer_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {remarks}
+                          {employee_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {user_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {employee_name}
+                          {depositor_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {remarks}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {reject_reason}
