@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-key */
 /* eslint-disable camelcase */
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
@@ -12,35 +12,31 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Card,
-  Checkbox,
-  CircularProgress,
-  Container,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    CircularProgress,
+    Container,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 
-import { useUser } from '../../../context/UserContext';
+import { useUser } from '../context/UserContext';
 // components
-import Iconify from '../../../components/iconify';
-import Scrollbar from '../../../components/scrollbar';
+import Scrollbar from '../components/scrollbar';
 // sections
 import {
-  approveBankDepositService,
-  dowloadBankDepositReceiptService,
-  getAllBankDepositsForAccountsService,
-  getUserProfileDetails,
-} from '../../../Services/ApiServices';
-// import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
-import { UserListHead } from '../user';
-import DepositListToolbar from './depositListToolbar';
+    dowloadBankDepositReceiptService,
+    getAllBankDepositsForAccountsService,
+    getUserProfileDetails
+} from '../Services/ApiServices';
+import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
+import { UserListHead } from '../sections/@dashboard/user';
 
 // ----------------------------------------------------------------------
 
@@ -137,8 +133,8 @@ export default function UserPage() {
           const response = await getAllBankDepositsForAccountsService(user);
 
           if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
-            setUserList(filteredList);
+            // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+            setUserList(response.data);
           }
         }
       } catch (error) {
@@ -261,27 +257,6 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const approveDeposits = async (deposits) => {
-    if (deposits.length > 0) {
-      try {
-        const approvalPromises = deposits.map(async (element) => {
-          const requestBody = {
-            action: 'RECONCILED',
-            cashReceiptId: element,
-          };
-          const response = await approveBankDepositService(user, requestBody);
-        });
-
-        await Promise.all(approvalPromises);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error during deposit approval:', error);
-      }
-    } else {
-      alert('Please select atleast one deposit to approve');
-    }
-  };
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
@@ -294,34 +269,25 @@ export default function UserPage() {
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          {/* <Typography variant="h4" gutterBottom>
-            Deposit Collection List
-          </Typography> */}
-          <Button
-            variant="text"
-            startIcon={<Iconify icon="mdi:approve" />}
-            color="primary"
-            onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Reconcile
-          </Button>
+          <Typography variant="h4" gutterBottom>
+            Deposit Collections
+          </Typography>
           {/* <Button
             variant="text"
-            startIcon={<Iconify icon="mdi:approve" />}
+            startIcon={<Iconify icon="icon-park:reject" />}
             color="primary"
             onClick={() => approveDeposits(selected)}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
           >
-            Reject
-          </Button> */}
+            Back to New
+          </Button>
           <Button
             startIcon={<Iconify icon="mdi-chevron-double-down" />}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
             onClick={onDownload}
           >
             Export
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -330,8 +296,6 @@ export default function UserPage() {
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
-            enableDelete
-            user={user}
           />
 
           <Scrollbar>
@@ -345,6 +309,7 @@ export default function UserPage() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  enableReadonly
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
@@ -370,17 +335,12 @@ export default function UserPage() {
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
-                    // const selectedUser = selected.findIndex((object) => object.itemId === cash_receipt_id) !== -1;
 
                     return (
                       <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            checked={selectedUser}
-                            onChange={(event) => handleClick(event, cash_receipt_id)}
-                            // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
-                          />
-                        </TableCell>
+                        {/* <TableCell padding="checkbox">
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cash_receipt_id)} />
+                        </TableCell> */}
 
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
