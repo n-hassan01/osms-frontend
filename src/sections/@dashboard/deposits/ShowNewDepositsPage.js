@@ -36,6 +36,7 @@ import {
   approveBankDepositService,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
   getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
@@ -197,7 +198,6 @@ export default function UserPage() {
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
-    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'type', label: 'Deposit Type', alignRight: false },
@@ -207,10 +207,13 @@ export default function UserPage() {
     { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
+    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
+    { id: 'employee_name', label: sentenceCase('Employee'), alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
-    { id: 'employee_name', label: 'Employee Name', alignRight: false },
+    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
+    // { id: 'employee_name', label: 'Employee Name', alignRight: false },
     // { id: '' },
   ];
 
@@ -260,6 +263,36 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [fromDate, setFromDate] = useState(null);
+  const handleFromDate = (event) => {
+    setPage(0);
+    setFromDate(event.target.value);
+  };
+  console.log(fromDate);
+
+  const [toDate, setToDate] = useState(0);
+  const handleToDate = (event) => {
+    setPage(0);
+    setToDate(event.target.value);
+  };
+  console.log(toDate);
+
+  const handleDateFilter = async () => {
+    const requestBody = {
+      toDepositDate: toDate,
+      fromDepositDate: fromDate,
+    };
+    const response = await getBankDepositViewFilterByDateService(user, requestBody);
+
+    console.log(response.data);
+
+    if (response.status === 200) {
+      const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+      setUserList(filteredList);
+    }
+  };
+  console.log(toDate);
+
   const approveDeposits = async (deposits) => {
     if (deposits.length > 0) {
       try {
@@ -305,15 +338,6 @@ export default function UserPage() {
           >
             Reconcile
           </Button>
-          {/* <Button
-            variant="text"
-            startIcon={<Iconify icon="mdi:approve" />}
-            color="primary"
-            onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Reject
-          </Button> */}
           <Button
             startIcon={<Iconify icon="mdi-chevron-double-down" />}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
@@ -328,9 +352,12 @@ export default function UserPage() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            onFilterDate={handleDateFilter}
             selectedUsers={selected}
             enableDelete
             user={user}
+            onFromDate={handleFromDate}
+            onToDate={handleToDate}
           />
 
           <Scrollbar>
@@ -365,6 +392,8 @@ export default function UserPage() {
                       uploaded_filename,
                       user_name,
                       employee_name,
+                      invoice_number,
+                      customer_name,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -389,11 +418,14 @@ export default function UserPage() {
                           {status}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {full_name}
+                          {getFormattedDate(deposit_date)}
                         </TableCell>
-                        <TableCell align="left">{getFormattedDate(deposit_date)}</TableCell>
-                        <TableCell align="right">{getFormattedPrice(amount)}</TableCell>
-                        <TableCell align="left">{deposit_type_name}</TableCell>
+                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedPrice(amount)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {deposit_type_name}
+                        </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_bank}
                         </TableCell>
@@ -413,17 +445,29 @@ export default function UserPage() {
                           {receipt_number}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {customer_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {employee_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {user_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {depositor_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {invoice_number}
+                        </TableCell>
+                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {user_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        </TableCell> */}
+                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {employee_name}
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     );
                   })}
