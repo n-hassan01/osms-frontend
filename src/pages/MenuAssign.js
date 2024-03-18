@@ -297,7 +297,7 @@ export default function MenuCreation() {
                             {selectedItem && menuslist.length > 0
                               ? menuslist.map((item, i) => (
                                   <div key={i}>
-                                    <TextField value={item.menu_description} />
+                                    <TextField value={item.title} />
                                   </div>
                                 ))
                               : null}
