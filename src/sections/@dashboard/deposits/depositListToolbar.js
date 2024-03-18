@@ -54,11 +54,25 @@ UserListToolbar.propTypes = {
   selectedUsers: PropTypes.array,
   enableDelete: PropTypes.bool,
   user: PropTypes.object,
+  onFromDate: PropTypes.func,
+  onToDate: PropTypes.func,
+  onFilterDate: PropTypes.func,
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName, selectedUsers, enableDelete, user }) {
+export default function UserListToolbar({
+  numSelected,
+  filterName,
+  onFilterName,
+  selectedUsers,
+  enableDelete,
+  user,
+  onFromDate,
+  onToDate,
+  onFilterDate,
+}) {
   const [open, setOpen] = useState(false);
   const [rowData, setRowData] = useState({});
+  const [enableFilter, setEnableFilter] = useState(false);
 
   const onValueChange = (e) => {
     setRowData({ ...rowData, [e.target.name]: e.target.value });
@@ -71,32 +85,6 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
   const handleClose = () => {
     setOpen(false);
   };
-
-  // const deleteSelectedUser = async () => {
-  //   setReject(true);
-  //   try {
-  //     const approvalPromises = selectedUsers.map(async (element) => {
-  //       const requestBody = {
-  //         action: 'REJECTED',
-  //         cashReceiptId: element,
-  //       };
-  //       const response = await approveBankDepositService(user, requestBody);
-
-  //       const rejectRequestBody = {
-  //         rejectReason: 'REJECTED',
-  //         cashReceiptId: element,
-  //       };
-  //       const rejectResponse = await approveBankDepositService(user, rejectRequestBody);
-  //     });
-
-  //     await Promise.all(approvalPromises);
-
-  //     console.log('Successfully rejected!');
-  //     window.location.reload();
-  //   } catch (error) {
-  //     console.error('Error during deposit approval:', error);
-  //   }
-  // };
 
   const rejectDeposits = async () => {
     try {
@@ -149,6 +137,42 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         />
       )}
 
+      {enableFilter && (
+        <Stack direction="row" alignItems="center" justifyContent="flex-start">
+          <div className="col-auto" style={{ marginRight: '15px' }}>
+            <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
+              From <span style={{ color: 'red' }}>*</span>
+              <input
+                required
+                type="date"
+                id="from"
+                name="from"
+                className="form-control"
+                style={{ marginLeft: '5px' }}
+                // value={headerDetails.orderNumber}
+                // readOnly
+                onChange={onFromDate}
+              />
+            </label>
+          </div>
+          <div className="col-auto">
+            <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
+              To <span style={{ color: 'red' }}>*</span>
+              <input
+                required
+                type="date"
+                id="to"
+                name="to"
+                className="form-control"
+                style={{ marginLeft: '5px' }}
+                onChange={onToDate}
+              />
+            </label>
+          </div>
+          <Button onClick={onFilterDate}>Filter</Button>
+        </Stack>
+      )}
+
       {enableDelete && numSelected > 0 ? (
         <Tooltip title="Reject" style={{ color: 'crimson' }}>
           <IconButton onClick={handleClickOpen}>
@@ -158,7 +182,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
+          <IconButton onClick={() => setEnableFilter(true)}>
             <Iconify icon="ic:round-filter-list" />
           </IconButton>
         </Tooltip>

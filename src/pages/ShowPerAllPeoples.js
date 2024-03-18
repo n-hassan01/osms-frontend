@@ -6,22 +6,22 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    Card,
-    Checkbox,
-    Container,
-    IconButton,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  Checkbox,
+  Container,
+  IconButton,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -36,18 +36,15 @@ import { getPerAllPeoplesService } from '../Services/Admin/GetPerAllPeoples';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  // { id: 'personId', label: 'Person ID', alignRight: false },
-  { id: 'effectiveStartDate', label: 'Effective Start Date', alignRight: false },
-  { id: 'effectiveEndDate', label: 'Effective End Date', alignRight: false },
-  { id: 'businessGroupId', label: 'Business Group ID', alignRight: false },
   { id: 'employeeNumber', label: 'Employee Number', alignRight: false },
-  { id: ' fullName', label: ' Full Name', alignRight: false },
+  { id: 'fullName', label: ' Full Name', alignRight: false },
   { id: 'emailAddress', label: 'Email Address', alignRight: false },
   { id: 'workTelephone', label: 'Work Telephone', alignRight: false },
+  { id: 'ship_to_address', label: 'Ship To Address', alignRight: false },
   { id: 'originalDateOfHire', label: 'Original Date Of Hire', alignRight: false },
+  { id: 'effectiveStartDate', label: 'Effective Start Date', alignRight: false },
+  { id: 'effectiveEndDate', label: 'Effective End Date', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
-
-  { id: '' },
 ];
 const selectedUsers = [];
 
@@ -77,7 +74,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.location_code.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.full_name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -165,7 +162,7 @@ export default function ShowPerAllPeoples() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.email);
+      const newSelecteds = USERLIST.map((n) => n.person_id);
       setSelected(newSelecteds);
       return;
     }
@@ -203,22 +200,35 @@ export default function ShowPerAllPeoples() {
     setFilterName(event.target.value);
   };
 
+  function getFormattedDate(value) {
+    if (!value) return '';
+
+    const dateObject = new Date(value);
+
+    // Extract date and time components
+    const formattedDate = dateObject.toLocaleDateString();
+    const formattedTime = dateObject.toLocaleTimeString();
+    const date = new Date(formattedDate);
+    const year = String(date.getFullYear()).slice(-2);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}/${month}/${year}    ${formattedTime}`;
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
     <>
       <Helmet>
-        <title> HR Per All Peoples | COMS </title>
+        <title> All Employees | COMS </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Per All Peoples
+            Employees
           </Typography>
           <div>
             <Button
@@ -230,7 +240,7 @@ export default function ShowPerAllPeoples() {
                 navigate('/dashboard/addperallpeoples/null');
               }}
             >
-              Add PerAllPeoples
+              Add Employees
             </Button>
           </div>
         </Stack>
@@ -260,15 +270,13 @@ export default function ShowPerAllPeoples() {
                     const {
                       person_id,
                       effective_start_date,
-
                       effective_end_date,
-
-                      business_group_id,
                       employee_number,
                       full_name,
                       email_address,
                       work_telephone,
                       original_date_of_hire,
+                      ship_to_address,
                     } = row;
                     const selectedUser = selected.indexOf(person_id) !== -1;
 
@@ -277,18 +285,30 @@ export default function ShowPerAllPeoples() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, person_id)} />
                         </TableCell>
-
-                        {/* <TableCell align="left">{person_id}</TableCell> */}
-                        <TableCell align="left">{effective_start_date}</TableCell>
-
-                        <TableCell align="left">{effective_end_date}</TableCell>
-
-                        <TableCell align="left">{business_group_id}</TableCell>
-                        <TableCell align="left">{employee_number}</TableCell>
-                        <TableCell align="left">{full_name}</TableCell>
-                        <TableCell align="left">{email_address}</TableCell>
-                        <TableCell align="left">{work_telephone}</TableCell>
-                        <TableCell align="left">{original_date_of_hire}</TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {employee_number}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {full_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {email_address}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {work_telephone}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {ship_to_address}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedDate(original_date_of_hire)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedDate(effective_start_date)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedDate(effective_end_date)}
+                        </TableCell>
 
                         <TableCell align="right">
                           <IconButton
@@ -302,9 +322,6 @@ export default function ShowPerAllPeoples() {
                             <Iconify icon={'tabler:edit'} />
                           </IconButton>
                         </TableCell>
-                        {/* <TableCell align="right">
-                          <DeletePerAllPeoples person_id={person_id} />
-                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}
