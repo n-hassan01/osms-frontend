@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { addUserAssign, getFndUserIds, getMenusDetails } from '../Services/ApiServices';
+import { addUserAssign, getFndUserIds, getMenusDetails, getSelectIdsMenus } from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 
 // Add this import statement
@@ -20,11 +20,12 @@ export default function MenuCreation() {
   const [userInput, setUserInput] = useState('');
   // const [user, setUser] = useState('');
   const [showMenuLines, setShowMenuLines] = useState(true);
-
+  const [selectid, setSelectid] = useState('');
   const [list, setList] = useState([]);
-
+  const [menuslist, setMenuslist] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [account, setAccount] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null);
   useEffect(() => {
     async function fetchData() {
       try {
@@ -102,7 +103,7 @@ export default function MenuCreation() {
     }
     setCount(c);
     alert('Successfully added');
-    navigate('/dashboard/dashclone');
+    navigate('/dashboard/menuassign');
 
     window.location.reload();
   };
@@ -141,7 +142,7 @@ export default function MenuCreation() {
     console.log('value', value);
     const updatedRows = [...menurows];
     updatedRows[index][name] = value;
-
+    // setSelectedItem(null);
     setMenuRows(updatedRows);
   };
   const handleInputItemChange = (index, event) => {
@@ -169,10 +170,13 @@ export default function MenuCreation() {
 
   const handleMenuItemClick = (index, item) => {
     console.log(index);
-    console.log(item);
+    console.log(item.user_id);
+    console.log(item.user_name);
+    setSelectid(item.user_id);
+    console.log(selectid);
+
     const name = 'userId';
     const username = 'userName';
-
     const show = 'showList';
 
     const updatedRows = [...menurows];
@@ -182,9 +186,28 @@ export default function MenuCreation() {
     updatedRows[index][show] = false;
     console.log(updatedRows);
     setMenuRows(updatedRows);
-
+    setSelectedItem(item);
     console.log(menurows);
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        console.log(selectid);
+        const response = await getSelectIdsMenus(user, selectid);
+        console.log(response);
+        if (response.status === 200) {
+          setMenuslist(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+      console.log(list);
+    }
+
+    fetchData();
+  }, [selectid]);
+
   const handleClose = () => {
     navigate('/dashboard/menuassign');
 
@@ -207,18 +230,18 @@ export default function MenuCreation() {
           </Typography>
         </Stack>
         <Grid item xs={3}>
-          <Button
+          {/* <Button
             style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
             onClick={() => {
               handleAddRow();
             }}
           >
             <span style={{ font: 'bold' }}>+ </span> New Menu Assign
-          </Button>
-
+          </Button> */}
+{/* 
           <Button style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }} onClick={handleClose}>
             Cancel
-          </Button>
+          </Button> */}
         </Grid>
         <Grid
           container
@@ -232,8 +255,9 @@ export default function MenuCreation() {
                   <thead>
                     <tr>
                       <th>
-                        User ID <span style={{ color: 'red' }}>*</span>
+                        User Name <span style={{ color: 'red' }}>*</span>
                       </th>
+                      <th>Active Menu</th>
                       <th>
                         Menu Description <span style={{ color: 'red' }}>*</span>
                       </th>
@@ -248,7 +272,7 @@ export default function MenuCreation() {
                               select
                               type="text"
                               name="userId"
-                              placeholder="Type User Name "
+                              placeholder="Type User Name"
                               value={row.userName}
                               onChange={(e) => handleInputItemChange(index, e)}
                               //  onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
@@ -267,6 +291,16 @@ export default function MenuCreation() {
                                 ))}
                               </ul>
                             )}
+                          </td>
+
+                          <td>
+                            {selectedItem && menuslist.length > 0
+                              ? menuslist.map((item, i) => (
+                                  <div key={i}>
+                                    <TextField value={item.menu_description} />
+                                  </div>
+                                ))
+                              : null}
                           </td>
 
                           <td>
