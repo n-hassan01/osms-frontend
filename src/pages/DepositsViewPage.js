@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-key */
 /* eslint-disable camelcase */
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
-  Checkbox,
   CircularProgress,
   Container,
   Paper,
@@ -27,21 +26,18 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useUser } from '../../../context/UserContext';
+import { useUser } from '../context/UserContext';
 // components
-import Iconify from '../../../components/iconify';
-import Scrollbar from '../../../components/scrollbar';
+import Scrollbar from '../components/scrollbar';
 // sections
 import {
-  approveBankDepositService,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
   getUserProfileDetails,
-} from '../../../Services/ApiServices';
-// import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
-import { UserListHead } from '../user';
-import DepositListToolbar from './depositListToolbar';
+} from '../Services/ApiServices';
+import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
+import { UserListHead } from '../sections/@dashboard/user';
 
 // ----------------------------------------------------------------------
 
@@ -138,8 +134,8 @@ export default function UserPage() {
           const response = await getAllBankDepositsForAccountsService(user);
 
           if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
-            setUserList(filteredList);
+            // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+            setUserList(response.data);
           }
         }
       } catch (error) {
@@ -198,6 +194,8 @@ export default function UserPage() {
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
+    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'type', label: 'Deposit Type', alignRight: false },
@@ -207,9 +205,6 @@ export default function UserPage() {
     { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-    { id: 'employee_name', label: 'Employee', alignRight: false },
-    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
@@ -287,29 +282,7 @@ export default function UserPage() {
     console.log(response.data);
 
     if (response.status === 200) {
-      const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
-      setUserList(filteredList);
-    }
-  };
-
-  const approveDeposits = async (deposits) => {
-    if (deposits.length > 0) {
-      try {
-        const approvalPromises = deposits.map(async (element) => {
-          const requestBody = {
-            action: 'REVERSED',
-            cashReceiptId: element,
-          };
-          const response = await approveBankDepositService(user, requestBody);
-        });
-
-        await Promise.all(approvalPromises);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error during deposit approval:', error);
-      }
-    } else {
-      alert('Please select atleast one deposit to approve');
+      setUserList(response.data);
     }
   };
 
@@ -325,10 +298,10 @@ export default function UserPage() {
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          {/* <Typography variant="h4" gutterBottom>
-            Deposit Collection List
-          </Typography> */}
-          <Button
+          <Typography variant="h4" gutterBottom>
+            Deposit Collections
+          </Typography>
+          {/* <Button
             variant="text"
             startIcon={<Iconify icon="icon-park:reject" />}
             color="primary"
@@ -343,7 +316,7 @@ export default function UserPage() {
             onClick={onDownload}
           >
             Export
-          </Button>
+          </Button> */}
         </Stack>
 
         <Card>
@@ -368,6 +341,7 @@ export default function UserPage() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  enableReadonly
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
@@ -390,16 +364,15 @@ export default function UserPage() {
                       user_name,
                       employee_name,
                       invoice_number,
-                      customer_name,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
 
                     return (
                       <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cash_receipt_id)} />
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
@@ -408,6 +381,12 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {status}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {employee_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {user_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {getFormattedDate(deposit_date)}
@@ -435,15 +414,6 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {receipt_number}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {customer_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {employee_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {user_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {depositor_name}

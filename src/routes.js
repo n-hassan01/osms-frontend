@@ -53,6 +53,7 @@ import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
 import BankFormPage from './pages/BankFormPage';
 import DepositEntryForm from './pages/DepositEntryForm';
+import DepositsViewPage from './pages/DepositsViewPage';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
 import ManageMtlCategoriesB from './pages/ManageMtlCategoriesB';
@@ -164,6 +165,7 @@ export default function Router() {
         { path: 'showDepositDetails/:cash_receipt_id', element: <ShowDepositDetailsPage /> },
         { path: 'allDeposits', element: <ShowAllDeposits /> },
         { path: 'mtlcategoriesformpage', element: <MtlCategoriesFormPage /> },
+        { path: 'depositsView', element: <DepositsViewPage /> },
       ],
     },
 
