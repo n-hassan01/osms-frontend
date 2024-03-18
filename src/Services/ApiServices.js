@@ -1181,6 +1181,20 @@ export const getBankDepositViewService = async (loginToken, userId) => {
   }
 };
 
+export const getBankDepositViewFilterByDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}bank-deposit/customer/view/filterByDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getAllBankDepositsForAccountsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {

@@ -12,18 +12,18 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    CircularProgress,
-    Container,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  CircularProgress,
+  Container,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 
 import { useUser } from '../context/UserContext';
@@ -31,9 +31,10 @@ import { useUser } from '../context/UserContext';
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getUserProfileDetails
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -257,6 +258,34 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [fromDate, setFromDate] = useState(null);
+  const handleFromDate = (event) => {
+    setPage(0);
+    setFromDate(event.target.value);
+  };
+  console.log(fromDate);
+
+  const [toDate, setToDate] = useState(0);
+  const handleToDate = (event) => {
+    setPage(0);
+    setToDate(event.target.value);
+  };
+  console.log(toDate);
+
+  const handleDateFilter = async () => {
+    const requestBody = {
+      toDepositDate: toDate,
+      fromDepositDate: fromDate,
+    };
+    const response = await getBankDepositViewFilterByDateService(user, requestBody);
+
+    console.log(response.data);
+
+    if (response.status === 200) {
+      setUserList(response.data);
+    }
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
@@ -295,7 +324,10 @@ export default function UserPage() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            onFilterDate={handleDateFilter}
             selectedUsers={selected}
+            onFromDate={handleFromDate}
+            onToDate={handleToDate}
           />
 
           <Scrollbar>

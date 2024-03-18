@@ -36,6 +36,7 @@ import {
   approveBankDepositService,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
   getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
@@ -262,6 +263,36 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [fromDate, setFromDate] = useState(null);
+  const handleFromDate = (event) => {
+    setPage(0);
+    setFromDate(event.target.value);
+  };
+  console.log(fromDate);
+
+  const [toDate, setToDate] = useState(0);
+  const handleToDate = (event) => {
+    setPage(0);
+    setToDate(event.target.value);
+  };
+  console.log(toDate);
+
+  const handleDateFilter = async () => {
+    const requestBody = {
+      toDepositDate: toDate,
+      fromDepositDate: fromDate,
+    };
+    const response = await getBankDepositViewFilterByDateService(user, requestBody);
+
+    console.log(response.data);
+
+    if (response.status === 200) {
+      const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+      setUserList(filteredList);
+    }
+  };
+  console.log(toDate);
+
   const approveDeposits = async (deposits) => {
     if (deposits.length > 0) {
       try {
@@ -307,15 +338,6 @@ export default function UserPage() {
           >
             Reconcile
           </Button>
-          {/* <Button
-            variant="text"
-            startIcon={<Iconify icon="mdi:approve" />}
-            color="primary"
-            onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Reject
-          </Button> */}
           <Button
             startIcon={<Iconify icon="mdi-chevron-double-down" />}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
@@ -330,9 +352,12 @@ export default function UserPage() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            onFilterDate={handleDateFilter}
             selectedUsers={selected}
             enableDelete
             user={user}
+            onFromDate={handleFromDate}
+            onToDate={handleToDate}
           />
 
           <Scrollbar>
