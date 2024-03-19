@@ -288,12 +288,17 @@ export default function UserPage() {
   };
   console.log(fromDate);
 
-  const [toDate, setToDate] = useState(0);
+  const [toDate, setToDate] = useState(null);
   const handleToDate = (event) => {
     setPage(0);
     setToDate(event.target.value);
   };
   console.log(toDate);
+
+  const handleClearDate = (event) => {
+    setToDate('');
+    setFromDate('');
+  };
 
   const handleDateFilter = async () => {
     const requestBody = {
@@ -376,6 +381,9 @@ export default function UserPage() {
             selectedUsers={selected}
             onFromDate={handleFromDate}
             onToDate={handleToDate}
+            onClearDate={handleClearDate}
+            toDepositDate={toDate}
+            fromDepositDate={fromDate}
           />
 
           <Scrollbar>
