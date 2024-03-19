@@ -199,10 +199,12 @@ export default function UserPage() {
     'Deposit From Bank': item.depositor_bank,
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
+    Customer: item.customer_name,
+    Employee: item.employee_name,
+    'User Name': item.user_name,
     Depositor: item.depositor_name,
     Remarks: item.remarks,
-    'User Name': item.user_name,
-    'Employee Name': item.employee_name,
+    'Invoice Number': item.invoice_number,
   }));
 
   // const { onDownload } = useDownloadExcel({
@@ -224,12 +226,12 @@ export default function UserPage() {
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
     { id: 'customer', label: sentenceCase('customer'), alignRight: false },
-    { id: 'employee_name', label: sentenceCase('Employee'), alignRight: false },
+    { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-    // { id: 'employee_name', label: 'Employee Name', alignRight: false },
+    // { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
     // { id: '' },
   ];
 
@@ -434,7 +436,7 @@ export default function UserPage() {
                           <Checkbox
                             checked={selectedUser}
                             onChange={(event) => handleClick(event, cash_receipt_id)}
-                          // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
+                            // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
                           />
                         </TableCell>
 
