@@ -1622,3 +1622,16 @@ export const getPerMtlCategoriesDetails = async (category_id) => {
     return err.message;
   }
 };
+export const getSelectIdsMenus = async (user, user_id) => {
+  try {
+    return await axios.get(`${usersUrl}get-menus/peruser/${user_id}`, {
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

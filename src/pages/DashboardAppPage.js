@@ -25,19 +25,24 @@ export default function DashboardAppPage() {
             <ShowWfNotifications />
           </Grid>
 
-          <Grid container spacing={2} style={{ marginLeft: '30px', marginTop: '10px' }}>
+          <Grid
+            container
+            spacing={2}
+            style={{ marginLeft: '25px', marginTop: '10px', display: 'flex', flexDirection: 'column', width: '100%' }}
+          >
             {/* Left-aligned Grid items */}
-            <Grid item xs={12} md={4}>
-              <Grid container spacing={2} direction="column" style={{ height: 'auto' }}>
-                <Grid item>
+            <Grid item xs={12} style={{ height: '100px' }}>
+              <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'column' }}>
+                <Grid item style={{ height: '40%' }}>
                   <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
                 </Grid>
-                <Grid item>
+                <Grid item style={{ height: '20%' }}>
                   <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
                 </Grid>
                 <Grid item>
-                  <AppWidgetSummary title="Deposits" total={232323}  icon={'ant-design:windows-filled'} />
+                  <AppWidgetSummary title="Deposits" total={232323} icon={'ant-design:windows-filled'} />
                 </Grid>
+
                 <Grid item>
                   <AppWidgetSummary
                     title="Item Orders"
@@ -53,10 +58,10 @@ export default function DashboardAppPage() {
             </Grid>
 
             {/* Right-aligned Grid item */}
-            <Grid item xs={12} md={6} style={{ marginLeft: '20px', height: 'auto' }} direction="column">
+            <Grid item xs={12} md={9.7} style={{ marginLeft: '20px', height: 'auto' }} direction="column">
               <AppCurrentVisits
                 style={{ marginBottom: '20px' }}
-                title="Current Visits"
+                title="Total Sales Order "
                 chartData={[
                   { label: 'America', value: 4344 },
                   { label: 'Asia', value: 5435 },
