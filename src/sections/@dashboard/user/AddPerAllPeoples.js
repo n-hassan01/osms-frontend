@@ -2,11 +2,10 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-undef */
-import { Container, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { sentenceCase } from 'change-case';
 
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -63,6 +62,7 @@ export default function AddPerAllPeoples() {
   }, []);
 
   const handleMenuChange = (index, name, value) => {
+    console.log(name, value);
     const updatedRows = [...people];
     updatedRows[index][name] = value;
     setPeople(updatedRows);
@@ -107,16 +107,13 @@ export default function AddPerAllPeoples() {
             businessGroupId: lineInfo.business_group_id,
             workTelephone: lineInfo.work_telephone,
             employeeNumber: lineInfo.employee_number,
-
             fullName: lineInfo.full_name,
-
             emailAddress: lineInfo.email_address,
-
             originalDateOfHire: lineInfo.original_date_of_hire,
+            shipToAddress: lineInfo.ship_to_address,
           };
 
           const response = await addPerAllPeopleService(requestBody);
-          console.log('Pass to home after request ');
           handleClose();
         } else {
           const requestBody = {
@@ -125,17 +122,12 @@ export default function AddPerAllPeoples() {
             businessGroupId: lineInfo.business_group_id,
             workTelephone: lineInfo.work_telephone,
             employeeNumber: lineInfo.employee_number,
-
             fullName: lineInfo.full_name,
-
             emailAddress: lineInfo.email_address,
-
             originalDateOfHire: lineInfo.original_date_of_hire,
+            shipToAddress: lineInfo.ship_to_address,
           };
-          console.log(requestBody);
           const response = await updatePerAllPeoplesDetails(requestBody, person_id);
-          console.log(response);
-          console.log('Pass to home after request ');
           handleClose();
         }
       }
@@ -157,11 +149,8 @@ export default function AddPerAllPeoples() {
           business_group_id: '',
           work_telephone: '',
           employee_number: '',
-
           full_name: '',
-
           email_address: '',
-
           original_date_of_hire: '',
         },
       ]);
@@ -179,7 +168,7 @@ export default function AddPerAllPeoples() {
   return (
     <div>
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={1}>
           <Typography variant="h4" gutterBottom>
             PerAllPeoples Add
           </Typography>
@@ -192,7 +181,7 @@ export default function AddPerAllPeoples() {
               handleAddRow();
             }}
           >
-            Add PerAllPeoples
+            Add Employee
           </Button>
 
           <Button
@@ -204,46 +193,97 @@ export default function AddPerAllPeoples() {
         </Grid>
 
         <div>
-          <form className="form-horizontal" style={{ marginTop: '5%' }}>
+          <form className="form-horizontal" style={{ marginTop: '20px' }}>
             <div className="table-responsive">
               <table className="table table-bordered table-striped table-highlight">
                 <thead>
                   <tr>
-                    <th>
-                      Effective Start Date <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Effective End Date <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Business Group Id <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Work Telephone <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
+                    <th style={{ whiteSpace: 'nowrap' }}>
                       Employee Number <span style={{ color: 'red' }}>*</span>
                     </th>
-                    <th>
+                    <th style={{ whiteSpace: 'nowrap' }}>
                       Full Name <span style={{ color: 'red' }}>*</span>
                     </th>
-                    <th>
-                      Email Address <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Original Date Of Hire <span style={{ color: 'red' }}>*</span>
-                    </th>
+                    <th style={{ whiteSpace: 'nowrap' }}>Email Address</th>
+                    <th style={{ whiteSpace: 'nowrap' }}>Work Telephone</th>
+                    {/* <th style={{ whiteSpace: 'nowrap' }}>Work Telephone</th> */}
+                    <th style={{ whiteSpace: 'nowrap' }}>Ship To Address</th>
+                    <th style={{ whiteSpace: 'nowrap' }}>Effective Start Date</th>
+                    <th style={{ whiteSpace: 'nowrap' }}>Effective End Date</th>
+                    {/* <th style={{ whiteSpace: 'nowrap' }}>
+                      Business Group Id <span style={{ color: 'red' }}>*</span>
+                    </th> */}
+                    <th style={{ whiteSpace: 'nowrap' }}>Original Date Of Hire</th>
                   </tr>
                 </thead>
                 <tbody>
                   {showMenuLines &&
                     people.map((row, index) => (
                       <tr key={index}>
-                        <td style={{ width: '190px' }}>
-                          <TextField
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="employee_number"
+                            style={{ height: '30px' }}
+                            value={row.employee_number}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="full_name"
+                            style={{ height: '30px' }}
+                            value={row.full_name}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="email_address"
+                            style={{ height: '30px' }}
+                            value={row.email_address}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="work_telephone"
+                            style={{ height: '30px' }}
+                            value={row.work_telephone}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="ship_to_address"
+                            style={{ height: '30px' }}
+                            value={row.ship_to_address}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="date"
+                            id="effective_start_date"
+                            name="effective_start_date"
+                            style={{ width: '100%', borderRadius: '5px' }}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                            value={row.effective_start_date}
+                          />
+                          {/* <TextField
                             type="date"
                             name="effective_start_date"
                             label={sentenceCase('effective_start_date')}
+                            style={{ height: '15px' }}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                             error={!!errors.effective_start_date}
                             helperText={errors.effective_start_date}
@@ -251,10 +291,18 @@ export default function AddPerAllPeoples() {
                               shrink: true,
                             }}
                             // value={row.effective_start_date}
-                          />
+                          /> */}
                         </td>
-                        <td style={{ width: '150px' }}>
-                          <TextField
+                        <td>
+                          <input
+                            type="date"
+                            id="effective_end_date"
+                            name="effective_end_date"
+                            style={{ width: '100%', borderRadius: '5px' }}
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                            value={row.effective_end_date}
+                          />
+                          {/* <TextField
                             type="date"
                             name="effective_end_date"
                             label={sentenceCase('effective_end_date')}
@@ -265,56 +313,28 @@ export default function AddPerAllPeoples() {
                               shrink: true,
                             }}
                             // value={row.effective_end_date}
-                          />
+                          /> */}
                         </td>
-                        <td style={{ width: '350px' }}>
+                        {/* <td>
                           <input
                             type="text"
                             className="form-control"
                             name="business_group_id"
+                            style={{ height: '30px' }}
                             value={row.business_group_id}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
-                        </td>
-                        <td style={{ width: '350px' }}>
+                        </td> */}
+                        <td>
                           <input
-                            type="text"
-                            className="form-control"
-                            name="work_telephone"
-                            value={row.work_telephone}
+                            type="date"
+                            id="original_date_of_hire"
+                            name="original_date_of_hire"
+                            style={{ width: '100%', borderRadius: '5px' }}
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                            value={row.original_date_of_hire}
                           />
-                        </td>
-                        <td style={{ width: '350px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="employee_number"
-                            value={row.employee_number}
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-                        <td style={{ width: '350px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="full_name"
-                            value={row.full_name}
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-                        <td style={{ width: '350px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="email_address"
-                            value={row.email_address}
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-
-                        <td style={{ width: '150px' }}>
-                          <TextField
+                          {/* <TextField
                             type="date"
                             name="original_date_of_hire"
                             label={sentenceCase('original_date_of_hire')}
@@ -325,7 +345,7 @@ export default function AddPerAllPeoples() {
                               shrink: true,
                             }}
                             //  value={row.original_date_of_hire}
-                          />
+                          /> */}
                         </td>
                       </tr>
                     ))}
@@ -333,7 +353,7 @@ export default function AddPerAllPeoples() {
               </table>
             </div>
             {showMenuLines && (
-              <Grid item xs={3}>
+              <Grid item xs={3} mt={2}>
                 <Button
                   style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
                   onClick={handleClick}
