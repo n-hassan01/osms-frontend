@@ -206,10 +206,11 @@ export default function UserPage() {
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
     Customer: item.customer_name,
-    'User Name': item.user_name,
     Employee: item.employee_name,
+    'User Name': item.user_name,
     Depositor: item.depositor_name,
     Remarks: item.remarks,
+    'Invoice Number': item.invoice_number,
     'Reject Reason': item.reject_reason,
   }));
 
