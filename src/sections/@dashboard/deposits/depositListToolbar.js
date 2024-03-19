@@ -50,6 +50,8 @@ const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
 UserListToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
+  toDepositDate: PropTypes.string,
+  fromDepositDate: PropTypes.string,
   onFilterName: PropTypes.func,
   selectedUsers: PropTypes.array,
   enableDelete: PropTypes.bool,
@@ -57,6 +59,7 @@ UserListToolbar.propTypes = {
   onFromDate: PropTypes.func,
   onToDate: PropTypes.func,
   onFilterDate: PropTypes.func,
+  onClearDate: PropTypes.func,
 };
 
 export default function UserListToolbar({
@@ -69,10 +72,15 @@ export default function UserListToolbar({
   onFromDate,
   onToDate,
   onFilterDate,
+  onClearDate,
+  toDepositDate,
+  fromDepositDate,
 }) {
+  console.log(fromDepositDate);
   const [open, setOpen] = useState(false);
   const [rowData, setRowData] = useState({});
   const [enableFilter, setEnableFilter] = useState(false);
+  // const [toDate, setToDate] = useState(toDepositDate);
 
   const onValueChange = (e) => {
     setRowData({ ...rowData, [e.target.name]: e.target.value });
@@ -149,8 +157,7 @@ export default function UserListToolbar({
                 name="from"
                 className="form-control"
                 style={{ marginLeft: '5px' }}
-                // value={headerDetails.orderNumber}
-                // readOnly
+                value={fromDepositDate}
                 onChange={onFromDate}
               />
             </label>
@@ -165,11 +172,13 @@ export default function UserListToolbar({
                 name="to"
                 className="form-control"
                 style={{ marginLeft: '5px' }}
+                value={toDepositDate}
                 onChange={onToDate}
               />
             </label>
           </div>
           <Button onClick={onFilterDate}>Filter</Button>
+          <Button onClick={onClearDate}>Clear</Button>
         </Stack>
       )}
 
