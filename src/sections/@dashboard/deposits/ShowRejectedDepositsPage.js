@@ -195,9 +195,9 @@ export default function UserPage() {
   //   sheet: 'SalesOrderData',
   // });
   const exportData = USERLIST.map((item) => ({
-    Status: item.status,
+    'Status': item.status,
     'Deposit Date': item.deposit_date,
-    Amount: item.amount,
+    'Amount': item.amount,
     'Deposit Type': item.deposit_type_name,
     'Company Bank': item.company_bank,
     'Company Account': item.company_account,
@@ -205,10 +205,12 @@ export default function UserPage() {
     'Deposit From Bank': item.depositor_bank,
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
-    Depositor: item.depositor_name,
-    Remarks: item.remarks,
+    'Customer': item.customer_name,
     'User Name': item.user_name,
-    'Employee Name': item.employee_name,
+    'Employee': item.employee_name,
+    'Depositor': item.depositor_name,
+    'Remarks': item.remarks,
+    'Reject Reason': item.reject_reason,
   }));
 
   const TABLE_HEAD = [
