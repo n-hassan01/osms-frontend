@@ -7,23 +7,23 @@ import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { filter } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
-import { useDownloadExcel } from 'react-export-table-to-excel';
+import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    CircularProgress,
-    Container,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  CircularProgress,
+  Container,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 
 import { useUser } from '../context/UserContext';
@@ -31,9 +31,10 @@ import { useUser } from '../context/UserContext';
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getUserProfileDetails
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -184,11 +185,27 @@ export default function UserPage() {
     }
   };
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableref.current,
-    filename: 'sales_order_data',
-    sheet: 'SalesOrderData',
-  });
+  // const { onDownload } = useDownloadExcel({
+  //   currentTableRef: tableref.current,
+  //   filename: 'sales_order_data',
+  //   sheet: 'SalesOrderData',
+  // });
+  const exportData = USERLIST.map((item) => ({
+    Status: item.status,
+    'Deposit Date': item.deposit_date,
+    Amount: item.amount,
+    'Deposit Type': item.deposit_type_name,
+    'Company Bank': item.company_bank,
+    'Company Account': item.company_account,
+    'Company Name': item.company_name,
+    'Deposit From Bank': item.depositor_bank,
+    'Deposit From Branch': item.depositor_branch,
+    'Receipt Number': item.receipt_number,
+    Depositor: item.depositor_name,
+    Remarks: item.remarks,
+    'User Name': item.user_name,
+    'Employee Name': item.employee_name,
+  }));
 
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
@@ -257,6 +274,34 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [fromDate, setFromDate] = useState(null);
+  const handleFromDate = (event) => {
+    setPage(0);
+    setFromDate(event.target.value);
+  };
+  console.log(fromDate);
+
+  const [toDate, setToDate] = useState(0);
+  const handleToDate = (event) => {
+    setPage(0);
+    setToDate(event.target.value);
+  };
+  console.log(toDate);
+
+  const handleDateFilter = async () => {
+    const requestBody = {
+      toDepositDate: toDate,
+      fromDepositDate: fromDate,
+    };
+    const response = await getBankDepositViewFilterByDateService(user, requestBody);
+
+    console.log(response.data);
+
+    if (response.status === 200) {
+      setUserList(response.data);
+    }
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
@@ -288,6 +333,9 @@ export default function UserPage() {
           >
             Export
           </Button> */}
+          <CSVLink data={exportData} className="btn btn-success">
+            Export Table
+          </CSVLink>
         </Stack>
 
         <Card>
@@ -295,7 +343,10 @@ export default function UserPage() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            onFilterDate={handleDateFilter}
             selectedUsers={selected}
+            onFromDate={handleFromDate}
+            onToDate={handleToDate}
           />
 
           <Scrollbar>

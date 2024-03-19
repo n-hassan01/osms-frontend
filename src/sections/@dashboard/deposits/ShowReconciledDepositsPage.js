@@ -6,8 +6,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { filter } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
-import { useDownloadExcel } from 'react-export-table-to-excel';
+import { useEffect, useState } from 'react';
+import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -36,6 +36,7 @@ import {
   approveBankDepositService,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
   getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
@@ -88,7 +89,7 @@ function getFormattedDate(value) {
 }
 
 export default function UserPage() {
-  const tableref = useRef(null);
+  // const tableref = useRef(null);
 
   const navigate = useNavigate();
 
@@ -188,11 +189,27 @@ export default function UserPage() {
     }
   };
 
-  const { onDownload } = useDownloadExcel({
-    currentTableRef: tableref.current,
-    filename: 'sales_order_data',
-    sheet: 'SalesOrderData',
-  });
+  // const { onDownload } = useDownloadExcel({
+  //   currentTableRef: tableref.current,
+  //   filename: 'sales_order_data',
+  //   sheet: 'SalesOrderData',
+  // });
+  const exportData = USERLIST.map((item) => ({
+    Status: item.status,
+    'Deposit Date': item.deposit_date,
+    Amount: item.amount,
+    'Deposit Type': item.deposit_type_name,
+    'Company Bank': item.company_bank,
+    'Company Account': item.company_account,
+    'Company Name': item.company_name,
+    'Deposit From Bank': item.depositor_bank,
+    'Deposit From Branch': item.depositor_branch,
+    'Receipt Number': item.receipt_number,
+    Depositor: item.depositor_name,
+    Remarks: item.remarks,
+    'User Name': item.user_name,
+    'Employee Name': item.employee_name,
+  }));
 
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
@@ -262,6 +279,35 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [fromDate, setFromDate] = useState(null);
+  const handleFromDate = (event) => {
+    setPage(0);
+    setFromDate(event.target.value);
+  };
+  console.log(fromDate);
+
+  const [toDate, setToDate] = useState(0);
+  const handleToDate = (event) => {
+    setPage(0);
+    setToDate(event.target.value);
+  };
+  console.log(toDate);
+
+  const handleDateFilter = async () => {
+    const requestBody = {
+      toDepositDate: toDate,
+      fromDepositDate: fromDate,
+    };
+    const response = await getBankDepositViewFilterByDateService(user, requestBody);
+
+    console.log(response.data);
+
+    if (response.status === 200) {
+      const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+      setUserList(filteredList);
+    }
+  };
+
   const approveDeposits = async (deposits) => {
     if (deposits.length > 0) {
       try {
@@ -307,13 +353,16 @@ export default function UserPage() {
           >
             Back to New
           </Button>
-          <Button
+          {/* <Button
             startIcon={<Iconify icon="mdi-chevron-double-down" />}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
             onClick={onDownload}
           >
             Export
-          </Button>
+          </Button> */}
+          <CSVLink data={exportData} className="btn btn-success">
+            Export Table
+          </CSVLink>
         </Stack>
 
         <Card>
@@ -321,12 +370,15 @@ export default function UserPage() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            onFilterDate={handleDateFilter}
             selectedUsers={selected}
+            onFromDate={handleFromDate}
+            onToDate={handleToDate}
           />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
-              <Table ref={tableref}>
+              <Table>
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
