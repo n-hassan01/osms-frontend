@@ -296,9 +296,16 @@ export default function UserPage() {
   };
   console.log(toDate);
 
-  const handleClearDate = (event) => {
-    setToDate('');
-    setFromDate('');
+  const handleClearDate = async (event) => {
+    const response = await getAllBankDepositsForAccountsService(user);
+
+    if (response.status === 200) {
+      setUserList(response.data);
+      setToDate('');
+      setFromDate('');
+    } else {
+      alert('Process failed! Please try again');
+    }
   };
 
   const handleDateFilter = async () => {
