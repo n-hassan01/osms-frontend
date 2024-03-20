@@ -195,9 +195,9 @@ export default function UserPage() {
   //   sheet: 'SalesOrderData',
   // });
   const exportData = USERLIST.map((item) => ({
-    'Status': item.status,
+    Status: item.status,
     'Deposit Date': item.deposit_date,
-    'Amount': item.amount,
+    Amount: item.amount,
     'Deposit Type': item.deposit_type_name,
     'Company Bank': item.company_bank,
     'Company Account': item.company_account,
@@ -205,11 +205,12 @@ export default function UserPage() {
     'Deposit From Bank': item.depositor_bank,
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
-    'Customer': item.customer_name,
+    Customer: item.customer_name,
+    Employee: item.employee_name,
     'User Name': item.user_name,
-    'Employee': item.employee_name,
-    'Depositor': item.depositor_name,
-    'Remarks': item.remarks,
+    Depositor: item.depositor_name,
+    Remarks: item.remarks,
+    'Invoice Number': item.invoice_number,
     'Reject Reason': item.reject_reason,
   }));
 
@@ -225,11 +226,12 @@ export default function UserPage() {
     { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-    { id: 'customer_name', label: sentenceCase('customer'), alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
+    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
     { id: 'employee_name', label: 'Employee', alignRight: false },
+    { id: 'user_name', label: 'User Name', alignRight: false },
     { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
+    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
     { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
     // { id: '' },
   ];
@@ -287,12 +289,17 @@ export default function UserPage() {
   };
   console.log(fromDate);
 
-  const [toDate, setToDate] = useState(0);
+  const [toDate, setToDate] = useState(null);
   const handleToDate = (event) => {
     setPage(0);
     setToDate(event.target.value);
   };
   console.log(toDate);
+
+  const handleClearDate = (event) => {
+    setToDate('');
+    setFromDate('');
+  };
 
   const handleDateFilter = async () => {
     const requestBody = {
@@ -375,6 +382,9 @@ export default function UserPage() {
             selectedUsers={selected}
             onFromDate={handleFromDate}
             onToDate={handleToDate}
+            onClearDate={handleClearDate}
+            toDepositDate={toDate}
+            fromDepositDate={fromDate}
           />
 
           <Scrollbar>
@@ -411,6 +421,7 @@ export default function UserPage() {
                       employee_name,
                       reject_reason,
                       customer_name,
+                      invoice_number,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -470,6 +481,9 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {invoice_number}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {reject_reason}
