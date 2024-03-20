@@ -191,20 +191,21 @@ export default function UserPage() {
   const exportData = USERLIST.map((item) => ({
     Status: item.status,
     'Deposit Date': item.deposit_date,
-    Amount: item.amount,
-    'Deposit Type': item.deposit_type_name,
     'Company Bank': item.company_bank,
     'Company Account': item.company_account,
     'Company Name': item.company_name,
+    'Customer Code': item.customer_code,
+    'Customer Name': item.customer_name,
+    Amount: item.amount,
+    'Invoice Number': item.invoice_number,
+    'Deposit Type': item.deposit_type_name,
     'Deposit From Bank': item.depositor_bank,
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
-    Customer: item.customer_name,
+    Depositor: item.depositor_name,
     Employee: item.employee_name,
     'User Name': item.user_name,
-    Depositor: item.depositor_name,
     Remarks: item.remarks,
-    'Invoice Number': item.invoice_number,
   }));
 
   // const { onDownload } = useDownloadExcel({
