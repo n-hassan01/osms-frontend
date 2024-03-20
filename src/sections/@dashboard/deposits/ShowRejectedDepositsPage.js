@@ -206,10 +206,11 @@ export default function UserPage() {
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
     Customer: item.customer_name,
-    'User Name': item.user_name,
     Employee: item.employee_name,
+    'User Name': item.user_name,
     Depositor: item.depositor_name,
     Remarks: item.remarks,
+    'Invoice Number': item.invoice_number,
     'Reject Reason': item.reject_reason,
   }));
 
@@ -217,21 +218,22 @@ export default function UserPage() {
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-    { id: 'amount', label: sentenceCase('amount'), alignRight: true },
-    { id: 'type', label: 'Deposit Type', alignRight: false },
     { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
     { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
     { id: 'company_name', label: 'Company Name', alignRight: false },
+    { id: 'customer_code', label: 'Customer Code', alignRight: false },
+    { id: 'customer', label: 'Customer Name', alignRight: false },
+    { id: 'amount', label: sentenceCase('amount'), alignRight: true },
+    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
+    { id: 'type', label: 'Deposit Type', alignRight: false },
     { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
     { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
     { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-    { id: 'customer', label: sentenceCase('customer'), alignRight: false },
+    { id: 'depositor', label: 'Depositor', alignRight: false },
     { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
-    { id: 'depositor', label: 'Depositor', alignRight: false },
-    { id: 'remarks', label: 'Remarks', alignRight: false },
-    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
     { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
+    { id: 'remarks', label: 'Remarks', alignRight: false },
     // { id: '' },
   ];
 
@@ -418,9 +420,10 @@ export default function UserPage() {
                       uploaded_filename,
                       user_name,
                       employee_name,
-                      reject_reason,
-                      customer_name,
                       invoice_number,
+                      customer_name,
+                      reject_reason,
+                      customer_code,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -442,12 +445,6 @@ export default function UserPage() {
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {getFormattedDate(deposit_date)}
                         </TableCell>
-                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
-                          {getFormattedPrice(amount)}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {deposit_type_name}
-                        </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_bank}
                         </TableCell>
@@ -456,6 +453,21 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {customer_code}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {customer_name}
+                        </TableCell>
+                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
+                          {getFormattedPrice(amount)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {invoice_number}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {deposit_type_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {depositor_bank}
@@ -467,7 +479,7 @@ export default function UserPage() {
                           {receipt_number}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {customer_name}
+                          {depositor_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {employee_name}
@@ -476,16 +488,10 @@ export default function UserPage() {
                           {user_name}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {depositor_name}
+                          {reject_reason}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {invoice_number}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {reject_reason}
                         </TableCell>
                       </TableRow>
                     );
