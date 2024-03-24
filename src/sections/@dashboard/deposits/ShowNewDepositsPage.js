@@ -88,6 +88,19 @@ function getFormattedDate(value) {
   return `${day}/${month}/${year}`;
 }
 
+function getFormattedDateWithTime(value) {
+  const dateObject = new Date(value);
+
+  // Extract date and time components
+  const formattedDate = dateObject.toLocaleDateString();
+  const formattedTime = dateObject.toLocaleTimeString();
+  const date = new Date(formattedDate);
+  const year = String(date.getFullYear()).slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${day}/${month}/${year}    ${formattedTime}`;
+}
+
 export default function UserPage() {
   // const tableref = useRef(null);
 
@@ -188,30 +201,6 @@ export default function UserPage() {
       setOpen(true); // This will be executed regardless of success or failure
     }
   };
-  const exportData = USERLIST.map((item) => ({
-    Status: item.status,
-    'Deposit Date': item.deposit_date,
-    Amount: item.amount,
-    'Deposit Type': item.deposit_type_name,
-    'Company Bank': item.company_bank,
-    'Company Account': item.company_account,
-    'Company Name': item.company_name,
-    'Deposit From Bank': item.depositor_bank,
-    'Deposit From Branch': item.depositor_branch,
-    'Receipt Number': item.receipt_number,
-    Customer: item.customer_name,
-    Employee: item.employee_name,
-    'User Name': item.user_name,
-    Depositor: item.depositor_name,
-    Remarks: item.remarks,
-    'Invoice Number': item.invoice_number,
-  }));
-
-  // const { onDownload } = useDownloadExcel({
-  //   currentTableRef: tableref.current,
-  //   filename: 'sales_order_data',
-  //   sheet: 'SalesOrderData',
-  // });
 
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
@@ -296,9 +285,16 @@ export default function UserPage() {
   };
   console.log(toDate);
 
-  const handleClearDate = (event) => {
-    setToDate('');
-    setFromDate('');
+  const handleClearDate = async (event) => {
+    const response = await getAllBankDepositsForAccountsService(user);
+
+    if (response.status === 200) {
+      setUserList(response.data);
+      setToDate('');
+      setFromDate('');
+    } else {
+      alert('Process failed! Please try again');
+    }
   };
 
   const handleDateFilter = async () => {
@@ -341,6 +337,26 @@ export default function UserPage() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  const exportData = filteredUsers.map((item) => ({
+    Status: item.status,
+    'Deposit Date': getFormattedDateWithTime(item.deposit_date),
+    'Company Bank': item.company_bank,
+    'Company Account': item.company_account,
+    'Company Name': item.company_name,
+    'Customer Code': item.customer_code,
+    'Customer Name': item.customer_name,
+    Amount: item.amount,
+    'Invoice Number': item.invoice_number,
+    'Deposit Type': item.deposit_type_name,
+    'Deposit From Bank': item.depositor_bank,
+    'Deposit From Branch': item.depositor_branch,
+    'Receipt Number': item.receipt_number,
+    Depositor: item.depositor_name,
+    Employee: item.employee_name,
+    'User Name': item.user_name,
+    Remarks: item.remarks,
+  }));
 
   return (
     <>
@@ -407,7 +423,7 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={filteredUsers.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -460,7 +476,8 @@ export default function UserPage() {
                           {status}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {getFormattedDate(deposit_date)}
+                          {/* {getFormattedDate(deposit_date)} */}
+                          {getFormattedDateWithTime(deposit_date)}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_bank}
@@ -569,7 +586,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={filteredUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
