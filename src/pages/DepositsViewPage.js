@@ -311,24 +311,25 @@ export default function UserPage() {
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  const exportData = filteredUsers.map((item) => ({
+  const exportData = getFormattedDateWithTime.map((item) => ({
     Status: item.status,
     'Deposit Date': getFormattedDateWithTime(item.deposit_date),
-    Amount: item.amount,
-    'Deposit Type': item.deposit_type_name,
     'Company Bank': item.company_bank,
     'Company Account': item.company_account,
     'Company Name': item.company_name,
+    'Customer Code': item.customer_code,
+    'Customer Name': item.customer_name,
+    Amount: item.amount,
+    'Invoice Number': item.invoice_number,
+    'Deposit Type': item.deposit_type_name,
     'Deposit From Bank': item.depositor_bank,
     'Deposit From Branch': item.depositor_branch,
     'Receipt Number': item.receipt_number,
-    Customer: item.customer_name,
+    Depositor: item.depositor_name,
     Employee: item.employee_name,
     'User Name': item.user_name,
-    Depositor: item.depositor_name,
-    Remarks: item.remarks,
-    'Invoice Number': item.invoice_number,
     'Reject Reason': item.reject_reason,
+    Remarks: item.remarks,
   }));
 
   return (
