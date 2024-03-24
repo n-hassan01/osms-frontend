@@ -1635,3 +1635,16 @@ export const getSelectIdsMenus = async (user, user_id) => {
     return err.message;
   }
 };
+export const getDrillView = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}drill-down/view`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
