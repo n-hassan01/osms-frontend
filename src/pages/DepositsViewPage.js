@@ -311,7 +311,7 @@ export default function UserPage() {
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  const exportData = getFormattedDateWithTime.map((item) => ({
+  const exportData = filteredUsers.map((item) => ({
     Status: item.status,
     'Deposit Date': getFormattedDateWithTime(item.deposit_date),
     'Company Bank': item.company_bank,
