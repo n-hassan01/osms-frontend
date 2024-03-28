@@ -358,6 +358,7 @@ export default function UserPage() {
     'Company Name': item.company_name,
     'Customer Code': item.customer_code,
     'Customer Name': item.customer_name,
+    'Customer Group': item.customer_group,
     Amount: item.amount,
     'Invoice Number': item.invoice_number,
     'Deposit Type': item.deposit_type_name,
