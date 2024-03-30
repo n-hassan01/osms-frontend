@@ -48,6 +48,7 @@ import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrgani
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 // import getCookieService from './Services/GetCookieService';
+import DrillDownPage from './DrillDown/DrillDown';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
@@ -166,6 +167,8 @@ export default function Router() {
         { path: 'allDeposits', element: <ShowAllDeposits /> },
         { path: 'mtlcategoriesformpage', element: <MtlCategoriesFormPage /> },
         { path: 'depositsView', element: <DepositsViewPage /> },
+        { path: 'drilldownpage', element: <DrillDownPage /> },
+
       ],
     },
 
