@@ -14,7 +14,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CircularProgress,
-  Container,
   Paper,
   Stack,
   Table,
@@ -34,6 +33,8 @@ import {
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
 } from '../Services/ApiServices';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
@@ -331,6 +332,34 @@ export default function UserPage() {
       }
     }
 
+    if (filterInfo.from && !filterInfo.to) {
+      console.log('from');
+      const requestBody = {
+        fromDepositDate: filterInfo.from,
+      };
+      const response = await getBankDepositViewFilterByFromDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
+    if (filterInfo.to && !filterInfo.from) {
+      console.log('to');
+      const requestBody = {
+        toDepositDate: filterInfo.to,
+      };
+      const response = await getBankDepositViewFilterByToDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
     if (filterInfo.amount) {
       filteredData = filteredData.filter((item) => item.amount === filterInfo.amount);
     }
@@ -381,11 +410,11 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <Container>
+      <div style={{ margin: '0 22px' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h4" gutterBottom>
+          {/* <Typography variant="h4" gutterBottom>
             Deposit Collections
-          </Typography>
+          </Typography> */}
           {/* <Button
             variant="text"
             startIcon={<Iconify icon="icon-park:reject" />}
@@ -602,7 +631,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </div>
     </>
   );
 }

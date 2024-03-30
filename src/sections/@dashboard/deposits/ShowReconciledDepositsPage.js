@@ -15,7 +15,6 @@ import {
   Card,
   Checkbox,
   CircularProgress,
-  Container,
   Paper,
   Stack,
   Table,
@@ -37,6 +36,8 @@ import {
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
@@ -331,7 +332,33 @@ export default function UserPage() {
       console.log(response.data);
 
       if (response.status === 200) {
-        filteredData = response.data;
+        filteredData = response.data.filter((item) => item.status === 'RECONCILED');
+      }
+    }
+
+    if (filterInfo.from && !filterInfo.to) {
+      const requestBody = {
+        fromDepositDate: filterInfo.from,
+      };
+      const response = await getBankDepositViewFilterByFromDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'RECONCILED');
+      }
+    }
+
+    if (filterInfo.to && !filterInfo.from) {
+      const requestBody = {
+        toDepositDate: filterInfo.to,
+      };
+      const response = await getBankDepositViewFilterByToDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'RECONCILED');
       }
     }
 
@@ -405,7 +432,7 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <Container>
+      <div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collection List
@@ -625,7 +652,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </div>
     </>
   );
 }
