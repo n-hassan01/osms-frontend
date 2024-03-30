@@ -14,7 +14,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CircularProgress,
-  Container,
   Paper,
   Stack,
   Table,
@@ -381,11 +380,11 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <Container>
+      <div style={{ margin: '0 22px' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h4" gutterBottom>
+          {/* <Typography variant="h4" gutterBottom>
             Deposit Collections
-          </Typography>
+          </Typography> */}
           {/* <Button
             variant="text"
             startIcon={<Iconify icon="icon-park:reject" />}
@@ -602,7 +601,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </div>
     </>
   );
 }

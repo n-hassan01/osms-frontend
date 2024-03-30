@@ -52,13 +52,13 @@ export default function BasicTabs() {
   };
 
   return (
-    <Box>
-      <Box style={{ marginLeft: '50px' }} mb={1}>
+    <div>
+      {/* <Box style={{ marginLeft: '50px' }} mb={1}>
         <Typography variant="h4" gutterBottom>
           Deposit Collection List
         </Typography>
-      </Box>
-      <Box style={{ marginLeft: '50px' }}>
+      </Box> */}
+      <Box style={{ marginLeft: '10px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab {...a11yProps(0)} label="New Deposits" />
           <Tab {...a11yProps(1)} label="Reconciled Deposits" />
@@ -74,6 +74,6 @@ export default function BasicTabs() {
       <CustomTabPanel value={value} index={2}>
         <ShowRejectedDepositsPage />
       </CustomTabPanel>
-    </Box>
+    </div>
   );
 }

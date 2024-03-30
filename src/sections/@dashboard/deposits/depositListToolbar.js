@@ -193,7 +193,7 @@ export default function UserListToolbar({
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ marginRight: '10px', display: filterDetails.from ? 'block' : 'none' }}>
+            <div className="col-auto" style={{ marginRight: '10px' }}>
               <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
                 To
                 <input

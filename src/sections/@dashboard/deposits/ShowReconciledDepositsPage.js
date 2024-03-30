@@ -15,7 +15,6 @@ import {
   Card,
   Checkbox,
   CircularProgress,
-  Container,
   Paper,
   Stack,
   Table,
@@ -24,7 +23,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography,
+  Typography
 } from '@mui/material';
 
 import { useUser } from '../../../context/UserContext';
@@ -405,7 +404,7 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <Container>
+      <div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collection List
@@ -625,7 +624,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </div>
     </>
   );
 }
