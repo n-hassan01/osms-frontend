@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import Select from 'react-select';
 // @mui
 import {
   Button,
@@ -60,6 +61,10 @@ UserListToolbar.propTypes = {
   onToDate: PropTypes.func,
   onFilterDate: PropTypes.func,
   onClearDate: PropTypes.func,
+  filterDetails: PropTypes.object,
+  onFilterDetails: PropTypes.func,
+  customerGroupList: PropTypes.array,
+  customerList: PropTypes.array,
 };
 
 export default function UserListToolbar({
@@ -75,8 +80,11 @@ export default function UserListToolbar({
   onClearDate,
   toDepositDate,
   fromDepositDate,
+  filterDetails,
+  onFilterDetails,
+  customerGroupList,
+  customerList,
 }) {
-  console.log(fromDepositDate);
   const [open, setOpen] = useState(false);
   const [rowData, setRowData] = useState({});
   const [enableFilter, setEnableFilter] = useState(false);
@@ -119,6 +127,24 @@ export default function UserListToolbar({
     }
   };
 
+  const [inputValue, setInputValue] = useState('');
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    filterDetails.customer = selectedOption.value;
+  };
+
+  const handleInputChange = (inputValue) => {
+    setInputValue(inputValue);
+  };
+
+  const filteredOptions = customerList
+    .filter((option) => option.toLowerCase().includes(inputValue.toLowerCase()))
+    .map((option) => ({ value: option, label: option }));
+
+  const today = new Date().toISOString().split('T')[0];
+
   return (
     <StyledRoot
       sx={{
@@ -146,39 +172,121 @@ export default function UserListToolbar({
       )}
 
       {enableFilter && (
-        <Stack direction="row" alignItems="center" justifyContent="flex-start">
-          <div className="col-auto" style={{ marginRight: '15px' }}>
-            <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
-              From <span style={{ color: 'red' }}>*</span>
-              <input
-                required
-                type="date"
-                id="from"
-                name="from"
-                className="form-control"
-                style={{ marginLeft: '5px' }}
-                value={fromDepositDate}
-                onChange={onFromDate}
+        <Stack ml={1} mr={1}>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            <div className="col-auto" style={{ marginRight: '10px' }}>
+              <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
+                {/* From <span style={{ color: 'red' }}>*</span> */}
+                From
+                <input
+                  required
+                  type="date"
+                  id="from"
+                  name="from"
+                  className="form-control"
+                  max={today}
+                  style={{ marginLeft: '5px' }}
+                  // value={fromDepositDate}
+                  value={filterDetails.from}
+                  // onChange={onFromDate}
+                  onChange={onFilterDetails}
+                />
+              </label>
+            </div>
+            <div className="col-auto" style={{ marginRight: '10px', display: filterDetails.from ? 'block' : 'none' }}>
+              <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
+                To
+                <input
+                  required
+                  type="date"
+                  id="to"
+                  name="to"
+                  className="form-control"
+                  style={{ marginLeft: '5px' }}
+                  max={today}
+                  min={filterDetails.from}
+                  // value={toDepositDate}
+                  // onChange={onToDate}
+                  value={filterDetails.to}
+                  onChange={onFilterDetails}
+                />
+              </label>
+            </div>
+            <div className="col-auto">
+              <label htmlFor="amount" className="col-form-label" style={{ display: 'flex' }}>
+                Amount
+                <input
+                  required
+                  id="amount"
+                  name="amount"
+                  className="form-control"
+                  style={{ marginLeft: '5px', width: '125px' }}
+                  // value={toDepositDate}
+                  // onChange={onToDate}
+                  value={filterDetails.amount}
+                  onChange={onFilterDetails}
+                />
+              </label>
+            </div>
+          </Stack>
+          <Stack direction="row" alignItems="center" justifyContent="flex-start">
+            {/* <div className="col-auto" style={{ marginRight: '10px' }}>
+              <label htmlFor="account" className="col-form-label" style={{ display: 'flex' }}>
+                Customer
+                <input
+                  required
+                  id="account"
+                  name="account"
+                  className="form-control"
+                  style={{ marginLeft: '5px', width: '125px' }}
+                  // value={toDepositDate}
+                  // onChange={onToDate}
+                  value={filterDetails.account}
+                  onChange={onFilterDetails}
+                />
+              </label>
+            </div> */}
+            <div className="col-auto" style={{ display: 'flex', marginRight: '10px' }}>
+              <span style={{ marginRight: '5px' }}>Customer</span>
+              <Select
+                id="customer"
+                name="customer"
+                value={filterDetails.customer ? { value: filterDetails.customer, label: filterDetails.customer } : null}
+                // value={selectedOption}
+                // onChange={onFilterDetails}
+                onChange={handleChange}
+                onInputChange={handleInputChange}
+                options={filteredOptions}
+                placeholder="Type to select a customer..."
+                isClearable
               />
-            </label>
-          </div>
-          <div className="col-auto">
-            <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
-              To <span style={{ color: 'red' }}>*</span>
-              <input
-                required
-                type="date"
-                id="to"
-                name="to"
-                className="form-control"
-                style={{ marginLeft: '5px' }}
-                value={toDepositDate}
-                onChange={onToDate}
-              />
-            </label>
-          </div>
-          <Button onClick={onFilterDate}>Filter</Button>
-          <Button onClick={onClearDate}>Clear</Button>
+            </div>
+
+            <div className="col-auto">
+              <label htmlFor="group" className="col-form-label" style={{ display: 'flex' }}>
+                Customer Group
+                <select
+                  required
+                  id="group"
+                  name="group"
+                  className="form-control"
+                  style={{ marginLeft: '5px', width: '125px' }}
+                  // value={filterDetails.group}
+                  onChange={onFilterDetails}
+                >
+                  <option value=""> </option>
+                  {customerGroupList.map((group, index) => (
+                    <option key={index} value={group}>
+                      {group}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <Button onClick={onFilterDate}>Filter</Button>
+            <Button onClick={onClearDate}>Clear</Button>
+          </Stack>
         </Stack>
       )}
 
