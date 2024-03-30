@@ -33,6 +33,8 @@ import {
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
 } from '../Services/ApiServices';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
@@ -322,6 +324,34 @@ export default function UserPage() {
         fromDepositDate: filterInfo.from,
       };
       const response = await getBankDepositViewFilterByDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
+    if (filterInfo.from && !filterInfo.to) {
+      console.log('from');
+      const requestBody = {
+        fromDepositDate: filterInfo.from,
+      };
+      const response = await getBankDepositViewFilterByFromDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
+    if (filterInfo.to && !filterInfo.from) {
+      console.log('to');
+      const requestBody = {
+        toDepositDate: filterInfo.to,
+      };
+      const response = await getBankDepositViewFilterByToDateService(user, requestBody);
 
       console.log(response.data);
 

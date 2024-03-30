@@ -23,7 +23,7 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
 } from '@mui/material';
 
 import { useUser } from '../../../context/UserContext';
@@ -36,6 +36,8 @@ import {
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
@@ -330,7 +332,33 @@ export default function UserPage() {
       console.log(response.data);
 
       if (response.status === 200) {
-        filteredData = response.data;
+        filteredData = response.data.filter((item) => item.status === 'REJECTED');
+      }
+    }
+
+    if (filterInfo.from && !filterInfo.to) {
+      const requestBody = {
+        fromDepositDate: filterInfo.from,
+      };
+      const response = await getBankDepositViewFilterByFromDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'REJECTED');
+      }
+    }
+
+    if (filterInfo.to && !filterInfo.from) {
+      const requestBody = {
+        toDepositDate: filterInfo.to,
+      };
+      const response = await getBankDepositViewFilterByToDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'REJECTED');
       }
     }
 
