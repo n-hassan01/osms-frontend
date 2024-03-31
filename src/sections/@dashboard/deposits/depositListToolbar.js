@@ -143,6 +143,20 @@ export default function UserListToolbar({
     .filter((option) => option.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({ value: option, label: option }));
 
+  // for customer group
+  const handleGroupChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    filterDetails.group = selectedOption.value;
+  };
+
+  const handleGroupInputChange = (inputValue) => {
+    setInputValue(inputValue);
+  };
+
+  const filteredGroupOptions = customerGroupList
+    .filter((option) => option.toLowerCase().includes(inputValue.toLowerCase()))
+    .map((option) => ({ value: option, label: option }));
+
   const today = new Date().toISOString().split('T')[0];
 
   return (
@@ -228,6 +242,9 @@ export default function UserListToolbar({
                 />
               </label>
             </div>
+
+            <Button onClick={onFilterDate}>Filter</Button>
+            <Button onClick={onClearDate}>Clear</Button>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
             {/* <div className="col-auto" style={{ marginRight: '10px' }}>
@@ -246,26 +263,46 @@ export default function UserListToolbar({
                 />
               </label>
             </div> */}
-            <div className="col-auto" style={{ display: 'flex', marginRight: '10px' }}>
+            <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
               <span style={{ marginRight: '5px' }}>Customer</span>
-              <Select
-                id="customer"
-                name="customer"
-                value={filterDetails.customer ? { value: filterDetails.customer, label: filterDetails.customer } : null}
-                // value={selectedOption}
-                // onChange={onFilterDetails}
-                onChange={handleChange}
-                onInputChange={handleInputChange}
-                options={filteredOptions}
-                placeholder="Type to select a customer..."
-                isClearable
-              />
+              <div style={{ width: '425px' }}>
+                <Select
+                  id="customer"
+                  name="customer"
+                  value={
+                    filterDetails.customer ? { value: filterDetails.customer, label: filterDetails.customer } : null
+                  }
+                  // value={selectedOption}
+                  // onChange={onFilterDetails}
+                  onChange={handleChange}
+                  onInputChange={handleInputChange}
+                  options={filteredOptions}
+                  placeholder="Type to select..."
+                  isClearable
+                />
+              </div>
             </div>
 
-            <div className="col-auto">
-              <label htmlFor="group" className="col-form-label" style={{ display: 'flex' }}>
-                Customer Group
-                <select
+            <div className="col-auto" style={{ display: 'flex' }}>
+              <span style={{ marginRight: '5px' }}>Customer Group</span>
+              {/* <div>
+                <span style={{ marginRight: '5px' }}>Customer</span>
+                <br />
+                <span style={{ marginRight: '5px' }}>Group</span>
+              </div> */}
+              <div style={{ width: '190px' }}>
+                {/* Customer Group */}
+                <Select
+                  value={filterDetails.group ? { value: filterDetails.group, label: filterDetails.group } : null}
+                  // value={selectedOption}
+                  // onChange={onFilterDetails}
+                  onChange={handleGroupChange}
+                  onInputChange={handleGroupInputChange}
+                  options={filteredGroupOptions}
+                  placeholder="Type to select..."
+                  isClearable
+                />
+                {/* <select
                   required
                   id="group"
                   name="group"
@@ -280,12 +317,9 @@ export default function UserListToolbar({
                       {group}
                     </option>
                   ))}
-                </select>
-              </label>
+                </select> */}
+              </div>
             </div>
-
-            <Button onClick={onFilterDate}>Filter</Button>
-            <Button onClick={onClearDate}>Clear</Button>
           </Stack>
         </Stack>
       )}
