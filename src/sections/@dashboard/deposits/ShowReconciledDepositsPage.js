@@ -120,6 +120,8 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [USERLIST, setUserList] = useState([]);
+  const [customerGroups, setCustomerGroups] = useState([]);
+  const [customers, setCustomers] = useState([]);
 
   const { user } = useUser();
   console.log(user);
@@ -154,6 +156,11 @@ export default function UserPage() {
           if (response.status === 200) {
             const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
             setUserList(filteredList);
+
+            const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
+            const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
+            setCustomerGroups(customerGroupList);
+            setCustomers(customerList);
           }
         }
       } catch (error) {
@@ -422,9 +429,6 @@ export default function UserPage() {
     'User Name': item.user_name,
     Remarks: item.remarks,
   }));
-
-  const customerGroups = [...new Set(filteredUsers.map((obj) => obj.customer_group))];
-  const customers = [...new Set(filteredUsers.map((obj) => obj.customer_name))];
 
   return (
     <>
