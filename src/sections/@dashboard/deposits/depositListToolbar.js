@@ -129,6 +129,7 @@ export default function UserListToolbar({
 
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
+  const displayFilter = enableFilter ? 'Hide' : 'Show';
 
   const handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
@@ -188,7 +189,7 @@ export default function UserListToolbar({
       {enableFilter && (
         <Stack ml={1} mr={1}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ marginRight: '10px' }}>
+            <div className="col-auto" style={{ marginRight: '20px' }}>
               <label htmlFor="orderNumber" className="col-form-label" style={{ display: 'flex' }}>
                 {/* From <span style={{ color: 'red' }}>*</span> */}
                 From
@@ -207,7 +208,7 @@ export default function UserListToolbar({
                 />
               </label>
             </div>
-            <div className="col-auto" style={{ marginRight: '10px' }}>
+            <div className="col-auto" style={{ marginRight: '20px' }}>
               <label htmlFor="orderedDate" className="col-form-label" style={{ display: 'flex' }}>
                 To
                 <input
@@ -263,7 +264,7 @@ export default function UserListToolbar({
                 />
               </label>
             </div> */}
-            <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
+            <div className="col-auto" style={{ display: 'flex', marginRight: '20px', width: 'auto' }}>
               <span style={{ marginRight: '5px' }}>Customer</span>
               <div style={{ width: '425px' }}>
                 <Select
@@ -333,9 +334,10 @@ export default function UserListToolbar({
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton onClick={() => setEnableFilter(true)}>
-            <Iconify icon="ic:round-filter-list" />
-          </IconButton>
+          <Button onClick={() => setEnableFilter(!enableFilter)}>
+            {/* <Iconify icon="ic:round-filter-list" /> */}
+            {displayFilter}
+          </Button>
         </Tooltip>
       )}
 
