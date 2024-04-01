@@ -43,6 +43,7 @@ import {
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
 import DepositListToolbar from './depositListToolbar';
+import './depositStyle.css';
 
 // ----------------------------------------------------------------------
 
@@ -439,7 +440,7 @@ export default function UserPage() {
       </Helmet>
 
       <div>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} className="actionButton">
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collection List
           </Typography> */}
@@ -448,7 +449,7 @@ export default function UserPage() {
             startIcon={<Iconify icon="mdi:approve" />}
             color="primary"
             onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '20px' }}
           >
             Reconcile
           </Button>
