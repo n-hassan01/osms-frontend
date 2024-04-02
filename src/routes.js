@@ -48,7 +48,10 @@ import UpdateHrOrganizationUnits from './sections/@dashboard/user/UpdateHrOrgani
 import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMenu';
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 // import getCookieService from './Services/GetCookieService';
-import DrillDownPage from './DrillDown/DrillDown';
+import BarChart from './DataVisualization/BarChart';
+import DrillDownPage from './DataVisualization/DrillDown';
+import Gauge from './DataVisualization/Gauge';
+import PieChartView from './DataVisualization/PieChart';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
@@ -168,7 +171,9 @@ export default function Router() {
         { path: 'mtlcategoriesformpage', element: <MtlCategoriesFormPage /> },
         { path: 'depositsView', element: <DepositsViewPage /> },
         { path: 'drilldownpage', element: <DrillDownPage /> },
-
+        { path: 'gaugepage', element: <Gauge /> },
+        { path: 'barchart', element: <BarChart /> },
+        { path: 'piechart', element: <PieChartView /> },
       ],
     },
 
