@@ -15,7 +15,6 @@ import {
   Card,
   Checkbox,
   CircularProgress,
-  Container,
   Paper,
   Stack,
   Table,
@@ -37,11 +36,14 @@ import {
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
 import DepositListToolbar from './depositListToolbar';
+import './depositStyle.css';
 
 // ----------------------------------------------------------------------
 
@@ -119,6 +121,8 @@ export default function UserPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [USERLIST, setUserList] = useState([]);
+  const [customerGroups, setCustomerGroups] = useState([]);
+  const [customers, setCustomers] = useState([]);
 
   const { user } = useUser();
   console.log(user);
@@ -153,6 +157,11 @@ export default function UserPage() {
           if (response.status === 200) {
             const filteredList = response.data.filter((item) => item.status === 'REJECTED');
             setUserList(filteredList);
+
+            const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
+            const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
+            setCustomerGroups(customerGroupList);
+            setCustomers(customerList);
           }
         }
       } catch (error) {
@@ -211,6 +220,7 @@ export default function UserPage() {
     { id: 'company_name', label: 'Company Name', alignRight: false },
     { id: 'customer_code', label: 'Customer Code', alignRight: false },
     { id: 'customer', label: 'Customer Name', alignRight: false },
+    { id: 'customer_group', label: 'Customer Group', alignRight: false },
     { id: 'amount', label: sentenceCase('amount'), alignRight: true },
     { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
     { id: 'type', label: 'Deposit Type', alignRight: false },
@@ -271,6 +281,19 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const [filterInfo, setFilterInfo] = useState({
+    from: '',
+    to: '',
+    amount: '',
+    group: '',
+  });
+
+  const handleFilterInfo = (e) => {
+    console.log(e.target.name, e.target.value);
+    setFilterInfo({ ...filterInfo, [e.target.name]: e.target.value });
+  };
+  console.log(filterInfo);
+
   const [fromDate, setFromDate] = useState(null);
   const handleFromDate = (event) => {
     setPage(0);
@@ -292,24 +315,74 @@ export default function UserPage() {
       setUserList(response.data);
       setToDate('');
       setFromDate('');
+      setFilterInfo({
+        from: '',
+        to: '',
+        amount: '',
+        customer: '',
+        group: '',
+      });
     } else {
       alert('Process failed! Please try again');
     }
   };
 
   const handleDateFilter = async () => {
-    const requestBody = {
-      toDepositDate: toDate,
-      fromDepositDate: fromDate,
-    };
-    const response = await getBankDepositViewFilterByDateService(user, requestBody);
+    let filteredData = USERLIST;
 
-    console.log(response.data);
+    if (filterInfo.from && filterInfo.to) {
+      const requestBody = {
+        toDepositDate: filterInfo.to,
+        fromDepositDate: filterInfo.from,
+      };
+      const response = await getBankDepositViewFilterByDateService(user, requestBody);
 
-    if (response.status === 200) {
-      const filteredList = response.data.filter((item) => item.status === 'REJECTED');
-      setUserList(filteredList);
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'REJECTED');
+      }
     }
+
+    if (filterInfo.from && !filterInfo.to) {
+      const requestBody = {
+        fromDepositDate: filterInfo.from,
+      };
+      const response = await getBankDepositViewFilterByFromDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'REJECTED');
+      }
+    }
+
+    if (filterInfo.to && !filterInfo.from) {
+      const requestBody = {
+        toDepositDate: filterInfo.to,
+      };
+      const response = await getBankDepositViewFilterByToDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data.filter((item) => item.status === 'REJECTED');
+      }
+    }
+
+    if (filterInfo.amount) {
+      filteredData = filteredData.filter((item) => item.amount === filterInfo.amount);
+    }
+
+    if (filterInfo.group) {
+      filteredData = filteredData.filter((item) => item.customer_group === filterInfo.group);
+    }
+
+    if (filterInfo.customer) {
+      filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
+    }
+
+    setUserList(filteredData);
   };
 
   const approveDeposits = async (deposits) => {
@@ -345,6 +418,7 @@ export default function UserPage() {
     'Company Name': item.company_name,
     'Customer Code': item.customer_code,
     'Customer Name': item.customer_name,
+    'Customer Group': item.customer_group,
     Amount: item.amount,
     'Invoice Number': item.invoice_number,
     'Deposit Type': item.deposit_type_name,
@@ -364,8 +438,8 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+      <div>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} className="actionButton">
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collection List
           </Typography> */}
@@ -374,7 +448,7 @@ export default function UserPage() {
             startIcon={<Iconify icon="icon-park:reject" />}
             color="primary"
             onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '20px' }}
           >
             Back to New
           </Button>
@@ -402,6 +476,10 @@ export default function UserPage() {
             onClearDate={handleClearDate}
             toDepositDate={toDate}
             fromDepositDate={fromDate}
+            filterDetails={filterInfo}
+            onFilterDetails={handleFilterInfo}
+            customerGroupList={customerGroups}
+            customerList={customers}
           />
 
           <Scrollbar>
@@ -440,6 +518,7 @@ export default function UserPage() {
                       customer_name,
                       reject_reason,
                       customer_code,
+                      customer_group,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -476,6 +555,9 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {customer_name}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {customer_group}
                         </TableCell>
                         <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
                           {getFormattedPrice(amount)}
@@ -576,7 +658,7 @@ export default function UserPage() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </div>
     </>
   );
 }
