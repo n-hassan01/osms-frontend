@@ -1393,6 +1393,45 @@ export const createSalesOrderService = async (token, requestBody) => {
   }
 };
 
+// vatpos integration
+export const getSalesMasterDetailsService = async (requestBody) => {
+  const url = requestBody.companyCode
+    ? `http://taxpollbd.com/hssalesapi/api/Sale/GetByDate?fromDate=${requestBody.fromDate}&toDate=${requestBody.toDate}&companyCode=${requestBody.companyCode}`
+    : `http://taxpollbd.com/hssalesapi/api/Sale/GetByDate?fromDate=${requestBody.fromDate}&toDate=${requestBody.toDate}`;
+
+  console.log(url);
+  try {
+    return await axios.get(
+      // `http://taxpollbd.com/hssalesapi/api/Sale/GetByDate?fromDate=${requestBody.fromDate}&toDate=${requestBody.toDate}`
+      url
+    );
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesMasterDetailsByInvoiceService = async (requestBody) => {
+  try {
+    return await axios.get(`http://taxpollbd.com/hssalesapi/api/Sale/GetByInvoice?invoiceNo=${requestBody.invoiceNo}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postSalesMasterDetailsService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}vatpos-integration/sales/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getAllWfNotificationsService = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}get-all-wf-notifications`, bodyInfo);
