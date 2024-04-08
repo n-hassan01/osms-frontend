@@ -1726,3 +1726,17 @@ export const getDrillView = async (loginToken) => {
     return err.message;
   }
 };
+
+export const getStandardBarDataView = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}standard-bar-data/view`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
