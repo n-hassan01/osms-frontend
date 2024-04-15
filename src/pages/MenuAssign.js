@@ -19,7 +19,7 @@ export default function MenuCreation() {
   const { user } = useUser();
   const [userInput, setUserInput] = useState('');
   // const [user, setUser] = useState('');
-  const [showMenuLines, setShowMenuLines] = useState(true);
+  const [showMenuLines, setShowMenuLines] = useState(false);
   const [selectid, setSelectid] = useState('');
   const [list, setList] = useState([]);
   const [menuslist, setMenuslist] = useState([]);
@@ -32,7 +32,8 @@ export default function MenuCreation() {
       menuId: '',
       userId: '',
       userName: '',
-
+      fromDate: '',
+      toDate: '',
       showList: false,
     },
   ]);
@@ -136,6 +137,8 @@ export default function MenuCreation() {
         const requestBody = {
           menuId: lineInfo.menuId,
           userId: lineInfo.userId,
+          fromDate: lineInfo.fromDate,
+          toDate: lineInfo.toDate,
         };
 
         const response = await addUserAssign(requestBody);
@@ -234,31 +237,56 @@ export default function MenuCreation() {
     navigate('/dashboard/menuassign');
   };
 
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
+  const day = currentDate.getDate();
+
+  const formattedDate = `${month}/${day}/${year}`;
+  console.log(formattedDate);
+
   return (
     <>
       <Helmet>
         <title> COMS | System Menu </title>
       </Helmet>
       <Container style={{ display: 'flex', flexDirection: 'column' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h4" gutterBottom>
+        <Stack direction="row" alignItems="left" mb={3}>
+          <Typography variant="h4" gutterBottom style={{ whiteSpace: 'nowrap', marginRight: '10px' }}>
             Menu Assignment
           </Typography>
-        </Stack>
-        {/* <Grid item xs={3}> */}
-        {/* <Button
-            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
-            onClick={() => {
-              handleAddRow();
+          <input
+            select
+            type="text"
+            name="userId"
+            placeholder="Type to select User"
+            className="form-control"
+            value={menurows[0].userName}
+            onChange={(e) => handleInputItemChange(0, e)}
+            style={{ width: '30%', height: '35px' }}
+          />
+          <div
+            style={{
+              marginLeft: '2px',
+              // border: '1px dotted lightgray',
+              borderRadius: '5px',
+              maxHeight: '70px',
+              width: '40%',
+              overflow: 'auto',
+              // backgroundColor: 'white'
             }}
           >
-            <span style={{ font: 'bold' }}>+ </span> New Menu Assign
-          </Button> */}
-        {/* 
-          <Button style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }} onClick={handleClose}>
-            Cancel
-          </Button> */}
-        {/* </Grid> */}
+            {menurows[0].showList && (
+              <ul>
+                {filteredList.map((item, itemIndex) => (
+                  <MenuItem key={itemIndex} defaultValue={item.user_name} onClick={(e) => handleMenuItemClick(0, item)}>
+                    {item.user_name}
+                  </MenuItem>
+                ))}
+              </ul>
+            )}
+          </div>
+        </Stack>
         <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row', marginLeft: '0px' }}>
           <div style={{ width: '100%' }}>
             <form className="form-horizontal">
@@ -266,103 +294,138 @@ export default function MenuCreation() {
                 <table className="table table-bordered table-striped table-highlight">
                   <thead>
                     <tr>
-                      <th>
+                      {/* <th>
                         User Name <span style={{ color: 'red' }}>*</span>
-                      </th>
-                      <th>Active Menu</th>
-                      <th>
-                        Menu Description <span style={{ color: 'red' }}>*</span>
-                      </th>
+                      </th> */}
+                      <th style={{ width: '40%' }}>Active Menu</th>
+                      <th style={{ width: '30%' }}>From Date</th>
+                      <th>To Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {menurows.map((row, index) => (
-                      <tr key={index}>
-                        <td style={{ width: '40%' }}>
-                          <input
-                            select
-                            type="text"
-                            name="userId"
-                            placeholder="Type User Name"
-                            className="form-control"
-                            style={{
-                              textAlign: 'inherit',
-                              border: 'none',
-                              background: 'none',
-                              outline: 'none',
-                            }}
-                            value={row.userName}
-                            onChange={(e) => handleInputItemChange(index, e)}
-                            //  onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
-                            // style={{ marginTop: '18px' }}
-                          />
-                          {row.showList && (
-                            <ul>
-                              {filteredList.map((item, itemIndex) => (
-                                <MenuItem
-                                  key={itemIndex}
-                                  defaultValue={item.user_name}
-                                  onClick={(e) => handleMenuItemClick(index, item)}
-                                >
-                                  {item.user_name}
-                                </MenuItem>
-                              ))}
-                            </ul>
-                          )}
-                        </td>
-                        <td>
-                          {selectedItem && menuslist.length > 0 && (
-                            <div>
-                              {menuslist.map((item, i) => (
-                                <TextField key={i} disabled value={item.menu_description} style={{ width: '100%' }} />
-                              ))}
-                            </div>
-                          )}
-                        </td>
-                        <td style={{ width: '30%' }}>
-                          <TextField
-                            select
-                            fullWidth
-                            name="menuId"
-                            value={menurows[0].menuId}
-                            onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
-                          >
-                            <MenuItem value={null}>
-                              <em />
-                            </MenuItem>
-                            {/* Check if menuids is defined before mapping over it */}
-                            {menuids &&
-                              menuids.map((id, index) => (
-                                <MenuItem key={index} value={id.menu_id}>
-                                  {id.menu_description}
-                                </MenuItem>
-                              ))}
-                          </TextField>
-                        </td>
-                      </tr>
-                    ))}
+                    {selectedItem &&
+                      menuslist.length > 0 &&
+                      menuslist.map((item, i) => (
+                        <tr key={i}>
+                          <td>{item.menu_description}</td>
+                          <td>
+                            <input type="date" className="form-control" name="fromDate" value={item.from_date} />
+                          </td>
+                          <td>
+                            <input type="date" className="form-control" name="toDate" value={item.to_date} />
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
-              {/* {showMenuLines && ( */}
-              <Grid item xs={2} style={{ display: 'flex', flexDirection: 'row' }}>
+              <Grid item xs={6} style={{ display: 'flex', flexDirection: 'row' }}>
                 <Button
-                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  style={{
+                    marginRight: '10px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'lightgray',
+                    whiteSpace: 'nowrap',
+                  }}
                   onClick={saveSubMenus}
                 >
                   Submit
                 </Button>
-
                 <Button
-                  style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'lightgray',
+                    whiteSpace: 'nowrap',
+                    marginRight: '10px',
+                  }}
                   onClick={handleClose}
                 >
                   Clear
                 </Button>
+                <Button
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'lightgray',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onClick={(e) => setShowMenuLines(true)}
+                >
+                  Assign new menu
+                </Button>
               </Grid>
-              {/* )} */}
             </form>
           </div>
+
+          {showMenuLines && (
+            <div className="table-responsive" style={{ marginTop: '20px', width: '100%' }}>
+              <table className="table table-bordered table-striped table-highlight">
+                <thead>
+                  <tr>
+                    <th style={{ width: '40%' }}>
+                      Menu Description <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th style={{ width: '30%' }}>From Date</th>
+                    <th>To Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <TextField
+                        select
+                        fullWidth
+                        name="menuId"
+                        value={menurows[0].menuId}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      >
+                        <MenuItem value={null}>
+                          <em />
+                        </MenuItem>
+                        {menuids &&
+                          menuids.map((id, index) => (
+                            <MenuItem key={index} value={id.menu_id}>
+                              {id.menu_description}
+                            </MenuItem>
+                          ))}
+                      </TextField>
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="fromDate"
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="toDate"
+                        // value={index + 1}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <Button
+                style={{
+                  marginRight: '10px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'lightgray',
+                  whiteSpace: 'nowrap',
+                }}
+                onClick={saveSubMenus}
+              >
+                Assign menu
+              </Button>
+            </div>
+          )}
         </Grid>
       </Container>
     </>
