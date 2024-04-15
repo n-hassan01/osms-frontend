@@ -26,6 +26,17 @@ export default function MenuCreation() {
   const [filteredList, setFilteredList] = useState([]);
   const [account, setAccount] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
+
+  const [menurows, setMenuRows] = useState([
+    {
+      menuId: '',
+      userId: '',
+      userName: '',
+
+      showList: false,
+    },
+  ]);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -78,46 +89,72 @@ export default function MenuCreation() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // const response = await getSelectIdsMenus(user, selectid);
+        if (menurows[0].userId) {
+          console.log(menurows);
+          const response = await getSelectIdsMenus(user, menurows[0].userId);
+          console.log(response);
+          if (response.status === 200) {
+            setMenuslist(response.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+      // console.log(list);
+    }
+
+    fetchData();
+  }, [menurows]);
+  console.log(menuslist);
+
+  function clearMenu() {
+    setMenuRows([
+      {
+        menuId: '',
+        userId: '',
+        userName: '',
+
+        showList: false,
+      },
+    ]);
+    setMenuslist([]);
+  }
   const [count, setCount] = useState(0);
   const saveSubMenus = async () => {
-    console.log('menurows:', menurows.length);
+    try {
+      const filteredArray = menurows.filter((item) => Object.values(item).some((value) => value !== ''));
 
-    const filteredArray = menurows.filter((item) => Object.values(item).some((value) => value !== ''));
+      let c;
+      for (c = count; c < filteredArray.length; c++) {
+        const lineInfo = filteredArray[c];
+        console.log(lineInfo);
 
-    let c;
-    for (c = count; c < filteredArray.length; c++) {
-      const lineInfo = filteredArray[c];
-      console.log(lineInfo);
+        const requestBody = {
+          menuId: lineInfo.menuId,
+          userId: lineInfo.userId,
+        };
 
-      const requestBody = {
-        menuId: lineInfo.menuId,
-        userId: lineInfo.userId,
-      };
+        const response = await addUserAssign(requestBody);
 
-      const response = await addUserAssign(requestBody);
-
-      if (response.status === 200) {
-        // Move this line outside the loop to clear the rows only once after all iterations
-        setMenuRows([]);
+        if (response.status !== 200) {
+          throw new Error('Process failed! Try again');
+        }
       }
+      setCount(c);
+      clearMenu();
+
+      alert('Successfully added');
+      navigate('/dashboard/menuassign');
+    } catch (error) {
+      console.log(error);
+      alert('Process failed! Try again');
     }
-    setCount(c);
-    alert('Successfully added');
-    navigate('/dashboard/menuassign');
-
-    window.location.reload();
+    // window.location.reload();
   };
-
-  const [menurows, setMenuRows] = useState([
-    {
-      menuId: '',
-      userId: '',
-      userName: '',
-
-      showList: false,
-    },
-  ]);
-  console.log(userInput);
 
   const handleAddRow = () => {
     if (menurows.length === 1) setShowMenuLines(true);
@@ -190,33 +227,12 @@ export default function MenuCreation() {
     console.log(menurows);
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        console.log(selectid);
-        const response = await getSelectIdsMenus(user, selectid);
-        console.log(response);
-        if (response.status === 200) {
-          setMenuslist(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-      console.log(list);
-    }
-
-    fetchData();
-  }, [selectid]);
-
   const handleClose = () => {
-    navigate('/dashboard/menuassign');
-
-    window.location.reload();
-
+    clearMenu();
+    // window.location.reload();
     setOpen(false);
+    navigate('/dashboard/menuassign');
   };
-
-  console.log('mm', menurows);
 
   return (
     <>
@@ -224,13 +240,13 @@ export default function MenuCreation() {
         <title> COMS | System Menu </title>
       </Helmet>
       <Container style={{ display: 'flex', flexDirection: 'column' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           <Typography variant="h4" gutterBottom>
-            Assign Menu
+            Menu Assignment
           </Typography>
         </Stack>
-        <Grid item xs={3}>
-          {/* <Button
+        {/* <Grid item xs={3}> */}
+        {/* <Button
             style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
             onClick={() => {
               handleAddRow();
@@ -238,18 +254,14 @@ export default function MenuCreation() {
           >
             <span style={{ font: 'bold' }}>+ </span> New Menu Assign
           </Button> */}
-{/* 
+        {/* 
           <Button style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }} onClick={handleClose}>
             Cancel
           </Button> */}
-        </Grid>
-        <Grid
-          container
-          spacing={2}
-          style={{ display: 'flex', flexDirection: 'row', marginLeft: '0px', marginTop: '10px' }}
-        >
-          <div>
-            <form className="form-horizontal" style={{ marginTop: '5%' }}>
+        {/* </Grid> */}
+        <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row', marginLeft: '0px' }}>
+          <div style={{ width: '100%' }}>
+            <form className="form-horizontal">
               <div className="table-responsive">
                 <table className="table table-bordered table-striped table-highlight">
                   <thead>
@@ -264,92 +276,91 @@ export default function MenuCreation() {
                     </tr>
                   </thead>
                   <tbody>
-                    {showMenuLines &&
-                      menurows.map((row, index) => (
-                        <tr key={index}>
-                          <td style={{ width: '190px' }}>
-                            <input
-                              select
-                              type="text"
-                              name="userId"
-                              placeholder="Type User Name"
-                              value={row.userName}
-                              onChange={(e) => handleInputItemChange(index, e)}
-                              //  onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
-                              style={{ marginTop: '18px' }}
-                            />
-                            {row.showList && (
-                              <ul style={{ marginTop: '18px' }}>
-                                {filteredList.map((item, itemIndex) => (
-                                  <MenuItem
-                                    key={itemIndex}
-                                    defaultValue={item.user_name}
-                                    onClick={(e) => handleMenuItemClick(index, item)}
-                                  >
-                                    {item.user_name}
-                                  </MenuItem>
-                                ))}
-                              </ul>
-                            )}
-                          </td>
-
-                          <td>
-                            {selectedItem && menuslist.length > 0
-                              ? menuslist.map((item, i) => (
-                                  <div key={i}>
-                                    <TextField value={item.title} />
-                                  </div>
-                                ))
-                              : null}
-                          </td>
-
-                          <td>
-                            <TextField
-                              select
-                              fullWidth
-                              name="menuId"
-                              label="Menu Name"
-                              autoComplete="given-name"
-                              onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              style={{ backgroundColor: 'white' }}
-                            >
-                              <MenuItem value={null}>
-                                <em />
-                              </MenuItem>
-                              {/* Check if menuids is defined before mapping over it */}
-                              {menuids &&
-                                menuids.map((id, index) => (
-                                  <MenuItem key={index} value={id.menu_id}>
-                                    {id.menu_description}
-                                  </MenuItem>
-                                ))}
-                            </TextField>
-                          </td>
-                        </tr>
-                      ))}
+                    {menurows.map((row, index) => (
+                      <tr key={index}>
+                        <td style={{ width: '40%' }}>
+                          <input
+                            select
+                            type="text"
+                            name="userId"
+                            placeholder="Type User Name"
+                            className="form-control"
+                            style={{
+                              textAlign: 'inherit',
+                              border: 'none',
+                              background: 'none',
+                              outline: 'none',
+                            }}
+                            value={row.userName}
+                            onChange={(e) => handleInputItemChange(index, e)}
+                            //  onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
+                            // style={{ marginTop: '18px' }}
+                          />
+                          {row.showList && (
+                            <ul>
+                              {filteredList.map((item, itemIndex) => (
+                                <MenuItem
+                                  key={itemIndex}
+                                  defaultValue={item.user_name}
+                                  onClick={(e) => handleMenuItemClick(index, item)}
+                                >
+                                  {item.user_name}
+                                </MenuItem>
+                              ))}
+                            </ul>
+                          )}
+                        </td>
+                        <td>
+                          {selectedItem && menuslist.length > 0 && (
+                            <div>
+                              {menuslist.map((item, i) => (
+                                <TextField key={i} disabled value={item.menu_description} style={{ width: '100%' }} />
+                              ))}
+                            </div>
+                          )}
+                        </td>
+                        <td style={{ width: '30%' }}>
+                          <TextField
+                            select
+                            fullWidth
+                            name="menuId"
+                            value={menurows[0].menuId}
+                            onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
+                          >
+                            <MenuItem value={null}>
+                              <em />
+                            </MenuItem>
+                            {/* Check if menuids is defined before mapping over it */}
+                            {menuids &&
+                              menuids.map((id, index) => (
+                                <MenuItem key={index} value={id.menu_id}>
+                                  {id.menu_description}
+                                </MenuItem>
+                              ))}
+                          </TextField>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
-              {showMenuLines && (
-                <Grid item xs={2} style={{ display: 'flex', flexDirection: 'row' }}>
-                  <Button
-                    style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
-                    onClick={saveSubMenus}
-                  >
-                    Submit
-                  </Button>
+              {/* {showMenuLines && ( */}
+              <Grid item xs={2} style={{ display: 'flex', flexDirection: 'row' }}>
+                <Button
+                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={saveSubMenus}
+                >
+                  Submit
+                </Button>
 
-                  <Button
-                    style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
-                    onClick={handleClose}
-                  >
-                    Cancel
-                  </Button>
-                </Grid>
-              )}
+                <Button
+                  style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  onClick={handleClose}
+                >
+                  Clear
+                </Button>
+              </Grid>
+              {/* )} */}
             </form>
           </div>
         </Grid>
