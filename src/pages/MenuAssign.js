@@ -9,7 +9,13 @@ import { useEffect, useState } from 'react';
 
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { addUserAssign, getFndUserIds, getMenusDetails, getSelectIdsMenus } from '../Services/ApiServices';
+import {
+  addUserAssign,
+  getFndUserIds,
+  getMenusDetails,
+  getSelectIdsMenus,
+  updateMenuService,
+} from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 
 // Add this import statement
@@ -26,6 +32,7 @@ export default function MenuCreation() {
   const [filteredList, setFilteredList] = useState([]);
   const [account, setAccount] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showAssignNewMenuButton, setShowAssignNewMenuButton] = useState(false);
 
   const [menurows, setMenuRows] = useState([
     {
@@ -118,7 +125,8 @@ export default function MenuCreation() {
         menuId: '',
         userId: '',
         userName: '',
-
+        fromDate: '',
+        toDate: '',
         showList: false,
       },
     ]);
@@ -148,6 +156,8 @@ export default function MenuCreation() {
         }
       }
       setCount(c);
+      setShowAssignNewMenuButton(false);
+      setShowMenuLines(false);
       clearMenu();
 
       alert('Successfully added');
@@ -185,6 +195,14 @@ export default function MenuCreation() {
     // setSelectedItem(null);
     setMenuRows(updatedRows);
   };
+
+  const handleDateChanges = (index, name, value) => {
+    const updatedList = [...menuslist];
+    updatedList[index][name] = value;
+
+    setMenuslist(updatedList);
+  };
+
   const handleInputItemChange = (index, event) => {
     console.log(event);
     const input = event.target.value;
@@ -227,23 +245,60 @@ export default function MenuCreation() {
     console.log(updatedRows);
     setMenuRows(updatedRows);
     setSelectedItem(item);
-    console.log(menurows);
+    setShowAssignNewMenuButton(true);
   };
 
   const handleClose = () => {
     clearMenu();
     // window.location.reload();
-    setOpen(false);
+    // setOpen(false);
     navigate('/dashboard/menuassign');
   };
 
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth() + 1; // Months are zero-indexed, so add 1
-  const day = currentDate.getDate();
+  const saveUpdateMenu = async () => {
+    try {
+      await Promise.all(menuslist.map((menuInfo) => updateMenuDates(menuInfo)));
+      alert('Successfully updated!');
+    } catch (error) {
+      console.error('Error updating menu: ', error);
+    }
+  };
 
-  const formattedDate = `${month}/${day}/${year}`;
-  console.log(formattedDate);
+  const updateMenuDates = async (value) => {
+    try {
+      const requestBody = {
+        userId: value.user_id,
+        menuId: value.menu_id,
+        fromDate: value.from_date,
+        toDate: value.to_date,
+      };
+      const response = await updateMenuService(user, requestBody);
+    } catch (error) {
+      console.error('Error updating menu dates:', error);
+      throw error;
+    }
+  };
+
+  function getFormattedDate(value) {
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Zero-padding the month
+    const day = String(date.getDate()).padStart(2, '0'); // Zero-padding the day
+
+    // return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
+  }
+
+  function getFormattedCurrentDate() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Zero-padding the month
+    const day = String(currentDate.getDate()).padStart(2, '0'); // Zero-padding the day
+
+    return `${year}-${month}-${day}`;
+  }
+
+  const filteredMenuOptions = menuids.map((option) => ({ value: option.menu_id, label: option.menu_description }));
 
   return (
     <>
@@ -253,7 +308,7 @@ export default function MenuCreation() {
       <Container style={{ display: 'flex', flexDirection: 'column' }}>
         <Stack direction="row" alignItems="left" mb={3}>
           <Typography variant="h4" gutterBottom style={{ whiteSpace: 'nowrap', marginRight: '10px' }}>
-            Menu Assignment
+            User Menu Assignment
           </Typography>
           <input
             select
@@ -309,10 +364,22 @@ export default function MenuCreation() {
                         <tr key={i}>
                           <td>{item.menu_description}</td>
                           <td>
-                            <input type="date" className="form-control" name="fromDate" value={item.from_date} />
+                            <input
+                              type="date"
+                              className="form-control"
+                              name="from_date"
+                              value={item.from_date ? getFormattedDate(item.from_date) : getFormattedCurrentDate()}
+                              onChange={(e) => handleDateChanges(i, e.target.name, e.target.value)}
+                            />
                           </td>
                           <td>
-                            <input type="date" className="form-control" name="toDate" value={item.to_date} />
+                            <input
+                              type="date"
+                              className="form-control"
+                              name="to_date"
+                              value={item.to_date ? getFormattedDate(item.to_date) : ''}
+                              onChange={(e) => handleDateChanges(i, e.target.name, e.target.value)}
+                            />
                           </td>
                         </tr>
                       ))}
@@ -328,9 +395,9 @@ export default function MenuCreation() {
                     backgroundColor: 'lightgray',
                     whiteSpace: 'nowrap',
                   }}
-                  onClick={saveSubMenus}
+                  onClick={saveUpdateMenu}
                 >
-                  Submit
+                  Update Menu
                 </Button>
                 <Button
                   style={{
@@ -344,17 +411,19 @@ export default function MenuCreation() {
                 >
                   Clear
                 </Button>
-                <Button
-                  style={{
-                    fontWeight: 'bold',
-                    color: 'black',
-                    backgroundColor: 'lightgray',
-                    whiteSpace: 'nowrap',
-                  }}
-                  onClick={(e) => setShowMenuLines(true)}
-                >
-                  Assign new menu
-                </Button>
+                {showAssignNewMenuButton && (
+                  <Button
+                    style={{
+                      fontWeight: 'bold',
+                      color: 'black',
+                      backgroundColor: 'lightgray',
+                      whiteSpace: 'nowrap',
+                    }}
+                    onClick={(e) => setShowMenuLines(true)}
+                  >
+                    Assign new menu
+                  </Button>
+                )}
               </Grid>
             </form>
           </div>
@@ -365,7 +434,7 @@ export default function MenuCreation() {
                 <thead>
                   <tr>
                     <th style={{ width: '40%' }}>
-                      Menu Description <span style={{ color: 'red' }}>*</span>
+                      Select Menu <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th style={{ width: '30%' }}>From Date</th>
                     <th>To Date</th>
@@ -374,6 +443,13 @@ export default function MenuCreation() {
                 <tbody>
                   <tr>
                     <td>
+                      {/* <Select
+                        value={menurows[0].menuId}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                        options={filteredMenuOptions}
+                        placeholder="Type to select..."
+                        isClearable
+                      /> */}
                       <TextField
                         select
                         fullWidth
@@ -397,6 +473,7 @@ export default function MenuCreation() {
                         type="date"
                         className="form-control"
                         name="fromDate"
+                        value={menurows[0].fromDate || getFormattedCurrentDate()}
                         onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
                       />
                     </td>
@@ -405,7 +482,7 @@ export default function MenuCreation() {
                         type="date"
                         className="form-control"
                         name="toDate"
-                        // value={index + 1}
+                        value={menurows[0].toDate}
                         onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
                       />
                     </td>
