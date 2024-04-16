@@ -9,7 +9,13 @@ import { useEffect, useState } from 'react';
 
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { addUserAssign, getFndUserIds, getMenusDetails, getSelectIdsMenus } from '../Services/ApiServices';
+import {
+  addUserAssign,
+  getFndUserIds,
+  getMenusDetails,
+  getSelectIdsMenus,
+  updateMenuService,
+} from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 
 // Add this import statement
@@ -19,20 +25,22 @@ export default function MenuCreation() {
   const { user } = useUser();
   const [userInput, setUserInput] = useState('');
   // const [user, setUser] = useState('');
-  const [showMenuLines, setShowMenuLines] = useState(true);
+  const [showMenuLines, setShowMenuLines] = useState(false);
   const [selectid, setSelectid] = useState('');
   const [list, setList] = useState([]);
   const [menuslist, setMenuslist] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [account, setAccount] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
+  const [showAssignNewMenuButton, setShowAssignNewMenuButton] = useState(false);
 
   const [menurows, setMenuRows] = useState([
     {
       menuId: '',
       userId: '',
       userName: '',
-
+      fromDate: '',
+      toDate: '',
       showList: false,
     },
   ]);
@@ -117,7 +125,8 @@ export default function MenuCreation() {
         menuId: '',
         userId: '',
         userName: '',
-
+        fromDate: '',
+        toDate: '',
         showList: false,
       },
     ]);
@@ -136,6 +145,8 @@ export default function MenuCreation() {
         const requestBody = {
           menuId: lineInfo.menuId,
           userId: lineInfo.userId,
+          fromDate: lineInfo.fromDate,
+          toDate: lineInfo.toDate,
         };
 
         const response = await addUserAssign(requestBody);
@@ -145,6 +156,8 @@ export default function MenuCreation() {
         }
       }
       setCount(c);
+      setShowAssignNewMenuButton(false);
+      setShowMenuLines(false);
       clearMenu();
 
       alert('Successfully added');
@@ -182,6 +195,14 @@ export default function MenuCreation() {
     // setSelectedItem(null);
     setMenuRows(updatedRows);
   };
+
+  const handleDateChanges = (index, name, value) => {
+    const updatedList = [...menuslist];
+    updatedList[index][name] = value;
+
+    setMenuslist(updatedList);
+  };
+
   const handleInputItemChange = (index, event) => {
     console.log(event);
     const input = event.target.value;
@@ -224,15 +245,60 @@ export default function MenuCreation() {
     console.log(updatedRows);
     setMenuRows(updatedRows);
     setSelectedItem(item);
-    console.log(menurows);
+    setShowAssignNewMenuButton(true);
   };
 
   const handleClose = () => {
     clearMenu();
     // window.location.reload();
-    setOpen(false);
+    // setOpen(false);
     navigate('/dashboard/menuassign');
   };
+
+  const saveUpdateMenu = async () => {
+    try {
+      await Promise.all(menuslist.map((menuInfo) => updateMenuDates(menuInfo)));
+      alert('Successfully updated!');
+    } catch (error) {
+      console.error('Error updating menu: ', error);
+    }
+  };
+
+  const updateMenuDates = async (value) => {
+    try {
+      const requestBody = {
+        userId: value.user_id,
+        menuId: value.menu_id,
+        fromDate: value.from_date,
+        toDate: value.to_date,
+      };
+      const response = await updateMenuService(user, requestBody);
+    } catch (error) {
+      console.error('Error updating menu dates:', error);
+      throw error;
+    }
+  };
+
+  function getFormattedDate(value) {
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Zero-padding the month
+    const day = String(date.getDate()).padStart(2, '0'); // Zero-padding the day
+
+    // return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
+  }
+
+  function getFormattedCurrentDate() {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Zero-padding the month
+    const day = String(currentDate.getDate()).padStart(2, '0'); // Zero-padding the day
+
+    return `${year}-${month}-${day}`;
+  }
+
+  const filteredMenuOptions = menuids.map((option) => ({ value: option.menu_id, label: option.menu_description }));
 
   return (
     <>
@@ -240,25 +306,42 @@ export default function MenuCreation() {
         <title> COMS | System Menu </title>
       </Helmet>
       <Container style={{ display: 'flex', flexDirection: 'column' }}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-          <Typography variant="h4" gutterBottom>
-            Menu Assignment
+        <Stack direction="row" alignItems="left" mb={3}>
+          <Typography variant="h4" gutterBottom style={{ whiteSpace: 'nowrap', marginRight: '10px' }}>
+            User Menu Assignment
           </Typography>
-        </Stack>
-        {/* <Grid item xs={3}> */}
-        {/* <Button
-            style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
-            onClick={() => {
-              handleAddRow();
+          <input
+            select
+            type="text"
+            name="userId"
+            placeholder="Type to select User"
+            className="form-control"
+            value={menurows[0].userName}
+            onChange={(e) => handleInputItemChange(0, e)}
+            style={{ width: '30%', height: '35px' }}
+          />
+          <div
+            style={{
+              marginLeft: '2px',
+              // border: '1px dotted lightgray',
+              borderRadius: '5px',
+              maxHeight: '70px',
+              width: '40%',
+              overflow: 'auto',
+              // backgroundColor: 'white'
             }}
           >
-            <span style={{ font: 'bold' }}>+ </span> New Menu Assign
-          </Button> */}
-        {/* 
-          <Button style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }} onClick={handleClose}>
-            Cancel
-          </Button> */}
-        {/* </Grid> */}
+            {menurows[0].showList && (
+              <ul>
+                {filteredList.map((item, itemIndex) => (
+                  <MenuItem key={itemIndex} defaultValue={item.user_name} onClick={(e) => handleMenuItemClick(0, item)}>
+                    {item.user_name}
+                  </MenuItem>
+                ))}
+              </ul>
+            )}
+          </div>
+        </Stack>
         <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row', marginLeft: '0px' }}>
           <div style={{ width: '100%' }}>
             <form className="form-horizontal">
@@ -266,103 +349,160 @@ export default function MenuCreation() {
                 <table className="table table-bordered table-striped table-highlight">
                   <thead>
                     <tr>
-                      <th>
+                      {/* <th>
                         User Name <span style={{ color: 'red' }}>*</span>
-                      </th>
-                      <th>Active Menu</th>
-                      <th>
-                        Menu Description <span style={{ color: 'red' }}>*</span>
-                      </th>
+                      </th> */}
+                      <th style={{ width: '40%' }}>Active Menu</th>
+                      <th style={{ width: '30%' }}>From Date</th>
+                      <th>To Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {menurows.map((row, index) => (
-                      <tr key={index}>
-                        <td style={{ width: '40%' }}>
-                          <input
-                            select
-                            type="text"
-                            name="userId"
-                            placeholder="Type User Name"
-                            className="form-control"
-                            style={{
-                              textAlign: 'inherit',
-                              border: 'none',
-                              background: 'none',
-                              outline: 'none',
-                            }}
-                            value={row.userName}
-                            onChange={(e) => handleInputItemChange(index, e)}
-                            //  onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
-                            // style={{ marginTop: '18px' }}
-                          />
-                          {row.showList && (
-                            <ul>
-                              {filteredList.map((item, itemIndex) => (
-                                <MenuItem
-                                  key={itemIndex}
-                                  defaultValue={item.user_name}
-                                  onClick={(e) => handleMenuItemClick(index, item)}
-                                >
-                                  {item.user_name}
-                                </MenuItem>
-                              ))}
-                            </ul>
-                          )}
-                        </td>
-                        <td>
-                          {selectedItem && menuslist.length > 0 && (
-                            <div>
-                              {menuslist.map((item, i) => (
-                                <TextField key={i} disabled value={item.menu_description} style={{ width: '100%' }} />
-                              ))}
-                            </div>
-                          )}
-                        </td>
-                        <td style={{ width: '30%' }}>
-                          <TextField
-                            select
-                            fullWidth
-                            name="menuId"
-                            value={menurows[0].menuId}
-                            onChange={(e) => handleInputChanges(index, e.target.name, e.target.value)}
-                          >
-                            <MenuItem value={null}>
-                              <em />
-                            </MenuItem>
-                            {/* Check if menuids is defined before mapping over it */}
-                            {menuids &&
-                              menuids.map((id, index) => (
-                                <MenuItem key={index} value={id.menu_id}>
-                                  {id.menu_description}
-                                </MenuItem>
-                              ))}
-                          </TextField>
-                        </td>
-                      </tr>
-                    ))}
+                    {selectedItem &&
+                      menuslist.length > 0 &&
+                      menuslist.map((item, i) => (
+                        <tr key={i}>
+                          <td>{item.menu_description}</td>
+                          <td>
+                            <input
+                              type="date"
+                              className="form-control"
+                              name="from_date"
+                              value={item.from_date ? getFormattedDate(item.from_date) : getFormattedCurrentDate()}
+                              onChange={(e) => handleDateChanges(i, e.target.name, e.target.value)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="date"
+                              className="form-control"
+                              name="to_date"
+                              value={item.to_date ? getFormattedDate(item.to_date) : ''}
+                              onChange={(e) => handleDateChanges(i, e.target.name, e.target.value)}
+                            />
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
-              {/* {showMenuLines && ( */}
-              <Grid item xs={2} style={{ display: 'flex', flexDirection: 'row' }}>
+              <Grid item xs={6} style={{ display: 'flex', flexDirection: 'row' }}>
                 <Button
-                  style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
-                  onClick={saveSubMenus}
+                  style={{
+                    marginRight: '10px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'lightgray',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onClick={saveUpdateMenu}
                 >
-                  Submit
+                  Update Menu
                 </Button>
-
                 <Button
-                  style={{ fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
+                  style={{
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'lightgray',
+                    whiteSpace: 'nowrap',
+                    marginRight: '10px',
+                  }}
                   onClick={handleClose}
                 >
                   Clear
                 </Button>
+                {showAssignNewMenuButton && (
+                  <Button
+                    style={{
+                      fontWeight: 'bold',
+                      color: 'black',
+                      backgroundColor: 'lightgray',
+                      whiteSpace: 'nowrap',
+                    }}
+                    onClick={(e) => setShowMenuLines(true)}
+                  >
+                    Assign new menu
+                  </Button>
+                )}
               </Grid>
-              {/* )} */}
             </form>
           </div>
+
+          {showMenuLines && (
+            <div className="table-responsive" style={{ marginTop: '20px', width: '100%' }}>
+              <table className="table table-bordered table-striped table-highlight">
+                <thead>
+                  <tr>
+                    <th style={{ width: '40%' }}>
+                      Select Menu <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th style={{ width: '30%' }}>From Date</th>
+                    <th>To Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      {/* <Select
+                        value={menurows[0].menuId}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                        options={filteredMenuOptions}
+                        placeholder="Type to select..."
+                        isClearable
+                      /> */}
+                      <TextField
+                        select
+                        fullWidth
+                        name="menuId"
+                        value={menurows[0].menuId}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      >
+                        <MenuItem value={null}>
+                          <em />
+                        </MenuItem>
+                        {menuids &&
+                          menuids.map((id, index) => (
+                            <MenuItem key={index} value={id.menu_id}>
+                              {id.menu_description}
+                            </MenuItem>
+                          ))}
+                      </TextField>
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="fromDate"
+                        value={menurows[0].fromDate || getFormattedCurrentDate()}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="date"
+                        className="form-control"
+                        name="toDate"
+                        value={menurows[0].toDate}
+                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <Button
+                style={{
+                  marginRight: '10px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'lightgray',
+                  whiteSpace: 'nowrap',
+                }}
+                onClick={saveSubMenus}
+              >
+                Assign menu
+              </Button>
+            </div>
+          )}
         </Grid>
       </Container>
     </>
