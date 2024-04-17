@@ -72,6 +72,7 @@ import TestSapApiPage from './pages/TestSapApiPage';
 import UpdateAccountPage from './pages/UpdateAccountPage';
 import UpdateBankFormPage from './pages/UpdateBankFormPage';
 import UpdateMtlCategories from './pages/UpdateMtlCategories';
+import UserActionAssignmentPage from './pages/UserActionAssignmentPage';
 import VatposIntegrationService from './pages/VatposIntegrationService';
 import ForgetPassword from './pages/forgetPassword';
 
@@ -175,6 +176,7 @@ export default function Router() {
         { path: 'gaugepage', element: <Gauge /> },
         { path: 'barchart', element: <BarChart /> },
         { path: 'piechart', element: <PieChartView /> },
+        { path: 'actionAssignment', element: <UserActionAssignmentPage /> },
       ],
     },
 

@@ -1754,3 +1754,18 @@ export const getStandardBarDataView = async (loginToken) => {
     return err.message;
   }
 };
+
+// user action assignment
+export const getUserActionsService = async (loginToken, userId) => {
+  try {
+    return await axios.get(`${usersUrl}user-actions/actionList/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
