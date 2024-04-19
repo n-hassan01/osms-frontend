@@ -4,17 +4,19 @@
 /* eslint-disable no-undef */
 /* eslint-disable import/named */
 
-import { Button, Container, Grid, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Button, Container, Grid, MenuItem, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
+import Select from 'react-select';
 
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import {
-    addUserAssign,
-    getFndUserIds,
-    getMenusDetails,
-    getUserActionsService,
-    updateMenuService,
+  assignUserActionDatesService,
+  getFndUserIds,
+  getReservedActionsService,
+  getUserActionsService,
+  updateMenuService,
+  updateUserActionDatesService,
 } from '../Services/ApiServices';
 import { useUser } from '../context/UserContext';
 
@@ -82,21 +84,19 @@ export default function MenuCreation() {
     fetchData();
   }, []);
 
-  const [menuids, setMenuIds] = useState([]);
+  const [reservedActions, setReservedActions] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getMenusDetails(user);
-        console.log('hhh', response);
-        if (response) setMenuIds(response.data);
-        console.log(menuids);
+        const response = await getReservedActionsService(user);
+        if (response) setReservedActions(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
     }
-
     fetchData();
   }, []);
+  console.log(reservedActions);
 
   useEffect(() => {
     async function fetchData() {
@@ -144,13 +144,13 @@ export default function MenuCreation() {
         console.log(lineInfo);
 
         const requestBody = {
-          menuId: lineInfo.menuId,
+          actionId: lineInfo.menuId,
           userId: lineInfo.userId,
           fromDate: lineInfo.fromDate,
           toDate: lineInfo.toDate,
         };
 
-        const response = await addUserAssign(requestBody);
+        const response = await assignUserActionDatesService(user, requestBody);
 
         if (response.status !== 200) {
           throw new Error('Process failed! Try again');
@@ -162,12 +162,11 @@ export default function MenuCreation() {
       clearMenu();
 
       alert('Successfully added');
-      navigate('/dashboard/menuassign');
+      navigate('/dashboard/actionAssignment');
     } catch (error) {
       console.log(error);
       alert('Process failed! Try again');
     }
-    // window.location.reload();
   };
 
   const handleAddRow = () => {
@@ -188,9 +187,6 @@ export default function MenuCreation() {
   };
 
   const handleInputChanges = (index, name, value) => {
-    console.log('index', index);
-    console.log('name', name);
-    console.log('value', value);
     const updatedRows = [...menurows];
     updatedRows[index][name] = value;
     // setSelectedItem(null);
@@ -258,12 +254,30 @@ export default function MenuCreation() {
 
   const saveUpdateMenu = async () => {
     try {
-      await Promise.all(actionList.map((menuInfo) => updateMenuDates(menuInfo)));
+      await Promise.all(actionList.map((actionInfo) => updateUserActionDatesService(user, actionInfo)));
       alert('Successfully updated!');
     } catch (error) {
       console.error('Error updating menu: ', error);
     }
   };
+
+  const [selectedPage, setSelectedPage] = useState({});
+  const onSelectPage = (e) => {
+    setSelectedPage(e);
+    const actions = reservedActions.filter((element) => element.sub_menu_name === e.value);
+    setReservedActions(actions);
+  };
+
+  const [selectedAction, setSelectedAction] = useState({});
+  const onSelectAction = (e) => {
+    setSelectedAction(e);
+    const updatedRows = [...menurows];
+    const name = 'menuId';
+    updatedRows[0][name] = e.value;
+    // setSelectedItem(null);
+    setMenuRows(updatedRows);
+  };
+  console.log(selectedAction);
 
   const updateMenuDates = async (value) => {
     try {
@@ -299,7 +313,15 @@ export default function MenuCreation() {
     return `${year}-${month}-${day}`;
   }
 
-  const filteredMenuOptions = menuids.map((option) => ({ value: option.menu_id, label: option.menu_description }));
+  const filteredMenuOptions = reservedActions.map((option) => ({
+    value: option.sub_menu_name,
+    label: option.sub_menu_name,
+  }));
+
+  const filteredActionOptions = reservedActions.map((option) => ({
+    value: option.action_id,
+    label: option.action_description,
+  }));
 
   return (
     <>
@@ -436,40 +458,35 @@ export default function MenuCreation() {
               <table className="table table-bordered table-striped table-highlight">
                 <thead>
                   <tr>
-                    <th style={{ width: '40%' }}>
-                      Select Menu <span style={{ color: 'red' }}>*</span>
+                    <th style={{ width: '30%' }}>
+                      Select Page <span style={{ color: 'red' }}>*</span>
                     </th>
-                    <th style={{ width: '30%' }}>From Date</th>
+                    <th style={{ width: '30%' }}>
+                      Select Action <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th style={{ width: '20%' }}>From Date</th>
                     <th>To Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>
-                      {/* <Select
-                        value={menurows[0].menuId}
-                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
+                      <Select
+                        value={selectedPage}
+                        onChange={(e) => onSelectPage(e)}
                         options={filteredMenuOptions}
                         placeholder="Type to select..."
                         isClearable
-                      /> */}
-                      <TextField
-                        select
-                        fullWidth
-                        name="menuId"
-                        value={menurows[0].menuId}
-                        onChange={(e) => handleInputChanges(0, e.target.name, e.target.value)}
-                      >
-                        <MenuItem value={null}>
-                          <em />
-                        </MenuItem>
-                        {menuids &&
-                          menuids.map((id, index) => (
-                            <MenuItem key={index} value={id.menu_id}>
-                              {id.menu_description}
-                            </MenuItem>
-                          ))}
-                      </TextField>
+                      />
+                    </td>
+                    <td>
+                      <Select
+                        value={selectedAction}
+                        onChange={(e) => onSelectAction(e)}
+                        options={filteredActionOptions}
+                        placeholder="Type to select..."
+                        isClearable
+                      />
                     </td>
                     <td>
                       <input
@@ -502,7 +519,7 @@ export default function MenuCreation() {
                 }}
                 onClick={saveSubMenus}
               >
-                Assign menu
+                Assign action
               </Button>
             </div>
           )}

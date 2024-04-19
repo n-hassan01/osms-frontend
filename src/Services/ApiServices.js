@@ -1769,3 +1769,59 @@ export const getUserActionsService = async (loginToken, userId) => {
     return err.message;
   }
 };
+
+export const getReservedActionsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}user-actions/actionList/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateUserActionDatesService = async (loginToken, requestInfo) => {
+  try {
+    return await axios.put(`${usersUrl}user-actions/updateDates`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const assignUserActionDatesService = async (loginToken, requestInfo) => {
+  try {
+    return await axios.post(`${usersUrl}user-actions/assign`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const checkUserActionAssignment = async (loginToken, requestInfo) => {
+  try {
+    return await axios.post(`${usersUrl}user-actions/checkAssignment`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

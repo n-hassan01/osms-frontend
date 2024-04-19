@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CircularProgress,
+  IconButton,
   Paper,
   Stack,
   Table,
@@ -30,6 +31,7 @@ import { useUser } from '../context/UserContext';
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
+  checkUserActionAssignment,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
@@ -37,6 +39,7 @@ import {
   getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
 } from '../Services/ApiServices';
+import Iconify from '../components/iconify';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
 
@@ -142,6 +145,31 @@ export default function UserPage() {
   }, [user]);
   console.log(account);
 
+  const [canEdit, setCanEdit] = useState(false);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (account) {
+          const requestBody = {
+            userId: account.user_id,
+            actionId: 1,
+          };
+          const accountDetails = await checkUserActionAssignment(user, requestBody); // Call your async function here
+
+          if (accountDetails.status === 200) {
+            setCanEdit(accountDetails.data.value);
+          } // Set the account details in the component's state
+        }
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [account]);
+  console.log(canEdit);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -205,29 +233,80 @@ export default function UserPage() {
     }
   };
 
-  const TABLE_HEAD = [
-    { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
-    { id: 'status', label: 'Status', alignRight: false },
-    { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-    { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
-    { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
-    { id: 'company_name', label: 'Company Name', alignRight: false },
-    { id: 'customer_code', label: 'Customer Code', alignRight: false },
-    { id: 'customer', label: 'Customer Name', alignRight: false },
-    { id: 'customer_group', label: 'Customer Group', alignRight: false },
-    { id: 'amount', label: sentenceCase('amount'), alignRight: true },
-    { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-    { id: 'type', label: 'Deposit Type', alignRight: false },
-    { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
-    { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
-    { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-    { id: 'depositor', label: 'Depositor', alignRight: false },
-    { id: 'employee_name', label: 'Employee', alignRight: false },
-    { id: 'user_name', label: 'User Name', alignRight: false },
-    { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-    { id: 'remarks', label: 'Remarks', alignRight: false },
-    // { id: '' },
-  ];
+  let TABLE_HEAD = [];
+  if (canEdit) {
+    TABLE_HEAD = [
+      { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
+      { id: 'status', label: 'Status', alignRight: false },
+      { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
+      { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
+      { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
+      { id: 'company_name', label: 'Company Name', alignRight: false },
+      { id: 'customer_code', label: 'Customer Code', alignRight: false },
+      { id: 'customer', label: 'Customer Name', alignRight: false },
+      { id: 'customer_group', label: 'Customer Group', alignRight: false },
+      { id: 'amount', label: sentenceCase('amount'), alignRight: true },
+      { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
+      { id: 'type', label: 'Deposit Type', alignRight: false },
+      { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
+      { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
+      { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
+      { id: 'depositor', label: 'Depositor', alignRight: false },
+      { id: 'employee_name', label: 'Employee', alignRight: false },
+      { id: 'user_name', label: 'User Name', alignRight: false },
+      { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
+      { id: 'remarks', label: 'Remarks', alignRight: false },
+      { id: 'edit', label: 'Edit', alignRight: false },
+      // { id: '' },
+    ];
+  } else {
+    TABLE_HEAD = [
+      { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
+      { id: 'status', label: 'Status', alignRight: false },
+      { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
+      { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
+      { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
+      { id: 'company_name', label: 'Company Name', alignRight: false },
+      { id: 'customer_code', label: 'Customer Code', alignRight: false },
+      { id: 'customer', label: 'Customer Name', alignRight: false },
+      { id: 'customer_group', label: 'Customer Group', alignRight: false },
+      { id: 'amount', label: sentenceCase('amount'), alignRight: true },
+      { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
+      { id: 'type', label: 'Deposit Type', alignRight: false },
+      { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
+      { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
+      { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
+      { id: 'depositor', label: 'Depositor', alignRight: false },
+      { id: 'employee_name', label: 'Employee', alignRight: false },
+      { id: 'user_name', label: 'User Name', alignRight: false },
+      { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
+      { id: 'remarks', label: 'Remarks', alignRight: false },
+      // { id: '' },
+    ];
+  }
+  // const TABLE_HEAD = [
+  //   { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
+  //   { id: 'status', label: 'Status', alignRight: false },
+  //   { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
+  //   { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
+  //   { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
+  //   { id: 'company_name', label: 'Company Name', alignRight: false },
+  //   { id: 'customer_code', label: 'Customer Code', alignRight: false },
+  //   { id: 'customer', label: 'Customer Name', alignRight: false },
+  //   { id: 'customer_group', label: 'Customer Group', alignRight: false },
+  //   { id: 'amount', label: sentenceCase('amount'), alignRight: true },
+  //   { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
+  //   { id: 'type', label: 'Deposit Type', alignRight: false },
+  //   { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
+  //   { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
+  //   { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
+  //   { id: 'depositor', label: 'Depositor', alignRight: false },
+  //   { id: 'employee_name', label: 'Employee', alignRight: false },
+  //   { id: 'user_name', label: 'User Name', alignRight: false },
+  //   { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
+  //   { id: 'remarks', label: 'Remarks', alignRight: false },
+  //   // { id: '' },
+  // ];
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -567,6 +646,11 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
+                        </TableCell>
+                        <TableCell padding="checkbox">
+                          <IconButton size="large" color="primary">
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
                         </TableCell>
                       </TableRow>
                     );
