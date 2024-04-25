@@ -732,6 +732,26 @@ export const getSytemItems = async () => {
   }
 };
 
+export const getItemsByCategory = async (categoryId) => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/${categoryId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemListService = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/get/list`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addSystemItemsDetails = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}add-item-master`, bodyInfo);
@@ -1843,6 +1863,105 @@ export const assignUserActionDatesService = async (loginToken, requestInfo) => {
 export const checkUserActionAssignment = async (loginToken, requestInfo) => {
   try {
     return await axios.post(`${usersUrl}user-actions/checkAssignment`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// branding assets tracking services
+export const getBrandingAssetsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-branding-assets-detail/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDivisionsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/division`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getThanasService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/thana`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDistrictsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/district`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDistrictsByDivisionService = async (loginToken, divisionId) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/get-per-division/district/${divisionId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getThanasByDistrictService = async (loginToken, districtId) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/get-per-district/thana/${districtId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemCategoriesService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-categories-b`, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
