@@ -12,9 +12,13 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
+  Button,
   Card,
   CircularProgress,
+  DialogTitle,
+  Grid,
   IconButton,
+  MenuItem,
   Paper,
   Stack,
   Table,
@@ -23,6 +27,8 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
+  TextField,
+  TextareaAutosize,
   Typography,
 } from '@mui/material';
 
@@ -34,9 +40,11 @@ import {
   checkUserActionAssignment,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
+  getAllCustomerService,
   getBankDepositViewFilterByDateService,
   getBankDepositViewFilterByFromDateService,
   getBankDepositViewFilterByToDateService,
+  getDepositTypesService,
   getUserProfileDetails,
 } from '../Services/ApiServices';
 import Iconify from '../components/iconify';
@@ -82,10 +90,12 @@ function applySortFilter(array, comparator, query) {
 
 function getFormattedDate(value) {
   const date = new Date(value);
-  const year = String(date.getFullYear()).slice(-2);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${day}/${month}/${year}`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Zero-padding the month
+  const day = String(date.getDate()).padStart(2, '0'); // Zero-padding the day
+
+  // return `${day}/${month}/${year}`;
+  return `${year}-${month}-${day}`;
 }
 
 function getFormattedDateWithTime(value) {
@@ -194,6 +204,46 @@ export default function UserPage() {
     fetchData();
   }, [account]);
   console.log(USERLIST);
+
+  const [customerList, setCustomerList] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (account) {
+          const response = await getAllCustomerService(user);
+
+          if (response.status === 200) {
+            setCustomerList(response.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [account]);
+  console.log(customerList);
+
+  const [depositTypeList, setDepositTypeList] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (account) {
+          const response = await getDepositTypesService(user);
+
+          if (response.status === 200) {
+            setDepositTypeList(response.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [account]);
+  console.log(depositTypeList);
 
   function getFormattedPrice(value) {
     const formattedPrice = new Intl.NumberFormat().format(value);
@@ -486,6 +536,85 @@ export default function UserPage() {
     Remarks: item.remarks,
   }));
 
+  // edit features
+  const [rowData, setRowData] = useState({});
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const onValueChange = (e) => {
+    console.log(rowData);
+    setRowData({ ...rowData, [e.target.name]: e.target.value });
+  };
+
+  const closeDialog = () => {
+    setFilteredCustomerList([]);
+    setShowFilteredCustomerList(false);
+
+    setFilteredPaymentMethodList([]);
+    setShowFilteredPaymentMethodList(false);
+
+    setOpenEdit(false);
+  };
+  const openEditDialog = (event) => {
+    console.log(event);
+    setRowData(event);
+    setOpenEdit(true);
+  };
+
+  const [filteredCustomerList, setFilteredCustomerList] = useState([]);
+  const [showCustomerList, setShowFilteredCustomerList] = useState(false);
+
+  const handleInputCustomerChange = (event) => {
+    setShowFilteredCustomerList(true);
+
+    const input = event.target.value;
+    const name = 'customer_name';
+    setRowData({ ...rowData, [name]: input });
+
+    console.log(customerList);
+    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
+    console.log(filtered);
+    setFilteredCustomerList(filtered);
+  };
+
+  const handleCustomerClick = (value) => {
+    const cName = value.full_name;
+    const cId = value.cust_account_id;
+
+    const name1 = 'customer_name';
+    const name2 = 'pay_from_customer';
+    setRowData({
+      ...rowData,
+      [name1]: cName,
+      [name2]: cId,
+    });
+
+    setShowFilteredCustomerList(false);
+  };
+
+  // payment method
+  const paymentMethodList = [...new Set(depositTypeList.map((value) => value.deposit_type_name))];
+  const [filteredPaymentMethodList, setFilteredPaymentMethodList] = useState([]);
+  const [showPaymentMethodList, setShowFilteredPaymentMethodList] = useState(false);
+
+  const handleInputPaymentMethodChange = (event) => {
+    setShowFilteredPaymentMethodList(true);
+
+    const input = event.target.value;
+    const name = 'deposit_type_name';
+    setRowData({ ...rowData, [name]: input });
+
+    const filtered = paymentMethodList.filter((item) => item.toLowerCase().includes(input.toLowerCase()));
+    console.log(filtered);
+    setFilteredPaymentMethodList(filtered);
+  };
+
+  const handlePaymentMethodClick = (value) => {
+    const name1 = 'deposit_type_name';
+    setRowData({ ...rowData, [name1]: value });
+
+    setShowFilteredPaymentMethodList(false);
+  };
+
   return (
     <>
       <Helmet>
@@ -649,7 +778,7 @@ export default function UserPage() {
                         </TableCell>
                         {canEdit && (
                           <TableCell padding="checkbox">
-                            <IconButton size="large" color="primary">
+                            <IconButton size="large" color="primary" onClick={(e) => openEditDialog(row)}>
                               <Iconify icon={'tabler:edit'} />
                             </IconButton>
                           </TableCell>
@@ -704,6 +833,166 @@ export default function UserPage() {
                         // <p>No photo available</p>
                       )}
                     </Stack>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog open={openEdit} onClose={closeDialog}>
+                  <DialogTitle style={{ color: 'crimson' }}>Edit Collections</DialogTitle>
+                  <Stack />
+                  <DialogContent>
+                    <Stack spacing={2} direction={'column'}>
+                      <TextField
+                        type="date"
+                        name="deposit_date"
+                        label="Deposit Date"
+                        autoComplete="given-name"
+                        fullWidth
+                        style={{ backgroundColor: 'white' }}
+                        onChange={(e) => onValueChange(e)}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.deposit_date ? getFormattedDate(rowData.deposit_date) : ''}
+                      />
+                      <TextField
+                        fullWidth
+                        type="number"
+                        name="amount"
+                        label="Amount"
+                        autoComplete="given-name"
+                        // style={{ backgroundColor: 'white' }}
+                        onChange={(e) => onValueChange(e)}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.amount ? rowData.amount : null}
+                      />
+                      <TextField
+                        fullWidth
+                        name="customer_name"
+                        label="Customer"
+                        autoComplete="given-name"
+                        style={{ backgroundColor: 'white' }}
+                        onChange={(e) => handleInputCustomerChange(e)}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.customer_name ? rowData.customer_name : ''}
+                      />
+                      {showCustomerList && (
+                        <ul
+                          style={{
+                            // position: 'absolute',
+                            // top: '100%',
+                            // left: 0,
+                            // width: '100%',
+                            backgroundColor: 'white',
+                            border: '1px solid #ccc',
+                            zIndex: 1,
+                          }}
+                        >
+                          {filteredCustomerList.map((suggestion, index) => (
+                            <MenuItem key={index} onClick={() => handleCustomerClick(suggestion)}>
+                              {suggestion.full_name}
+                            </MenuItem>
+                          ))}
+                        </ul>
+                      )}
+                      <TextField
+                        name="paymentMethod"
+                        label="Payment Method"
+                        autoComplete="given-name"
+                        fullWidth
+                        style={{ backgroundColor: 'white' }}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.deposit_type_name ? rowData.deposit_type_name : ''}
+                        onChange={(e) => handleInputPaymentMethodChange(e)}
+                      />
+                      {showPaymentMethodList && (
+                        <ul
+                          style={{
+                            // position: 'absolute',
+                            // top: '100%',
+                            // left: 0,
+                            // width: '100%',
+                            backgroundColor: 'white',
+                            border: '1px solid #ccc',
+                            zIndex: 1,
+                          }}
+                        >
+                          {filteredPaymentMethodList.map((suggestion, index) => (
+                            <MenuItem key={index} onClick={() => handlePaymentMethodClick(suggestion)}>
+                              {suggestion}
+                            </MenuItem>
+                          ))}
+                        </ul>
+                      )}
+                      <TextField
+                        name="company_bank"
+                        label="Company Bank"
+                        autoComplete="given-name"
+                        fullWidth
+                        style={{ backgroundColor: 'white' }}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.company_bank ? rowData.company_bank : ''}
+                        onChange={(e) => onValueChange(e)}
+                      />
+                      <TextField
+                        name="company_name"
+                        label="Company Name"
+                        autoComplete="given-name"
+                        fullWidth
+                        style={{ backgroundColor: 'white' }}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.company_name ? rowData.company_name : ''}
+                        onChange={(e) => onValueChange(e)}
+                      />
+                      <TextField
+                        name="invoice_number"
+                        label="Invoice Number"
+                        autoComplete="given-name"
+                        fullWidth
+                        style={{ backgroundColor: 'white' }}
+                        InputLabelProps={{ shrink: true }}
+                        value={rowData.invoice_number ? rowData.invoice_number : ''}
+                        onChange={(e) => onValueChange(e)}
+                      />
+                      <TextField
+                        required
+                        type="file"
+                        name="depositAttachment"
+                        label="Deposit Attachment"
+                        autoComplete="given-name"
+                        fullWidth
+                        // style={{ backgroundColor: 'white' }}
+                        // onChange={(e) => uplodPhoto(e)}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                      <TextareaAutosize
+                        name="remarks"
+                        placeholder="Remarks"
+                        style={{ width: '100%', height: '55px' }}
+                        value={rowData.remarks ? rowData.remarks : ''}
+                        onChange={(e) => onValueChange(e)}
+                      />
+                    </Stack>
+
+                    {/* <Container>
+                      <LoadingButton fullWidth size="large" type="submit" variant="contained">
+                        Submit
+                      </LoadingButton>
+                    </Container> */}
+
+                    <Grid container spacing={2} style={{ marginTop: '5px' }}>
+                      <Grid item xs={3} style={{ display: 'flex' }}>
+                        <Button
+                          style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                          // onClick={rejectDeposits}
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+                          onClick={closeDialog}
+                        >
+                          Cancel
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </DialogContent>
                 </Dialog>
               </Table>

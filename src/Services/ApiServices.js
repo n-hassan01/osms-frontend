@@ -1352,6 +1352,34 @@ export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => 
   }
 };
 
+export const getAllCustomerService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}customer-list/all`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPaymentMethodService = async (loginToken, depositTypeId) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/type/${depositTypeId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // SAP testing
 export const getTokenService = async () => {
   try {
