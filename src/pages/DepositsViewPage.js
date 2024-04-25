@@ -647,11 +647,13 @@ export default function UserPage() {
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
                         </TableCell>
-                        <TableCell padding="checkbox">
-                          <IconButton size="large" color="primary">
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell>
+                        {canEdit && (
+                          <TableCell padding="checkbox">
+                            <IconButton size="large" color="primary">
+                              <Iconify icon={'tabler:edit'} />
+                            </IconButton>
+                          </TableCell>
+                        )}
                       </TableRow>
                     );
                   })}
