@@ -56,6 +56,7 @@ import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
 import BankFormPage from './pages/BankFormPage';
+import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
 import DepositEntryForm from './pages/DepositEntryForm';
 import DepositsViewPage from './pages/DepositsViewPage';
 import ManageAccountPage from './pages/ManageAccountPage';
@@ -177,6 +178,7 @@ export default function Router() {
         { path: 'barchart', element: <BarChart /> },
         { path: 'piechart', element: <PieChartView /> },
         { path: 'actionAssignment', element: <UserActionAssignmentPage /> },
+        { path: 'brandingAssets', element: <BrandingAssetsTrackingPage /> },
       ],
     },
 
