@@ -5,7 +5,7 @@ import getCookieService from './GetCookieService';
 
 const usersUrl = 'http://182.160.114.100:5001/';
 // const usersUrl = 'http://182.160.114.100:5003/';
-// const usersUrl = 'http://localhost:5003/';
+// const usersUrl = 'http://localhost:5001/';
 
 const sapTokenUrl =
   'https://my407415-api.s4hana.cloud.sap/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder?$top=1&$format=json';
@@ -515,6 +515,20 @@ export const getMenusDetails = async (user) => {
   }
 };
 
+export const updateMenuService = async (user, requestInfo) => {
+  try {
+    return await axios.put(`${usersUrl}updateUserMenuAssign/`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${user}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getperPerAllPeoplesDetails = async (person_id) => {
   try {
     return await axios.get(`${usersUrl}getper-per-all-peoples/${person_id}`);
@@ -711,6 +725,26 @@ export const updateHrLocationsDetails = async (locationsDetails) => {
 export const getSytemItems = async () => {
   try {
     return await axios.get(`${usersUrl}get-item-master/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemsByCategory = async (categoryId) => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/${categoryId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemListService = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/get/list`);
   } catch (err) {
     console.log(err.message);
 
@@ -1338,6 +1372,34 @@ export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => 
   }
 };
 
+export const getAllCustomerService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}customer-list/all`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getPaymentMethodService = async (loginToken, depositTypeId) => {
+  try {
+    return await axios.get(`${usersUrl}bank-deposit/type/${depositTypeId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // SAP testing
 export const getTokenService = async () => {
   try {
@@ -1716,6 +1778,190 @@ export const getSelectIdsMenus = async (user, user_id) => {
 export const getDrillView = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}drill-down/view`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getStandardBarDataView = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}standard-bar-data/view`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// user action assignment
+export const getUserActionsService = async (loginToken, userId) => {
+  try {
+    return await axios.get(`${usersUrl}user-actions/actionList/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getReservedActionsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}user-actions/actionList/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateUserActionDatesService = async (loginToken, requestInfo) => {
+  try {
+    return await axios.put(`${usersUrl}user-actions/updateDates`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const assignUserActionDatesService = async (loginToken, requestInfo) => {
+  try {
+    return await axios.post(`${usersUrl}user-actions/assign`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const checkUserActionAssignment = async (loginToken, requestInfo) => {
+  try {
+    return await axios.post(`${usersUrl}user-actions/checkAssignment`, requestInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+// branding assets tracking services
+export const getBrandingAssetsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-branding-assets-detail/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDivisionsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/division`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getThanasService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/thana`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDistrictsService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/district`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getDistrictsByDivisionService = async (loginToken, divisionId) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/get-per-division/district/${divisionId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getThanasByDistrictService = async (loginToken, districtId) => {
+  try {
+    return await axios.get(`${usersUrl}get-bd-area-lists/get-per-district/thana/${districtId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemCategoriesService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-mtl-categories-b`, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
