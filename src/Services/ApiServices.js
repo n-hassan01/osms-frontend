@@ -1972,3 +1972,17 @@ export const getItemCategoriesService = async (loginToken) => {
     return err.message;
   }
 };
+
+export const getDrillDownCustomerDepositAnalytic = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}drill-down/view/customerDepositAnalytic`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
