@@ -3,7 +3,7 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-const usersUrl = 'http://182.160.114.100:5001/';
+ const usersUrl = 'http://182.160.114.100:5001/';
 // const usersUrl = 'http://182.160.114.100:5003/';
 // const usersUrl = 'http://localhost:5001/';
 
@@ -1972,3 +1972,19 @@ export const getItemCategoriesService = async (loginToken) => {
     return err.message;
   }
 };
+
+export const getDrillDownCustomerDepositAnalytic = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}drill-down/view/customerDepositAnalytic`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+
