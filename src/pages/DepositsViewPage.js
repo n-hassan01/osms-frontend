@@ -651,6 +651,7 @@ export default function UserPage() {
       uploadedFilename: rowData.uploaded_filename,
       remarks: rowData.remarks,
       lastUpdatedBy: user.user_id,
+      cashReceiptId: rowData.cash_receipt_id,
     };
     const response = await upldateBankDepositService(user, requestBody);
 
