@@ -215,6 +215,7 @@ export default function UserPage() {
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
+    { id: 'entry_date', label: 'Entry Date', alignRight: false },
     { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
     { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
     { id: 'company_name', label: 'Company Name', alignRight: false },
@@ -413,6 +414,7 @@ export default function UserPage() {
   const exportData = filteredUsers.map((item) => ({
     Status: item.status,
     'Deposit Date': getFormattedDateWithTime(item.deposit_date),
+    'Entry Date': getFormattedDateWithTime(item.creation_date),
     'Company Bank': item.company_bank,
     'Company Account': item.company_account,
     'Company Name': item.company_name,
@@ -519,6 +521,7 @@ export default function UserPage() {
                       reject_reason,
                       customer_code,
                       customer_group,
+                      creation_date,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -540,6 +543,10 @@ export default function UserPage() {
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(deposit_date)}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {/* {getFormattedDate(deposit_date)} */}
+                          {getFormattedDateWithTime(creation_date)}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {company_bank}
