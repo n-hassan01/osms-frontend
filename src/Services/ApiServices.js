@@ -966,6 +966,37 @@ export const getSalesOrderHeadersByUserService = async (requestInfo) => {
   }
 };
 
+// route master
+export const getRouteMasterService = async () => {
+  try {
+    return await axios.get(`${usersUrl}route-master/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addShopRoutesService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}route-master/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateShopRoutesService = async (bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}route-master/updateRouteMaster`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // sales order lines
 export const addSalesOrderLinesService = async (bodyInfo) => {
   try {
