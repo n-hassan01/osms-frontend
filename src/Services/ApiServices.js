@@ -997,6 +997,16 @@ export const updateShopRoutesService = async (bodyInfo) => {
   }
 };
 
+export const deleteShopRoutesService = async (routeId) => {
+  try {
+    return await axios.delete(`${usersUrl}route-master/deleteRouteMaster/${routeId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // sales order lines
 export const addSalesOrderLinesService = async (bodyInfo) => {
   try {
