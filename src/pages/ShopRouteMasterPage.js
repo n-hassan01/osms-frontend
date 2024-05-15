@@ -11,27 +11,27 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    Container,
-    DialogTitle,
-    Grid,
-    IconButton,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Checkbox,
+  Container,
+  DialogTitle,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { getRouteMasterService, updateShopRoutesService } from '../Services/ApiServices';
+import { deleteShopRoutesService, getRouteMasterService, updateShopRoutesService } from '../Services/ApiServices';
 import UomListToolbar from '../sections/@dashboard/uom/UomListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
 
@@ -201,8 +201,21 @@ export default function UserPage() {
   };
 
   const addRoutes = () => {
-    // navigate('/dashboard/add-uom');
     navigate('/dashboard/routeMaster/add', { replace: true });
+  };
+
+  const deleteRoutes = async () => {
+    const result = selected.map(async (element) => {
+      try {
+        const response = await deleteShopRoutesService(element);
+
+        const alertMessage = response.status === 200 ? response.data.message : 'Service failed! Try again';
+        alert(alertMessage);
+        window.location.reload();
+      } catch (err) {
+        console.log(err.message);
+      }
+    });
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -239,6 +252,7 @@ export default function UserPage() {
             filterName={filterName}
             onFilterName={handleFilterByName}
             selectedUsers={selected}
+            onDeleteRoutes={deleteRoutes}
           />
 
           <Scrollbar>
