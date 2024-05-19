@@ -568,7 +568,6 @@ export default function UserPage() {
     }
 
     if (filterInfo.from && !filterInfo.to) {
-      console.log('from');
       const requestBody = {
         fromDepositDate: filterInfo.from,
       };
@@ -582,13 +581,10 @@ export default function UserPage() {
     }
 
     if (filterInfo.to && !filterInfo.from) {
-      console.log('to');
       const requestBody = {
         toDepositDate: filterInfo.to,
       };
       const response = await getBankDepositViewFilterByToDateService(user, requestBody);
-
-      console.log(response.data);
 
       if (response.status === 200) {
         filteredData = response.data;
