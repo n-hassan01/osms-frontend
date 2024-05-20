@@ -12,21 +12,21 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    Checkbox,
-    Container,
-    DialogTitle,
-    Grid,
-    IconButton,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  Checkbox,
+  Container,
+  DialogTitle,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -134,6 +134,19 @@ export default function UserPage() {
     }
 
     return data;
+  }
+
+  function getFormattedDateWithTime(value) {
+    const dateObject = new Date(value);
+
+    // Extract date and time components
+    const formattedDate = dateObject.toLocaleDateString();
+    const formattedTime = dateObject.toLocaleTimeString();
+    const date = new Date(formattedDate);
+    const year = String(date.getFullYear()).slice(-2);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}/${month}/${year}    ${formattedTime}`;
   }
 
   const [open, setOpen] = useState(false);
@@ -408,7 +421,9 @@ export default function UserPage() {
                         </TableCell>
 
                         {rowValues.map((value) => (
-                          <TableCell align="left">{value}</TableCell>
+                          <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                            {value}
+                          </TableCell>
                         ))}
 
                         <TableCell padding="checkbox">
