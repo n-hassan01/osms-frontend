@@ -198,25 +198,25 @@ export default function ResponsiveDialog() {
                     checked={selectedRows.length === rows.length && rows.length !== 0}
                   />
                 </th>
-                <th>
+                <th style={{ whiteSpace: 'nowrap' }}>
                   {sentenceCase('inventory_item_id')} <span style={{ color: 'red' }}>*</span>
                 </th>
-                <th>
+                <th style={{ whiteSpace: 'nowrap' }}>
                   {sentenceCase('inventory_item_code')} <span style={{ color: 'red' }}>*</span>
                 </th>
-                <th>{sentenceCase('primary_uom_code')}</th>
-                <th>{sentenceCase('primary_unit_of_measure')}</th>
-                <th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('primary_uom_code')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('primary_unit_of_measure')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>
                   {sentenceCase('enabled_flag')} <span style={{ color: 'red' }}>*</span>
                 </th>
-                <th>{sentenceCase('start_date_active')}</th>
-                <th>{sentenceCase('end_date_active')}</th>
-                <th>{sentenceCase('buyer_id')}</th>
-                <th>{sentenceCase('min_minmax_quantity')}</th>
-                <th>{sentenceCase('max_minmax_quantity')}</th>
-                <th>{sentenceCase('minimum_order_quantity')}</th>
-                <th>{sentenceCase('maximum_order_quantity')}</th>
-                <th>{sentenceCase('description')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('start_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('end_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('buyer_id')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('min_minmax_quantity')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('max_minmax_quantity')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('minimum_order_quantity')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('maximum_order_quantity')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('description')}</th>
               </tr>
             </thead>
             <tbody>
