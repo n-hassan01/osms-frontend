@@ -420,11 +420,45 @@ export default function UserPage() {
                           {/* <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, inventory_item_id)} /> */}
                         </TableCell>
 
-                        {rowValues.map((value) => (
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {organization_id}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {inventory_item_code}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {description}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {primary_uom_code}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {enabled_flag}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {getFormattedDateWithTime(start_date_active)}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {getFormattedDateWithTime(end_date_active)}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {min_minmax_quantity}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {max_minmax_quantity}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {minimum_order_quantity}
+                        </TableCell>
+                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {maximum_order_quantity}
+                        </TableCell>
+
+                        {/* {rowValues.map((value) => (
                           <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
                             {value}
                           </TableCell>
-                        ))}
+                        ))} */}
 
                         <TableCell padding="checkbox">
                           <IconButton size="large" color="primary" onClick={() => handleClickOpen(row)}>
