@@ -56,6 +56,7 @@ import PieChartView from './DataVisualization/PieChart';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
+import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
 import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
@@ -81,7 +82,6 @@ import VatposIntegrationService from './pages/VatposIntegrationService';
 import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
-
 export default function Router() {
   const navigate = useNavigate();
 
@@ -185,6 +185,7 @@ export default function Router() {
         { path: 'drilldowncustomerdepositanalytic', element: <DrillDownCustomerDepositAnalytic /> },
         { path: 'routeMaster', element: <ShopRouteMasterPage /> },
         { path: 'routeMaster/add', element: <AddShopRoutesPage /> },
+        { path: 'shopitems/add', element: <AddShopItems /> },
       ],
     },
 
