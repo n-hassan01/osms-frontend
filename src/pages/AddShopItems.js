@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-restricted-globals */
@@ -5,12 +6,13 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable camelcase */
 // import Button from '@mui/material/Button';
-import { Button, Container, Grid, MenuItem, TextField } from '@mui/material';
+import { Button, Container, Grid } from '@mui/material';
 import { sentenceCase } from 'change-case';
 import { filter } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 // @mui
 import { useUser } from '../context/UserContext';
 // components
@@ -111,6 +113,7 @@ export default function AddShopItems() {
 
     fetchData();
   }, []);
+  console.log(itemIds);
 
   const [account, setAccount] = useState({});
   useEffect(() => {
@@ -225,15 +228,35 @@ export default function AddShopItems() {
     shopName: '',
   });
 
+  const [itemInfo, setItemInfo] = useState({
+    description: '',
+    inventory_item_id: '',
+  });
+
   const handleFilterInfo = (e) => {
     console.log(e.target.name, e.target.value);
-    setFilterInfo({ ...filterInfo, [e.target.name]: e.target.value });
+    setItemInfo({ ...itemInfo, [e.target.name]: e.target.value });
   };
   console.log(filterInfo);
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedLines, setSelectedLines] = useState([]);
-  const [rows, setRows] = useState([{}]);
+  const [rows, setRows] = useState([
+    {
+      description: '',
+      inventory_item_id: '',
+      startDateActive: '',
+      endDateActive: '',
+      remarks: '',
+    },
+  ]);
+
+  const customStyles = {
+    container: (provided) => ({
+      ...provided,
+      width: '400px',
+    }),
+  };
 
   const [showLines, setShowLines] = useState(false);
   const handleRowSelect = (index, row) => {
@@ -260,6 +283,8 @@ export default function AddShopItems() {
     setSelectedLines(updatedSelectedLines);
   };
   const handleInputChange = (index, name, value) => {
+    // itemInfo.inventory_item_id = selectedOption.value;
+    // itemInfo.description = selectedOption.label;
     console.log(index);
     console.log(name);
     console.log(value);
@@ -275,7 +300,7 @@ export default function AddShopItems() {
         ...rows,
         {
           description: '',
-          inventoryItemId: '',
+          inventory_item_id: '',
           startDateActive: '',
           endDateActive: '',
           remarks: '',
@@ -289,6 +314,38 @@ export default function AddShopItems() {
     setRows(updatedRows);
     setSelectedRows([]);
   };
+  const [inputValue, setInputValue] = useState('');
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  // const handleChange = (selectedOption) => {
+
+  //   console.log(selectedOption);
+  //   setSelectedOption(selectedOption);
+  //   itemInfo.inventory_item_id = selectedOption.value;
+  //   itemInfo.description = selectedOption.label;
+  //   // const updatedRows = [...rows];
+  //   // updatedRows[index][name] = value;
+  //   // console.log(updatedRows);
+  //   // setRows(updatedRows);
+  // };
+  const handleChange = (index, selectedOption) => {
+    const updatedRows = [...rows];
+    updatedRows[index]['inventory_item_id'] = selectedOption.value;
+    updatedRows[index]['description'] = selectedOption.label;
+    setRows(updatedRows);
+    itemInfo.inventory_item_id = selectedOption.value;
+    itemInfo.description = selectedOption.label;
+  };
+  console.log(itemInfo);
+
+  const handleInputChanges = (inputValue) => {
+    console.log(inputValue);
+    setInputValue(inputValue);
+  };
+  const filteredOptions = itemIds
+    .filter((option) => option.description.toLowerCase().includes(inputValue.toLowerCase()))
+    .map((option) => ({ value: option.inventory_item_id, label: `${option.description}` }));
+
   const [count, setCount] = useState(0);
   const saveSubMenus = async () => {
     console.log(rows);
@@ -304,7 +361,7 @@ export default function AddShopItems() {
         const requestBody = {
           shopName: filterInfo.shopName,
           shopId: filterInfo.shopId,
-          assetId: lineInfo.inventoryItemId,
+          assetId: lineInfo.inventory_item_id,
           dateEffective: lineInfo.startDateActive,
           dateIneffective: lineInfo.endDateActive,
           remarks: lineInfo.remarks,
@@ -323,7 +380,7 @@ export default function AddShopItems() {
       console.log(error);
       alert('Process failed! Try again');
     }
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
@@ -337,7 +394,6 @@ export default function AddShopItems() {
         onFilterName={handleFilterByName}
         selectedUsers={selected}
         filterDetails={filterInfo}
-        onFilterDetails={handleFilterInfo}
         customerGroupList={customerGroups}
         customerList={customers}
       />
@@ -367,7 +423,7 @@ export default function AddShopItems() {
       </Container>
       <form className="form-horizontal" style={{ marginTop: '20px' }}>
         <div className="table-responsive">
-          <table className="table table-bordered table-striped table-highlight">
+          <table className="table table-bordered table-striped table-highlight" style={{ height: '100%',marginBottom: '200px' }}>
             <thead>
               <tr>
                 <th>
@@ -382,12 +438,12 @@ export default function AddShopItems() {
                     checked={selectedRows.length === rows.length && rows.length !== 0}
                   />
                 </th>
-                <th style={{ whiteSpace: 'nowrap' }}>
+                <th style={{ whiteSpace: 'nowrap', width: '400px'}}>
                   {sentenceCase('Item List')} <span style={{ color: 'red' }}>*</span>
                 </th>
-                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('start_date_active')}</th>
-                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('end_date_active')}</th>
-                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('remarks')}</th>
+                <th style={{ whiteSpace: 'nowrap',width: '400px' }}>{sentenceCase('start_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap',width: '400px' }}>{sentenceCase('end_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap',width: '400px' }}>{sentenceCase('remarks')}</th>
               </tr>
             </thead>
             <tbody>
@@ -401,31 +457,27 @@ export default function AddShopItems() {
                         checked={selectedRows.includes(index)}
                       />
                     </td>
-                    <td>
-                      <TextField
-                        select
-                        fullWidth
-                        name="inventoryItemId"
-                        value={row.inventoryItemId || ''}
-                        onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
-                      >
-                        <MenuItem value="">
-                          <em />
-                        </MenuItem>
-                        {itemIds &&
-                          itemIds.map((id, idx) => (
-                            <MenuItem key={idx} value={id.inventory_item_id}>
-                              {id.description}
-                            </MenuItem>
-                          ))}
-                      </TextField>
+
+                    <td style={{ width: '400px' }}>
+                      <Select
+                        id="inventory_item_id"
+                        name="inventory_item_id"
+                        value={row.description ? { value: row.inventory_item_id, label: row.description } : null}
+                        onChange={(selectedOption) => handleChange(index, selectedOption)}
+                        onInputChange={handleInputChanges}
+                        options={filteredOptions}
+                        placeholder="Type to select..."
+                        isClearable
+                        styles={customStyles}
+                        style={{ backgroundColor: 'white', height: '100%' }}
+                      />
                     </td>
                     <td>
                       <input
                         type="date"
                         name="startDateActive"
                         className="form-control"
-                        style={{ backgroundColor: 'white', height: '55px' }}
+                        style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
@@ -434,7 +486,7 @@ export default function AddShopItems() {
                         type="date"
                         name="endDateActive"
                         className="form-control"
-                        style={{ backgroundColor: 'white', height: '55px' }}
+                        style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
@@ -443,7 +495,7 @@ export default function AddShopItems() {
                         name="remarks"
                         className="form-control"
                         title="Maximum 240 characters are allowed."
-                        style={{ height: '55px' }}
+                        style={{ height: '35px' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
