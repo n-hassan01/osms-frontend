@@ -254,7 +254,7 @@ export default function AddShopItems() {
   const customStyles = {
     container: (provided) => ({
       ...provided,
-      width: '400px',
+      width: '300px',
     }),
   };
 
@@ -380,7 +380,7 @@ export default function AddShopItems() {
       console.log(error);
       alert('Process failed! Try again');
     }
-    // window.location.reload();
+    window.location.reload();
   };
 
   return (
@@ -401,29 +401,36 @@ export default function AddShopItems() {
         <Grid container spacing={2}>
           <Grid item xs={3} style={{ display: 'flex' }}>
             <Button
-              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
+              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
               onClick={saveSubMenus}
             >
               Save
             </Button>
             <Button
-              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
+              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
               onClick={handleDeleteRows}
             >
               Delete
             </Button>
-            <Button
-              style={{ backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
-              onClick={handleAddRow}
-            >
+            <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
               Add Lines
             </Button>
           </Grid>
         </Grid>
       </Container>
-      <form className="form-horizontal" style={{ marginTop: '20px' }}>
+      <form className="form-horizontal" style={{ marginTop: '30px', marginLeft: '57px', marginRight: '20px' }}>
         <div className="table-responsive">
-          <table className="table table-bordered table-striped table-highlight" style={{ height: '100%',marginBottom: '200px' }}>
+          <table
+            className="table table-bordered table-striped table-highlight"
+            style={{ tableLayout: 'fixed', width: '100%', marginBottom: '200px' }}
+          >
+            <colgroup>
+              <col style={{ width: '25px' }} />
+              <col style={{ width: '220px' }} />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '140px' }} />
+              <col style={{ width: '255px' }} />
+            </colgroup>
             <thead>
               <tr>
                 <th>
@@ -438,12 +445,12 @@ export default function AddShopItems() {
                     checked={selectedRows.length === rows.length && rows.length !== 0}
                   />
                 </th>
-                <th style={{ whiteSpace: 'nowrap', width: '400px'}}>
+                <th style={{ whiteSpace: 'nowrap' }}>
                   {sentenceCase('Item List')} <span style={{ color: 'red' }}>*</span>
                 </th>
-                <th style={{ whiteSpace: 'nowrap',width: '400px' }}>{sentenceCase('start_date_active')}</th>
-                <th style={{ whiteSpace: 'nowrap',width: '400px' }}>{sentenceCase('end_date_active')}</th>
-                <th style={{ whiteSpace: 'nowrap',width: '400px' }}>{sentenceCase('remarks')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('start_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('end_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('remarks')}</th>
               </tr>
             </thead>
             <tbody>
@@ -457,8 +464,7 @@ export default function AddShopItems() {
                         checked={selectedRows.includes(index)}
                       />
                     </td>
-
-                    <td style={{ width: '400px' }}>
+                    <td>
                       <Select
                         id="inventory_item_id"
                         name="inventory_item_id"
@@ -468,7 +474,6 @@ export default function AddShopItems() {
                         options={filteredOptions}
                         placeholder="Type to select..."
                         isClearable
-                        styles={customStyles}
                         style={{ backgroundColor: 'white', height: '100%' }}
                       />
                     </td>
