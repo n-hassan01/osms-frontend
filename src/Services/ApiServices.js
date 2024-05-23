@@ -1329,6 +1329,34 @@ export const getAllBankDepositsForAccountsService = async (loginToken) => {
   }
 };
 
+export const getShopsListService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}shop-master/`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemsListService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/2`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBankDepositDetailsViewService = async (loginToken, userId) => {
   try {
     console.log(userId);
@@ -1391,6 +1419,19 @@ export const deleteBankDepositAttachmentService = async (loginToken, bodyInfo) =
 export const addBankDepositService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}bank-deposit/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const addShopItemsService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}branding-assets/add`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
