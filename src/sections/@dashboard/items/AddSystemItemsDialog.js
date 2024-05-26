@@ -312,12 +312,6 @@ export default function ResponsiveDialog() {
               onChange={(e) => handleParentInputChange(e)}
             />
           </div>
-          <Button
-            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
-            onClick={onSubmitParent}
-          >
-            Save
-          </Button>
         </Stack>
       </Stack>
       {/* </Grid> */}
