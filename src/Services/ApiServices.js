@@ -762,6 +762,16 @@ export const addSystemItemsDetails = async (bodyInfo) => {
   }
 };
 
+export const addSystemItemsChildDetails = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-item-master/child`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const updateSystemItems = async (bodyInfo) => {
   try {
     return await axios.put(`${usersUrl}update-item-master`, bodyInfo);
