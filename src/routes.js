@@ -62,6 +62,7 @@ import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
 import DepositEntryForm from './pages/DepositEntryForm';
 import DepositsViewPage from './pages/DepositsViewPage';
+import ItemsDashBoard from './pages/ItemsDashBoard';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
 import ManageMtlCategoriesB from './pages/ManageMtlCategoriesB';
@@ -186,6 +187,7 @@ export default function Router() {
         { path: 'routeMaster', element: <ShopRouteMasterPage /> },
         { path: 'routeMaster/add', element: <AddShopRoutesPage /> },
         { path: 'shopitems/add', element: <AddShopItems /> },
+        { path: 'itemsdashboard', element: <ItemsDashBoard /> },
       ],
     },
 
