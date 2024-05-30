@@ -9,7 +9,7 @@ const PrivacyPolicyPage = () => (
           __html: " body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding:1em; } ",
         }}
       />
-      <strong>Privacy Policy</strong>{' '}
+      <strong>Privacy Policy </strong>{' '}
       <p>
         Remark HB Limited built the HB Hub app as a Free app. This SERVICE is provided by Remark HB Limited at no cost
         and is intended for use as is.
