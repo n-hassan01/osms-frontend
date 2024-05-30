@@ -31,12 +31,15 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TablePagination,
   TableRow,
   Typography,
 } from '@mui/material';
 import Select from 'react-select';
 import {
+  dowloadBankDepositReceiptService,
   getBrandingAssetsChildItemsService,
+  getBrandingAssetsItemImagesService,
   getBrandingAssetsItemsService,
   getDistrictsByDivisionService,
   getDistrictsService,
@@ -81,15 +84,15 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 const TABLE_HEAD = [
+  { id: '', label: '', alignRight: false },
   { id: 'shop_number', label: 'Shop Number', alignRight: false },
-
   { id: 'shop_name', label: 'Shop Name', alignRight: false },
-
   { id: 'mobile', label: 'Mobile', alignRight: false },
   { id: 'owner_name', label: 'Owner Name', alignRight: false },
   { id: 'category', label: 'Category', alignRight: false },
 ];
 const TABLE_HEADs = [
+  { id: '', label: '', alignRight: false },
   { id: 'item_name', label: 'Item Name', alignRight: false },
   { id: 'Item_category', label: 'Item Category', alignRight: false },
 ];
@@ -99,36 +102,11 @@ const TABLE_HEADss = [
 ];
 export default function ItemsDashBoard() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+
   const { user } = useUser();
-
-  const [ischecked, setIsChecked] = useState(false);
-  const [ismenuchecked, setIsMenuChecked] = useState(false);
-  const [issubmenuchecked, setIsSubMenuChecked] = useState(false);
-
-  const [systemMenuId, setSystemMenuId] = useState(' ');
-
   const [showShops, setShowShops] = useState(true);
   const [showItems, setShowItems] = useState(false);
   const [showChilds, setShowChilds] = useState(false);
-
-  const handleChange = (event) => {
-    console.log('check', event.target.checked);
-
-    setIsChecked(event.target.checked);
-
-    console.log(ischecked);
-    updateMenuActive(event.target.checked);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const mainSystemMenuDetails = {
-    systemMenuDescription: '',
-    menuActive: 'n',
-    iconPath: '',
-  };
 
   const [filterDetails, setFilterDetails] = useState({
     division: '',
@@ -138,24 +116,6 @@ export default function ItemsDashBoard() {
     shop: '',
     mobile: '',
   });
-
-  const [mainSystemMenu, setMainSystemMenu] = useState(mainSystemMenuDetails);
-  const onChangeMainSystem = (e) => {
-    setMainSystemMenu({ ...mainSystemMenu, [e.target.name]: e.target.value });
-  };
-  const updateMenuActive = (checked) => {
-    if (checked === true) {
-      setMainSystemMenu((prevMenu) => ({
-        ...prevMenu,
-        menuActive: 'y',
-      }));
-    } else {
-      setMainSystemMenu((prevMenu) => ({
-        ...prevMenu,
-        menuActive: 'n',
-      }));
-    }
-  };
 
   //Start From here ////////////////////////////////
   const [inputValue, setInputValue] = useState('');
@@ -168,6 +128,8 @@ export default function ItemsDashBoard() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
+  const [filterItem, setFilterItem] = useState('');
+  const [filterChild, setFilterChild] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState([]);
@@ -175,7 +137,22 @@ export default function ItemsDashBoard() {
   const [account, setAccount] = useState({});
 
   console.log(user);
+  const [activeIndex, setActiveIndex] = useState(0);
 
+  const handlePrev = () => {
+    setActivateIndex((prevIndex) => (prevIndex === 0 ? 2 : prevIndex - 1));
+  };
+
+  const handleNext = () => {
+    setActivateIndex((prevIndex) => (prevIndex === 2 ? 0 : prevIndex + 1));
+  };
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
   useEffect(() => {
     async function fetchData() {
       try {
@@ -382,15 +359,13 @@ export default function ItemsDashBoard() {
 
   const selectedUsers = [];
   const selectedItems = [];
-  const [specificShop, setSpecificShop] = useState({});
-  const [specificItem, setSpecificItem] = useState({});
   const [items, setItems] = useState([]);
   const [childItems, setChildItems] = useState([]);
   const fetchDataForSpecificShop = async (specificElement) => {
     console.log(specificElement);
     try {
       let response = {};
-      response = await getBrandingAssetsItemsService(user, parseInt(specificElement.shop_id, 10));
+      response = await getBrandingAssetsItemsService(user, parseInt(specificElement, 10));
       console.log(response);
       if (response.status === 200) setItems(response.data);
       if (response) {
@@ -415,15 +390,26 @@ export default function ItemsDashBoard() {
     }
   };
   console.log(childItems);
-  const handleClick = (event, name) => {
-    console.log(name);
 
-    const specificElement = USERLIST[name - 1];
-    console.log(specificElement);
-    setSpecificShop(specificElement);
-    console.log(specificElement);
-    console.log(specificShop);
-    fetchDataForSpecificShop(specificElement);
+  const [images, setImages] = useState([]);
+  const fetchImageForSpecificItem = async (specificElements) => {
+    console.log(specificElements);
+    try {
+      let response = {};
+      response = await getBrandingAssetsItemImagesService(user, specificElements);
+      console.log(response.data);
+      if (response.status === 200) setImages(response.data);
+      if (response) {
+        setShowChilds(true);
+      }
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+  };
+  console.log(images);
+
+  const handleClick = (event, name) => {
+    fetchDataForSpecificShop(name);
     const selectedIndex = selected.indexOf(name);
     selectedUsers.push(name);
     let newSelected = [];
@@ -439,35 +425,32 @@ export default function ItemsDashBoard() {
     setSelected(newSelected);
     console.log('toselectedUsers : ', selectedUsers);
   };
-  const handleItemClick = (event, name) => {
-    console.log(event);
-    console.log(name);
-    console.log(items);
-    const specificElements = items[name - 1];
-    console.log(specificElements);
-    setSpecificItem(specificElements);
-    console.log(specificElements);
-    console.log(specificItem);
-    fetchDataForSpecificItem(name);
-    const selectedIndex = selected.indexOf(name);
-    selectedItems.push(name);
+  const handleItemClick = (event, inventoryItemId) => {
+    fetchDataForSpecificItem(inventoryItemId);
+    fetchImageForSpecificItem(inventoryItemId);
+    const selectedIndex = selectedItem.indexOf(inventoryItemId);
     let newSelected = [];
+
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+      newSelected = [...selectedItem, inventoryItemId];
+    } else {
+      newSelected = selectedItem.filter((id) => id !== inventoryItemId);
     }
+
     setSelectedItem(newSelected);
-    console.log('toselectedUsers : ', selectedUsers);
   };
 
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+  };
+  const handleFilterItem = (event) => {
+    setPage(0);
+    setFilterItem(event.target.value);
+  };
+  const handleFilterChild = (event) => {
+    setPage(0);
+    setFilterChild(event.target.value);
   };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -492,42 +475,60 @@ export default function ItemsDashBoard() {
 
   const handleSelectItemClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = items.map((n) => n.location_id);
-      setSelected(newSelecteds);
-
-      return;
+      const newSelecteds = filteredItems.map((row) => row.inventory_item_id);
+      setSelectedItem(newSelecteds);
+    } else {
+      setSelectedItem([]);
     }
-    console.log('allselectedUsers : ', selectedUsers);
-    setSelected([]);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-  const filteredItems = applySortFilter(items, getComparator(order, orderBy), filterName);
-  const filteredChilds = applySortFilter(childItems, getComparator(order, orderBy), filterName);
+  const filteredItems = applySortFilter(items, getComparator(order, orderBy), filterItem);
+  const filteredChilds = applySortFilter(childItems, getComparator(order, orderBy), filterChild);
   const isNotFound = !filteredUsers.length && !!filterName;
+  const isNotFoundItem = !filteredItems.length && !!filterItem;
+  const isNotFoundChild = !filteredChilds.length && !!filterChild;
+  const [activateIndex, setActivateIndex] = useState(0);
+  const img = [
+    'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(15).webp',
+    'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(22).webp',
+    'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(23).webp',
+  ];
 
-  const [menuId, setMenuId] = useState(' ');
+  const [imageSrc, setImageSrc] = useState();
+  if(images){
+  for (let i = 0; i < images.length; i++) {
+    viewAttachment(images[i]);
+  }
+}
+  const viewAttachment = async (value) => {
+    console.log(value);
+    try {
+      const filename = value;
+      const requestBody = {
+        fileName: filename,
+      };
+      const response = await dowloadBankDepositReceiptService(user, requestBody);
 
-  const showItemsList = () => {
-    setShowItems(true);
+      if (response.status === 200) {
+        const base64String = btoa(
+          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        const dataURL = `data:image/jpeg;base64,${base64String}`;
+        setImageSrc(dataURL);
+      } else {
+        console.log('Image download failed. Server returned status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
+    } finally {
+      setOpen(true); // This will be executed regardless of success or failure
+    }
   };
-  const showChildsList = () => {
-    setShowChilds(true);
-  };
-
-  const [submenurows, setSubMenuRows] = useState([
-    {
-      subMenuDescription: '',
-      subMenuAction: '',
-      subMenuActive: 'n',
-      subMenuType: '',
-      slno: null,
-      menuId: menuId,
-    },
-  ]);
-
+  console.log(imageSrc);
   return (
     <>
       <Helmet>
@@ -559,7 +560,7 @@ export default function ItemsDashBoard() {
                 </div>
               </div>
 
-              <div className="col-auto" style={{ display: 'flex', marginRight: '20px' }}>
+              <div className="col-auto" style={{ display: 'flex', marginRight: '25px' }}>
                 <span style={{ marginRight: '5px' }}>District</span>
                 <div style={{ width: '200px' }}>
                   <Select
@@ -589,8 +590,8 @@ export default function ItemsDashBoard() {
             </Stack>
           </Stack>
           <Stack direction="row" mb={1}>
-            <div className="col-auto" style={{ display: 'flex', marginRight: '20px' }}>
-              <span style={{ marginRight: '5px' }}>Route</span>
+            <div className="col-auto" style={{ display: 'flex', marginRight: '35px' }}>
+              <span style={{ marginRight: '18px' }}>Route</span>
               <div style={{ width: '200px' }}>
                 <Select
                   value={selectedRoute}
@@ -604,7 +605,7 @@ export default function ItemsDashBoard() {
             </div>
 
             <div className="col-auto" style={{ display: 'flex', marginRight: '20px' }}>
-              <span style={{ marginRight: '5px' }}>Shop NO</span>
+              <span style={{ marginRight: '5px' }}>Shop</span>
               <div style={{ width: '200px' }}>
                 <Select
                   value={selectedShop}
@@ -709,8 +710,17 @@ export default function ItemsDashBoard() {
             )}
           </Table>
         </TableContainer>
-        <Button onClick={showItemsList}>Show Items</Button>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
+          component="div"
+          count={USERLIST.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        {/* <Button onClick={showItemsList}>Show Items</Button> */}
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', marginTop: '30px' }}>
           <div style={{ flex: '1' }}>
             <TableContainer>
               <Table>
@@ -720,6 +730,7 @@ export default function ItemsDashBoard() {
                   headLabel={TABLE_HEADs}
                   rowCount={items.length}
                   numSelected={selectedItem.length}
+                  onFilterName={handleFilterItem}
                   onRequestSort={handleRequestItemSort}
                   onSelectAllClick={handleSelectItemClick}
                 />
@@ -757,7 +768,7 @@ export default function ItemsDashBoard() {
                   )}
                 </TableBody>
 
-                {isNotFound && (
+                {isNotFoundItem && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -782,7 +793,16 @@ export default function ItemsDashBoard() {
                 )}
               </Table>
             </TableContainer>
-            <Button onClick={showChildsList}>Show Shops</Button>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={USERLIST.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            {/* <Button onClick={showChildsList}>Show Shops</Button> */}
           </div>
           <div style={{ flex: '1' }}>
             <TableContainer>
@@ -793,6 +813,7 @@ export default function ItemsDashBoard() {
                   headLabel={TABLE_HEADss}
                   rowCount={childItems.length}
                   numSelected={selected.length}
+                  onFilterName={handleFilterChild}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
@@ -830,7 +851,7 @@ export default function ItemsDashBoard() {
                   )}
                 </TableBody>
 
-                {isNotFound && (
+                {isNotFoundChild && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -855,7 +876,68 @@ export default function ItemsDashBoard() {
                 )}
               </Table>
             </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 25]}
+              component="div"
+              count={USERLIST.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </div>
+        </div>
+        <div
+          id="carouselBasicExample"
+          className="carousel slide carousel-fade"
+          style={{ marginTop: '20px', marginLeft: '300px', width: '50%' }}
+        >
+          <div className="carousel-indicators">
+            {[0, 1, 2].map((index) => (
+              <button
+                key={index}
+                type="button"
+                className={index === activeIndex ? 'active' : ''}
+                onClick={() => setActiveIndex(index)}
+                aria-current={index === activeIndex ? 'true' : undefined}
+                aria-label={`Slide ${index + 1}`}
+              />
+            ))}
+          </div>
+          <div className="carousel-inner">
+            {img.map((image, index) => {
+              const record = images[index]; // Get the corresponding record for this image
+              return (
+                <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
+                  <img src={image} className="d-block w-100" alt={`Slide ${index + 1}`} />
+                  <div className="carousel-caption d-none d-md-block">
+                    {/* <h5>{`Slide ${index + 1} label`}</h5> */}
+                    <p>
+                      {record ? (
+                        <>
+                          <span>Record Type: {record.RECORD_TYPE}</span>
+                          <br />
+                          <span>Shop Name: {record.shop_name}</span>
+                          <br />
+                          <span>Date Effective: {new Date(record.execution_date).toLocaleDateString()}</span>
+                        </>
+                      ) : (
+                        'No description available'
+                      )}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <button className="carousel-control-prev" type="button" onClick={handlePrev}>
+            <span className="carousel-control-prev-icon" aria-hidden="true" />
+            <span className="visually-hidden">Previous</span>
+          </button>
+          <button className="carousel-control-next" type="button" onClick={handleNext}>
+            <span className="carousel-control-next-icon" aria-hidden="true" />
+            <span className="visually-hidden">Next</span>
+          </button>
         </div>
       </Container>
           
