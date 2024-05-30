@@ -2074,7 +2074,22 @@ export const getBrandingAssetsItemsService = async (loginToken, shopId) => {
 export const getBrandingAssetsChildItemsService = async (loginToken, itemId) => {
   console.log(itemId);
   try {
-    return await axios.get(`${usersUrl}branding-assets/getChildItem/${'1009'}`, {
+    return await axios.get(`${usersUrl}branding-assets/getChildItem/${itemId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetsItemImagesService = async (loginToken, itemId) => {
+  console.log(itemId);
+  try {
+    return await axios.get(`${usersUrl}branding-assets/viewReviewStatus/${itemId}`, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
