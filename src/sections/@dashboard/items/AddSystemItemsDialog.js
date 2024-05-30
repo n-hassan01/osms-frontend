@@ -209,7 +209,9 @@ export default function ResponsiveDialog() {
         }
       } else {
         console.log(response);
-        alert('Process failed! Try again later');
+        const alertMessage =
+          filteredArray.length === 0 ? 'Item saved without child items!' : 'Process failed! Try again later';
+        alert(alertMessage);
       }
     } catch (err) {
       console.log(err.message);
