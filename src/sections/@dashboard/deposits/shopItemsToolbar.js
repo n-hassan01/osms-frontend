@@ -142,7 +142,10 @@ export default function UserListToolbar({
       {enableFilter && (
         <Stack ml={1} mr={1}>
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
-            <div className="col-auto" style={{ display: 'flex', marginRight: '20px', width: 'auto' }}>
+            <div
+              className="col-auto"
+              style={{ display: 'flex', marginRight: '20px', width: 'auto', marginLeft: '25px' }}
+            >
               <span style={{ marginRight: '5px' }}>Shop Name</span>
               <div style={{ width: '425px' }}>
                 <Select
