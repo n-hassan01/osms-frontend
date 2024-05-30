@@ -160,9 +160,7 @@ export default function ResponsiveDialog() {
       };
       const response = await addSystemItemsDetails(requestBody);
 
-      if (response.status === 200) {
-        console.log(response.data);
-
+      if (response.status === 200 && filteredArray.length > 0) {
         const remainingItems = [];
 
         for (const lineInfo of filteredArray) {
