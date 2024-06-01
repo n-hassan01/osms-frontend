@@ -161,11 +161,11 @@ export default function ResponsiveDialog() {
       const response = await addSystemItemsDetails(requestBody);
 
       if (response.status === 200) {
-        console.log(response.data);
-
         const remainingItems = [];
 
         for (const lineInfo of filteredArray) {
+          if (!lineInfo.inventoryItemCode) break;
+
           try {
             const itemDetails = lineInfo;
             const lineRequestBody = {
@@ -211,6 +211,7 @@ export default function ResponsiveDialog() {
         }
       } else {
         console.log(response);
+
         alert('Process failed! Try again later');
       }
     } catch (err) {
