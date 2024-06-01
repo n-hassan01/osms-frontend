@@ -393,6 +393,7 @@ export default function ItemsDashBoard() {
   console.log(childItems);
 
   const [imageSrc, setImageSrc] = useState([]);
+
   const viewAttachment = async (value) => {
     console.log(value);
     try {
@@ -410,7 +411,7 @@ export default function ItemsDashBoard() {
         const dataURL = `data:image/jpeg;base64,${base64String}`;
         console.log(dataURL);
         if (dataURL) {
-          setImageSrc(dataURL);
+          setImageSrc((prevImageSrc) => [...prevImageSrc, dataURL]);
         }
       } else {
         console.log('Image download failed. Server returned status:', response.status);
@@ -419,7 +420,9 @@ export default function ItemsDashBoard() {
       console.error('Error during image download:', error);
     }
   };
+
   console.log(imageSrc);
+
   console.log('1', imageSrc[0]);
   console.log('2', imageSrc[1]);
 
@@ -925,7 +928,7 @@ export default function ItemsDashBoard() {
             style={{ marginTop: '20px', marginLeft: '200px', width: '70%' }}
           >
             <div className="carousel-inner">
-              {img.map((image, index) => {
+              {imageSrc.map((image, index) => {
                 const record = images[index];
 
                 return (
@@ -947,11 +950,7 @@ export default function ItemsDashBoard() {
                         </p>
                       </div>
                       <div style={carouselImageStyle}>
-                        <img
-                          src={'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(15).webp'}
-                          className="d-block w-80"
-                          alt={`Slide ${index + 1}`}
-                        />
+                        <img src={image} className="d-block w-80" alt={`Slide ${index + 1}`} />
                       </div>
                     </div>
                   </div>
