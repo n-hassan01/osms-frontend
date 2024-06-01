@@ -1526,7 +1526,7 @@ export const rejectBankDepositService = async (loginToken, bodyInfo) => {
 
 export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => {
   try {
-    return await axios.post(`${usersUrl}bank-deposit/download`, bodyInfo, {
+    return await axios.post(`${usersUrl}branding-assets/image/download`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
