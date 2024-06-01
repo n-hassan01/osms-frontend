@@ -160,10 +160,12 @@ export default function ResponsiveDialog() {
       };
       const response = await addSystemItemsDetails(requestBody);
 
-      if (response.status === 200 && filteredArray.length > 0) {
+      if (response.status === 200) {
         const remainingItems = [];
 
         for (const lineInfo of filteredArray) {
+          if (!lineInfo.inventoryItemCode) break;
+
           try {
             const itemDetails = lineInfo;
             const lineRequestBody = {
@@ -209,9 +211,8 @@ export default function ResponsiveDialog() {
         }
       } else {
         console.log(response);
-        const alertMessage =
-          filteredArray.length === 0 ? 'Item saved without child items!' : 'Process failed! Try again later';
-        alert(alertMessage);
+
+        alert('Process failed! Try again later');
       }
     } catch (err) {
       console.log(err.message);

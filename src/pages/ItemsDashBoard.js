@@ -153,6 +153,7 @@ export default function ItemsDashBoard() {
     setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
   };
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -391,19 +392,56 @@ export default function ItemsDashBoard() {
   };
   console.log(childItems);
 
-  const [images, setImages] = useState([]);
-  const fetchImageForSpecificItem = async (specificElements) => {
-    console.log(specificElements);
+  const [imageSrc, setImageSrc] = useState();
+  const viewAttachment = async (value) => {
+    console.log(value);
     try {
-      let response = {};
-      response = await getBrandingAssetsItemImagesService(user, specificElements);
-      console.log(response.data);
-      if (response.status === 200) setImages(response.data);
-      if (response) {
-        setShowChilds(true);
+      const filename = value;
+      const requestBody = {
+        fileName: filename,
+      };
+      const response = await dowloadBankDepositReceiptService(user, requestBody);
+
+      if (response.status === 200) {
+        const base64String = btoa(
+          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        const dataURL = `data:image/jpeg;base64,${base64String}`;
+        if (dataURL) {
+          setImageSrc(dataURL);
+        } else {
+          setImageSrc('https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(15).webp');
+        }
+      } else {
+        console.log('Image download failed. Server returned status:', response.status);
       }
     } catch (error) {
-      console.error('Error fetching account details:', error);
+      console.error('Error during image download:', error);
+    } finally {
+      setOpen(true); // This will be executed regardless of success or failure
+    }
+  };
+  console.log(imageSrc);
+
+  const [images, setImages] = useState([]);
+  const fetchImageForSpecificItem = async (specificElements) => {
+    try {
+      const response = await getBrandingAssetsItemImagesService(user, specificElements);
+      if (response.status === 200) {
+        setImages(response.data);
+
+        // Iterate over images and call viewAttachment with each image's filename
+        response.data.forEach((image) => {
+          if (image && image.uploaded_filename) {
+            viewAttachment(image.uploaded_filename);
+          }
+        });
+      } else {
+        console.log('Failed to fetch images. Server returned status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching images:', error);
     }
   };
   console.log(images);
@@ -425,9 +463,14 @@ export default function ItemsDashBoard() {
     setSelected(newSelected);
     console.log('toselectedUsers : ', selectedUsers);
   };
-  const handleItemClick = (event, inventoryItemId) => {
-    fetchDataForSpecificItem(inventoryItemId);
-    fetchImageForSpecificItem(inventoryItemId);
+  const handleItemClick = async (event, inventoryItemId) => {
+    console.log(images);
+    console.log(inventoryItemId);
+    await fetchDataForSpecificItem(inventoryItemId);
+    await fetchImageForSpecificItem(inventoryItemId);
+    console.log(inventoryItemId);
+    console.log(images);
+
     const selectedIndex = selectedItem.indexOf(inventoryItemId);
     let newSelected = [];
 
@@ -497,38 +540,6 @@ export default function ItemsDashBoard() {
     'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(23).webp',
   ];
 
-  const [imageSrc, setImageSrc] = useState();
-  if(images){
-  for (let i = 0; i < images.length; i++) {
-    viewAttachment(images[i]);
-  }
-}
-  const viewAttachment = async (value) => {
-    console.log(value);
-    try {
-      const filename = value;
-      const requestBody = {
-        fileName: filename,
-      };
-      const response = await dowloadBankDepositReceiptService(user, requestBody);
-
-      if (response.status === 200) {
-        const base64String = btoa(
-          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        );
-
-        const dataURL = `data:image/jpeg;base64,${base64String}`;
-        setImageSrc(dataURL);
-      } else {
-        console.log('Image download failed. Server returned status:', response.status);
-      }
-    } catch (error) {
-      console.error('Error during image download:', error);
-    } finally {
-      setOpen(true); // This will be executed regardless of success or failure
-    }
-  };
-  console.log(imageSrc);
   return (
     <>
       <Helmet>
