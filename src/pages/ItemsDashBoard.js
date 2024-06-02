@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Button,
+  CircularProgress,
   Container,
   Radio,
   Stack,
@@ -107,6 +108,8 @@ export default function ItemsDashBoard() {
   const [showShops, setShowShops] = useState(true);
   const [showItems, setShowItems] = useState(false);
   const [showChilds, setShowChilds] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [noImages, setNoImages] = useState(false);
 
   const [filterDetails, setFilterDetails] = useState({
     division: '',
@@ -367,7 +370,7 @@ export default function ItemsDashBoard() {
     try {
       let response = {};
       response = await getBrandingAssetsItemsService(user, parseInt(specificElement, 10));
-      console.log(response);
+      console.log(response.data);
       if (response.status === 200) setItems(response.data);
       if (response) {
         setShowItems(true);
@@ -381,7 +384,7 @@ export default function ItemsDashBoard() {
     try {
       let response = {};
       response = await getBrandingAssetsChildItemsService(user, specificElements);
-      console.log(response);
+      console.log(response.data);
       if (response.status === 200) setChildItems(response.data);
       if (response) {
         setShowChilds(true);
@@ -398,29 +401,26 @@ export default function ItemsDashBoard() {
     console.log(value);
     try {
       const filename = value;
-      const requestBody = {
-        fileName: filename,
-      };
+      const requestBody = { fileName: filename };
       const response = await dowloadBankDepositReceiptService(user, requestBody);
-      console.log(response);
       if (response.status === 200) {
         const base64String = btoa(
           new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
         );
-
         const dataURL = `data:image/jpeg;base64,${base64String}`;
-        console.log(dataURL);
-        if (dataURL) {
-          setImageSrc((prevImageSrc) => [...prevImageSrc, dataURL]);
-        }
-      } else {
-        console.log('Image download failed. Server returned status:', response.status);
+        setImageSrc((prevImageSrc) => {
+          const updatedImages = [...prevImageSrc, dataURL];
+          if (updatedImages.length === response.data.length) {
+            setLoading(false); // All images have been processed, stop loading
+          }
+          return updatedImages;
+        });
       }
     } catch (error) {
       console.error('Error during image download:', error);
+      setLoading(false); // Stop loading on error
     }
   };
-
   console.log(imageSrc);
 
   console.log('1', imageSrc[0]);
@@ -428,26 +428,25 @@ export default function ItemsDashBoard() {
 
   const [images, setImages] = useState([]);
   const fetchImageForSpecificItem = async (specificElements) => {
-    console.log(specificElements);
     try {
       const response = await getBrandingAssetsItemImagesService(user, specificElements);
       console.log(response.data);
-      if (response.status === 200) {
-        console.log(response.data);
+      if (response.status === 200 && response.data.length > 0) {
         setImages(response.data);
-
-        // Iterate over images and call viewAttachment with each image's filename
         response.data.forEach((image) => {
-          if (image && image.uploaded_filename) {
-            console.log(image.uploaded_filename);
+          if (image.uploaded_filename) {
             viewAttachment(image.uploaded_filename);
+          } else {
+            setImageSrc(['https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(23).webp']);
           }
         });
       } else {
-        console.log('Failed to fetch images. Server returned status:', response.status);
+        setNoImages(true);
       }
     } catch (error) {
       console.error('Error fetching images:', error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log(images);
@@ -465,6 +464,12 @@ export default function ItemsDashBoard() {
   };
   const [showimage, setShowImage] = useState(false);
   const handleItemClick = async (event, inventoryItemId) => {
+    // Clear the existing images and set loading state
+    setImageSrc([]);
+    setLoading(true);
+    setNoImages(false);
+    setActivateIndex(0);
+
     await fetchDataForSpecificItem(inventoryItemId);
     await fetchImageForSpecificItem(inventoryItemId);
 
@@ -472,10 +477,8 @@ export default function ItemsDashBoard() {
     console.log(images);
 
     setSelectedItem([inventoryItemId]); // Only one item can be selected with radio button
-
     setShowImage(true);
   };
-
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
@@ -563,11 +566,6 @@ export default function ItemsDashBoard() {
   const isNotFoundItem = !filteredItems.length && !!filterItem;
   const isNotFoundChild = !filteredChilds.length && !!filterChild;
   const [activateIndex, setActivateIndex] = useState(0);
-  const img = [
-    'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(15).webp',
-    'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(22).webp',
-    'https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(23).webp',
-  ];
 
   return (
     <>
@@ -927,45 +925,72 @@ export default function ItemsDashBoard() {
             className="carousel slide carousel-fade"
             style={{ marginTop: '20px', marginLeft: '200px', width: '70%' }}
           >
-            <div className="carousel-inner">
-              {imageSrc.map((image, index) => {
-                const record = images[index];
+            {loading ? (
+              <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                <CircularProgress />
+                <p>Loading images...</p>
+              </div>
+            ) : noImages ? (
+              <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                <p>No images available for this item.</p>
+              </div>
+            ) : (
+              <>
+                <div className="carousel-inner">
+                  {imageSrc.map((image, index) => {
+                    console.log(images);
+                    const record = images[index];
 
-                return (
-                  <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
-                    <div style={carouselContentStyle}>
-                      <div style={carouselDescriptionStyle}>
-                        <p>
-                          {record ? (
-                            <>
-                              <span>Record Type: {record.RECORD_TYPE}</span>
-                              <br />
-                              <span>Shop Name: {record.shop_name}</span>
-                              <br />
-                              <span>Date Effective: {new Date(record.date_effective).toLocaleDateString()}</span>
-                            </>
-                          ) : (
-                            'No description available'
-                          )}
-                        </p>
+                    return (
+                      <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
+                        <div style={carouselContentStyle}>
+                          <div style={carouselDescriptionStyle}>
+                            <p>
+                              {record ? (
+                                <>
+                                  <span>Review Status: {record.review_status}</span>
+                                  <br />
+                                  <span>Created By: {record.created_by}</span>
+                                  <br />
+                                  <span>Created On: {new Date(record.creation_date).toLocaleDateString()}</span>
+                                  <br />
+                                  <span>Remarks: {record.remarks}</span>
+                                </>
+                              ) : (
+                                'No description available'
+                              )}
+                            </p>
+                          </div>
+                          <div style={carouselImageStyle}>
+                            <img src={image} className="d-block w-80" alt={`Slide ${index + 1}`} />
+                          </div>
+                        </div>
                       </div>
-                      <div style={carouselImageStyle}>
-                        <img src={image} className="d-block w-80" alt={`Slide ${index + 1}`} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
 
-            <button className="carousel-control-prev" type="button" onClick={handlePrev} style={{ ...prevButtonStyle }}>
-              <span className="carousel-control-prev-icon" aria-hidden="true" style={iconStyle} />
-              <span className="visually-hidden">Previous</span>
-            </button>
-            <button className="carousel-control-next" type="button" onClick={handleNext} style={{ ...nextButtonStyle }}>
-              <span className="carousel-control-next-icon" aria-hidden="true" style={nextIconStyle} />
-              <span className="visually-hidden">Next</span>
-            </button>
+                <button
+                  className="carousel-control-prev"
+                  type="button"
+                  onClick={handlePrev}
+                  style={{ ...prevButtonStyle }}
+                >
+                  <span className="carousel-control-prev-icon" aria-hidden="true" style={iconStyle} />
+                  <span className="visually-hidden">Previous</span>
+                </button>
+                <button
+                  className="carousel-control-next"
+                  type="button"
+                  onClick={handleNext}
+                  style={{ ...nextButtonStyle }}
+                  disabled={imageSrc.length <= 1}
+                >
+                  <span className="carousel-control-next-icon" aria-hidden="true" style={nextIconStyle} />
+                  <span className="visually-hidden">Next</span>
+                </button>
+              </>
+            )}
           </div>
         )}
       </Container>
