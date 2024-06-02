@@ -342,6 +342,24 @@ export default function AddShopItems() {
     console.log(inputValue);
     setInputValue(inputValue);
   };
+
+  const newAssignment = () => {
+    setFilterInfo({
+      shopId: '',
+      shopName: '',
+    });
+    setRows([
+      {
+        description: '',
+        inventory_item_id: '',
+        startDateActive: '',
+        endDateActive: '',
+        remarks: '',
+      },
+    ]);
+    // window.location.reload();
+  };
+
   const filteredOptions = itemIds
     .filter((option) => option.description.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({ value: option.inventory_item_id, label: `${option.description}` }));
@@ -380,7 +398,7 @@ export default function AddShopItems() {
       console.log(error);
       alert('Process failed! Try again');
     }
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
@@ -401,19 +419,28 @@ export default function AddShopItems() {
         <Grid container spacing={2}>
           <Grid item xs={3} style={{ display: 'flex' }}>
             <Button
-              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
               onClick={saveSubMenus}
             >
               Save
             </Button>
             <Button
-              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
+              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
               onClick={handleDeleteRows}
             >
               Delete
             </Button>
-            <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={handleAddRow}>
+            <Button
+              style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
+              onClick={handleAddRow}
+            >
               Add Lines
+            </Button>
+            <Button
+              style={{ backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
+              onClick={newAssignment}
+            >
+              New Assignment
             </Button>
           </Grid>
         </Grid>
@@ -483,6 +510,7 @@ export default function AddShopItems() {
                         name="startDateActive"
                         className="form-control"
                         style={{ backgroundColor: 'white' }}
+                        value={row.startDateActive ? row.startDateActive : ''}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
@@ -492,6 +520,7 @@ export default function AddShopItems() {
                         name="endDateActive"
                         className="form-control"
                         style={{ backgroundColor: 'white' }}
+                        value={row.endDateActive ? row.endDateActive : ''}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
                       />
                     </td>
