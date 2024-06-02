@@ -437,7 +437,7 @@ export default function ItemsDashBoard() {
           if (image.uploaded_filename) {
             viewAttachment(image.uploaded_filename);
           } else {
-            setImageSrc(['https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(23).webp']);
+            setImageSrc(['https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png']);
           }
         });
       } else {
@@ -952,7 +952,10 @@ export default function ItemsDashBoard() {
                                   <br />
                                   <span>Created By: {record.created_by}</span>
                                   <br />
-                                  <span>Created On: {new Date(record.creation_date).toLocaleDateString()}</span>
+                                  <span>
+                                    Created On:{' '}
+                                    {record.creation_date ? new Date(record.creation_date).toLocaleDateString() : null}
+                                  </span>
                                   <br />
                                   <span>Remarks: {record.remarks}</span>
                                 </>
