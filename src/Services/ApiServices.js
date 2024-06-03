@@ -1482,9 +1482,24 @@ export const addBankDepositService = async (loginToken, bodyInfo) => {
     return err.message;
   }
 };
+
 export const addShopItemsService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}branding-assets/add`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateShopItemsService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}branding-assets/update`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
