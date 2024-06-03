@@ -136,6 +136,28 @@ export default function ResponsiveDialog() {
     console.log(parentItem);
   };
 
+  const newEntry = () => {
+    setParentItem({});
+    setRows([
+      {
+        inventoryItemId: rowValue.inventory_item_id,
+        organizationId: rowValue.organization_id,
+        inventoryItemCode: rowValue.inventory_item_code,
+        description: rowValue.description,
+        primaryUomCode: rowValue.primary_uom_code,
+        primaryUnitOfMeasure: rowValue.primary_unit_of_measure,
+        enabledFlag: rowValue.enabled_flag,
+        startDateActive: rowValue.start_date_active,
+        endDateActive: rowValue.end_date_active,
+        buyerId: rowValue.buyer_id,
+        minMinmaxQuantity: rowValue.min_minmax_quantity,
+        maxMinmaxQuantity: rowValue.max_minmax_quantity,
+        minimumOrderQuantity: rowValue.minimum_order_quantity,
+        maximumOrderQuantity: rowValue.maximum_order_quantity,
+      },
+    ]);
+  };
+
   const handleClick = async () => {
     const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== '' && value !== null));
     console.log(filteredArray);
@@ -202,8 +224,9 @@ export default function ResponsiveDialog() {
 
         if (remainingItems.length === 0) {
           console.log(remainingItems);
-          navigate('/dashboard/items', { replace: true });
+          // navigate('/dashboard/items', { replace: true });
           // window.location.reload();
+          alert('Successfully added!');
         } else {
           setRows(remainingItems);
           alert('Process failed for some items! Try again later');
@@ -331,8 +354,14 @@ export default function ResponsiveDialog() {
           >
             Delete
           </Button>
-          <Button style={{ backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }} onClick={handleAddRow}>
+          <Button
+            style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }}
+            onClick={handleAddRow}
+          >
             Add Lines
+          </Button>
+          <Button style={{ backgroundColor: 'lightgray', color: 'black', whiteSpace: 'nowrap' }} onClick={newEntry}>
+            New Item
           </Button>
         </Grid>
       </Grid>
