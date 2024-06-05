@@ -35,6 +35,7 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
 import Select from 'react-select';
 import {
   dowloadBankDepositReceiptService,
@@ -522,8 +523,9 @@ export default function ItemsDashBoard() {
   };
   const carouselContentStyle = {
     display: 'flex',
-    alignItems: 'center', // Center items vertically
-    // justifyContent: 'space-between', // Add space between description and image
+    // alignItems: 'center', // Center items vertically
+    width: '100%',
+    justifyContent: 'space-between', // Add space between description and image
   };
 
   const carouselDescriptionStyle = {
@@ -565,6 +567,19 @@ export default function ItemsDashBoard() {
   const isNotFoundItem = !filteredItems.length && !!filterItem;
   const isNotFoundChild = !filteredChilds.length && !!filterChild;
   const [activateIndex, setActivateIndex] = useState(0);
+
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  // const handleOpen = () => {
+  //   setOpen(true);
+  // };
 
   // styling css
   const zeroPaddingStyling = {
@@ -613,8 +628,7 @@ export default function ItemsDashBoard() {
       <Helmet>
         <title> COMS | Assets Tracking </title>
       </Helmet>
-      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-1%' }}>
-        {/* <div style={{ width: '60%', marginRight: '10px' }}> */}
+      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-2%' }}>
         <div
           style={{
             height: '40%',
@@ -622,7 +636,7 @@ export default function ItemsDashBoard() {
             flexDirection: 'row',
             border: '1px solid lightgrey',
             padding: '2px',
-            margin: '2px',
+            margin: '5px',
           }}
         >
           <div style={{ width: '60%' }}>
@@ -718,99 +732,103 @@ export default function ItemsDashBoard() {
               </div>
             </Stack>
             <Stack direction="row" gap={1} mb={1}>
-              <Button>Filter</Button>
+              <Button variant="contained" size="medium">
+                Filter
+              </Button>
             </Stack>
           </div>
 
-          <TableContainer style={{ width: '40%' }}>
-            <Table>
-              <NewListHead
-                order={order}
-                orderBy={orderBy}
-                headLabel={TABLE_HEAD}
-                rowCount={USERLIST.length}
-                numSelected={selected.length}
-                onRequestSort={handleRequestSort}
-                onSelectAllClick={handleSelectAllClick}
-              />
-              <TableBody>
-                {showShops ? (
-                  filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { shop_id, shop_name, owner_name, contact_number, category } = row;
-
-                    const selectedUser = selected.indexOf(shop_id) !== -1;
-
-                    return (
-                      <TableRow hover key={shop_id} tabIndex={-1} role="checkbox">
-                        <TableCell style={combinedStylingForRadioTableCell}>
-                          <Radio checked={selectedUser} onChange={(event) => handleClick(event, shop_id)} />
-                        </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
-                          {shop_id}
-                        </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
-                          {shop_name}
-                        </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
-                          {contact_number}
-                        </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
-                          {owner_name}
-                        </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
-                          {category}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={11} align="center">
-                      <Typography variant="body2">No data available</Typography>
-                    </TableCell>
-                  </TableRow>
-                )}
-                {emptyRows > 0 && (
-                  <TableRow style={{ height: 53 * emptyRows }}>
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-
-              {isNotFound && (
+          <div>
+            <TableContainer>
+              <Table>
+                <NewListHead
+                  order={order}
+                  orderBy={orderBy}
+                  headLabel={TABLE_HEAD}
+                  rowCount={USERLIST.length}
+                  numSelected={selected.length}
+                  onRequestSort={handleRequestSort}
+                  onSelectAllClick={handleSelectAllClick}
+                />
                 <TableBody>
-                  <TableRow>
-                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                      <Paper
-                        sx={{
-                          textAlign: 'center',
-                        }}
-                      >
-                        <Typography variant="h6" paragraph>
-                          Not found
-                        </Typography>
+                  {showShops ? (
+                    filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                      const { shop_id, shop_name, owner_name, contact_number, category } = row;
 
-                        <Typography variant="body2">
-                          No results found for &nbsp;
-                          <strong>&quot;{filterName}&quot;</strong>.
-                          <br /> Try checking for typos or using complete words.
-                        </Typography>
-                      </Paper>
-                    </TableCell>
-                  </TableRow>
+                      const selectedUser = selected.indexOf(shop_id) !== -1;
+
+                      return (
+                        <TableRow hover key={shop_id} tabIndex={-1} role="checkbox">
+                          <TableCell style={combinedStylingForRadioTableCell}>
+                            <Radio checked={selectedUser} onChange={(event) => handleClick(event, shop_id)} />
+                          </TableCell>
+                          <TableCell style={combinedStylingForTableCell} align="left">
+                            {shop_id}
+                          </TableCell>
+                          <TableCell style={combinedStylingForTableCell} align="left">
+                            {shop_name}
+                          </TableCell>
+                          <TableCell style={combinedStylingForTableCell} align="left">
+                            {contact_number}
+                          </TableCell>
+                          <TableCell style={combinedStylingForTableCell} align="left">
+                            {owner_name}
+                          </TableCell>
+                          <TableCell style={combinedStylingForTableCell} align="left">
+                            {category}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={11} align="center">
+                        <Typography variant="body2">No data available</Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {emptyRows > 0 && (
+                    <TableRow style={{ height: 53 * emptyRows }}>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
                 </TableBody>
-              )}
-            </Table>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={USERLIST.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </TableContainer>
+
+                {isNotFound && (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                        <Paper
+                          sx={{
+                            textAlign: 'center',
+                          }}
+                        >
+                          <Typography variant="h6" paragraph>
+                            Not found
+                          </Typography>
+
+                          <Typography variant="body2">
+                            No results found for &nbsp;
+                            <strong>&quot;{filterName}&quot;</strong>.
+                            <br /> Try checking for typos or using complete words.
+                          </Typography>
+                        </Paper>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                )}
+              </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={USERLIST.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </TableContainer>
+          </div>
         </div>
         {/* <Button onClick={showItemsList}>Show Items</Button> */}
         {/* <div style={{ width: '40%' }}> */}
@@ -824,7 +842,7 @@ export default function ItemsDashBoard() {
             // margin: '2px',
           }}
         >
-          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '2px' }}>
+          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px' }}>
             <TableContainer>
               <Table>
                 <NewListHead
@@ -916,7 +934,7 @@ export default function ItemsDashBoard() {
               id="carouselBasicExample"
               className="carousel slide carousel-fade"
               // style={{ marginTop: '20px', marginLeft: '200px', width: '70%' }}
-              style={{ border: '1px solid lightgrey', padding: '2px', margin: '2px', width: '60%' }}
+              style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '60%' }}
             >
               {loading ? (
                 <div style={{ textAlign: 'center', margin: '20px 0' }}>
@@ -929,64 +947,100 @@ export default function ItemsDashBoard() {
                 </div>
               ) : (
                 <>
-                  <div className="carousel-inner">
+                  {/* <div className="carousel-inner"> */}
+                  <div
+                    id="carouselMultiItemExample"
+                    data-mdb-carousel-init=""
+                    className="carousel slide carousel-dark text-center"
+                    data-mdb-ride="carousel"
+                  >
+                    <div className="d-flex justify-content-center mb-2">
+                      <button
+                        data-mdb-button-init=""
+                        className="carousel-control-prev position-relative"
+                        type="button"
+                        data-mdb-target="#carouselMultiItemExample"
+                        data-mdb-slide="prev"
+                        onClick={handlePrev}
+                      >
+                        <span className="carousel-control-prev-icon" aria-hidden="true" />
+                        <span className="visually-hidden">Previous</span>
+                      </button>
+                      <button
+                        data-mdb-button-init=""
+                        className="carousel-control-next position-relative"
+                        type="button"
+                        data-mdb-target="#carouselMultiItemExample"
+                        data-mdb-slide="next"
+                        onClick={handleNext}
+                      >
+                        <span className="carousel-control-next-icon" aria-hidden="true" />
+                        <span className="visually-hidden">Next</span>
+                      </button>
+                    </div>
                     {imageSrc.map((image, index) => {
-                      console.log(images);
                       const record = images[index];
 
                       return (
                         <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
                           <div style={carouselContentStyle}>
-                            <div style={carouselDescriptionStyle}>
-                              <p>
-                                {record ? (
-                                  <>
-                                    <span>Review Status: {record.review_status}</span>
-                                    <br />
-                                    <span>Created By: {record.created_by}</span>
-                                    <br />
-                                    <span>
-                                      Created On:{' '}
-                                      {record.creation_date
-                                        ? new Date(record.creation_date).toLocaleDateString()
-                                        : null}
-                                    </span>
-                                    <br />
-                                    <span>Remarks: {record.remarks}</span>
-                                  </>
-                                ) : (
-                                  'No description available'
-                                )}
-                              </p>
-                            </div>
-                            <div style={carouselImageStyle}>
-                              <img src={image} className="d-block w-80" alt={`Slide ${index + 1}`} />
+                            <div className="carousel-item active">
+                              <div>
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'flex-start',
+                                  }}
+                                >
+                                  <div style={{ width: '30%' }}>
+                                    <h5>Reviews</h5>
+                                    <p>
+                                      <span>Review Status: {record.review_status}</span>
+                                      <br />
+                                      <span>Created By: {record.created_by}</span>
+                                      <br />
+                                      <span>
+                                        Created On:{' '}
+                                        {record.creation_date
+                                          ? new Date(record.creation_date).toLocaleDateString()
+                                          : null}
+                                      </span>
+                                      <br />
+                                      <span>Remarks: {record.remarks}</span>
+                                    </p>
+                                    {/* <a href="#!" data-mdb-ripple-init="" className="btn btn-primary">
+                                          Button
+                                        </a> */}
+                                  </div>
+
+                                  <div
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={handleOpen}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter' || e.key === ' ') {
+                                        handleOpen();
+                                      }
+                                    }}
+                                    style={{ display: 'inline-block', cursor: 'pointer', width: '70%' }}
+                                  >
+                                    <img
+                                      src={image}
+                                      className="card-img-top"
+                                      alt={`Slide ${index + 1}`}
+                                      style={{ height: '167px' }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       );
                     })}
                   </div>
-
-                  <button
-                    className="carousel-control-prev"
-                    type="button"
-                    onClick={handlePrev}
-                    style={{ ...prevButtonStyle }}
-                  >
-                    <span className="carousel-control-prev-icon" aria-hidden="true" style={iconStyle} />
-                    <span className="visually-hidden">Previous</span>
-                  </button>
-                  <button
-                    className="carousel-control-next"
-                    type="button"
-                    onClick={handleNext}
-                    style={{ ...nextButtonStyle }}
-                    disabled={imageSrc.length <= 1}
-                  >
-                    <span className="carousel-control-next-icon" aria-hidden="true" style={nextIconStyle} />
-                    <span className="visually-hidden">Next</span>
-                  </button>
                 </>
               )}
             </div>
@@ -995,7 +1049,7 @@ export default function ItemsDashBoard() {
               style={{
                 border: '1px solid lightgrey',
                 padding: '2px',
-                margin: '2px',
+                margin: '5px',
                 width: '60%',
                 alignItems: 'center',
               }}
@@ -1003,7 +1057,7 @@ export default function ItemsDashBoard() {
               <h6>No item selected</h6>
             </div>
           )}
-          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '2px', width: '30%' }}>
+          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '30%' }}>
             <TableContainer>
               <Table>
                 <NewListHead
@@ -1088,6 +1142,310 @@ export default function ItemsDashBoard() {
           </div>
         </div>
       </div>
+
+      <Dialog fullScreen open={open} onClose={handleClose}>
+        <Stack style={{ width: '100px', margin: '5px' }}>
+          <Button variant="contained" size="medium" onClick={handleClose}>
+            Back
+          </Button>
+        </Stack>
+        {/* <DialogContent> */}
+        <div
+          style={{
+            // height: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            // border: '1px solid lightgrey',
+            // padding: '2px',
+            // margin: '2px',
+          }}
+        >
+          {showimage ? (
+            <div
+              id="carouselBasicExample"
+              className="carousel slide carousel-fade"
+              // style={{ marginTop: '20px', marginLeft: '200px', width: '70%' }}
+              style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '70%' }}
+            >
+              {loading ? (
+                <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                  <CircularProgress />
+                  <p>Loading images...</p>
+                </div>
+              ) : noImages ? (
+                <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                  <p>No images available for this item.</p>
+                </div>
+              ) : (
+                <>
+                  {/* <div className="carousel-inner"> */}
+                  <div
+                    id="carouselMultiItemExample"
+                    data-mdb-carousel-init=""
+                    className="carousel slide carousel-dark text-center"
+                    data-mdb-ride="carousel"
+                  >
+                    <div className="d-flex justify-content-center mb-2">
+                      <button
+                        data-mdb-button-init=""
+                        className="carousel-control-prev position-relative"
+                        type="button"
+                        data-mdb-target="#carouselMultiItemExample"
+                        data-mdb-slide="prev"
+                        onClick={handlePrev}
+                      >
+                        <span className="carousel-control-prev-icon" aria-hidden="true" />
+                        <span className="visually-hidden">Previous</span>
+                      </button>
+                      <button
+                        data-mdb-button-init=""
+                        className="carousel-control-next position-relative"
+                        type="button"
+                        data-mdb-target="#carouselMultiItemExample"
+                        data-mdb-slide="next"
+                        onClick={handleNext}
+                      >
+                        <span className="carousel-control-next-icon" aria-hidden="true" />
+                        <span className="visually-hidden">Next</span>
+                      </button>
+                    </div>
+                    {imageSrc.map((image, index) => {
+                      const record = images[index];
+
+                      return (
+                        <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
+                          <div style={carouselContentStyle}>
+                            <div className="carousel-item active">
+                              <div>
+                                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                  <div className="card-body" style={{ width: '40%' }}>
+                                    <h5 className="card-title">Reviews</h5>
+                                    <p className="card-text">
+                                      <span>Review Status: {record.review_status}</span>
+                                      <br />
+                                      <span>Created By: {record.created_by}</span>
+                                      <br />
+                                      <span>
+                                        Created On:{' '}
+                                        {record.creation_date
+                                          ? new Date(record.creation_date).toLocaleDateString()
+                                          : null}
+                                      </span>
+                                      <br />
+                                      <span>Remarks: {record.remarks}</span>
+                                    </p>
+                                    {/* <a href="#!" data-mdb-ripple-init="" className="btn btn-primary">
+                                          Button
+                                        </a> */}
+                                  </div>
+
+                                  <img
+                                    src={image}
+                                    className="card-img-top"
+                                    alt={`Slide ${index + 1}`}
+                                    style={{ height: '494px' }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                border: '1px solid lightgrey',
+                padding: '2px',
+                margin: '5px',
+                width: '70%',
+                alignItems: 'center',
+              }}
+            >
+              <h6>No item selected</h6>
+            </div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', width: '30%' }}>
+            <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px' }}>
+              <TableContainer>
+                <Table>
+                  <NewListHead
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEADs}
+                    rowCount={items.length}
+                    numSelected={selectedItem.length}
+                    onFilterName={handleFilterItem}
+                    onRequestSort={handleRequestItemSort}
+                    onSelectAllClick={handleSelectItemClick}
+                  />
+                  <TableBody>
+                    {showItems ? (
+                      filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                        const { inventory_item_id, item_category, item_name } = row;
+
+                        const selectedUser = selectedItem.includes(inventory_item_id);
+
+                        return (
+                          <TableRow hover key={inventory_item_id} tabIndex={-1} role="radio">
+                            <TableCell style={combinedStylingForRadioTableCell}>
+                              <Radio
+                                checked={selectedUser}
+                                onChange={(event) => handleItemClick(event, inventory_item_id)}
+                              />
+                            </TableCell>
+                            <TableCell style={combinedStylingForTableCell} align="left">
+                              {item_name}
+                            </TableCell>
+                            {/* <TableCell style={combinedStylingForTableCell} align="left">
+                            {item_category}
+                          </TableCell> */}
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={11} align="center">
+                          <Typography variant="body2">No data available</Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+
+                  {isNotFoundItem && (
+                    <TableBody>
+                      <TableRow>
+                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                          <Paper
+                            sx={{
+                              textAlign: 'center',
+                            }}
+                          >
+                            <Typography variant="h6" paragraph>
+                              Not found
+                            </Typography>
+
+                            <Typography variant="body2">
+                              No results found for &nbsp;
+                              <strong>&quot;{filterName}&quot;</strong>.
+                              <br /> Try checking for typos or using complete words.
+                            </Typography>
+                          </Paper>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  )}
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={items.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+              {/* <Button onClick={showChildsList}>Show Shops</Button> */}
+            </div>
+
+            <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px' }}>
+              <TableContainer>
+                <Table>
+                  <NewListHead
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEADss}
+                    rowCount={childItems.length}
+                    numSelected={selected.length}
+                    onFilterName={handleFilterChild}
+                    onRequestSort={handleRequestSort}
+                    onSelectAllClick={handleSelectAllClick}
+                  />
+                  <TableBody>
+                    {showChilds ? (
+                      filteredChilds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                        const { inventory_item_id, description, inventory_item_code } = row;
+
+                        const selectedUser = selected.indexOf(inventory_item_id) !== -1;
+
+                        return (
+                          <TableRow hover key={inventory_item_id} tabIndex={-1} role="checkbox">
+                            <TableCell style={{ width: '5px' }} align="left">
+                              {' '}
+                            </TableCell>
+                            <TableCell style={combinedStylingForTableCell} align="left">
+                              {description}
+                            </TableCell>
+                            {/* <TableCell style={combinedStylingForTableCell} align="left">
+                            {inventory_item_code}
+                          </TableCell> */}
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={11} align="center">
+                          <Typography variant="body2">No data available</Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {emptyRows > 0 && (
+                      <TableRow style={{ height: 53 * emptyRows }}>
+                        <TableCell colSpan={6} />
+                      </TableRow>
+                    )}
+                  </TableBody>
+
+                  {isNotFoundChild && (
+                    <TableBody>
+                      <TableRow>
+                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                          <Paper
+                            sx={{
+                              textAlign: 'center',
+                            }}
+                          >
+                            <Typography variant="h6" paragraph>
+                              Not found
+                            </Typography>
+
+                            <Typography variant="body2">
+                              No results found for &nbsp;
+                              <strong>&quot;{filterName}&quot;</strong>.
+                              <br /> Try checking for typos or using complete words.
+                            </Typography>
+                          </Paper>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  )}
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={childItems.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </div>
+          </div>
+        </div>
+        {/* </DialogContent> */}
+      </Dialog>
     </>
   );
 }
