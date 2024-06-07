@@ -860,7 +860,7 @@ export default function ItemsDashBoard() {
             // margin: '2px',
           }}
         >
-          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px' }}>
+          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '30%' }}>
             <TableContainer>
               <Table>
                 <NewListHead
@@ -952,7 +952,7 @@ export default function ItemsDashBoard() {
               id="carouselBasicExample"
               className="carousel slide carousel-fade"
               // style={{ marginTop: '20px', marginLeft: '200px', width: '70%' }}
-              style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '60%' }}
+              style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '40%' }}
             >
               {loading ? (
                 <div style={{ textAlign: 'center', margin: '20px 0' }}>
