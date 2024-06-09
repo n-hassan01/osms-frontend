@@ -273,6 +273,7 @@ export default function ItemsDashBoard() {
     setSelectedDivision(selectedOption);
     filterDetails.division = selectedOption.value;
     filterDetails.divisionName = selectedOption.label;
+    console.log(filterDetails);
   };
 
   const handleDivisionInputChange = (inputValue) => {
@@ -348,8 +349,7 @@ export default function ItemsDashBoard() {
 
   const handleContactChange = (selectedOption) => {
     setSelectedContact(selectedOption);
-    filterDetails.shop = selectedOption.value;
-    filterDetails.shopName = selectedOption.label;
+    filterDetails.mobile = selectedOption.label;
   };
 
   const handleContactInputChange = (inputValue) => {
@@ -577,9 +577,54 @@ export default function ItemsDashBoard() {
     setOpen(true);
   };
 
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
+  // filering feature
+  const handleFilterShops = () => {
+    let filteredData = USERLIST;
+
+    if (filterDetails.division) {
+      filteredData = filteredData.filter((item) => item.division_id === filterDetails.division);
+    }
+
+    if (filterDetails.district) {
+      filteredData = filteredData.filter((item) => item.district_id === filterDetails.district);
+    }
+
+    if (filterDetails.thana) {
+      filteredData = filteredData.filter((item) => item.thana_id === filterDetails.thana);
+    }
+
+    if (filterDetails.route) {
+      filteredData = filteredData.filter((item) => item.route_id === filterDetails.route);
+    }
+
+    if (filterDetails.shop) {
+      filteredData = filteredData.filter((item) => item.shop_id === filterDetails.shop);
+    }
+
+    if (filterDetails.mobile) {
+      filteredData = filteredData.filter((item) => item.contact_number === filterDetails.mobile);
+    }
+
+    setUserList(filteredData);
+  };
+
+  const handleClearFilterShop = async () => {
+    setFilterDetails({});
+
+    setSelectedDivision(null);
+    setSelectedDistrict(null);
+    setSelectedThana(null);
+    setSelectedRoute(null);
+    setSelectedShop(null);
+    setSelectedContact(null);
+
+    try {
+      const response = await getShopsListService(user);
+      if (response) setUserList(response.data);
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+  };
 
   // styling css
   const zeroPaddingStyling = {
@@ -744,11 +789,11 @@ export default function ItemsDashBoard() {
             </Stack>
 
             <Stack direction="row" gap={1}>
-              <Button variant="contained" size="medium" style={{ width: '45%' }}>
+              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleFilterShops}>
                 Filter
               </Button>
 
-              <Button variant="contained" size="medium" style={{ width: '45%' }}>
+              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleClearFilterShop}>
                 Clear
               </Button>
             </Stack>

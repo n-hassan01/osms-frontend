@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   addSystemItemsChildDetails,
-  addSystemItemsDetails,
-  getItemCategoriesService,
+  addSystemItemsProcedureService,
+  getItemCategoriesService
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 
@@ -164,23 +164,30 @@ export default function ResponsiveDialog() {
     const currentDay = new Date().toJSON();
 
     try {
+      // const requestBody = {
+      //   inventoryItemCode: parentItem.inventoryItemCode || '',
+      //   description: parentItem.description || '',
+      //   primaryUomCode: parentItem.primaryUomCode || '',
+      //   lastUpdateDate: currentDay,
+      //   lastUpdatedBy: 1,
+      //   creationDate: currentDay,
+      //   createdBy: 1,
+      //   enabledFlag: parentItem.enabledFlag || 'N',
+      //   purchasingItemFlag: 'Y',
+      //   serviceItemFlag: 'Y',
+      //   inventoryItemFlag: 'Y',
+      //   startDateActive: parentItem.startDateActive || null,
+      //   endDateActive: parentItem.endDateActive || null,
+      //   categoryId: parentItem.categoryId || null,
+      // };
       const requestBody = {
         inventoryItemCode: parentItem.inventoryItemCode || '',
         description: parentItem.description || '',
         primaryUomCode: parentItem.primaryUomCode || '',
-        lastUpdateDate: currentDay,
-        lastUpdatedBy: 1,
-        creationDate: currentDay,
-        createdBy: 1,
-        enabledFlag: parentItem.enabledFlag || 'N',
-        purchasingItemFlag: 'Y',
-        serviceItemFlag: 'Y',
-        inventoryItemFlag: 'Y',
         startDateActive: parentItem.startDateActive || null,
-        endDateActive: parentItem.endDateActive || null,
         categoryId: parentItem.categoryId || null,
       };
-      const response = await addSystemItemsDetails(requestBody);
+      const response = await addSystemItemsProcedureService(user, requestBody);
 
       if (response.status === 200) {
         const remainingItems = [];
@@ -208,7 +215,7 @@ export default function ResponsiveDialog() {
               endDateActive: itemDetails.endDateActive || null,
               categoryId: response.data.headerInfo[0].category_id || null,
             };
-            const lineResponse = await addSystemItemsChildDetails(lineRequestBody);
+            const lineResponse = await addSystemItemsChildDetails(user, lineRequestBody);
 
             if (lineResponse.status !== 200) {
               remainingItems.push(lineInfo);
