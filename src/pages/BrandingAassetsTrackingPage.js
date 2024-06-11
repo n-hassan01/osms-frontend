@@ -273,6 +273,7 @@ export default function ItemsDashBoard() {
     setSelectedDivision(selectedOption);
     filterDetails.division = selectedOption.value;
     filterDetails.divisionName = selectedOption.label;
+    console.log(filterDetails);
   };
 
   const handleDivisionInputChange = (inputValue) => {
@@ -348,8 +349,7 @@ export default function ItemsDashBoard() {
 
   const handleContactChange = (selectedOption) => {
     setSelectedContact(selectedOption);
-    filterDetails.shop = selectedOption.value;
-    filterDetails.shopName = selectedOption.label;
+    filterDetails.mobile = selectedOption.label;
   };
 
   const handleContactInputChange = (inputValue) => {
@@ -577,9 +577,54 @@ export default function ItemsDashBoard() {
     setOpen(true);
   };
 
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
+  // filering feature
+  const handleFilterShops = () => {
+    let filteredData = USERLIST;
+
+    if (filterDetails.division) {
+      filteredData = filteredData.filter((item) => item.division_id === filterDetails.division);
+    }
+
+    if (filterDetails.district) {
+      filteredData = filteredData.filter((item) => item.district_id === filterDetails.district);
+    }
+
+    if (filterDetails.thana) {
+      filteredData = filteredData.filter((item) => item.thana_id === filterDetails.thana);
+    }
+
+    if (filterDetails.route) {
+      filteredData = filteredData.filter((item) => item.route_id === filterDetails.route);
+    }
+
+    if (filterDetails.shop) {
+      filteredData = filteredData.filter((item) => item.shop_id === filterDetails.shop);
+    }
+
+    if (filterDetails.mobile) {
+      filteredData = filteredData.filter((item) => item.contact_number === filterDetails.mobile);
+    }
+
+    setUserList(filteredData);
+  };
+
+  const handleClearFilterShop = async () => {
+    setFilterDetails({});
+
+    setSelectedDivision(null);
+    setSelectedDistrict(null);
+    setSelectedThana(null);
+    setSelectedRoute(null);
+    setSelectedShop(null);
+    setSelectedContact(null);
+
+    try {
+      const response = await getShopsListService(user);
+      if (response) setUserList(response.data);
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+  };
 
   // styling css
   const zeroPaddingStyling = {
@@ -596,6 +641,11 @@ export default function ItemsDashBoard() {
 
   const radioCellStyling = {
     width: '50px',
+  };
+
+  const tdStyling = {
+    textAlign: 'end',
+    paddingLeft: '10px',
   };
 
   const combinedStylingForTableCell = {
@@ -619,7 +669,8 @@ export default function ItemsDashBoard() {
 
   const filterFieldStyling = {
     display: 'flex',
-    // width: '100%',
+    flexDirection: 'column',
+    width: '45%',
     // marginBottom: '5px',
   };
 
@@ -631,15 +682,18 @@ export default function ItemsDashBoard() {
       <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-2%' }}>
         <div
           style={{
-            height: '40%',
+            height: '50%',
             display: 'flex',
             flexDirection: 'row',
             border: '1px solid lightgrey',
             padding: '2px',
             margin: '5px',
+            paddingRight: '10px',
           }}
         >
-          <div style={{ width: '60%' }}>
+          <div style={{ width: '40%' }}>
+            <h6>Filter shops</h6>
+
             <Stack direction="row" gap={1} mb={2}>
               {/* <div className="col-auto" style={filterFirstElementStyling}> */}
               <div className="col-auto" style={filterFieldStyling}>
@@ -660,6 +714,22 @@ export default function ItemsDashBoard() {
               </div>
 
               <div className="col-auto" style={filterFieldStyling}>
+                <span style={{ marginRight: '11px' }}>Route</span>
+                <div>
+                  <Select
+                    value={selectedRoute}
+                    onChange={handleRouteChange}
+                    onInputChange={handleRouteInputChange}
+                    options={filteredRouteOptions}
+                    placeholder="Type to select..."
+                    isClearable
+                  />
+                </div>
+              </div>
+            </Stack>
+
+            <Stack direction="row" gap={1} mb={2}>
+              <div className="col-auto" style={filterFieldStyling}>
                 <span style={{ marginRight: '5px' }}>District</span>
                 <div>
                   <Select
@@ -674,37 +744,6 @@ export default function ItemsDashBoard() {
               </div>
 
               <div className="col-auto" style={filterFieldStyling}>
-                <span style={{ marginRight: '5px' }}>Thana</span>
-                <div>
-                  <Select
-                    value={selectedThana}
-                    onChange={handleThanaChange}
-                    onInputChange={handleThanaInputChange}
-                    options={filteredThanaOptions}
-                    placeholder="Type to select..."
-                    isClearable
-                  />
-                </div>
-              </div>
-            </Stack>
-
-            <Stack direction="row" gap={1} mb={2}>
-              <div className="col-auto" style={filterFieldStyling}>
-                <span style={{ marginRight: '11px' }}>Route</span>
-                <div>
-                  <Select
-                    value={selectedRoute}
-                    onChange={handleRouteChange}
-                    onInputChange={handleRouteInputChange}
-                    options={filteredRouteOptions}
-                    placeholder="Type to select..."
-                    isClearable
-                  />
-                </div>
-              </div>
-              {/* </Stack> */}
-              {/* <Stack direction="row" mb={1}> */}
-              <div className="col-auto" style={filterFieldStyling}>
                 <span style={{ marginRight: '5px' }}>Shop</span>
                 <div>
                   <Select
@@ -717,6 +756,23 @@ export default function ItemsDashBoard() {
                   />
                 </div>
               </div>
+            </Stack>
+
+            <Stack direction="row" gap={1} mb={2}>
+              <div className="col-auto" style={filterFieldStyling}>
+                <span style={{ marginRight: '5px' }}>Thana</span>
+                <div>
+                  <Select
+                    value={selectedThana}
+                    onChange={handleThanaChange}
+                    onInputChange={handleThanaInputChange}
+                    options={filteredThanaOptions}
+                    placeholder="Type to select..."
+                    isClearable
+                  />
+                </div>
+              </div>
+
               <div className="col-auto" style={filterFieldStyling}>
                 <span style={{ marginRight: '5px' }}>Mobile</span>
                 <div>
@@ -731,14 +787,21 @@ export default function ItemsDashBoard() {
                 </div>
               </div>
             </Stack>
-            <Stack direction="row" gap={1} mb={1}>
-              <Button variant="contained" size="medium">
+
+            <Stack direction="row" gap={1}>
+              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleFilterShops}>
                 Filter
+              </Button>
+
+              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleClearFilterShop}>
+                Clear
               </Button>
             </Stack>
           </div>
 
-          <div>
+          <div style={{ width: '60%' }}>
+            <h6>Shop list</h6>
+
             <TableContainer>
               <Table>
                 <NewListHead
@@ -842,7 +905,7 @@ export default function ItemsDashBoard() {
             // margin: '2px',
           }}
         >
-          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px' }}>
+          <div style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '30%' }}>
             <TableContainer>
               <Table>
                 <NewListHead
@@ -934,7 +997,7 @@ export default function ItemsDashBoard() {
               id="carouselBasicExample"
               className="carousel slide carousel-fade"
               // style={{ marginTop: '20px', marginLeft: '200px', width: '70%' }}
-              style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '60%' }}
+              style={{ border: '1px solid lightgrey', padding: '2px', margin: '5px', width: '40%' }}
             >
               {loading ? (
                 <div style={{ textAlign: 'center', margin: '20px 0' }}>
@@ -994,25 +1057,37 @@ export default function ItemsDashBoard() {
                                     alignItems: 'flex-start',
                                   }}
                                 >
-                                  <div style={{ width: '30%' }}>
-                                    <h5>Reviews</h5>
-                                    <p>
-                                      <span>Review Status: {record.review_status}</span>
-                                      <br />
-                                      <span>Created By: {record.created_by}</span>
-                                      <br />
-                                      <span>
-                                        Created On:{' '}
-                                        {record.creation_date
-                                          ? new Date(record.creation_date).toLocaleDateString()
-                                          : null}
-                                      </span>
-                                      <br />
-                                      <span>Remarks: {record.remarks}</span>
-                                    </p>
-                                    {/* <a href="#!" data-mdb-ripple-init="" className="btn btn-primary">
-                                          Button
-                                        </a> */}
+                                  <div style={{ width: '50%' }}>
+                                    {/* <h5>Reviews</h5> */}
+                                    <table>
+                                      <th>
+                                        <td style={tdStyling}>Reviews</td>
+                                      </th>
+
+                                      <tr>
+                                        <td style={tdStyling}>Review Status: </td>
+                                        <td style={tdStyling}>{record.review_status}</td>
+                                      </tr>
+
+                                      <tr>
+                                        <td style={tdStyling}>Created By: </td>
+                                        <td style={tdStyling}>{record.created_by}</td>
+                                      </tr>
+
+                                      <tr>
+                                        <td style={tdStyling}>Created On: </td>
+                                        <td style={tdStyling}>
+                                          {record.creation_date
+                                            ? new Date(record.creation_date).toLocaleDateString()
+                                            : null}
+                                        </td>
+                                      </tr>
+
+                                      <tr>
+                                        <td style={tdStyling}>Remarks: </td>
+                                        <td style={tdStyling}>{record.remarks}</td>
+                                      </tr>
+                                    </table>
                                   </div>
 
                                   <div
@@ -1024,13 +1099,13 @@ export default function ItemsDashBoard() {
                                         handleOpen();
                                       }
                                     }}
-                                    style={{ display: 'inline-block', cursor: 'pointer', width: '70%' }}
+                                    style={{ display: 'inline-block', cursor: 'pointer', width: '50%', height: '50%' }}
                                   >
                                     <img
                                       src={image}
                                       className="card-img-top"
                                       alt={`Slide ${index + 1}`}
-                                      style={{ height: '167px' }}
+                                      style={{ height: '195px' }}
                                     />
                                   </div>
                                 </div>
@@ -1218,25 +1293,37 @@ export default function ItemsDashBoard() {
                             <div className="carousel-item active">
                               <div>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                  <div className="card-body" style={{ width: '40%' }}>
-                                    <h5 className="card-title">Reviews</h5>
-                                    <p className="card-text">
-                                      <span>Review Status: {record.review_status}</span>
-                                      <br />
-                                      <span>Created By: {record.created_by}</span>
-                                      <br />
-                                      <span>
-                                        Created On:{' '}
-                                        {record.creation_date
-                                          ? new Date(record.creation_date).toLocaleDateString()
-                                          : null}
-                                      </span>
-                                      <br />
-                                      <span>Remarks: {record.remarks}</span>
-                                    </p>
-                                    {/* <a href="#!" data-mdb-ripple-init="" className="btn btn-primary">
-                                          Button
-                                        </a> */}
+                                  <div style={{ width: '50%' }}>
+                                    {/* <h5>Reviews</h5> */}
+                                    <table>
+                                      <th>
+                                        <td style={tdStyling}>Reviews</td>
+                                      </th>
+
+                                      <tr>
+                                        <td style={tdStyling}>Review Status: </td>
+                                        <td style={tdStyling}>{record.review_status}</td>
+                                      </tr>
+
+                                      <tr>
+                                        <td style={tdStyling}>Created By: </td>
+                                        <td style={tdStyling}>{record.created_by}</td>
+                                      </tr>
+
+                                      <tr>
+                                        <td style={tdStyling}>Created On: </td>
+                                        <td style={tdStyling}>
+                                          {record.creation_date
+                                            ? new Date(record.creation_date).toLocaleDateString()
+                                            : null}
+                                        </td>
+                                      </tr>
+
+                                      <tr>
+                                        <td style={tdStyling}>Remarks: </td>
+                                        <td style={tdStyling}>{record.remarks}</td>
+                                      </tr>
+                                    </table>
                                   </div>
 
                                   <img
