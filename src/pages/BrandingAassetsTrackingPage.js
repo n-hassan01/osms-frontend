@@ -578,34 +578,41 @@ export default function ItemsDashBoard() {
   };
 
   // filering feature
-  const handleFilterShops = () => {
-    let filteredData = USERLIST;
+  const handleFilterShops = async () => {
+    try {
+      const response = await getShopsListService(user);
+      if (response) {
+        let filteredData = response.data;
 
-    if (filterDetails.division) {
-      filteredData = filteredData.filter((item) => item.division_id === filterDetails.division);
+        if (filterDetails.division) {
+          filteredData = filteredData.filter((item) => item.division_id === filterDetails.division);
+        }
+
+        if (filterDetails.district) {
+          filteredData = filteredData.filter((item) => item.district_id === filterDetails.district);
+        }
+
+        if (filterDetails.thana) {
+          filteredData = filteredData.filter((item) => item.thana_id === filterDetails.thana);
+        }
+
+        if (filterDetails.route) {
+          filteredData = filteredData.filter((item) => item.route_id === filterDetails.route);
+        }
+
+        if (filterDetails.shop) {
+          filteredData = filteredData.filter((item) => item.shop_id === filterDetails.shop);
+        }
+
+        if (filterDetails.mobile) {
+          filteredData = filteredData.filter((item) => item.contact_number === filterDetails.mobile);
+        }
+
+        setUserList(filteredData);
+      }
+    } catch (error) {
+      console.error('Error fetching account details:', error);
     }
-
-    if (filterDetails.district) {
-      filteredData = filteredData.filter((item) => item.district_id === filterDetails.district);
-    }
-
-    if (filterDetails.thana) {
-      filteredData = filteredData.filter((item) => item.thana_id === filterDetails.thana);
-    }
-
-    if (filterDetails.route) {
-      filteredData = filteredData.filter((item) => item.route_id === filterDetails.route);
-    }
-
-    if (filterDetails.shop) {
-      filteredData = filteredData.filter((item) => item.shop_id === filterDetails.shop);
-    }
-
-    if (filterDetails.mobile) {
-      filteredData = filteredData.filter((item) => item.contact_number === filterDetails.mobile);
-    }
-
-    setUserList(filteredData);
   };
 
   const handleClearFilterShop = async () => {
