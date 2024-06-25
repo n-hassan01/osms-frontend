@@ -273,6 +273,7 @@ export default function ItemsDashBoard() {
     setSelectedDivision(selectedOption);
     filterDetails.division = selectedOption.value;
     filterDetails.divisionName = selectedOption.label;
+    console.log(filterDetails);
   };
 
   const handleDivisionInputChange = (inputValue) => {
@@ -348,8 +349,7 @@ export default function ItemsDashBoard() {
 
   const handleContactChange = (selectedOption) => {
     setSelectedContact(selectedOption);
-    filterDetails.shop = selectedOption.value;
-    filterDetails.shopName = selectedOption.label;
+    filterDetails.mobile = selectedOption.label;
   };
 
   const handleContactInputChange = (inputValue) => {
@@ -380,20 +380,21 @@ export default function ItemsDashBoard() {
     }
   };
   const fetchDataForSpecificItem = async (specificElements) => {
-    console.log(specificElements);
     try {
+      setChildItems([]);
+      setShowChilds(false);
+
       let response = {};
       response = await getBrandingAssetsChildItemsService(user, specificElements);
       console.log(response.data);
-      if (response.status === 200) setChildItems(response.data);
-      if (response) {
+      if (response.status === 200) {
+        setChildItems(response.data);
         setShowChilds(true);
       }
     } catch (error) {
       console.error('Error fetching account details:', error);
     }
   };
-  console.log(childItems);
 
   const [imageSrc, setImageSrc] = useState([]);
 
@@ -577,9 +578,61 @@ export default function ItemsDashBoard() {
     setOpen(true);
   };
 
-  // const handleOpen = () => {
-  //   setOpen(true);
-  // };
+  // filering feature
+  const handleFilterShops = async () => {
+    try {
+      const response = await getShopsListService(user);
+      if (response) {
+        let filteredData = response.data;
+
+        if (filterDetails.division) {
+          filteredData = filteredData.filter((item) => item.division_id === filterDetails.division);
+        }
+
+        if (filterDetails.district) {
+          filteredData = filteredData.filter((item) => item.district_id === filterDetails.district);
+        }
+
+        if (filterDetails.thana) {
+          filteredData = filteredData.filter((item) => item.thana_id === filterDetails.thana);
+        }
+
+        if (filterDetails.route) {
+          filteredData = filteredData.filter((item) => item.route_id === filterDetails.route);
+        }
+
+        if (filterDetails.shop) {
+          filteredData = filteredData.filter((item) => item.shop_id === filterDetails.shop);
+        }
+
+        if (filterDetails.mobile) {
+          filteredData = filteredData.filter((item) => item.contact_number === filterDetails.mobile);
+        }
+
+        setUserList(filteredData);
+      }
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+  };
+
+  const handleClearFilterShop = async () => {
+    setFilterDetails({});
+
+    setSelectedDivision(null);
+    setSelectedDistrict(null);
+    setSelectedThana(null);
+    setSelectedRoute(null);
+    setSelectedShop(null);
+    setSelectedContact(null);
+
+    try {
+      const response = await getShopsListService(user);
+      if (response) setUserList(response.data);
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+  };
 
   // styling css
   const zeroPaddingStyling = {
@@ -744,11 +797,11 @@ export default function ItemsDashBoard() {
             </Stack>
 
             <Stack direction="row" gap={1}>
-              <Button variant="contained" size="medium" style={{ width: '45%' }}>
+              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleFilterShops}>
                 Filter
               </Button>
 
-              <Button variant="contained" size="medium" style={{ width: '45%' }}>
+              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleClearFilterShop}>
                 Clear
               </Button>
             </Stack>
@@ -1163,7 +1216,7 @@ export default function ItemsDashBoard() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={childItems.length}
+              count={items.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -1417,7 +1470,7 @@ export default function ItemsDashBoard() {
                   <TableBody>
                     {showChilds ? (
                       filteredChilds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                        const { inventory_item_id, description, inventory_item_code } = row;
+                        const { inventory_item_id, description } = row;
 
                         const selectedUser = selected.indexOf(inventory_item_id) !== -1;
 
