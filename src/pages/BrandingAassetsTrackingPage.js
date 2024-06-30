@@ -380,20 +380,21 @@ export default function ItemsDashBoard() {
     }
   };
   const fetchDataForSpecificItem = async (specificElements) => {
-    console.log(specificElements);
     try {
+      setChildItems([]);
+      setShowChilds(false);
+
       let response = {};
       response = await getBrandingAssetsChildItemsService(user, specificElements);
       console.log(response.data);
-      if (response.status === 200) setChildItems(response.data);
-      if (response) {
+      if (response.status === 200) {
+        setChildItems(response.data);
         setShowChilds(true);
       }
     } catch (error) {
       console.error('Error fetching account details:', error);
     }
   };
-  console.log(childItems);
 
   const [imageSrc, setImageSrc] = useState([]);
 
@@ -1215,7 +1216,7 @@ export default function ItemsDashBoard() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={childItems.length}
+              count={items.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -1469,7 +1470,7 @@ export default function ItemsDashBoard() {
                   <TableBody>
                     {showChilds ? (
                       filteredChilds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                        const { inventory_item_id, description, inventory_item_code } = row;
+                        const { inventory_item_id, description } = row;
 
                         const selectedUser = selected.indexOf(inventory_item_id) !== -1;
 
