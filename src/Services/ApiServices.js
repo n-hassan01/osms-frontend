@@ -2235,3 +2235,14 @@ export const getDrillDownCustomerDepositAnalytic = async (loginToken) => {
     return err.message;
   }
 };
+
+export const postExcelDataService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}add-excel-data/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

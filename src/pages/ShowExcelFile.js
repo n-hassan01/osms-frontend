@@ -2,18 +2,28 @@
 /* eslint-disable camelcase */
 
 import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 // @mui
 
-import { Card, Container, Stack, Table, TableBody, TableContainer, TablePagination, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  Container,
+  Stack,
+  Table,
+  TableBody,
+  TableContainer,
+  TablePagination,
+  Typography,
+} from '@mui/material';
 
 // components
 import ExcelListHead from 'src/sections/@dashboard/user/ExcelListHead';
 import ExcelListToolbar from 'src/sections/@dashboard/user/ExcelListToolbar';
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
+import { postExcelDataService } from '../Services/ApiServices';
 import Scrollbar from '../components/scrollbar';
 
 // ----------------------------------------------------------------------
@@ -101,19 +111,29 @@ export default function ShowExcelFile() {
   };
 
   console.log(exceldata);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
-        if (usersDetails) setUserList(usersDetails.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  const formattedData = exceldata.map((item) => ({
+    id: item.ID,
+    age: item.AGE,
+    name: item.NAME,
+    value: item.VALUE,
+  }));
+  console.log(formattedData);
 
-    fetchData();
-  }, []);
+  const saveExcelData = async () => {
+    let postData;
+    try {
+      if (formattedData) {
+        postData = await postExcelDataService(formattedData);
+      }
+      console.log('Hola', postData);
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+    if (postData.status === 200) {
+      alert('Succefully Added');
+      window.location.reload();
+    }
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -187,6 +207,7 @@ export default function ShowExcelFile() {
     setPage(0);
     setFilterName(event.target.value);
   };
+  console.log(exceldata);
   const paginatedData = exceldata.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - exceldata.length) : 0;
 
@@ -268,6 +289,18 @@ export default function ShowExcelFile() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
+        <button
+          data-mdb-button-init=""
+          className="carousel-control-prev position-relative"
+          type="button"
+          data-mdb-target="#carouselMultiItemExample"
+          data-mdb-slide="prev"
+          onClick={saveExcelData}
+        />
+
+        <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={saveExcelData}>
+          Add Excel Data to DB
+        </Button>
       </Container>
     </>
   );
