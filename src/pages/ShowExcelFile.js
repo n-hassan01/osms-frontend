@@ -2,26 +2,36 @@
 /* eslint-disable camelcase */
 
 import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 // @mui
 
-import { Card, Container, Stack, Table, TableBody, TableContainer, TablePagination, Typography } from '@mui/material';
+import {
+  Button,
+  Card,
+  Container,
+  Stack,
+  Table,
+  TableBody,
+  TableContainer,
+  TablePagination,
+  Typography,
+} from '@mui/material';
 
 // components
 import ExcelListHead from 'src/sections/@dashboard/user/ExcelListHead';
 import ExcelListToolbar from 'src/sections/@dashboard/user/ExcelListToolbar';
-import { getHrLocationsDetailsService } from '../Services/Admin/GetAllHrLocations';
+import { postExcelDataService } from '../Services/ApiServices';
 import Scrollbar from '../components/scrollbar';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'id', label: 'ID', alignRight: false },
-  { id: 'name', label: 'NAME', alignRight: false },
   { id: 'age', label: 'AGE', alignRight: false },
+  { id: 'name', label: 'NAME', alignRight: false },
   { id: 'value', label: 'VALUE', alignRight: false },
 ];
 const selectedUsers = [];
@@ -101,19 +111,29 @@ export default function ShowExcelFile() {
   };
 
   console.log(exceldata);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const usersDetails = await getHrLocationsDetailsService();
-        console.log('Hola', usersDetails.data[0].location_id);
-        if (usersDetails) setUserList(usersDetails.data);
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  const formattedData = exceldata.map((item) => ({
+    id: item.ID,
+    age: item.AGE,
+    name: item.NAME,
+    value: item.VALUE,
+  }));
+  console.log(formattedData);
 
-    fetchData();
-  }, []);
+  const saveExcelData = async () => {
+    let postData;
+    try {
+      if (formattedData) {
+        postData = await postExcelDataService(formattedData);
+      }
+      console.log('Hola', postData);
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+    if (postData.status === 200) {
+      alert('Succefully Added');
+      window.location.reload();
+    }
+  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -187,8 +207,9 @@ export default function ShowExcelFile() {
     setPage(0);
     setFilterName(event.target.value);
   };
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  console.log(exceldata);
+  const paginatedData = exceldata.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - exceldata.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
@@ -225,15 +246,15 @@ export default function ShowExcelFile() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={exceldata.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
 
                 <TableBody>
-                  {exceldata.length ? (
-                    exceldata.map((info, index) => (
+                  {paginatedData.length ? (
+                    paginatedData.map((info, index) => (
                       <tr key={index}>
                         <td>{info.ID}</td>
                         <td>{info.AGE}</td>
@@ -248,31 +269,12 @@ export default function ShowExcelFile() {
                       </td>
                     </tr>
                   )}
+                  {emptyRows > 0 && (
+                    <tr style={{ height: 53 * emptyRows }}>
+                      <td colSpan={4} />
+                    </tr>
+                  )}
                 </TableBody>
-
-                {/* {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )} */}
               </Table>
             </TableContainer>
           </Scrollbar>
@@ -280,13 +282,25 @@ export default function ShowExcelFile() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={exceldata.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
+        <button
+          data-mdb-button-init=""
+          className="carousel-control-prev position-relative"
+          type="button"
+          data-mdb-target="#carouselMultiItemExample"
+          data-mdb-slide="prev"
+          onClick={saveExcelData}
+        />
+
+        <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={saveExcelData}>
+          Add Excel Data to DB
+        </Button>
       </Container>
     </>
   );
