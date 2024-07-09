@@ -80,6 +80,7 @@ import TestSapApiPage from './pages/TestSapApiPage';
 import UpdateAccountPage from './pages/UpdateAccountPage';
 import UpdateBankFormPage from './pages/UpdateBankFormPage';
 import UpdateMtlCategories from './pages/UpdateMtlCategories';
+import UploadReconciledDepositsExcel from './pages/UploadReconciledDepositsExcel';
 import UserActionAssignmentPage from './pages/UserActionAssignmentPage';
 import VatposIntegrationService from './pages/VatposIntegrationService';
 import ForgetPassword from './pages/forgetPassword';
@@ -192,6 +193,7 @@ export default function Router() {
         { path: 'itemsdashboard', element: <ItemsDashBoard /> },
         { path: 'customers', element: <CustomerManagementPage /> },
         { path: 'customers/add', element: <AddCustomerPage /> },
+        { path: 'uploadreconcileddepositsexcel', element: <UploadReconciledDepositsExcel /> },
       ],
     },
 
