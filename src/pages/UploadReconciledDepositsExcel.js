@@ -9,15 +9,15 @@ import { read, utils } from 'xlsx';
 // @mui
 
 import {
-    Button,
-    Card,
-    Container,
-    Stack,
-    Table,
-    TableBody,
-    TableContainer,
-    TablePagination,
-    Typography,
+  Button,
+  Card,
+  Container,
+  Stack,
+  Table,
+  TableBody,
+  TableContainer,
+  TablePagination,
+  Typography,
 } from '@mui/material';
 
 // components
@@ -29,27 +29,27 @@ import Scrollbar from '../components/scrollbar';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'id', label: 'CashReceiptId', alignRight: false },
-  //   { id: 'id', label: 'Status', alignRight: false },
+  { id: 'id', label: 'Status', alignRight: false },
+  { id: 'value', label: 'remarks', alignRight: false },
   { id: 'id', label: 'DepositDate', alignRight: false },
-  //   { id: 'id', label: 'CompanyBank', alignRight: false },
-  //   { id: 'id', label: 'CompanyAccount', alignRight: false },
-  //   { id: 'id', label: 'CompanyName', alignRight: false },
+  { id: 'id', label: 'CompanyBank', alignRight: false },
+  { id: 'id', label: 'CompanyAccount', alignRight: false },
+  { id: 'id', label: 'CompanyName', alignRight: false },
   { id: 'id', label: 'CustomerCode', alignRight: false },
-  //   { id: 'id', label: 'CustomerName', alignRight: false },
-  //   { id: 'id', label: 'CustomerGroup', alignRight: false },
+  { id: 'id', label: 'CustomerName', alignRight: false },
+  { id: 'id', label: 'CustomerGroup', alignRight: false },
   { id: 'id', label: 'Amount', alignRight: false },
-  //   { id: 'id', label: 'InvoiceNumber', alignRight: false },
-  //   { id: 'id', label: 'DepositType', alignRight: false },
-  //   { id: 'id', label: 'DepositFromBank', alignRight: false },
-  //   { id: 'id', label: 'DepositFromBranch', alignRight: false },
-  //   { id: 'id', label: 'ReceiptNumber', alignRight: false },
+  { id: 'id', label: 'InvoiceNumber', alignRight: false },
+  { id: 'id', label: 'DepositType', alignRight: false },
+  { id: 'id', label: 'DepositFromBank', alignRight: false },
+  { id: 'id', label: 'DepositFromBranch', alignRight: false },
+  { id: 'id', label: 'ReceiptNumber', alignRight: false },
+  { id: 'age', label: 'Depositor', alignRight: false },
+  { id: 'name', label: 'Employee', alignRight: false },
+  { id: 'value', label: 'UserName', alignRight: false },
   { id: 'id', label: 'GLDate', alignRight: false },
   { id: 'id', label: 'GLAmount', alignRight: false },
-  //   { id: 'age', label: 'Depositor', alignRight: false },
-  //   { id: 'name', label: 'Employee', alignRight: false },
-  //   { id: 'value', label: 'UserName', alignRight: false },
-  //   { id: 'value', label: 'remarks', alignRight: false },
+  { id: 'id', label: 'CashReceiptId', alignRight: false },
 ];
 const selectedUsers = [];
 
@@ -134,7 +134,7 @@ export default function UploadReconciledDepositsExcel() {
   console.log(exceldata);
   const formattedData = exceldata.map((item) => ({
     cashReceiptId: item.CashReceiptId,
-    // status: item.Status,
+    status: item.Status,
     depositDate: item.DepositDate,
     // entryDate: item.EntryDate,
     // companyBank: item.CompanyBank,
@@ -154,7 +154,7 @@ export default function UploadReconciledDepositsExcel() {
     // depositor: item.Depositor,
     // employee: item.Employee,
     // userName: item.UserName,
-    // remarks: item.Remarks,
+    remarks: item.Remarks,
     // id: item.ID,
     // age: item.AGE,
     // name: item.NAME,
@@ -299,27 +299,27 @@ export default function UploadReconciledDepositsExcel() {
                   {paginatedData.length ? (
                     paginatedData.map((info, index) => (
                       <tr key={index}>
-                        <td>{info.CashReceiptId}</td>
-                        {/* <td>{info.Status}</td> */}
+                        <td>{info.Status}</td>
+                        <td>{info.Remarks}</td>
                         <td>{info.DepositDate}</td>
-                        {/* <td>{info.EntryDate}</td>
+                        <td>{info.EntryDate}</td>
                         <td>{info.CompanyBank}</td>
-                        <td>{info.CompanyAccount}</td> */}
+                        <td>{info.CompanyAccount}</td>
                         <td>{info.PayFromCustomer}</td>
-                        {/* <td>{info.CustomerName}</td>
-                        <td>{info.CustomerGroup}</td> */}
+                        <td>{info.CustomerName}</td>
+                        <td>{info.CustomerGroup}</td>
                         <td>{info.Amount}</td>
-                        {/* <td>{info.InvoiceNumber}</td>
+                        <td>{info.InvoiceNumber}</td>
                         <td>{info.DepositType}</td>
                         <td>{info.DepositFromBank}</td>
                         <td>{info.DepositFromBranch}</td>
-                        <td>{info.ReceiptNumber}</td> */}
-                        <td>{info.GLDate}</td>
-                        <td>{info.GLAmount}</td>
-                        {/* <td>{info.Depositor}</td>
+                        <td>{info.ReceiptNumber}</td>
+                        <td>{info.Depositor}</td>
                         <td>{info.Employee}</td>
                         <td>{info.UserName}</td>
-                        <td>{info.Remarks}</td> */}
+                        <td>{info.GLDate}</td>
+                        <td>{info.GLAmount}</td>
+                        <td>{info.CashReceiptId}</td>
                       </tr>
                     ))
                   ) : (
@@ -349,14 +349,14 @@ export default function UploadReconciledDepositsExcel() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-        <button
+        {/* <button
           data-mdb-button-init=""
           className="carousel-control-prev position-relative"
           type="button"
           data-mdb-target="#carouselMultiItemExample"
           data-mdb-slide="prev"
           onClick={saveExcelData}
-        />
+        /> */}
 
         <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={saveExcelData}>
           Add Excel Data to DB
