@@ -2246,3 +2246,14 @@ export const postExcelDataService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const postReconciledDataExcelService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}add-updatedreconciled-excel-data/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

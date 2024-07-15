@@ -27,6 +27,7 @@ import {
 } from '@mui/material';
 
 import { CSVLink } from 'react-csv';
+import { read, utils } from 'xlsx';
 import { useUser } from '../../../context/UserContext';
 // components
 import Iconify from '../../../components/iconify';
@@ -40,6 +41,7 @@ import {
   getBankDepositViewFilterByFromDateService,
   getBankDepositViewFilterByToDateService,
   getUserProfileDetails,
+  postReconciledDataExcelService,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -124,7 +126,7 @@ export default function UserPage() {
   const [USERLIST, setUserList] = useState([]);
   const [customerGroups, setCustomerGroups] = useState([]);
   const [customers, setCustomers] = useState([]);
-
+  const [exceldata, setExceldata] = useState([]);
   const { user } = useUser();
   console.log(user);
 
@@ -181,9 +183,89 @@ export default function UserPage() {
     return formattedPrice;
   }
 
+  const file_type = [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
+    'text/csv',
+  ];
+  const handleChange = (e) => {
+    const selected_file = e.target.files[0];
+    console.log(selected_file.type);
+    if (selected_file && file_type.includes(selected_file.type)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const workbook = read(e.target.result);
+        const sheet = workbook.SheetNames;
+        if (sheet.length) {
+          const data = utils.sheet_to_json(workbook.Sheets[sheet[0]]);
+          setExceldata(data);
+        }
+      };
+      reader.readAsArrayBuffer(selected_file);
+    }
+  };
+
+  console.log(exceldata);
+  const formattedData = exceldata.map((item) => ({
+    cashReceiptId: item.CashReceiptId,
+    bankReconId: item.BankReconId,
+    // status: item.Status,
+    // depositDate: item.DepositDate,
+    // entryDate: item.EntryDate,
+    // companyBank: item.CompanyBank,
+    // companyAccount: item.CompanyAccount,
+    // companyName: item.CompanyName,
+    // payFromCustomer: item.PayFromCustomer,
+    // customerName: item.CustomerName,
+    // customerGroup: item.CustomerGroup,
+    // amount: item.Amount,
+    // invoiceNumber: item.InvoiceNumber,
+    // depositType: item.DepositType,
+    // depositFromBank: item.DepositFromBank,
+    // depositFromBranch: item.DepositFromBranch,
+    // receiptNumber: item.ReceiptNumber,
+    // glDate: item.GLDate,
+    // glAmount: item.GLAmount,
+    // depositor: item.Depositor,
+    // employee: item.Employee,
+    // userName: item.UserName,
+    remarks: item.Remarks,
+    // id: item.ID,
+    // age: item.AGE,
+    // name: item.NAME,
+    // value: item.VALUE,
+  }));
+  console.log(formattedData);
+
+  const saveExcelData = async () => {
+    let postData;
+
+    try {
+      if (formattedData) {
+        postData = await postReconciledDataExcelService(formattedData);
+      }
+      console.log('Hola', postData);
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+    if (postData.status === 200) {
+      alert('Succefully Added');
+      window.location.reload();
+    }
+  };
+
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const [openUploadExcelDialog, setOpenUploadExcelDialog] = useState(false);
+  const handleCloseDialog = () => {
+    setOpenUploadExcelDialog(false);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenUploadExcelDialog(true);
   };
 
   const [imageSrc, setImageSrc] = useState(null);
@@ -443,25 +525,26 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const exportData = filteredUsers.map((item) => ({
-    Status: item.status,
-    'Deposit Date': getFormattedDateWithTime(item.deposit_date),
-    'Entry Date': getFormattedDateWithTime(item.creation_date),
-    'Company Bank': item.company_bank,
-    'Company Account': item.company_account,
-    'Company Name': item.company_name,
-    'Customer Code': item.customer_code,
-    'Customer Name': item.customer_name,
-    'Customer Group': item.customer_group,
+    BankReconId: item.bank_recon_id,
+    Remarks: '',
+    DepositDate: getFormattedDateWithTime(item.deposit_date),
+    EntryDate: getFormattedDateWithTime(item.creation_date),
+    CompanyBank: item.company_bank,
+    CompanyAccount: item.company_account,
+    CompanyName: item.company_name,
+    PayFromCustomer: item.customer_code,
+    CustomerName: item.customer_name,
+    CustomerGroup: item.customer_group,
     Amount: item.amount,
-    'Invoice Number': item.invoice_number,
-    'Deposit Type': item.deposit_type_name,
-    'Deposit From Bank': item.depositor_bank,
-    'Deposit From Branch': item.depositor_branch,
-    'Receipt Number': item.receipt_number,
+    InvoiceNumber: item.invoice_number,
+    DepositType: item.deposit_type_name,
+    DepositFromBank: item.depositor_bank,
+    DepositFromBranch: item.depositor_branch,
+    ReceiptNumber: item.receipt_number,
+    CashReceiptId: item.cash_receipt_id,
     Depositor: item.depositor_name,
     Employee: item.employee_name,
-    'User Name': item.user_name,
-    Remarks: item.remarks,
+    UserName: item.user_name,
   }));
 
   return (
@@ -504,6 +587,17 @@ export default function UserPage() {
           <CSVLink data={exportData} className="btn btn-success">
             Export Table
           </CSVLink>
+          <Button
+            style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
+            onClick={handleOpenDialog}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleOpenDialog();
+              }
+            }}
+          >
+            Upload Excel Data{' '}
+          </Button>
         </Stack>
 
         <Card>
@@ -680,6 +774,22 @@ export default function UserPage() {
                     </TableRow>
                   </TableBody>
                 )}
+                <Dialog open={openUploadExcelDialog} onClose={handleCloseDialog}>
+                  <Stack />
+                  <DialogContent>
+                    <Stack spacing={2.5} direction="row">
+                      <Typography sx={{ fontWeight: 'bold' }}>Upload Excel -&gt;</Typography>
+                      <div style={{ marginLeft: '10px' }}>
+                        <input type="file" onChange={handleChange} />
+                      </div>
+                      <div>
+                        <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={saveExcelData}>
+                          Upload
+                        </Button>
+                      </div>
+                    </Stack>
+                  </DialogContent>
+                </Dialog>
 
                 <Dialog open={open} onClose={handleClose}>
                   <Stack />
