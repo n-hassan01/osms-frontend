@@ -2257,3 +2257,13 @@ export const postReconciledDataExcelService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const getBankReconIdDetails = async (userInfo) => {
+  try {
+    return await axios.get(`${usersUrl}get-bank_recon_details/all`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
