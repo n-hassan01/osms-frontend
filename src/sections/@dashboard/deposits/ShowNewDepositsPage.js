@@ -40,6 +40,7 @@ import {
   getBankDepositViewFilterByDateService,
   getBankDepositViewFilterByFromDateService,
   getBankDepositViewFilterByToDateService,
+  getBankReconIdDetails,
   getUserProfileDetails,
   postReconciledDataExcelService,
 } from '../../../Services/ApiServices';
@@ -150,6 +151,26 @@ export default function UserPage() {
   }, [user]);
   console.log(account);
 
+  const [bankReconIdAll, setBankReconIdAll] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (user) {
+          const bankReconIdDetails = await getBankReconIdDetails(user); // Call your async function here
+          if (bankReconIdDetails.status === 200) {
+            setBankReconIdAll(bankReconIdDetails.data);
+          } // Set the account details in the component's state
+        }
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [user]);
+  console.log(bankReconIdAll);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -159,6 +180,7 @@ export default function UserPage() {
 
           if (response.status === 200) {
             const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+
             setUserList(filteredList);
 
             const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
@@ -370,6 +392,8 @@ export default function UserPage() {
     to: '',
     amount: '',
     group: '',
+    status: '',
+    username: '',
   });
 
   const handleFilterInfo = (e) => {
@@ -409,8 +433,9 @@ export default function UserPage() {
         from: '',
         to: '',
         amount: '',
-        customer: '',
         group: '',
+        status: '',
+        username: '',
       });
     } else {
       alert('Process failed! Please try again');
@@ -494,6 +519,14 @@ export default function UserPage() {
 
     if (filterInfo.customer) {
       filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
+    }
+
+    if (filterInfo.status) {
+      filteredData = filteredData.filter((item) => item.bank_status === filterInfo.status);
+    }
+
+    if (filterInfo.username) {
+      filteredData = filteredData.filter((item) => item.user_name === filterInfo.username);
     }
 
     setUserList(filteredData);
@@ -619,6 +652,7 @@ export default function UserPage() {
             customerGroupList={customerGroups}
             customerList={customers}
             onDateChange={handleDateChange}
+            bankstatuslist={bankReconIdAll}
           />
 
           <Scrollbar>
