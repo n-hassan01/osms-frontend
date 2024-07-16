@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
-  Checkbox,
   CircularProgress,
   Paper,
   Stack,
@@ -317,10 +316,9 @@ export default function UserPage() {
   };
 
   const TABLE_HEAD = [
-    { id: 'bank_recon_id', label: 'Bank Recon Id', alignRight: false },
-    { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
+    { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'entry_date', label: 'Entry Date', alignRight: false },
     { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
@@ -668,6 +666,7 @@ export default function UserPage() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  enableReadonly
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
@@ -704,20 +703,13 @@ export default function UserPage() {
 
                     return (
                       <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox
                             checked={selectedUser}
                             onChange={(event) => handleClick(event, cash_receipt_id)}
                             // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
                           />
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {bank_recon_id}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {remarks}
-                        </TableCell>
-
+                        </TableCell> */}
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
@@ -726,6 +718,10 @@ export default function UserPage() {
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {bank_status}
                         </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {remarks}
+                        </TableCell>
+
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(deposit_date)}
