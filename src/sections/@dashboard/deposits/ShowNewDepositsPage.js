@@ -317,6 +317,8 @@ export default function UserPage() {
   };
 
   const TABLE_HEAD = [
+    { id: 'bank_recon_id', label: 'Bank Recon Id', alignRight: false },
+    { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
@@ -337,7 +339,7 @@ export default function UserPage() {
     { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
     // { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-    { id: 'remarks', label: 'Remarks', alignRight: false },
+
     // { id: '' },
   ];
 
@@ -670,6 +672,8 @@ export default function UserPage() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
+                      bank_recon_id,
+                      bank_status,
                       amount,
                       cash_receipt_id,
                       company_account,
@@ -707,6 +711,12 @@ export default function UserPage() {
                             // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
                           />
                         </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {bank_recon_id}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {remarks}
+                        </TableCell>
 
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
@@ -714,7 +724,7 @@ export default function UserPage() {
                           </button>
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {status}
+                          {bank_status}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {/* {getFormattedDate(deposit_date)} */}
@@ -772,9 +782,6 @@ export default function UserPage() {
                         {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {reject_reason}
                         </TableCell> */}
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {remarks}
-                        </TableCell>
                       </TableRow>
                     );
                   })}
