@@ -13,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
-  Checkbox,
   CircularProgress,
   Paper,
   Stack,
@@ -319,6 +318,7 @@ export default function UserPage() {
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
+    { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'entry_date', label: 'Entry Date', alignRight: false },
     { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
@@ -337,7 +337,7 @@ export default function UserPage() {
     { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
     // { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-    { id: 'remarks', label: 'Remarks', alignRight: false },
+
     // { id: '' },
   ];
 
@@ -666,10 +666,13 @@ export default function UserPage() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  enableReadonly
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
+                      bank_recon_id,
+                      bank_status,
                       amount,
                       cash_receipt_id,
                       company_account,
@@ -700,22 +703,25 @@ export default function UserPage() {
 
                     return (
                       <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox
                             checked={selectedUser}
                             onChange={(event) => handleClick(event, cash_receipt_id)}
                             // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
                           />
-                        </TableCell>
-
+                        </TableCell> */}
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
                           </button>
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {status}
+                          {bank_status}
                         </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {remarks}
+                        </TableCell>
+
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(deposit_date)}
@@ -772,9 +778,6 @@ export default function UserPage() {
                         {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {reject_reason}
                         </TableCell> */}
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {remarks}
-                        </TableCell>
                       </TableRow>
                     );
                   })}
