@@ -57,6 +57,7 @@ import PieChartView from './DataVisualization/PieChart';
 import { getUserProfileDetails } from './Services/ApiServices';
 import { useUser } from './context/UserContext';
 import AccountFormPage from './pages/AccountFormPage';
+import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
 import BankFormPage from './pages/BankFormPage';
@@ -194,6 +195,7 @@ export default function Router() {
         { path: 'customers', element: <CustomerManagementPage /> },
         { path: 'customers/add', element: <AddCustomerPage /> },
         { path: 'uploadreconcileddepositsexcel', element: <UploadReconciledDepositsExcel /> },
+        { path: 'addCustomersFromSap', element: <AddCustomerFromSapPage /> },
       ],
     },
 
