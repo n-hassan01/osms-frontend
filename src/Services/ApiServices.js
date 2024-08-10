@@ -1659,6 +1659,27 @@ export const createSalesOrderService = async (token, requestBody) => {
   }
 };
 
+// sap integration
+export const getCustomersFromSap = async () => {
+  try {
+    return await axios.get(`${usersUrl}add-customer-from-sap`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const addCustomersFromSap = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-customer-from-sap/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 // vatpos integration
 export const getSalesMasterDetailsService = async (requestBody) => {
   const url = requestBody.companyCode
