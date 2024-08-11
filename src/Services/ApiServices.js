@@ -3,8 +3,8 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-// const usersUrl = 'http://182.160.114.100:5001/';
-const usersUrl = 'http://182.160.114.100:5003/';
+const usersUrl = 'http://182.160.114.100:5001/';
+// const usersUrl = 'http://182.160.114.100:5003/';
 // const usersUrl = 'http://localhost:5001/';
 
 const sapTokenUrl =
@@ -2148,6 +2148,20 @@ export const getBrandingAssetsItemImagesService = async (loginToken, itemId) => 
   console.log(itemId);
   try {
     return await axios.get(`${usersUrl}branding-assets/viewReviewStatus/${itemId}`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetsViewData = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets`, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
