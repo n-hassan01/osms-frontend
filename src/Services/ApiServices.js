@@ -2159,6 +2159,20 @@ export const getBrandingAssetsItemImagesService = async (loginToken, itemId) => 
   }
 };
 
+export const getBrandingAssetsViewData = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getDivisionsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}get-bd-area-lists/division`, {

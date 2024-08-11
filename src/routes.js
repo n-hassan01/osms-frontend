@@ -62,6 +62,7 @@ import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
 import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
+import BrandingAssetsViewPage from './pages/BrandingAssetsViewPage';
 import CustomerManagementPage from './pages/CustomerManagementPage';
 import DepositEntryForm from './pages/DepositEntryForm';
 import DepositsViewPage from './pages/DepositsViewPage';
@@ -181,6 +182,7 @@ export default function Router() {
         { path: 'allDeposits', element: <ShowAllDeposits /> },
         { path: 'mtlcategoriesformpage', element: <MtlCategoriesFormPage /> },
         { path: 'depositsView', element: <DepositsViewPage /> },
+        { path: 'brandingassetsviewpage', element: <BrandingAssetsViewPage /> },
         { path: 'drilldownpage', element: <DrillDownPage /> },
         { path: 'gaugepage', element: <Gauge /> },
         { path: 'barchart', element: <BarChart /> },
