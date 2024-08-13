@@ -1363,7 +1363,7 @@ export const getAllBankDepositsForAccountsService = async (loginToken) => {
 
 export const getShopsListService = async (loginToken) => {
   try {
-    return await axios.get(`${usersUrl}shop-master/`, {
+    return await axios.get(`${usersUrl}shop-master/view`, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },

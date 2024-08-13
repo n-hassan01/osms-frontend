@@ -262,11 +262,14 @@ export default function ItemsDashBoard() {
     fetchData();
   }, [user]);
   console.log(USERLIST);
-  const shopIdNameArray = USERLIST.map(({ shop_id, shop_name, contact_number }) => ({
-    shop_id,
-    shop_name,
-    contact_number,
-  }));
+
+  const shopIdNameArray = USERLIST
+    ? USERLIST.map(({ shop_id, shop_name, contact_number }) => ({
+        shop_id,
+        shop_name,
+        contact_number,
+      }))
+    : [];
   console.log(shopIdNameArray);
 
   const handleDivisionChange = (selectedOption) => {
@@ -356,9 +359,9 @@ export default function ItemsDashBoard() {
     setInputValue(inputValue);
   };
 
+  console.log(shopIdNameArray.length > 0);
   const filteredContactOptions = shopIdNameArray
-    .filter((option) => option.contact_number.toLowerCase().includes(inputValue.toLowerCase()))
-    // .map((option) => ({ value: option.district_name, label: option.district_name }));
+    .filter((option) => option.contact_number && option.contact_number.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({ value: option.shop_id, label: option.contact_number }));
 
   const selectedUsers = [];
