@@ -1533,6 +1533,60 @@ export const updateShopItemsService = async (loginToken, bodyInfo) => {
   }
 };
 
+export const getAreaService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}area/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getTerritoriesService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}territory/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getTownsService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}town/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBeatsService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}beat/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getRegionService = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}region/byCustGroupId`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const approveBankDepositService = async (loginToken, bodyInfo) => {
   try {
     return await axios.put(`${usersUrl}bank-deposit/approve`, bodyInfo, {
