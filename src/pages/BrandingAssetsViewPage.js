@@ -4,6 +4,7 @@
 /* eslint-disable camelcase */
 // import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { filter } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
@@ -18,7 +19,6 @@ import {
   Button,
   Card,
   CircularProgress,
-  IconButton,
   Paper,
   Stack,
   Table,
@@ -34,21 +34,11 @@ import { useUser } from '../context/UserContext';
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
-  checkUserActionAssignment,
-  deleteBankDepositAttachmentService,
-  getAllCustomerService,
-  getBankAccountsViewService,
-  getBankBranchesByBankService,
-  getBankListService,
-  getBankReconIdDetails,
   getBrandingAssetsViewData,
-  getDepositTypesService,
+  getItemsListService,
   getShopsListService,
   getUserProfileDetails,
-  upldateBankDepositService,
-  uploadBankDepositAttachmentService,
 } from '../Services/ApiServices';
-import Iconify from '../components/iconify';
 // import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
 
@@ -112,6 +102,13 @@ function getFormattedDateWithTime(value) {
   return `${day}/${month}/${year}    ${formattedTime}`;
 }
 
+function getFormattedPrice(value) {
+  const formattedPrice = new Intl.NumberFormat().format(value);
+  console.log(parseInt(formattedPrice, 10));
+
+  return formattedPrice;
+}
+
 export default function UserPage() {
   const tableref = useRef(null);
 
@@ -167,31 +164,6 @@ export default function UserPage() {
   }, [user]);
   console.log(account);
 
-  const [canEdit, setCanEdit] = useState(false);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (account) {
-          const requestBody = {
-            userId: account.user_id,
-            actionId: 1,
-          };
-          const accountDetails = await checkUserActionAssignment(user, requestBody); // Call your async function here
-
-          if (accountDetails.status === 200) {
-            setCanEdit(accountDetails.data.value);
-          } // Set the account details in the component's state
-        }
-      } catch (error) {
-        // Handle any errors that might occur during the async operation
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData(); // Call the async function when the component mounts
-  }, [account]);
-  console.log(canEdit);
-
   useEffect(() => {
     async function fetchData() {
       try {
@@ -217,112 +189,14 @@ export default function UserPage() {
   }, [account]);
   console.log(USERLIST);
 
-  const [customerList, setCustomerList] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (account) {
-          const response = await getAllCustomerService(user);
-
-          if (response.status === 200) {
-            setCustomerList(response.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, [account]);
-  console.log(customerList);
-
-  const [depositTypeList, setDepositTypeList] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (account) {
-          const response = await getDepositTypesService(user);
-
-          if (response.status === 200) {
-            setDepositTypeList(response.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, [account]);
-  console.log(depositTypeList);
-
-  const [bankList, setBankList] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await getBankListService();
-
-        if (response.status === 200) {
-          setBankList(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, []);
-  console.log(bankList);
-
-  const [bankBranchList, setBankBranchList] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (rowData.company_cust_bank_id) {
-          const response = await getBankBranchesByBankService(rowData.company_cust_bank_id);
-
-          if (response.status === 200) {
-            setBankBranchList(response.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, [rowData.company_cust_bank_id]);
-  console.log(bankBranchList);
-
-  const [customerBankAccountList, setCustomerBankAccountList] = useState([]);
+  const [items, setItems] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
         if (user) {
-          const response = await getBankAccountsViewService(user);
-
+          const response = await getItemsListService(user); // Call your async function here
           if (response.status === 200) {
-            setCustomerBankAccountList(response.data);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData();
-  }, [user]);
-  console.log(customerBankAccountList);
-
-  const [bankReconIdAll, setBankReconIdAll] = useState([]);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (user) {
-          const bankReconIdDetails = await getBankReconIdDetails(user); // Call your async function here
-          if (bankReconIdDetails.status === 200) {
-            setBankReconIdAll(bankReconIdDetails.data);
+            setItems(response.data);
           } // Set the account details in the component's state
         }
       } catch (error) {
@@ -333,7 +207,7 @@ export default function UserPage() {
 
     fetchData(); // Call the async function when the component mounts
   }, [user]);
-  console.log(bankReconIdAll);
+  console.log(items);
 
   const [shopDetails, setShopDetails] = useState([]);
   useEffect(() => {
@@ -351,64 +225,37 @@ export default function UserPage() {
   }, [user]);
   console.log(shopDetails);
 
-  function getFormattedPrice(value) {
-    const formattedPrice = new Intl.NumberFormat().format(value);
-    console.log(parseInt(formattedPrice, 10));
-
-    return formattedPrice;
-  }
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [open, setOpen] = useState(false);
-  const [openForFilter, setOpenForFilter] = useState(false);
   const handleClose = () => {
     setOpen(false);
   };
-  // const handleCloseForFilter = () => {
-  //   setOpenForFilter(false);
-  // };
 
   const [imageSrc, setImageSrc] = useState(null);
-  //
 
-  let TABLE_HEAD = [];
-  if (canEdit) {
-    TABLE_HEAD = [
-      { id: 'attachment', label: 'Division Name', alignRight: false },
-      { id: 'status', label: 'District Name', alignRight: false },
-      { id: 'remarks', label: 'Thana Name', alignRight: false },
-      { id: 'deposit_date', label: 'Address', alignRight: false },
-      { id: 'entry_date', label: 'Shop Name', alignRight: false },
-      { id: 'entry_date', label: 'Brand Code', alignRight: false },
-      { id: 'deposit_bank_account', label: 'Item Name', alignRight: false },
-      { id: 'company_name', label: 'Item Category', alignRight: false },
-      { id: 'customer_code', label: 'Remarks', alignRight: false },
-      { id: 'edit', label: 'Edit', alignRight: false },
-      // { id: '' },
-    ];
-  } else {
-    TABLE_HEAD = [
-      { id: 'attachment', label: 'Division Name', alignRight: false },
-      { id: 'status', label: 'District Name', alignRight: false },
-      { id: 'remarks', label: 'Thana Name', alignRight: false },
-      { id: 'deposit_date', label: 'Address', alignRight: false },
-      { id: 'entry_date', label: 'Shop Name', alignRight: false },
-      { id: 'entry_date', label: 'Brand Code', alignRight: false },
-      { id: 'deposit_bank_account', label: 'Item Name', alignRight: false },
-      { id: 'company_name', label: 'Item Category', alignRight: false },
-      { id: 'customer_code', label: 'Remarks', alignRight: false },
-      { id: 'edit', label: 'Edit', alignRight: false },
-      // { id: '' },
-    ];
-  }
-
-  // const filteredStatusOptions = bankReconIdAll
-  //   .filter((option) => option.short_name.toLowerCase().includes(inputValue.toLowerCase()))
-  //   .map((option) => ({ value: option.short_name, label: option.short_name }));
-
-  const filteredShopsOptions = shopDetails
-    .filter((option) => option.shop_name.toLowerCase().includes(inputValue.toLowerCase()))
-    .map((option) => ({ value: option.shop_name, label: option.shop_name }));
+  const TABLE_HEAD = [
+    { id: 'review_status', label: 'Review Status', alignRight: false },
+    { id: 'item_name', label: 'Item Name', alignRight: false },
+    { id: 'item_category', label: 'Item Category', alignRight: false },
+    { id: 'inventory_item_id', label: 'Inventory Item Id', alignRight: false },
+    { id: 'brand_code', label: 'Brand Code', alignRight: false },
+    { id: 'shop_name', label: 'Shop Name', alignRight: false },
+    { id: 'address', label: 'Address', alignRight: false },
+    { id: 'area_name', label: 'Area_Name', alignRight: false },
+    { id: 'asset_cost', label: 'Asset Cost', alignRight: false },
+    { id: 'beat_name', label: 'Beat Name', alignRight: false },
+    { id: 'creation_date', label: 'Creation Date', alignRight: false },
+    { id: 'cust_group_name', label: 'Cust Group Name', alignRight: false },
+    { id: 'periodic_expense', label: 'Periodic Expense', alignRight: false },
+    { id: 'region_name', label: 'Region Name', alignRight: false },
+    { id: 'remarks', label: 'Remarks', alignRight: false },
+    { id: 'renew_date', label: 'Renew Date', alignRight: false },
+    { id: 'shop_code', label: 'Shop Code', alignRight: false },
+    { id: 'supplier_name', label: 'Supplier Name', alignRight: false },
+    { id: 'territory_name', label: 'Territory Name', alignRight: false },
+    { id: 'town_name', label: 'Town Name', alignRight: false },
+  ];
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -436,7 +283,13 @@ export default function UserPage() {
 
   const [filterInfo, setFilterInfo] = useState({
     shop: '',
+    status: '',
+    itemName: '',
   });
+
+  const filteredShopsOptions = shopDetails
+    .filter((option) => option.shop_name.toLowerCase().includes(inputValue.toLowerCase()))
+    .map((option) => ({ value: option.shop_name, label: option.shop_name }));
 
   const handleShopNameChange = (selectedOption) => {
     setSelectedOption(selectedOption);
@@ -447,30 +300,76 @@ export default function UserPage() {
     setInputValue(inputValue);
   };
 
+  const reviewStatusOptions = [
+    { value: 'New', label: 'New' },
+    { value: 'Excellent', label: 'Excellent' },
+    { value: 'Good', label: 'Good' },
+    { value: 'Broken', label: 'Broken' },
+    { value: 'Fade Out', label: 'Fade Out' },
+    { value: 'Not Found', label: 'Not Found' },
+    { value: 'Need Repair', label: 'Need Repair' },
+  ];
+
+  const handleReviewStatusChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    filterInfo.status = selectedOption.value;
+  };
+
+  const filteredItemOptions = items
+    .filter((option) => option.description.toLowerCase().includes(inputValue.toLowerCase()))
+    .map((option) => ({ value: option.description, label: option.description }));
+
+  const handleItemNameChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    filterInfo.itemName = selectedOption.value;
+  };
+
+  const handleItemNameInputChange = (inputValue) => {
+    setInputValue(inputValue);
+  };
+
   const handleClearDate = async () => {
     // Clear the shop filter
     setFilterInfo({
       shop: '',
+      status: '',
+      itemName: '',
     });
 
     // Reset the data in the table to show all records
     const response = await getBrandingAssetsViewData(user);
     if (response) setUserList(response.data);
 
-    setOpenFilterDialog(false); // Close the dialog after clearing the filter
+    // setOpenFilterDialog(false); // Close the dialog after clearing the filter
   };
 
   const handleDateFilter = async () => {
-    let filteredData = USERLIST;
+    try {
+      setUserList([]);
 
-    // Apply filter based on selected shop
-    if (filterInfo.shop) {
-      filteredData = filteredData.filter((item) => item.shop_name === filterInfo.shop);
+      const response = await getBrandingAssetsViewData(user);
+      if (response) {
+        let filteredData = response.data;
+
+        if (filterInfo.shop) {
+          filteredData = filteredData.filter((item) => item.shop_name === filterInfo.shop);
+        }
+
+        if (filterInfo.itemName) {
+          filteredData = filteredData.filter((item) => item.item_name === filterInfo.itemName);
+        }
+
+        if (filterInfo.status) {
+          filteredData = filteredData.filter((item) => item.review_status === filterInfo.status);
+        }
+
+        setUserList(filteredData);
+      }
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    } finally {
+      setOpenFilterDialog(false);
     }
-
-    // Update the state with the filtered data
-    setUserList(filteredData);
-    setOpenFilterDialog(false); // Close the dialog after filtering
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -478,284 +377,31 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const exportData = filteredUsers.map((item) => ({
-    'Division Name': item.division_name,
-    'District Name': item.district_name,
-    'Thana Name': item.thana_name,
-    Address: item.address,
-    'Shop Name': item.shop_name,
-    'Brand Code': item.brand_code,
+    'Review Status': item.review_status,
     'Item Name': item.item_name,
     'Item Category': item.item_category,
+    'Inventory Item Id': item.inventory_item_id,
+    'Brand Code': item.brand_code,
+    'Shop Name': item.shop_name,
+    Address: item.address,
+    'Area Name': item.area_name,
+    'Asset Cost': item.asset_cost,
+    'Beat Name': item.beat_name,
+    'Creation Date': item.creation_date,
+    'Cust Group Name': item.cust_group_name,
+    'Periodic Expense': item.periodic_expense,
+    'Region Name': item.region_name,
     Remarks: item.remarks,
+    'Renew Date': item.renew_date,
+    'Shop Code': item.shop_code,
+    'Supplier Name': item.supplier_name,
+    'Territory Name': item.territory_name,
+    'Town Name': item.town_name,
   }));
 
-  // edit features
-  const [openEdit, setOpenEdit] = useState(false);
-
-  const onValueChange = (e) => {
-    setRowData({ ...rowData, [e.target.name]: e.target.value });
-  };
-
-  const closeDialog = () => {
-    setFilteredCustomerList([]);
-    setShowFilteredCustomerList(false);
-
-    setFilteredPaymentMethodList([]);
-    setShowFilteredPaymentMethodList(false);
-
-    setFilteredPaymentTypeList([]);
-    setShowFilteredPaymentTypeList(false);
-
-    setFilteredDepositorBankList([]);
-    setShowFilteredDepositorBankList(false);
-
-    setFilteredDepositorBankBranchList([]);
-    setShowFilteredDepositorBankBranchList(false);
-
-    setFilteredCompanyBankAccountList([]);
-    setShowFilteredCompanyBankAccountList(false);
-
-    setOpenEdit(false);
-  };
-
-  const openEditDialog = (event) => {
-    console.log(event);
-    setRowData(event);
-    setOpenEdit(true);
-  };
-
-  const onEditDeposit = async () => {
-    const requestBody = {
-      depositDate: rowData.deposit_date,
-      amount: rowData.amount,
-      payFromCustomer: rowData.pay_from_customer,
-      depositTypeId: rowData.deposit_type_id,
-      depositorName: rowData.depositor_name,
-      companyCustBankId: rowData.company_cust_bank_id,
-      companyCustBankBranchId: rowData.company_cust_bank_branch_id,
-      remittanceBankAccountId: rowData.remittance_bank_account_id,
-      receiptNumber: rowData.receipt_number,
-      invoiceNumber: rowData.invoice_number,
-      uploadedFilename: rowData.uploaded_filename,
-      remarks: rowData.remarks,
-      lastUpdatedBy: user.user_id,
-      cashReceiptId: rowData.cash_receipt_id,
-    };
-    const response = await upldateBankDepositService(user, requestBody);
-
-    const alertMessage = response.status === 200 ? 'Updated successfully' : 'Process failed! Try again';
-    alert(alertMessage);
-    closeDialog();
-  };
-
-  const [filteredCustomerList, setFilteredCustomerList] = useState([]);
-  const [showCustomerList, setShowFilteredCustomerList] = useState(false);
-
-  const handleInputCustomerChange = (event) => {
-    setShowFilteredCustomerList(true);
-
-    const input = event.target.value;
-    const name = 'customer_name';
-    setRowData({ ...rowData, [name]: input });
-
-    console.log(customerList);
-    const filtered = customerList.filter((item) => item.full_name.toLowerCase().includes(input.toLowerCase()));
-    console.log(filtered);
-    setFilteredCustomerList(filtered);
-  };
-
-  const handleCustomerClick = (value) => {
-    const cName = value.full_name;
-    const cId = value.cust_account_id;
-
-    const name1 = 'customer_name';
-    const name2 = 'pay_from_customer';
-    setRowData({
-      ...rowData,
-      [name1]: cName,
-      [name2]: cId,
-    });
-
-    setShowFilteredCustomerList(false);
-  };
-
-  // payment method
-  const paymentMethodList = [...new Set(depositTypeList.map((value) => value.deposit_type_name))];
-  const [filteredPaymentMethodList, setFilteredPaymentMethodList] = useState([]);
-  const [showPaymentMethodList, setShowFilteredPaymentMethodList] = useState(false);
-
-  const handleInputPaymentMethodChange = (event) => {
-    setShowFilteredPaymentMethodList(true);
-
-    const input = event.target.value;
-    const name = 'deposit_type_name';
-    setRowData({ ...rowData, [name]: input });
-
-    const filtered = paymentMethodList.filter((item) => item.toLowerCase().includes(input.toLowerCase()));
-    console.log(filtered);
-    setFilteredPaymentMethodList(filtered);
-  };
-
-  const handlePaymentMethodClick = (value) => {
-    const name1 = 'deposit_type_name';
-    setRowData({ ...rowData, [name1]: value });
-
-    setShowFilteredPaymentMethodList(false);
-  };
-
-  // payment type
-  const paymentTypeList = depositTypeList.filter((value) => value.deposit_type_name === rowData.deposit_type_name);
-  const [filteredPaymentTypeList, setFilteredPaymentTypeList] = useState([]);
-  const [showPaymentTypeList, setShowFilteredPaymentTypeList] = useState(false);
-
-  const handleInputPaymentTypeChange = (event) => {
-    setShowFilteredPaymentTypeList(true);
-
-    const input = event.target.value;
-    const name = 'deposit_type';
-    setRowData({ ...rowData, [name]: input });
-
-    const filtered = paymentTypeList.filter((item) => item.deposit_type.toLowerCase().includes(input.toLowerCase()));
-    setFilteredPaymentTypeList(filtered);
-  };
-
-  const handlePaymentTypeClick = (value) => {
-    const name1 = 'deposit_type';
-    const name2 = 'deposit_type_id';
-    setRowData({
-      ...rowData,
-      [name1]: value.deposit_type,
-      [name2]: value.deposit_type_id,
-    });
-
-    setShowFilteredPaymentTypeList(false);
-  };
-
-  // depositor bank
-  const [filteredDepositorBankList, setFilteredDepositorBankList] = useState([]);
-  const [showDepositorBankList, setShowFilteredDepositorBankList] = useState(false);
-
-  const handleInputDepositorBankChange = (event) => {
-    setShowFilteredDepositorBankList(true);
-
-    const input = event.target.value;
-    const name = 'depositor_bank';
-    setRowData({ ...rowData, [name]: input });
-
-    const filtered = bankList.filter((item) => item.bank_name.toLowerCase().includes(input.toLowerCase()));
-    setFilteredDepositorBankList(filtered);
-  };
-
-  const handleDepositorBankClick = (value) => {
-    const name1 = 'depositor_bank';
-    const name2 = 'company_cust_bank_id';
-    setRowData({
-      ...rowData,
-      [name1]: value.bank_name,
-      [name2]: value.bank_id,
-    });
-
-    setShowFilteredDepositorBankList(false);
-  };
-
-  // depositor bank Branch
-  const [filteredDepositorBankBranchList, setFilteredDepositorBankBranchList] = useState([]);
-  const [showDepositorBankBranchList, setShowFilteredDepositorBankBranchList] = useState(false);
-
-  const handleInputDepositorBankBranchChange = (event) => {
-    setShowFilteredDepositorBankBranchList(true);
-
-    const input = event.target.value;
-    const name = 'depositor_branch';
-    setRowData({ ...rowData, [name]: input });
-
-    const filtered = bankBranchList.filter((item) => item.bank_branch_name.toLowerCase().includes(input.toLowerCase()));
-    setFilteredDepositorBankBranchList(filtered);
-  };
-
-  const handleDepositorBankBranchClick = (value) => {
-    const name1 = 'depositor_branch';
-    const name2 = 'company_cust_bank_branch_id';
-    setRowData({
-      ...rowData,
-      [name1]: value.bank_branch_name,
-      [name2]: value.bank_branch_id,
-    });
-
-    setShowFilteredDepositorBankBranchList(false);
-  };
-
-  // company bank account
-  const [filteredCompanyBankAccountList, setFilteredCompanyBankAccountList] = useState([]);
-  const [showCompanyBankAccountList, setShowFilteredCompanyBankAccountList] = useState(false);
-
-  const handleInputCompanyBankAccountChange = (event) => {
-    setShowFilteredCompanyBankAccountList(true);
-
-    const input = event.target.value;
-    const name = 'company_account';
-    setRowData({ ...rowData, [name]: input });
-
-    const list = customerBankAccountList.filter((value) => value.deposit_type_set_id === rowData.deposit_type_set_id);
-    console.log(list);
-    const filtered = list.filter((item) => item.bank_account_name.toLowerCase().includes(input.toLowerCase()));
-    setFilteredCompanyBankAccountList(filtered);
-  };
-
-  const handleCompanyBankAccountClick = (value) => {
-    const name1 = 'company_account';
-    const name2 = 'remittance_bank_account_id';
-    const name3 = 'company_bank';
-    const name4 = 'company_name';
-    setRowData({
-      ...rowData,
-      [name1]: value.bank_account_name,
-      [name2]: value.bank_account_id,
-      [name3]: value.bank_name,
-      [name4]: value.company_name,
-    });
-
-    setShowFilteredCompanyBankAccountList(false);
-  };
-
-  // image upload and delete method
-  const uplodPhoto = async (event, existedFileName) => {
-    try {
-      const selectedFile = event.target.files[0];
-
-      if (selectedFile) {
-        console.log('Selected file:', selectedFile);
-
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-
-        const uploadResponse = await uploadBankDepositAttachmentService(user, formData);
-        console.log(uploadResponse.data);
-
-        if (uploadResponse.status === 200) {
-          const requestBody = {
-            fileName: existedFileName,
-          };
-          const deleteResponse = await deleteBankDepositAttachmentService(user, requestBody);
-
-          if (deleteResponse.status === 200) {
-            const input = uploadResponse.data.value;
-            const name = 'uploaded_filename';
-            setRowData({ ...rowData, [name]: input });
-          } else {
-            throw new Error('File delete failed!');
-          }
-        } else {
-          throw new Error('File upload failed!');
-        }
-      } else {
-        throw new Error('File not selected!');
-      }
-    } catch (error) {
-      console.log(error.message);
-      alert('Process failed! Try again');
-    }
-  };
+  // const closeDialog = () => {
+  //   setOpenEdit(false);
+  // };
 
   return (
     <>
@@ -766,7 +412,6 @@ export default function UserPage() {
       <div style={{ margin: '0 22px' }}>
         <Box position="relative" width="100%" height="100px">
           {' '}
-          {/* Adjust height as needed */}
           <Stack
             direction="row"
             alignItems="center"
@@ -808,59 +453,64 @@ export default function UserPage() {
                   enableReadonly
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {USERLIST.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const {
                       shop_id,
-                      division_name,
-                      district_name,
-                      thana_name,
                       address,
-                      shop_name,
+                      area_name,
+                      asset_cost,
+                      beat_name,
                       brand_code,
+                      creation_date,
+                      cust_group_name,
+                      execution_date,
+                      inventory_item_id,
+                      item_category,
+                      item_name,
+                      periodic_expense,
+                      region_name,
+                      remarks,
+                      renew_date,
+                      review_status,
+                      shop_code,
+                      shop_name,
+                      supplier_name,
+                      territory_name,
+                      town_name,
+                    } = row;
+
+                    const rowValues = [
+                      review_status,
                       item_name,
                       item_category,
+                      inventory_item_id,
+                      brand_code,
+                      shop_name,
+                      address,
+                      area_name,
+                      asset_cost,
+                      beat_name,
+                      creation_date,
+                      cust_group_name,
+                      periodic_expense,
+                      region_name,
                       remarks,
-                    } = row;
+                      renew_date,
+                      shop_code,
+                      supplier_name,
+                      territory_name,
+                      town_name,
+                    ];
 
                     const selectedUser = selected.indexOf(shop_id) !== -1;
 
                     return (
                       <TableRow hover key={shop_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {division_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {district_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {thana_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {address}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {shop_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {brand_code}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {item_name}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {item_category}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {remarks}
-                        </TableCell>
-
-                        {canEdit && (
-                          <TableCell padding="checkbox">
-                            <IconButton size="large" color="primary" onClick={(e) => openEditDialog(row)}>
-                              <Iconify icon={'tabler:edit'} />
-                            </IconButton>
+                        {rowValues.map((value, index) => (
+                          <TableCell key={index} align="left" style={{ whiteSpace: 'nowrap' }}>
+                            {index === 10 || index === 15 ? getFormattedDateWithTime(value) : value}
                           </TableCell>
-                        )}
+                        ))}
                       </TableRow>
                     );
                   })}
@@ -919,12 +569,11 @@ export default function UserPage() {
                   onClose={handleCloseFilterDialog}
                   sx={{ '& .MuiDialog-paper': { maxWidth: '100%', height: '250px' } }}
                 >
-                  <Stack />
                   <DialogContent>
-                    <Stack spacing={1.5} direction="row">
+                    <Stack spacing={1.5} direction="column">
                       <div className="col-auto" style={{ marginRight: '20px', display: 'flex' }}>
                         <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
-                          <span style={{ marginRight: '5px' }}>Shop Name</span>
+                          <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Shop Name</span>
                           <div style={{ width: '180px' }}>
                             <Select
                               value={filterInfo.shop ? { value: filterInfo.shop, label: filterInfo.shop } : null}
@@ -938,12 +587,42 @@ export default function UserPage() {
                             />
                           </div>
                         </div>
-                        {/* <Button onClick={onFilterDate}>Filter</Button> */}
+                        <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
+                          <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Item Name</span>
+                          <div style={{ width: '180px' }}>
+                            <Select
+                              value={
+                                filterInfo.itemName ? { value: filterInfo.itemName, label: filterInfo.itemName } : null
+                              }
+                              onChange={handleItemNameChange}
+                              onInputChange={handleItemNameInputChange}
+                              options={filteredItemOptions}
+                              placeholder="Type to select..."
+                              isClearable
+                            />
+                          </div>
+                        </div>
+                        <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
+                          <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Review Status</span>
+                          <div style={{ width: '180px' }}>
+                            <Select
+                              value={filterInfo.status ? { value: filterInfo.status, label: filterInfo.status } : null}
+                              onChange={handleReviewStatusChange}
+                              options={reviewStatusOptions}
+                              placeholder="Click to select..."
+                              isClearable
+                              isSearchable={false}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </Stack>
+                  </DialogContent>
+                  <DialogActions>
                     <Button onClick={handleDateFilter}>Filter</Button>
                     <Button onClick={handleClearDate}>Clear</Button>
-                  </DialogContent>
+                    <Button onClick={handleCloseFilterDialog}>Close</Button>
+                  </DialogActions>
                 </Dialog>
               </Table>
             </TableContainer>
