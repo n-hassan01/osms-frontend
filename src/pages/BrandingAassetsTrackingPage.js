@@ -627,8 +627,8 @@ export default function ItemsDashBoard() {
           filteredData = filteredData.filter((item) => item.territory_id === filterDetails.territory);
         }
 
-        if (filterDetails.thana) {
-          filteredData = filteredData.filter((item) => item.thana_id === filterDetails.thana);
+        if (filterDetails.area) {
+          filteredData = filteredData.filter((item) => item.area_id === filterDetails.area);
         }
 
         if (filterDetails.town) {
