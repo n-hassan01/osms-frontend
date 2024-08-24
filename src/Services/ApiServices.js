@@ -2356,3 +2356,13 @@ export const getBankReconIdDetails = async (userInfo) => {
     return err.message;
   }
 };
+
+export const getBrandingAssetSumReport = async (userInfo) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/brandingAssetSumReport`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
