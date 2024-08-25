@@ -59,8 +59,8 @@ export default function BasicTabs() {
       </Box> */}
       <Box style={{ marginLeft: '10px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab {...a11yProps(0)} label="Report" />
-          <Tab {...a11yProps(1)} label="Sum Report" />
+          <Tab {...a11yProps(0)} label="Detail" />
+          <Tab {...a11yProps(1)} label="Summary" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
