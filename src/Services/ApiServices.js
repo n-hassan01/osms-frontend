@@ -1347,6 +1347,16 @@ export const upldateBankDepositService = async (loginToken, requestBody) => {
   }
 };
 
+export const getUndefinedDepositsService = async () => {
+  try {
+    return await axios.get(`${usersUrl}undefined-bank-deposit/`, {});
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getAllBankDepositsForAccountsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {
@@ -1354,6 +1364,16 @@ export const getAllBankDepositsForAccountsService = async (loginToken) => {
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetSumReport = async () => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/brandingAssetSumReport`);
   } catch (err) {
     console.log(err.message);
 
@@ -2340,6 +2360,17 @@ export const postReconciledDataExcelService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
     return await axios.post(`${usersUrl}add-updatedreconciled-excel-data/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postUndefinedDepositsFromExcelService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}undefined-bank-deposit/uploadExcel`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 

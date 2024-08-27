@@ -7,10 +7,8 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 // import DashboardAppPage from './DashboardAppPage';
 // import DashboardAppPage2 from './DashboardAppPage2';
-import ManageUndifinedDepositsPage from '../sections/@dashboard/deposits/ManageUndifinedDepositsPage';
-import ShowNewDepositsPage from '../sections/@dashboard/deposits/ShowNewDepositsPage';
-// import ShowReconciledDepositsPage from '../sections/@dashboard/deposits/ShowReconciledDepositsPage';
-// import ShowRejectedDepositsPage from '../sections/@dashboard/deposits/ShowRejectedDepositsPage';
+import ShowReconciledDepositsPage from './BrandingAssetSumReportPage';
+import ShowNewDepositsPage from './BrandingAssetsViewPage';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -61,24 +59,16 @@ export default function BasicTabs() {
       </Box> */}
       <Box style={{ marginLeft: '10px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab {...a11yProps(0)} label="New Deposits" />
-          <Tab {...a11yProps(1)} label="Manage Unidentified Deposits" />
-          {/* <Tab {...a11yProps(1)} label="Reconciled Deposits" />
-          <Tab {...a11yProps(2)} label="Rejected Deposits" /> */}
+          <Tab {...a11yProps(0)} label="Detail" />
+          <Tab {...a11yProps(1)} label="Summary" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
         <ShowNewDepositsPage />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        <ManageUndifinedDepositsPage />
-      </CustomTabPanel>
-      {/* <CustomTabPanel value={value} index={1}>
         <ShowReconciledDepositsPage />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <ShowRejectedDepositsPage />
-      </CustomTabPanel> */}
     </div>
   );
 }
