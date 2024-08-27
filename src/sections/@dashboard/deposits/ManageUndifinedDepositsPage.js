@@ -9,19 +9,20 @@ import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+
 // @mui
 import {
-    Card,
-    CircularProgress,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  CircularProgress,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 
 import { CSVLink } from 'react-csv';
@@ -31,16 +32,16 @@ import { useUser } from '../../../context/UserContext';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-    approveBankDepositService,
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getBankDepositViewFilterByDateService,
-    getBankDepositViewFilterByFromDateService,
-    getBankDepositViewFilterByToDateService,
-    getBankReconIdDetails,
-    getUndefinedDepositsService,
-    getUserProfileDetails,
-    postUndefinedDepositsFromExcelService,
+  approveBankDepositService,
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
+  getBankReconIdDetails,
+  getUndefinedDepositsService,
+  getUserProfileDetails,
+  postUndefinedDepositsFromExcelService,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -216,17 +217,23 @@ export default function UserPage() {
   };
 
   console.log(exceldata);
-  const formattedData = exceldata.map((item) => ({
-    document_number: item.document_number,
-    bank_stm_date: item.bank_stm_date,
-    company_code: item.company_code,
-    bank_name: item.bank_name,
-    bank_account_num: item.bank_account_num,
-    description: item.description,
-    amount: item.amount,
-    remarks: item.remarks,
-    status: item.status,
-  }));
+  const formattedData = exceldata.map((item) => {
+    const bankStmDate = item.bank_stm_date;
+    const convertedDate = bankStmDate ? new Date((bankStmDate - (25567 + 2)) * 86400 * 1000) : null;
+
+    return {
+      document_number: item.document_number,
+      bank_stm_date: convertedDate ? convertedDate.toISOString().split('T')[0] : '',
+      company_code: item.company_code,
+      bank_name: item.bank_name,
+      bank_account_num: item.bank_account_num,
+      description: item.description,
+      amount: item.amount,
+      remarks: item.remarks,
+      status: item.status,
+    };
+  });
+
   console.log(formattedData);
 
   const saveExcelData = async () => {
