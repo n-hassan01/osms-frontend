@@ -1371,16 +1371,6 @@ export const getAllBankDepositsForAccountsService = async (loginToken) => {
   }
 };
 
-export const getBrandingAssetSumReport = async () => {
-  try {
-    return await axios.get(`${usersUrl}branding-assets/brandingAssetSumReport`);
-  } catch (err) {
-    console.log(err.message);
-
-    return err.message;
-  }
-};
-
 export const getShopsListService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}shop-master/view`, {
@@ -2381,6 +2371,16 @@ export const postUndefinedDepositsFromExcelService = async (bodyInfo) => {
 export const getBankReconIdDetails = async (userInfo) => {
   try {
     return await axios.get(`${usersUrl}get-bank_recon_details/all`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetSumReport = async () => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/brandingAssetSumReport`);
   } catch (err) {
     console.log(err.message);
 
