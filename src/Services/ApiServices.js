@@ -2378,7 +2378,7 @@ export const getBankReconIdDetails = async (userInfo) => {
   }
 };
 
-export const getBrandingAssetSumReport = async (userInfo) => {
+export const getBrandingAssetSumReport = async () => {
   try {
     return await axios.get(`${usersUrl}branding-assets/brandingAssetSumReport`);
   } catch (err) {
