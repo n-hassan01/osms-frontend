@@ -12,17 +12,17 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Card,
-  CircularProgress,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Card,
+    CircularProgress,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 
 import { CSVLink } from 'react-csv';
@@ -32,15 +32,15 @@ import { useUser } from '../../../context/UserContext';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-  approveBankDepositService,
-  dowloadBankDepositReceiptService,
-  getAllBankDepositsForAccountsService,
-  getBankDepositViewFilterByDateService,
-  getBankDepositViewFilterByFromDateService,
-  getBankDepositViewFilterByToDateService,
-  getBankReconIdDetails,
-  getUserProfileDetails,
-  postReconciledDataExcelService,
+    dowloadBankDepositReceiptService,
+    getAllBankDepositsForAccountsService,
+    getBankDepositViewFilterByDateService,
+    getBankDepositViewFilterByFromDateService,
+    getBankDepositViewFilterByToDateService,
+    getBankReconIdDetails,
+    getUndefinedDepositsFromViewService,
+    getUserProfileDetails,
+    postReconciledDataExcelService
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -172,20 +172,16 @@ export default function UserPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (account) {
-          console.log(account.user_id);
-          const response = await getAllBankDepositsForAccountsService(user);
+        const response = await getUndefinedDepositsFromViewService();
 
-          if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+        if (response.status === 200 && response.data.length > 0) {
+          const filteredList = response.data;
+          setUserList(filteredList);
 
-            setUserList(filteredList);
-
-            const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
-            const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
-            setCustomerGroups(customerGroupList);
-            setCustomers(customerList);
-          }
+          const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
+          const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
+          setCustomerGroups(customerGroupList);
+          setCustomers(customerList);
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -193,7 +189,7 @@ export default function UserPage() {
     }
 
     fetchData();
-  }, [account]);
+  }, []);
   console.log(USERLIST);
 
   function getFormattedPrice(value) {
@@ -315,6 +311,7 @@ export default function UserPage() {
   };
 
   const TABLE_HEAD = [
+    { id: '' },
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
@@ -336,8 +333,6 @@ export default function UserPage() {
     { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
     // { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-
-    // { id: '' },
   ];
 
   const handleRequestSort = (event, property) => {
@@ -532,24 +527,25 @@ export default function UserPage() {
   };
 
   const approveDeposits = async (deposits) => {
-    if (deposits.length > 0) {
-      try {
-        const approvalPromises = deposits.map(async (element) => {
-          const requestBody = {
-            action: 'RECONCILED',
-            cashReceiptId: element,
-          };
-          const response = await approveBankDepositService(user, requestBody);
-        });
+    console.log(deposits.target);
+    // if (deposits.length > 0) {
+    //   try {
+    //     const approvalPromises = deposits.map(async (element) => {
+    //       const requestBody = {
+    //         action: 'RECONCILED',
+    //         cashReceiptId: element,
+    //       };
+    //       const response = await approveBankDepositService(user, requestBody);
+    //     });
 
-        await Promise.all(approvalPromises);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error during deposit approval:', error);
-      }
-    } else {
-      alert('Please select atleast one deposit to approve');
-    }
+    //     await Promise.all(approvalPromises);
+    //     window.location.reload();
+    //   } catch (error) {
+    //     console.error('Error during deposit approval:', error);
+    //   }
+    // } else {
+    //   alert('Please select atleast one deposit to approve');
+    // }
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -597,7 +593,7 @@ export default function UserPage() {
             onClick={() => approveDeposits(selected)}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '20px' }}
           >
-            Reconcile
+            Confirm
           </Button> */}
           {/* <Button
             variant="text"
@@ -709,6 +705,11 @@ export default function UserPage() {
                             // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
                           />
                         </TableCell> */}
+                        <TableCell align="left">
+                          <button style={{ width: '100%' }} onClick={(e) => approveDeposits(e)}>
+                            Confirm
+                          </button>
+                        </TableCell>
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
