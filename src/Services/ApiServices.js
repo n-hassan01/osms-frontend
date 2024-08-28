@@ -1357,6 +1357,16 @@ export const getUndefinedDepositsService = async () => {
   }
 };
 
+export const getUndefinedDepositsFromViewService = async () => {
+  try {
+    return await axios.get(`${usersUrl}undefined-bank-deposit/view`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getAllBankDepositsForAccountsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {
