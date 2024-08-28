@@ -12,17 +12,17 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Card,
-    CircularProgress,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Card,
+  CircularProgress,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 
 import { CSVLink } from 'react-csv';
@@ -32,15 +32,16 @@ import { useUser } from '../../../context/UserContext';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getBankDepositViewFilterByDateService,
-    getBankDepositViewFilterByFromDateService,
-    getBankDepositViewFilterByToDateService,
-    getBankReconIdDetails,
-    getUndefinedDepositsFromViewService,
-    getUserProfileDetails,
-    postReconciledDataExcelService
+  approveClaimedBankDepositService,
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
+  getBankDepositViewFilterByFromDateService,
+  getBankDepositViewFilterByToDateService,
+  getBankReconIdDetails,
+  getUndefinedDepositsFromViewService,
+  getUserProfileDetails,
+  postReconciledDataExcelService,
 } from '../../../Services/ApiServices';
 // import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../user';
@@ -526,26 +527,37 @@ export default function UserPage() {
     setUserList(filteredData);
   };
 
-  const approveDeposits = async (deposits) => {
-    console.log(deposits.target);
-    // if (deposits.length > 0) {
-    //   try {
-    //     const approvalPromises = deposits.map(async (element) => {
-    //       const requestBody = {
-    //         action: 'RECONCILED',
-    //         cashReceiptId: element,
-    //       };
-    //       const response = await approveBankDepositService(user, requestBody);
-    //     });
+  const approveDeposits = async (id, remarks) => {
+    try {
+      const requestBody = {
+        cashReceiptId: id,
+        remarks,
+      };
 
-    //     await Promise.all(approvalPromises);
-    //     window.location.reload();
-    //   } catch (error) {
-    //     console.error('Error during deposit approval:', error);
-    //   }
-    // } else {
-    //   alert('Please select atleast one deposit to approve');
-    // }
+      const response = await approveClaimedBankDepositService(user, requestBody);
+
+      if (response.status === 200) {
+        const deposits = await getUndefinedDepositsFromViewService();
+
+        if (deposits && deposits.status === 200 && deposits.data.length > 0) {
+          const filteredList = deposits.data;
+          setUserList(filteredList);
+
+          const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
+          const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
+
+          setCustomerGroups(customerGroupList);
+          setCustomers(customerList);
+        }
+
+        alert('Deposit has been confirmed!');
+      } else {
+        alert('Process failed! Try again');
+      }
+    } catch (error) {
+      console.error('Error during deposit approval:', error);
+      alert('An error occurred during the deposit approval process. Please try again later.');
+    }
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
@@ -706,7 +718,7 @@ export default function UserPage() {
                           />
                         </TableCell> */}
                         <TableCell align="left">
-                          <button style={{ width: '100%' }} onClick={(e) => approveDeposits(e)}>
+                          <button style={{ width: '100%' }} onClick={() => approveDeposits(cash_receipt_id, remarks)}>
                             Confirm
                           </button>
                         </TableCell>
