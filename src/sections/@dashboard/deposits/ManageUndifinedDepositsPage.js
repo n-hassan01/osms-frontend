@@ -218,12 +218,24 @@ export default function UserPage() {
 
   console.log(exceldata);
   const formattedData = exceldata.map((item) => {
+    let convertedDate = null;
     const bankStmDate = item.bank_stm_date;
-    const convertedDate = bankStmDate ? new Date((bankStmDate - (25567 + 2)) * 86400 * 1000) : null;
+
+    console.log(typeof bankStmDate);
+
+    if (typeof bankStmDate === 'number') {
+      convertedDate = bankStmDate ? new Date((bankStmDate - (25567 + 2)) * 86400 * 1000) : null;
+      console.log(typeof convertedDate);
+    }
 
     return {
       document_number: item.document_number,
-      bank_stm_date: convertedDate ? convertedDate.toISOString().split('T')[0] : '',
+      bank_stm_date:
+        typeof bankStmDate === 'number'
+          ? convertedDate
+            ? convertedDate.toISOString().split('T')[0]
+            : ''
+          : bankStmDate,
       company_code: item.company_code,
       bank_name: item.bank_name,
       bank_account_num: item.bank_account_num,
