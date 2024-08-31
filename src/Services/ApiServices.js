@@ -1357,6 +1357,16 @@ export const getUndefinedDepositsService = async () => {
   }
 };
 
+export const getUndefinedDepositsFromViewService = async () => {
+  try {
+    return await axios.get(`${usersUrl}undefined-bank-deposit/view`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getAllBankDepositsForAccountsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}bank-deposit/customer/view/`, {
@@ -1600,6 +1610,20 @@ export const getRegionService = async (loginToken) => {
 export const approveBankDepositService = async (loginToken, bodyInfo) => {
   try {
     return await axios.put(`${usersUrl}bank-deposit/approve`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const approveClaimedBankDepositService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}undefined-bank-deposit/confirm`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },

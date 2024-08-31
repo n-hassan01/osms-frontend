@@ -32,13 +32,14 @@ import { useUser } from '../../../context/UserContext';
 import Scrollbar from '../../../components/scrollbar';
 // sections
 import {
-  approveBankDepositService,
+  approveClaimedBankDepositService,
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
   getBankDepositViewFilterByDateService,
   getBankDepositViewFilterByFromDateService,
   getBankDepositViewFilterByToDateService,
   getBankReconIdDetails,
+  getUndefinedDepositsFromViewService,
   getUserProfileDetails,
   postReconciledDataExcelService,
 } from '../../../Services/ApiServices';
@@ -172,20 +173,16 @@ export default function UserPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (account) {
-          console.log(account.user_id);
-          const response = await getAllBankDepositsForAccountsService(user);
+        const response = await getUndefinedDepositsFromViewService();
 
-          if (response.status === 200) {
-            const filteredList = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+        if (response.status === 200 && response.data.length > 0) {
+          const filteredList = response.data;
+          setUserList(filteredList);
 
-            setUserList(filteredList);
-
-            const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
-            const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
-            setCustomerGroups(customerGroupList);
-            setCustomers(customerList);
-          }
+          const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
+          const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
+          setCustomerGroups(customerGroupList);
+          setCustomers(customerList);
         }
       } catch (error) {
         console.error('Error fetching account details:', error);
@@ -193,7 +190,7 @@ export default function UserPage() {
     }
 
     fetchData();
-  }, [account]);
+  }, []);
   console.log(USERLIST);
 
   function getFormattedPrice(value) {
@@ -315,6 +312,7 @@ export default function UserPage() {
   };
 
   const TABLE_HEAD = [
+    { id: '' },
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
@@ -336,8 +334,6 @@ export default function UserPage() {
     { id: 'employee_name', label: 'Employee', alignRight: false },
     { id: 'user_name', label: 'User Name', alignRight: false },
     // { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-
-    // { id: '' },
   ];
 
   const handleRequestSort = (event, property) => {
@@ -531,24 +527,36 @@ export default function UserPage() {
     setUserList(filteredData);
   };
 
-  const approveDeposits = async (deposits) => {
-    if (deposits.length > 0) {
-      try {
-        const approvalPromises = deposits.map(async (element) => {
-          const requestBody = {
-            action: 'RECONCILED',
-            cashReceiptId: element,
-          };
-          const response = await approveBankDepositService(user, requestBody);
-        });
+  const approveDeposits = async (id, remarks) => {
+    try {
+      const requestBody = {
+        cashReceiptId: id,
+        remarks,
+      };
 
-        await Promise.all(approvalPromises);
-        window.location.reload();
-      } catch (error) {
-        console.error('Error during deposit approval:', error);
+      const response = await approveClaimedBankDepositService(user, requestBody);
+
+      if (response.status === 200) {
+        const deposits = await getUndefinedDepositsFromViewService();
+
+        if (deposits && deposits.status === 200 && deposits.data.length > 0) {
+          const filteredList = deposits.data;
+          setUserList(filteredList);
+
+          const customerGroupList = [...new Set(filteredList.map((obj) => obj.customer_group))];
+          const customerList = [...new Set(filteredList.map((obj) => obj.customer_name))];
+
+          setCustomerGroups(customerGroupList);
+          setCustomers(customerList);
+        }
+
+        alert('Deposit has been confirmed!');
+      } else {
+        alert('Process failed! Try again');
       }
-    } else {
-      alert('Please select atleast one deposit to approve');
+    } catch (error) {
+      console.error('Error during deposit approval:', error);
+      alert('An error occurred during the deposit approval process. Please try again later.');
     }
   };
 
@@ -597,7 +605,7 @@ export default function UserPage() {
             onClick={() => approveDeposits(selected)}
             style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '20px' }}
           >
-            Reconcile
+            Confirm
           </Button> */}
           {/* <Button
             variant="text"
@@ -709,6 +717,11 @@ export default function UserPage() {
                             // onChange={(event) => handleClick(event, { itemId: cash_receipt_id })}
                           />
                         </TableCell> */}
+                        <TableCell align="left">
+                          <button style={{ width: '100%' }} onClick={() => approveDeposits(cash_receipt_id, remarks)}>
+                            Confirm
+                          </button>
+                        </TableCell>
                         <TableCell align="left">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
