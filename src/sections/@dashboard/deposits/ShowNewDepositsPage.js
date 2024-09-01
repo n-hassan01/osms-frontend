@@ -481,10 +481,8 @@ export default function UserPage() {
       };
       const response = await getBankDepositViewFilterByDateService(user, requestBody);
 
-      console.log(response.data);
-
       if (response.status === 200) {
-        filteredData = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+        filteredData = response.data;
       }
     }
 
@@ -508,7 +506,7 @@ export default function UserPage() {
       const response = await getBankDepositViewFilterByToDateService(user, requestBody);
 
       if (response.status === 200) {
-        filteredData = response.data.filter((item) => item.status === 'NEW' || item.status === 'REVERSED');
+        filteredData = response.data;
       }
     }
 
