@@ -6,7 +6,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { format, parse } from 'date-fns';
-import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
@@ -79,8 +78,14 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    console.log(filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1));
-    return filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    // console.log(filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1));
+    // return filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    const filteredArray = array.filter((_user) => {
+      const searchValue = _user.search_all ? _user.search_all.toLowerCase() : '';
+      return searchValue.includes(query.toLowerCase());
+    });
+    console.log(filteredArray);
+    return filteredArray;
   }
   return stabilizedThis.map((el) => el[0]);
 }
