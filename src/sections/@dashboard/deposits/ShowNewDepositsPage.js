@@ -78,8 +78,6 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    // console.log(filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1));
-    // return filter(array, (_user) => _user.search_all.toLowerCase().indexOf(query.toLowerCase()) !== -1);
     const filteredArray = array.filter((_user) => {
       const searchValue = _user.search_all ? _user.search_all.toLowerCase() : '';
       return searchValue.includes(query.toLowerCase());
