@@ -554,31 +554,28 @@ export default function UserPage() {
                           {getFormattedDateWithTime(bank_stm_date)}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {company_code}
+                          {deposit_type_id}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {bank_name}
+                          {bank_account_id}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {bank_account_num}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {description}
+                          {amount}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {amount}
+                          {company_code}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {description}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {status}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {bank_account_id}
-                        </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {deposit_type_id}
                         </TableCell>
                       </TableRow>
                     );
