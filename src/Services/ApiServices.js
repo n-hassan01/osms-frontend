@@ -1096,7 +1096,7 @@ export const updateSalesOrderLineService = async (lineId, lineInfo) => {
 export const getCustomerListService = async (token) => {
   console.log(token);
   try {
-    return await axios.get(`${usersUrl}customer-list/`, {
+    return await axios.get(`${usersUrl}customer-list/view`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
