@@ -886,6 +886,16 @@ export const getInventoryItemIdList = async () => {
   }
 };
 
+export const getFgItemListService = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/view/fg`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getUomCodeList = async () => {
   try {
     return await axios.get(`${usersUrl}get-unit-measure/uom_code`);
