@@ -28,13 +28,13 @@ import {
   deleteSalesOrderLinesService,
   getApprovalSequenceService,
   getCustomerListService,
-  getInventoryItemIdList,
+  getFgItemListService,
   getSalesOrderHeaderService,
   getSalesOrderLinesService,
   getUserProfileDetails,
   // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService,
+  updateSalesOrderLineService
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
@@ -97,7 +97,7 @@ export default function Page404() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getInventoryItemIdList();
+        const response = await getFgItemListService();
         if (response) setInventoryItemIds(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
