@@ -998,6 +998,16 @@ export const getSalesOrderHeaderService = async (requestInfo) => {
   }
 };
 
+export const getSalesOrderHeaderAllService = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-sales-order-header/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getSalesOrderHeadersByUserService = async (requestInfo) => {
   try {
     return await axios.get(`${usersUrl}get-sales-order-header/by-user/${requestInfo}`);
@@ -1345,7 +1355,7 @@ export const getBankDepositViewFilterByToDateService = async (loginToken, reques
 
 export const upldateBankDepositService = async (loginToken, requestBody) => {
   try {
-    return await axios.post(`${usersUrl}bank-deposit/update/${requestBody.cashReceiptId}`, requestBody, {
+    return await axios.put(`${usersUrl}bank-deposit/update/${requestBody.cashReceiptId}`, requestBody, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
