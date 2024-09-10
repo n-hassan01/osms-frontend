@@ -2,6 +2,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { useEffect, useRef, useState } from 'react';
+import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
@@ -34,7 +35,7 @@ import {
   getUserProfileDetails,
   // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService
+  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
@@ -182,6 +183,91 @@ export default function Page404() {
   });
   // row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price
   console.log(sumTotalPrice);
+
+  const [csvData, setCsvData] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const firstLine = soLineDetails.length > 0 ? soLineDetails[0] : {};
+
+        const firstRow = {
+          OrderNumber: soHeaderDetails.order_number,
+          OrderDate: getFormattedDate(soHeaderDetails.ordered_date),
+          Customer: soHeaderDetails.distributor,
+          ShipTo: customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to,
+          TransportType: soHeaderDetails.shipping_method_code || '',
+          SpecialDiscount: soHeaderDetails.special_discount,
+          SpecialAdjustment: soHeaderDetails.special_adjustment,
+          TotalPrice: getFormattedPrice(sumTotalPrice),
+          Item: firstLine.selectedItem?.description || firstLine.selectedItemName || '',
+          UOM: firstLine.selectedItem?.primary_uom_code || firstLine.order_quantity_uom || '',
+          Quantity: firstLine.ordered_quantity || '',
+          OfferQuantity: firstLine.offer_quantity ? firstLine.ordered_quantity : 0,
+          TotalQuantity: parseInt(firstLine.offer_quantity || 0, 10) + parseInt(firstLine.ordered_quantity || 0, 10),
+          UnitPrice: firstLine.unit_price || firstLine.unit_selling_price || 0,
+          UnitOfferPrice: firstLine.ordered_quantity
+            ? getFormattedPrice(
+                (firstLine.ordered_quantity * (firstLine.unit_price || firstLine.unit_selling_price)) /
+                  (parseInt(firstLine.offer_quantity || 0, 10) + parseInt(firstLine.ordered_quantity || 0, 10))
+              )
+            : firstLine.unit_price || 0,
+          Total: getFormattedPrice(
+            firstLine.ordered_quantity *
+              (firstLine.selectedItem.unit_price ? firstLine.selectedItem.unit_price : firstLine.unit_selling_price)
+          ),
+        };
+
+        const remainingLineRows = soLineDetails.slice(1).map((line) => ({
+          OrderNumber: '',
+          OrderDate: '',
+          Customer: '',
+          ShipTo: '',
+          TransportType: '',
+          SpecialDiscount: '',
+          SpecialAdjustment: '',
+          TotalPrice: '',
+
+          Item: line.selectedItem?.description || line.selectedItemName || '',
+          UOM: line.selectedItem?.primary_uom_code || line.order_quantity_uom || '',
+          Quantity: line.ordered_quantity || '',
+          OfferQuantity: line.offer_quantity ? line.ordered_quantity : 0,
+          TotalQuantity: parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10),
+          UnitPrice: line.unit_price || line.unit_selling_price || 0,
+          UnitOfferPrice: line.ordered_quantity
+            ? getFormattedPrice(
+                (line.ordered_quantity * (line.unit_price || line.unit_selling_price)) /
+                  (parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10))
+              )
+            : line.unit_price || 0,
+          Total: getFormattedPrice(
+            line.ordered_quantity *
+              (line.selectedItem.unit_price ? line.selectedItem.unit_price : line.unit_selling_price)
+          ),
+        }));
+        const totalRow = {
+          OrderNumber: '',
+          OrderDate: '',
+          Customer: '',
+          ShipTo: '',
+          TransportType: '',
+          SpecialDiscount: '',
+          SpecialAdjustment: '',
+          TotalPrice: '',
+
+          Total: getFormattedPrice(sumTotalPrice),
+        };
+
+        const exportOrderLinesData = [firstRow, ...remainingLineRows, totalRow];
+
+        console.log('Export Data:', exportOrderLinesData);
+        setCsvData(exportOrderLinesData);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [soHeaderDetails, soLineDetails]);
 
   const saveHeader = async () => {
     const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
@@ -776,6 +862,9 @@ export default function Page404() {
           <Typography variant="h4" gutterBottom>
             Update Customer Order
           </Typography>
+          <CSVLink data={csvData} className="btn btn-success">
+            Export Table
+          </CSVLink>
         </Stack>
         <div className="row g-3 align-items-center">
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
