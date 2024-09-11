@@ -58,7 +58,8 @@ export default function BasicTabs() {
 
   return (
     <Box>
-      <Box sx={{ borderBottom: 1, borderColor: 'white' }} style={{ marginLeft: '73px' }}>
+      {/* <Box sx={{ borderBottom: 1, borderColor: 'white' }} style={{ marginLeft: '73px' }}> */}
+      <Box sx={{ borderBottom: 1, borderColor: 'white' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab {...a11yProps(0)} label="Notifications" />
           <Tab {...a11yProps(1)} label="Notifications History" />
