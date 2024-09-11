@@ -185,79 +185,71 @@ export default function Page404() {
   console.log(sumTotalPrice);
 
   const [csvData, setCsvData] = useState([]);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const firstLine = soLineDetails.length > 0 ? soLineDetails[0] : {};
+        // const firstLine = soLineDetails.length > 0 ? soLineDetails[0] : {};
 
-        const firstRow = {
-          OrderNumber: soHeaderDetails.order_number,
-          OrderDate: getFormattedDate(soHeaderDetails.ordered_date),
-          Customer: soHeaderDetails.distributor,
-          ShipTo: customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to,
-          TransportType: soHeaderDetails.shipping_method_code || '',
-          SpecialDiscount: soHeaderDetails.special_discount,
-          SpecialAdjustment: soHeaderDetails.special_adjustment,
-          TotalPrice: getFormattedPrice(sumTotalPrice),
-          Item: firstLine.selectedItem?.description || firstLine.selectedItemName || '',
-          UOM: firstLine.selectedItem?.primary_uom_code || firstLine.order_quantity_uom || '',
-          Quantity: firstLine.ordered_quantity || '',
-          OfferQuantity: firstLine.offer_quantity ? firstLine.ordered_quantity : 0,
-          TotalQuantity: parseInt(firstLine.offer_quantity || 0, 10) + parseInt(firstLine.ordered_quantity || 0, 10),
-          UnitPrice: firstLine.unit_price || firstLine.unit_selling_price || 0,
-          UnitOfferPrice: firstLine.ordered_quantity
-            ? getFormattedPrice(
-                (firstLine.ordered_quantity * (firstLine.unit_price || firstLine.unit_selling_price)) /
-                  (parseInt(firstLine.offer_quantity || 0, 10) + parseInt(firstLine.ordered_quantity || 0, 10))
-              )
-            : firstLine.unit_price || 0,
-          Total: getFormattedPrice(
-            firstLine.ordered_quantity *
-              (firstLine.selectedItem.unit_price ? firstLine.selectedItem.unit_price : firstLine.unit_selling_price)
-          ),
-        };
+        // Data for the first section with one value per row in the first column
+        const firstSectionData = [
+          [
+            'Order Number',
+            'Ordered Date',
+            'Customer',
+            'Ship to',
+            'Transport Type',
+            'Special Discount',
+            'Special Adjustment',
+            'Total Price',
+          ],
+          [
+            soHeaderDetails.order_number,
+            getFormattedDate(soHeaderDetails.ordered_date),
+            soHeaderDetails.distributor,
+            customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to,
+            soHeaderDetails.shipping_method_code || '',
+            soHeaderDetails.special_discount,
+            soHeaderDetails.special_adjustment,
+            getFormattedPrice(sumTotalPrice),
+          ],
+        ];
 
-        const remainingLineRows = soLineDetails.slice(1).map((line) => ({
-          OrderNumber: '',
-          OrderDate: '',
-          Customer: '',
-          ShipTo: '',
-          TransportType: '',
-          SpecialDiscount: '',
-          SpecialAdjustment: '',
-          TotalPrice: '',
+        // Header for the remaining line items
+        const remainingRowsHeader = [
+          'Item',
+          'UOM',
+          'Quantity',
+          'Offer Quantity',
+          'Total Quantity',
+          'Unit Price',
+          'Unit Offer Price',
+          'Total Price',
+        ];
 
-          Item: line.selectedItem?.description || line.selectedItemName || '',
-          UOM: line.selectedItem?.primary_uom_code || line.order_quantity_uom || '',
-          Quantity: line.ordered_quantity || '',
-          OfferQuantity: line.offer_quantity ? line.ordered_quantity : 0,
-          TotalQuantity: parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10),
-          UnitPrice: line.unit_price || line.unit_selling_price || 0,
-          UnitOfferPrice: line.ordered_quantity
+        // Remaining rows data for the items
+        const remainingLineRows = soLineDetails.map((line) => [
+          line.selectedItem?.description || line.selectedItemName || '',
+          line.selectedItem?.primary_uom_code || line.order_quantity_uom || '',
+          line.ordered_quantity || '',
+          line.offer_quantity ? line.ordered_quantity : 0,
+          parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10),
+          line.unit_price || line.unit_selling_price || 0,
+          line.ordered_quantity
             ? getFormattedPrice(
                 (line.ordered_quantity * (line.unit_price || line.unit_selling_price)) /
                   (parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10))
               )
             : line.unit_price || 0,
-          Total: getFormattedPrice(
+          getFormattedPrice(
             line.ordered_quantity *
               (line.selectedItem.unit_price ? line.selectedItem.unit_price : line.unit_selling_price)
           ),
-        }));
-        const totalRow = {
-          OrderNumber: '',
-          OrderDate: '',
-          Customer: '',
-          ShipTo: '',
-          TransportType: '',
-          SpecialDiscount: '',
-          SpecialAdjustment: '',
-          TotalPrice: '',
+        ]);
 
-          Total: getFormattedPrice(sumTotalPrice),
-        };
+        const totalRow = ['', '', '', '', '', '', 'Total', getFormattedPrice(sumTotalPrice)];
 
-        const exportOrderLinesData = [firstRow, ...remainingLineRows, totalRow];
+        const exportOrderLinesData = [...firstSectionData, [], remainingRowsHeader, ...remainingLineRows, totalRow];
 
         console.log('Export Data:', exportOrderLinesData);
         setCsvData(exportOrderLinesData);
