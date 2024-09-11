@@ -725,7 +725,7 @@ export default function UserPage() {
       invoiceNumber: rowData.invoice_number,
       uploadedFilename: rowData.uploaded_filename,
       remarks: rowData.remarks,
-      lastUpdatedBy: user.user_id,
+      lastUpdatedBy: account.user_id,
       cashReceiptId: rowData.cash_receipt_id,
     };
     const response = await upldateBankDepositService(user, requestBody);
