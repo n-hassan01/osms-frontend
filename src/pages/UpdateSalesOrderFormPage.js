@@ -2,6 +2,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { useEffect, useRef, useState } from 'react';
+import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useParams } from 'react-router-dom';
 // @mui
@@ -34,7 +35,7 @@ import {
   getUserProfileDetails,
   // addSalesOrderHeaderService,
   updateSalesOrderHeaderService,
-  updateSalesOrderLineService
+  updateSalesOrderLineService,
 } from '../Services/ApiServices';
 
 // import { UserListHead } from '../sections/@dashboard/user';
@@ -182,6 +183,83 @@ export default function Page404() {
   });
   // row.selectedItem.unit_price ? row.selectedItem.unit_price : row.unit_selling_price
   console.log(sumTotalPrice);
+
+  const [csvData, setCsvData] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // const firstLine = soLineDetails.length > 0 ? soLineDetails[0] : {};
+
+        // Data for the first section with one value per row in the first column
+        const firstSectionData = [
+          [
+            'Order Number',
+            'Ordered Date',
+            'Customer',
+            'Ship to',
+            'Transport Type',
+            'Special Discount',
+            'Special Adjustment',
+            'Total Price',
+          ],
+          [
+            soHeaderDetails.order_number,
+            getFormattedDate(soHeaderDetails.ordered_date),
+            soHeaderDetails.distributor,
+            customerRows.ship_to_address ? customerRows.ship_to_address : soHeaderDetails.ship_to,
+            soHeaderDetails.shipping_method_code || '',
+            soHeaderDetails.special_discount,
+            soHeaderDetails.special_adjustment,
+            getFormattedPrice(sumTotalPrice),
+          ],
+        ];
+
+        // Header for the remaining line items
+        const remainingRowsHeader = [
+          'Item',
+          'UOM',
+          'Quantity',
+          'Offer Quantity',
+          'Total Quantity',
+          'Unit Price',
+          'Unit Offer Price',
+          'Total Price',
+        ];
+
+        // Remaining rows data for the items
+        const remainingLineRows = soLineDetails.map((line) => [
+          line.selectedItem?.description || line.selectedItemName || '',
+          line.selectedItem?.primary_uom_code || line.order_quantity_uom || '',
+          line.ordered_quantity || '',
+          line.offer_quantity ? line.ordered_quantity : 0,
+          parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10),
+          line.unit_price || line.unit_selling_price || 0,
+          line.ordered_quantity
+            ? getFormattedPrice(
+                (line.ordered_quantity * (line.unit_price || line.unit_selling_price)) /
+                  (parseInt(line.offer_quantity || 0, 10) + parseInt(line.ordered_quantity || 0, 10))
+              )
+            : line.unit_price || 0,
+          getFormattedPrice(
+            line.ordered_quantity *
+              (line.selectedItem.unit_price ? line.selectedItem.unit_price : line.unit_selling_price)
+          ),
+        ]);
+
+        const totalRow = ['', '', '', '', '', '', 'Total', getFormattedPrice(sumTotalPrice)];
+
+        const exportOrderLinesData = [...firstSectionData, [], remainingRowsHeader, ...remainingLineRows, totalRow];
+
+        console.log('Export Data:', exportOrderLinesData);
+        setCsvData(exportOrderLinesData);
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [soHeaderDetails, soLineDetails]);
 
   const saveHeader = async () => {
     const shipToValue = soHeaderDetails.ship_to ? soHeaderDetails.ship_to : '';
@@ -771,11 +849,14 @@ export default function Page404() {
         <title> COMS | Update Customer Order </title>
       </Helmet>
 
-      <Container>
+      <Container style={{ padding: '0px 25px', maxWidth: '100%' }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
             Update Customer Order
           </Typography>
+          <CSVLink data={csvData} className="btn btn-success">
+            Export Table
+          </CSVLink>
         </Stack>
         <div className="row g-3 align-items-center">
           <Stack direction="row" alignItems="center" justifyContent="flex-start">
@@ -1024,19 +1105,20 @@ export default function Page404() {
                     />
                   </th>
                   {/* <th>Line Number</th> */}
-                  <th style={{ width: '420px' }}>
+                  <th style={{ width: '420px', whiteSpace: 'nowrap' }}>
                     Item <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th style={{ width: '50px', textAlign: 'center' }}>UOM</th>
-                  <th style={{ textAlign: 'right' }}>
+                  <th style={{ width: '420px', whiteSpace: 'nowrap' }}>Item Code</th>
+                  <th style={{ width: '50px', textAlign: 'center', whiteSpace: 'nowrap' }}>UOM</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     Quantity <span style={{ color: 'red' }}>*</span>
                   </th>
-                  <th style={{ textAlign: 'right' }}>Offer Quantity</th>
-                  <th style={{ textAlign: 'right' }}>Total Quantity</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>Offer Quantity</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>Total Quantity</th>
                   {/* <th>Sold From Org ID</th> */}
-                  <th style={{ textAlign: 'right' }}>Unit Price</th>
-                  <th style={{ textAlign: 'right' }}>Unit Offer Price</th>
-                  <th style={{ textAlign: 'right' }}>Total Price</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>Unit Price</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>Unit Offer Price</th>
+                  <th style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>Total Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -1081,6 +1163,26 @@ export default function Page404() {
                             ))}
                           </ul>
                         )}
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          className="form-control"
+                          name="inventory_item_code"
+                          readOnly
+                          value={row.selectedItem.inventory_item_code}
+                          // style={{ width: '80px', textAlign: 'center' }}
+                          style={{
+                            textAlign: 'center',
+                            width: '25px',
+                            height: '50%',
+                            border: 'none',
+                            background: 'none',
+                            outline: 'none',
+                          }}
+                          defaultValue={row.inventory_item_code}
+                          onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                        />
                       </td>
                       <td>
                         <input
@@ -1257,13 +1359,14 @@ export default function Page404() {
                   <td />
                   <td />
                   <td />
+                  <td />
                   <td style={{ textAlign: 'right', paddingRight: '11px' }}>{getFormattedPrice(sumTotalPrice)}</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </form>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} mt={2}>
           <Grid item xs={3}>
             <ButtonGroup variant="contained" aria-label="outlined primary button group" spacing={2}>
               <Button
