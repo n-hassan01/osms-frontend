@@ -592,6 +592,7 @@ export default function DisplayCharts() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERSLIST.length) : 0;
   const filteredUsers = applySortFilter(USERSLIST, getComparator(order, orderBy), filterName);
+  const filteredSummaryUsers = applySortFilter(summaryCustomerList, getComparator(order, orderBy), filterName);
   const filteredItems = applySortFilter(items, getComparator(order, orderBy), filterItem);
   const filteredChilds = applySortFilter(childItems, getComparator(order, orderBy), filterChild);
   const isNotFound = !filteredUsers.length && !!filterName;
@@ -757,10 +758,12 @@ export default function DisplayCharts() {
 
   const handleClearDate = async (event) => {
     const response = await getAllBankDepositsForAccountsService(user);
+    const response2 = await getCustomerSummaryList();
     console.log(response.data);
 
-    if (response.status === 200) {
+    if (response.status === 200 && response2.status === 200) {
       setUsersList(response.data);
+      setSummaryCustomerList(response2.data);
       setToDate('');
       setFromDate('');
       setFilterInfo({
@@ -821,6 +824,7 @@ export default function DisplayCharts() {
     .map((option) => ({ value: option.short_name, label: option.short_name }));
 
   const handleDateFilter = async () => {
+    let filteredSummaryData = summaryCustomerList;
     let filteredData = USERSLIST;
 
     if (filterInfo.from && filterInfo.to) {
@@ -873,6 +877,14 @@ export default function DisplayCharts() {
       filteredData = filteredData.filter((item) => item.amount === filterInfo.amount);
     }
 
+    if (filterInfo.amount) {
+      filteredSummaryData = filteredSummaryData.filter((item) => item.amount === filterInfo.amount);
+    }
+
+    if (filterInfo.group) {
+      filteredSummaryData = filteredSummaryData.filter((item) => item.customer_group === filterInfo.group);
+    }
+
     if (filterInfo.group) {
       filteredData = filteredData.filter((item) => item.customer_group === filterInfo.group);
     }
@@ -891,6 +903,7 @@ export default function DisplayCharts() {
     console.log(filteredData);
 
     setUsersList(filteredData);
+    setSummaryCustomerList(filteredSummaryData);
   };
 
   return (
@@ -912,7 +925,7 @@ export default function DisplayCharts() {
         }}
       >
         <div style={{ width: '65%' }}>
-          <h6>Shop list</h6>
+          <h6>Data Visualization</h6>
           <div>
             <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
@@ -926,14 +939,14 @@ export default function DisplayCharts() {
                         order={order}
                         orderBy={orderBy}
                         headLabel={TABLE_HEAD_SUMMARY}
-                        rowCount={summaryCustomerList.length}
+                        rowCount={filteredSummaryUsers.length}
                         numSelected={selected.length}
                         onRequestSort={handleRequestSort}
                         onSelectAllClick={handleSelectAllClick}
                         enableReadonly
                       />
                       <TableBody>
-                        {summaryCustomerList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                        {filteredSummaryUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                           const {
                             amount,
 
@@ -948,7 +961,7 @@ export default function DisplayCharts() {
                                 {customer_group}
                               </TableCell>
                               <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                                {amount}
+                                {getFormattedPrice(amount)}
                               </TableCell>
                             </TableRow>
                           );
@@ -983,7 +996,7 @@ export default function DisplayCharts() {
                   <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={summaryCustomerList.length}
+                    count={filteredSummaryUsers.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -1059,124 +1072,64 @@ export default function DisplayCharts() {
                                   view
                                 </button>
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {bank_status}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {remarks}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {getFormattedDateWithTime(deposit_date)}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {getFormattedDateWithTime(creation_date)}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {company_bank}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {company_account}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {company_name}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {customer_code}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {customer_name}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {customer_group}
                               </TableCell>
-                              <TableCell
-                                align="right"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="right" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {getFormattedPrice(amount)}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {invoice_number}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {deposit_type_name}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {depositor_bank}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {depositor_branch}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {receipt_number}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {depositor_name}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {employee_name}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {user_name}
                               </TableCell>
-                              <TableCell
-                                align="left"
-                                style={{ fontSize: '10px', whiteSpace: 'nowrap', padding: '5px' }}
-                              >
+                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
                                 {reject_reason}
                               </TableCell>
                             </TableRow>
