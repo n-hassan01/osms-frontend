@@ -50,6 +50,7 @@ import UpdateMainSystemMenu from './sections/@dashboard/user/UpdateMainSystemMen
 import UpdateMtlTransactionTypes from './sections/@dashboard/user/UpdateMtlTransactionTypes';
 // import getCookieService from './Services/GetCookieService';
 import BarChart from './DataVisualization/BarChart';
+import DisplayCharts from './DataVisualization/DisplayCharts';
 import DrillDownPage from './DataVisualization/DrillDown';
 import DrillDownCustomerDepositAnalytic from './DataVisualization/DrillDownCustomerDepositAnalytic';
 import Gauge from './DataVisualization/Gauge';
@@ -200,6 +201,7 @@ export default function Router() {
         { path: 'uploadreconcileddepositsexcel', element: <UploadReconciledDepositsExcel /> },
         { path: 'addCustomersFromSap', element: <AddCustomerFromSapPage /> },
         { path: 'manage-so/admin', element: <ManageSoAdminPage /> },
+        { path: 'displayCharts', element: <DisplayCharts /> },
       ],
     },
 
