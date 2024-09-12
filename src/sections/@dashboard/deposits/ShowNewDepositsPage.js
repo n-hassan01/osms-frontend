@@ -321,6 +321,7 @@ export default function UserPage() {
   const TABLE_HEAD = [
     { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
     { id: 'status', label: 'Status', alignRight: false },
+    { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
     { id: 'remarks', label: 'Remarks', alignRight: false },
     { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
     { id: 'entry_date', label: 'Entry Date', alignRight: false },
@@ -560,6 +561,7 @@ export default function UserPage() {
 
   const exportData = filteredUsers.map((item) => ({
     BankReconId: item.bank_recon_id,
+    DocValue: item.doc_sequence_value,
     Remarks: '',
     DepositDate: getFormattedDateWithTime(item.deposit_date),
     EntryDate: getFormattedDateWithTime(item.creation_date),
@@ -697,6 +699,7 @@ export default function UserPage() {
                       customer_code,
                       customer_group,
                       creation_date,
+                      doc_sequence_value,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -718,6 +721,9 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {bank_status}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {doc_sequence_value}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
