@@ -6,40 +6,45 @@ const Progress_bar = ({ target, deposit, maxDeposit, height }) => {
   console.log(target, deposit, maxDeposit, height);
 
   // Normalize the deposit based on the maximum deposit value
-  const progress = maxDeposit > 0 ? (deposit / maxDeposit) * 100 : 0; // Cap progress at 100%
+  const progress = maxDeposit > 0 ? (deposit / maxDeposit) * 100 : 0;
   console.log(progress);
+
   let bgColor;
   if (progress < 10) {
-    bgColor = 'Red'; // Low progress
+    bgColor = 'Red';
   } else if (progress < 20) {
-    bgColor = 'Crimson'; // Medium progress
+    bgColor = 'Crimson';
   } else if (progress < 30) {
-    bgColor = 'IndianRed'; // Medium progress
+    bgColor = 'IndianRed';
   } else if (progress < 40) {
-    bgColor = 'Orange'; // Medium progress
+    bgColor = 'Orange';
   } else if (progress < 50) {
-    bgColor = 'DarkOrange'; // Medium progress
+    bgColor = 'DarkOrange';
   } else if (progress < 60) {
-    bgColor = 'SeaGreen'; // Medium progress
+    bgColor = 'SeaGreen';
   } else if (progress < 70) {
-    bgColor = 'Olive'; // Medium progress
+    bgColor = 'Olive';
   } else if (progress < 80) {
-    bgColor = 'SpringGreen'; // Medium progress
+    bgColor = 'SpringGreen';
   } else if (progress < 90) {
-    bgColor = 'MediumSeaGreen'; // Medium progress
+    bgColor = 'MediumSeaGreen';
   } else {
-    bgColor = 'green'; // High progress
+    bgColor = 'green';
   }
 
   return (
     <div
       className="progress"
       style={{
-        height: height,
-        backgroundColor: 'blue', // Parent background color
+        display: 'flex', // Enable flexbox on parent
+        alignItems: 'center', // Center child vertically
+        height: height, // Parent height
+        width: '100%', // Full width
+        maxWidth: '500px', // Maximum width
+        backgroundColor: 'MediumBlue', // Parent background color
+        margin: '0px 0', // Vertical margin
       }}
     >
-      {/* Height is dynamic */}
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
         role="progressbar"
@@ -47,8 +52,13 @@ const Progress_bar = ({ target, deposit, maxDeposit, height }) => {
         aria-valuemin="0"
         aria-valuemax="100"
         style={{
-          width: `${Math.min(progress, 100)}%`,
-          backgroundColor: 'orange', // Child background color
+          width: `${Math.min(progress, 100)}%`, // Adjust width based on progress
+          backgroundColor: 'DarkOrange', // Dynamic background color
+          height: height * 0.7,
+          borderTopRightRadius: '8px', // Add border radius only to the top-right
+          borderBottomRightRadius: '8px', // Add border radius only to the bottom-right
+          borderTopLeftRadius: progress >= 100 ? '8px' : '0px', // Ensure the left side has a radius if progress is 100%
+          borderBottomLeftRadius: progress >= 100 ? '8px' : '0px', // Child height is 70% of the parent height
         }}
       >
         {`${progress.toFixed(2)}%`}
