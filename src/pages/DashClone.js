@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../_css/Utils.css';
 import { useNavItem } from '../context/NavContext';
 import DashboardAppPage from './DashboardAppPage';
 import DashboardAppPage2 from './DashboardAppPage2';
@@ -59,7 +60,7 @@ export default function BasicTabs() {
   return (
     <Box>
       {/* <Box sx={{ borderBottom: 1, borderColor: 'white' }} style={{ marginLeft: '73px' }}> */}
-      <Box sx={{ borderBottom: 1, borderColor: 'white' }}>
+      <Box className="indexing" sx={{ borderBottom: 1, borderColor: 'white' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab {...a11yProps(0)} label="Notifications" />
           <Tab {...a11yProps(1)} label="Notifications History" />
