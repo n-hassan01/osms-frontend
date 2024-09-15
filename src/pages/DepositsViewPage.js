@@ -953,7 +953,7 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <div style={{ margin: '0 22px' }}>
+      <div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collections
