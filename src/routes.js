@@ -66,7 +66,6 @@ import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
 import BrandingAssetsViewPage from './pages/BrandingAssetsReportPage';
 import CustomerManagementPage from './pages/CustomerManagementPage';
 import DepositEntryForm from './pages/DepositEntryForm';
-import DepositsViewPage from './pages/DepositsViewPage';
 import ItemsDashBoard from './pages/ItemsDashBoard';
 import ManageAccountPage from './pages/ManageAccountPage';
 import ManageBankFormPage from './pages/ManageBankFormPage';
@@ -87,6 +86,7 @@ import UpdateMtlCategories from './pages/UpdateMtlCategories';
 import UploadReconciledDepositsExcel from './pages/UploadReconciledDepositsExcel';
 import UserActionAssignmentPage from './pages/UserActionAssignmentPage';
 import VatposIntegrationService from './pages/VatposIntegrationService';
+import DepositsViewPage from './pages/ViewCollectionsPage';
 import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
