@@ -380,6 +380,7 @@ export default function UserPage() {
     TABLE_HEAD = [
       { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
       { id: 'status', label: 'Status', alignRight: false },
+      { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
       { id: 'remarks', label: 'Remarks', alignRight: false },
       { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
       { id: 'entry_date', label: 'Entry Date', alignRight: false },
@@ -406,6 +407,7 @@ export default function UserPage() {
     TABLE_HEAD = [
       { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
       { id: 'status', label: 'Status', alignRight: false },
+      { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
       { id: 'remarks', label: 'Remarks', alignRight: false },
       { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
       { id: 'entry_date', label: 'Entry Date', alignRight: false },
@@ -655,6 +657,7 @@ export default function UserPage() {
 
   const exportData = filteredUsers.map((item) => ({
     Status: item.status,
+    'Doc Value': item.doc_sequence_value,
     'Deposit Date': getFormattedDateWithTime(item.deposit_date),
     'Entry Date': getFormattedDateWithTime(item.creation_date),
     'Company Bank': item.company_bank,
@@ -950,7 +953,7 @@ export default function UserPage() {
         <title> COMS | Deposits </title>
       </Helmet>
 
-      <div style={{ margin: '0 22px' }}>
+      <div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collections
@@ -1037,6 +1040,7 @@ export default function UserPage() {
                       customer_code,
                       customer_group,
                       creation_date,
+                      doc_sequence_value,
                     } = row;
 
                     const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
@@ -1053,6 +1057,9 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {bank_status}
+                        </TableCell>
+                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                          {doc_sequence_value}
                         </TableCell>
                         <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
                           {remarks}
