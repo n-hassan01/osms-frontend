@@ -934,7 +934,7 @@ export default function DisplayCharts() {
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
                 <Typography>Customer Summary</Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
                 <h3 className="heading">Progress Bars</h3>
 
                 {filteredSummaryUsers.length > 0
@@ -949,7 +949,7 @@ export default function DisplayCharts() {
                       });
                       console.log('Deposits:', deposits);
 
-                      // Find the maximum deposit
+                      // Set a fixed maximum deposit (example value)
                       const maxDeposit = 99999999;
                       console.log('Max Deposit:', maxDeposit);
 
@@ -960,12 +960,21 @@ export default function DisplayCharts() {
 
                         // Pass target, deposit, and maxDeposit values to the Progress_bar component
                         return (
-                          <div key={index}>
-                            {/* Display customer group */}
-                            <h4>{customer.customer_group}</h4>
+                          <div key={index} style={{ marginBottom: '10px' }}>
+                            {/* Container with flexbox to align elements horizontally */}
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                              {/* Display customer group with fixed width for consistent spacing */}
+                              <h6 style={{ marginRight: '0px', width: '150px' }}>{customer.customer_group}</h6>
 
-                            {/* Render dynamic progress bar with normalized percentage */}
-                            <Progressbar target={target} deposit={deposit} maxDeposit={maxDeposit} height={30} />
+                              {/* Progress bar will take up the remaining space */}
+                              <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                                {/* Progress bar */}
+                                <Progressbar target={target} deposit={deposit} maxDeposit={maxDeposit} height={30} />
+
+                                {/* 100% next to the progress bar with no space */}
+                                <h6 style={{ marginLeft: '15px', whiteSpace: 'nowrap' }}>100%</h6>
+                              </div>
+                            </div>
                           </div>
                         );
                       });
