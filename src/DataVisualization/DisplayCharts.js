@@ -31,32 +31,34 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import { sentenceCase } from 'change-case';
 import Select from 'react-select';
 import {
-    dowloadBankDepositReceiptService,
-    getAllBankDepositsForAccountsService,
-    getBankReconIdDetails,
-    getBrandingAssetsChildItemsService,
-    getBrandingAssetsItemImagesService,
-    getBrandingAssetsItemsService,
-    getCustomerSummaryList,
-    getRegionService,
-    getShopsListService,
-    getUserProfileDetails,
+  dowloadBankDepositReceiptService,
+  getAllBankDepositsForAccountsService,
+  getBankReconIdDetails,
+  getBrandingAssetsChildItemsService,
+  getBrandingAssetsItemImagesService,
+  getBrandingAssetsItemsService,
+  getCustomerSummaryList,
+  getRegionService,
+  getShopsListService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 // components
+import Progressbar from '../components/ProgressBar/Progress_bar';
 import Scrollbar from '../components/scrollbar';
+
 // @mui
 import { useUser } from '../context/UserContext';
 
@@ -393,7 +395,8 @@ export default function DisplayCharts() {
 
   const TABLE_HEAD_SUMMARY = [
     { id: 'customer_group', label: 'Customer Group', alignRight: false },
-    { id: 'amount', label: 'Amount', alignRight: false },
+    { id: 'deposit_amount', label: 'Deposit Amount', alignRight: false },
+    { id: 'target_amount', label: 'Target Amount', alignRight: false },
   ];
 
   const selectedUsers = [];
@@ -932,77 +935,42 @@ export default function DisplayCharts() {
                 <Typography>Customer Summary</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Scrollbar>
-                  <TableContainer sx={{ minWidth: 800 }}>
-                    <Table ref={tableref}>
-                      <UserListHead
-                        order={order}
-                        orderBy={orderBy}
-                        headLabel={TABLE_HEAD_SUMMARY}
-                        rowCount={filteredSummaryUsers.length}
-                        numSelected={selected.length}
-                        onRequestSort={handleRequestSort}
-                        onSelectAllClick={handleSelectAllClick}
-                        enableReadonly
-                      />
-                      <TableBody>
-                        {filteredSummaryUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                          const {
-                            amount,
+                <h3 className="heading">Progress Bars</h3>
 
-                            customer_group,
-                          } = row;
+                {filteredSummaryUsers.length > 0
+                  ? (() => {
+                      // Extract deposit values and convert them to numbers
+                      const deposits = filteredSummaryUsers.map((customer) => {
+                        const deposit = Number(customer.deposit_amount);
+                        if (isNaN(deposit)) {
+                          console.error(`Invalid deposit amount: ${customer.deposit_amount}`);
+                        }
+                        return deposit;
+                      });
+                      console.log('Deposits:', deposits);
 
-                          const selectedUser = selected.indexOf(customer_group) !== -1;
+                      // Find the maximum deposit
+                      const maxDeposit = 99999999;
+                      console.log('Max Deposit:', maxDeposit);
 
-                          return (
-                            <TableRow hover key={customer_group} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                              <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                                {customer_group}
-                              </TableCell>
-                              <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                                {getFormattedPrice(amount)}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                        {emptyRows > 0 && (
-                          <TableRow style={{ height: 53 * emptyRows }}>
-                            <TableCell colSpan={6} />
-                          </TableRow>
-                        )}
-                      </TableBody>
+                      return filteredSummaryUsers.map((customer, index) => {
+                        // Convert target_amount and deposit_amount to numbers
+                        const target = Number(customer.target_amount);
+                        const deposit = Number(customer.deposit_amount);
 
-                      {isNotFound && (
-                        <TableBody>
-                          <TableRow>
-                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                              <Paper sx={{ textAlign: 'center' }}>
-                                <Typography variant="h6" paragraph>
-                                  Not found
-                                </Typography>
-                                <Typography variant="body2">
-                                  No results found for &nbsp;
-                                  <strong>&quot;{filterName}&quot;</strong>.
-                                  <br /> Try checking for typos or using complete words.
-                                </Typography>
-                              </Paper>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      )}
-                    </Table>
-                  </TableContainer>
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={filteredSummaryUsers.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </Scrollbar>
+                        // Pass target, deposit, and maxDeposit values to the Progress_bar component
+                        return (
+                          <div key={index}>
+                            {/* Display customer group */}
+                            <h4>{customer.customer_group}</h4>
+
+                            {/* Render dynamic progress bar with normalized percentage */}
+                            <Progressbar target={target} deposit={deposit} maxDeposit={maxDeposit} height={30} />
+                          </div>
+                        );
+                      });
+                    })()
+                  : null}
               </AccordionDetails>
             </Accordion>
             <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
@@ -1179,11 +1147,76 @@ export default function DisplayCharts() {
                 <Typography>Collapsible Group Item #3</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet
-                  blandit leo lobortis eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                  malesuada lacus ex, sit amet blandit leo lobortis eget.
-                </Typography>
+                <Scrollbar>
+                  <TableContainer sx={{ minWidth: 800 }}>
+                    <Table ref={tableref}>
+                      <UserListHead
+                        order={order}
+                        orderBy={orderBy}
+                        headLabel={TABLE_HEAD_SUMMARY}
+                        rowCount={filteredSummaryUsers.length}
+                        numSelected={selected.length}
+                        onRequestSort={handleRequestSort}
+                        onSelectAllClick={handleSelectAllClick}
+                        enableReadonly
+                      />
+                      <TableBody>
+                        {filteredSummaryUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                          const { deposit_amount, target_amount, customer_group } = row;
+
+                          const selectedUser = selected.indexOf(customer_group) !== -1;
+
+                          return (
+                            <TableRow hover key={customer_group} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                              <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                                {customer_group}
+                              </TableCell>
+                              <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                                {getFormattedPrice(deposit_amount)}
+                              </TableCell>
+                              <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                                {getFormattedPrice(target_amount)}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                        {emptyRows > 0 && (
+                          <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={6} />
+                          </TableRow>
+                        )}
+                      </TableBody>
+
+                      {isNotFound && (
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                              <Paper sx={{ textAlign: 'center' }}>
+                                <Typography variant="h6" paragraph>
+                                  Not found
+                                </Typography>
+                                <Typography variant="body2">
+                                  No results found for &nbsp;
+                                  <strong>&quot;{filterName}&quot;</strong>.
+                                  <br /> Try checking for typos or using complete words.
+                                </Typography>
+                              </Paper>
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      )}
+                    </Table>
+                  </TableContainer>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={filteredSummaryUsers.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </Scrollbar>
               </AccordionDetails>
             </Accordion>
           </div>
