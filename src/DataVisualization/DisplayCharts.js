@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 /* eslint-disable camelcase */
 /* eslint-disable spaced-comment */
 /* eslint-disable dot-notation */
@@ -939,7 +940,6 @@ export default function DisplayCharts() {
 
                 {filteredSummaryUsers.length > 0
                   ? (() => {
-                      // Extract deposit values and convert them to numbers
                       const deposits = filteredSummaryUsers.map((customer) => {
                         const deposit = Number(customer.deposit_amount);
                         if (isNaN(deposit)) {
@@ -949,35 +949,63 @@ export default function DisplayCharts() {
                       });
                       console.log('Deposits:', deposits);
 
-                      // Set a fixed maximum deposit (example value)
                       const maxDeposit = 99999999;
                       console.log('Max Deposit:', maxDeposit);
 
-                      return filteredSummaryUsers.map((customer, index) => {
-                        // Convert target_amount and deposit_amount to numbers
-                        const target = Number(customer.target_amount);
-                        const deposit = Number(customer.deposit_amount);
+                      return (
+                        <div>
+                          {filteredSummaryUsers.map((customer, index) => {
+                            const target = Number(customer.target_amount);
+                            const deposit = Number(customer.deposit_amount);
 
-                        // Pass target, deposit, and maxDeposit values to the Progress_bar component
-                        return (
-                          <div key={index} style={{ marginBottom: '10px' }}>
-                            {/* Container with flexbox to align elements horizontally */}
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                              {/* Display customer group with fixed width for consistent spacing */}
-                              <h6 style={{ marginRight: '0px', width: '150px' }}>{customer.customer_group}</h6>
+                            return (
+                              <div key={index} style={{ marginBottom: '10px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                                  <h6 style={{ marginRight: '15px', width: '150px', whiteSpace: 'nowrap' }}>
+                                    {customer.customer_group}
+                                  </h6>
 
-                              {/* Progress bar will take up the remaining space */}
-                              <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-                                {/* Progress bar */}
-                                <Progressbar target={target} deposit={deposit} maxDeposit={maxDeposit} height={30} />
+                                  <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                                    <Progressbar
+                                      target={target}
+                                      deposit={deposit}
+                                      maxDeposit={maxDeposit}
+                                      height={35}
+                                    />
 
-                                {/* 100% next to the progress bar with no space */}
-                                <h6 style={{ marginLeft: '15px', whiteSpace: 'nowrap' }}>100%</h6>
+                                    <h6 style={{ marginLeft: '5px', marginTop: '5px', whiteSpace: 'nowrap' }}>100%</h6>
+                                  </div>
+                                </div>
                               </div>
+                            );
+                          })}
+
+                          <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginRight: '15px' }}>
+                              <div
+                                style={{
+                                  width: '20px',
+                                  height: '10px',
+                                  backgroundColor: 'SteelBlue',
+                                  marginRight: '5px',
+                                }}
+                              ></div>
+                              <span>Expectation</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <div
+                                style={{
+                                  width: '20px',
+                                  height: '10px',
+                                  backgroundColor: 'DarkOrange',
+                                  marginRight: '5px',
+                                }}
+                              ></div>
+                              <span>Progress</span>
                             </div>
                           </div>
-                        );
-                      });
+                        </div>
+                      );
                     })()
                   : null}
               </AccordionDetails>
