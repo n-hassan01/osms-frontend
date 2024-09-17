@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const Progress_bar = ({ target, deposit, maxDeposit, height }) => {
   console.log(target, deposit, maxDeposit, height);
 
-  // Normalize the deposit based on the maximum deposit value
   const progress = maxDeposit > 0 ? (deposit / maxDeposit) * 100 : 0;
   console.log(progress);
 
@@ -36,29 +35,33 @@ const Progress_bar = ({ target, deposit, maxDeposit, height }) => {
     <div
       className="progress"
       style={{
-        display: 'flex', // Enable flexbox on parent
-        alignItems: 'center', // Center child vertically
-        height: height, // Parent height
-        width: '100%', // Full width
-        maxWidth: '500px', // Maximum width
-        backgroundColor: 'MediumBlue', // Parent background color
-        margin: '0px 0', // Vertical margin
+        display: 'flex',
+        alignItems: 'center',
+        height: height,
+        width: '100%',
+        maxWidth: '500px',
+        backgroundColor: 'SteelBlue',
+        margin: '0px 0',
+        border: 'none', // Ensures no border is applied
+        borderRadius: '0px', // Ensures no border-radius is applied
       }}
     >
       <div
-        className="progress-bar progress-bar-striped progress-bar-animated"
+        // className="progress-bar progress-bar-striped progress-bar-animated"
+        className="progress-bar"
         role="progressbar"
         aria-valuenow={progress.toFixed(2)}
         aria-valuemin="0"
         aria-valuemax="100"
         style={{
-          width: `${Math.min(progress, 100)}%`, // Adjust width based on progress
-          backgroundColor: 'DarkOrange', // Dynamic background color
-          height: height * 0.7,
-          borderTopRightRadius: '8px', // Add border radius only to the top-right
-          borderBottomRightRadius: '8px', // Add border radius only to the bottom-right
-          borderTopLeftRadius: progress >= 100 ? '8px' : '0px', // Ensure the left side has a radius if progress is 100%
-          borderBottomLeftRadius: progress >= 100 ? '8px' : '0px', // Child height is 70% of the parent height
+          width: `${Math.min(progress, 100)}%`,
+          backgroundColor: 'DarkOrange',
+          height: height * 0.5,
+          color: 'black',
+          // borderTopRightRadius: '8px',
+          // borderBottomRightRadius: '8px',
+          // borderTopLeftRadius: progress >= 100 ? '8px' : '0px',
+          // borderBottomLeftRadius: progress >= 100 ? '8px' : '0px',
         }}
       >
         {`${progress.toFixed(2)}%`}
