@@ -55,7 +55,7 @@ export default function DashboardAppPage() {
             </Grid>
 
             {/* Right-aligned Grid item */}
-            <Grid item xs={12} md={6} style={{ marginLeft: '20px', height: 'auto' }}>
+            <Grid item xs={12} md={6}>
               <AppCurrentVisits
                 title="Total Sales Order"
                 chartData={[

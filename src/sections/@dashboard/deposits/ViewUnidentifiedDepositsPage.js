@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import { sentenceCase } from 'change-case';
 import { format, parse } from 'date-fns';
 import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -107,7 +107,7 @@ function getFormattedDateWithTime(value) {
 }
 
 export default function UserPage() {
-  // const tableref = useRef(null);
+  const tableref = useRef(null);
 
   const navigate = useNavigate();
 
@@ -663,7 +663,7 @@ export default function UserPage() {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
+              <Table ref={tableref}>
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
@@ -721,74 +721,71 @@ export default function UserPage() {
                             Confirm
                           </button>
                         </TableCell> */}
-                        <TableCell align="left">
+                        <TableCell align="left" className="viewTable">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
                           </button>
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {bank_status}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {remarks}
                         </TableCell>
 
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(deposit_date)}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(creation_date)}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {company_bank}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {company_account}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {company_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {customer_code}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {customer_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {customer_group}
                         </TableCell>
-                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="right" className="viewTable">
                           {getFormattedPrice(amount)}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {invoice_number}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {deposit_type_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {depositor_bank}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {depositor_branch}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {receipt_number}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {depositor_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {employee_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {user_name}
                         </TableCell>
-                        {/* <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
-                          {reject_reason}
-                        </TableCell> */}
                       </TableRow>
                     );
                   })}
