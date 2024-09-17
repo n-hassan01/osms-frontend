@@ -273,7 +273,7 @@ export default function ShowAllWfNotifications() {
         <title> HR Locations | COMS </title>
       </Helmet>
 
-      <Container className="paddingZero">
+      <Container className="paddingZero fullWidth">
         <Stack mb={1}>
           <Typography variant="h5" gutterBottom>
             List for Approval
