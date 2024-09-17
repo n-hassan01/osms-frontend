@@ -57,6 +57,8 @@ import {
 import Iconify from '../components/iconify';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
+// css
+import '../sections/@dashboard/deposits/depositStyle.css';
 
 // ----------------------------------------------------------------------
 
@@ -954,7 +956,7 @@ export default function UserPage() {
       </Helmet>
 
       <div>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} className="actionButton">
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collections
           </Typography> */}
