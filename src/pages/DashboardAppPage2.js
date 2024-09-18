@@ -21,7 +21,7 @@ export default function DashboardAppPage() {
         <title> Dashboard | COMS </title>
       </Helmet>
 
-      <Container maxWidth="xl" className="paddingZero">
+      <Container maxWidth={false} disableGutters style={{ width: '100%' }} className="paddingZero">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6} lg={12}>
             <ShowAllWfNotifications />
@@ -55,7 +55,7 @@ export default function DashboardAppPage() {
             </Grid>
 
             {/* Right-aligned Grid item */}
-            <Grid item xs={12} md={6} style={{ marginLeft: '20px', height: 'auto' }}>
+            <Grid item xs={12} md={6}>
               <AppCurrentVisits
                 title="Total Sales Order"
                 chartData={[

@@ -57,6 +57,8 @@ import {
 import Iconify from '../components/iconify';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
+// css
+import '../sections/@dashboard/deposits/depositStyle.css';
 
 // ----------------------------------------------------------------------
 
@@ -954,7 +956,7 @@ export default function UserPage() {
       </Helmet>
 
       <div>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} className="actionButton">
           {/* <Typography variant="h4" gutterBottom>
             Deposit Collections
           </Typography> */}
@@ -1050,75 +1052,75 @@ export default function UserPage() {
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cash_receipt_id)} />
                         </TableCell> */}
-                        <TableCell align="left">
+                        <TableCell align="left" className="viewTable">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
                           </button>
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {bank_status}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {doc_sequence_value}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {remarks}
                         </TableCell>
 
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(deposit_date)}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {/* {getFormattedDate(deposit_date)} */}
                           {getFormattedDateWithTime(creation_date)}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {company_bank}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {company_account}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {company_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {customer_code}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {customer_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {customer_group}
                         </TableCell>
-                        <TableCell align="right" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="right" className="viewTable">
                           {getFormattedPrice(amount)}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {invoice_number}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {deposit_type_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {depositor_bank}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {depositor_branch}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {receipt_number}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {depositor_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {employee_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {user_name}
                         </TableCell>
-                        <TableCell align="left" style={{ whiteSpace: 'nowrap' }}>
+                        <TableCell align="left" className="viewTable">
                           {reject_reason}
                         </TableCell>
                         {canEdit && (
