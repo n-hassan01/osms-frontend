@@ -24,7 +24,7 @@ import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import { styled } from '@mui/material/styles';
-import { parse } from 'date-fns';
+import { format, parse } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -47,6 +47,7 @@ import Select from 'react-select';
 import {
   dowloadBankDepositReceiptService,
   getAllBankDepositsForAccountsService,
+  getBankDepositViewFilterByDateService,
   getBankReconIdDetails,
   getBrandingAssetsChildItemsService,
   getBrandingAssetsItemImagesService,
@@ -741,9 +742,13 @@ export default function DisplayCharts() {
   console.log(filterInfo);
 
   const handleDateChange = (date, name) => {
-    const formattedDate = format(date, 'dd/MM/yy');
-    setFilterInfo({ ...filterInfo, [name]: formattedDate });
-    // setFilterDetails1({ ...filterDetails1, from: formattedDate });
+    if (date) {
+      const formattedDate = format(date, 'dd/MM/yy'); // Make sure 'format' is from 'date-fns' or similar library
+      setFilterInfo((prevInfo) => ({
+        ...prevInfo,
+        [name]: formattedDate, // Update the 'from' or 'to' field
+      }));
+    }
   };
 
   const [fromDate, setFromDate] = useState(null);
@@ -827,9 +832,33 @@ export default function DisplayCharts() {
     .filter((option) => option.short_name.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({ value: option.short_name, label: option.short_name }));
 
+  function convertToFrontendDate(backendDateString) {
+    try {
+      const date = new Date(backendDateString);
+
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date');
+      }
+      const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      const dayOfMonth = date.getDate().toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const time = date.toTimeString().split(' ')[0];
+      // const timezone = date.toTimeString().split(' ')[1];
+      const frontendDateString = `${day} ${month} ${dayOfMonth} ${year} ${time}`;
+
+      return frontendDateString;
+    } catch (error) {
+      console.error('Error while converting date:', error);
+      return null;
+    }
+  }
+
   const handleDateFilter = async () => {
     let filteredSummaryData = summaryCustomerList;
     let filteredData = USERSLIST;
+    console.log(filterInfo);
+
     if (filterInfo.from && filterInfo.to) {
       const toDate = parseDate(filterInfo.to);
       const fromDate = parseDate(filterInfo.from);
@@ -1345,9 +1374,9 @@ export default function DisplayCharts() {
                 <span className="col-form-label" style={{ marginRight: '10px' }}>
                   From
                 </span>
-                <div style={{ width: '160px', marginLeft: '20%' }}>
+                <div style={{ width: '160px', marginLeft: '18%' }}>
                   <DatePicker
-                    selected={filterInfo.from ? parseDate(filterInfo.from) : null}
+                    selected={filterInfo.from ? parse(filterInfo.from, 'dd/MM/yy', new Date()) : null}
                     onChange={(date) => handleDateChange(date, 'from')}
                     dateFormat="dd/MM/yy"
                     maxDate={new Date()}
@@ -1362,12 +1391,11 @@ export default function DisplayCharts() {
                 <span className="col-form-label" style={{ marginRight: '10px' }}>
                   To
                 </span>
-                <div style={{ width: '160px', marginLeft: '28%' }}>
+                <div style={{ width: '160px', marginLeft: '25%' }}>
                   <DatePicker
-                    selected={filterInfo.to ? parseDate(filterInfo.to) : null}
+                    selected={filterInfo.to ? parse(filterInfo.to, 'dd/MM/yy', new Date()) : null}
                     onChange={(date) => handleDateChange(date, 'to')}
                     dateFormat="dd/MM/yy"
-                    minDate={parseDate(filterInfo.from)}
                     maxDate={new Date()}
                     placeholderText="dd/mm/yy"
                     className="form-control"
@@ -1413,7 +1441,7 @@ export default function DisplayCharts() {
                 <span className="col-form-label" style={{ marginRight: '10px' }}>
                   Customer
                 </span>
-                <div style={{ width: '220px', marginLeft: '18px' }}>
+                <div style={{ width: '220px', marginLeft: '20px' }}>
                   <Select
                     id="customer"
                     name="customer"
