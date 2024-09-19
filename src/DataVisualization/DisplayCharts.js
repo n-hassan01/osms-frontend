@@ -909,6 +909,7 @@ export default function DisplayCharts() {
     setUsersList(filteredData);
     setSummaryCustomerList(filteredSummaryData);
   };
+  const [viewMode, setViewMode] = useState('percentage');
 
   return (
     <>
@@ -936,78 +937,154 @@ export default function DisplayCharts() {
                 <Typography>Customer Summary</Typography>
               </AccordionSummary>
               <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
-                <h3 className="heading">Progress Bars</h3>
+                <div style={{ height: '50%', overflowY: 'auto' }}>
+                  {/* Flex container to align heading and radio buttons side by side */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      // justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    <h3 className="heading">Progress Bars</h3>
 
-                {filteredSummaryUsers.length > 0
-                  ? (() => {
-                      const deposits = filteredSummaryUsers.map((customer) => {
+                    {/* Radio buttons aligned to the right of the heading */}
+                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4%' }}>
+                      <label style={{ marginRight: '10px' }}>
+                        <input
+                          type="radio"
+                          value="percentage"
+                          checked={viewMode === 'percentage'}
+                          onChange={() => setViewMode('percentage')}
+                        />
+                        Percentage
+                      </label>
+                      <label>
+                        <input
+                          type="radio"
+                          value="amount"
+                          checked={viewMode === 'amount'}
+                          onChange={() => setViewMode('amount')}
+                        />
+                        Amount
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Rest of the code with the progress bars */}
+                  {filteredSummaryUsers.length > 0 && (
+                    <div>
+                      {filteredSummaryUsers.map((customer, index) => {
+                        const target = Number(customer.target_amount);
                         const deposit = Number(customer.deposit_amount);
-                        if (isNaN(deposit)) {
-                          console.error(`Invalid deposit amount: ${customer.deposit_amount}`);
-                        }
-                        return deposit;
-                      });
-                      console.log('Deposits:', deposits);
 
-                      const maxDeposit = 99999999;
-                      console.log('Max Deposit:', maxDeposit);
+                        return (
+                          <div key={index} style={{ marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                              <h6 style={{ marginRight: '15px', width: '150px', whiteSpace: 'nowrap' }}>
+                                {customer.customer_group}
+                              </h6>
 
-                      return (
-                        <div>
-                          {filteredSummaryUsers.map((customer, index) => {
-                            const target = Number(customer.target_amount);
-                            const deposit = Number(customer.deposit_amount);
+                              <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', marginLeft: '50px' }}>
+                                {viewMode === 'percentage' ? (
+                                  <>
+                                    <Progressbar target={target} deposit={deposit} maxDeposit={99999999} height={35} />
+                                    <h6 style={{ marginLeft: '15px', marginTop: '5px', whiteSpace: 'nowrap' }}>100%</h6>
+                                  </>
+                                ) : (
+                                  <>
+                                    <div
+                                      className="progress"
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        height: 35,
+                                        width: '100%',
+                                        maxWidth: '500px',
+                                        backgroundColor: 'SteelBlue',
+                                        margin: '0px 0',
+                                        border: 'none',
+                                        borderRadius: '0px',
+                                        position: 'relative',
+                                      }}
+                                    >
+                                      <div
+                                        className="progress-bar progress-bar-striped progress-bar-animated"
+                                        role="progressbar"
+                                        aria-valuenow={deposit.toFixed(2)}
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        style={{
+                                          width: `${Math.min((deposit / 99999999) * 100, 100)}%`,
+                                          backgroundColor: 'darkorange',
+                                          height: 35 * 0.5,
+                                          color: 'black',
+                                          position: 'relative',
+                                        }}
+                                      >
+                                        {deposit >= 97905418 && (
+                                          <span style={{ marginLeft: '85%' }}>{`${getFormattedPrice(deposit)}`}</span>
+                                        )}
+                                      </div>
 
-                            return (
-                              <div key={index} style={{ marginBottom: '10px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                                  <h6 style={{ marginRight: '15px', width: '150px', whiteSpace: 'nowrap' }}>
-                                    {customer.customer_group}
-                                  </h6>
-
-                                  <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-                                    <Progressbar
-                                      target={target}
-                                      deposit={deposit}
-                                      maxDeposit={maxDeposit}
-                                      height={35}
-                                    />
-
-                                    <h6 style={{ marginLeft: '5px', marginTop: '5px', whiteSpace: 'nowrap' }}>100%</h6>
-                                  </div>
-                                </div>
+                                      {deposit < 97905418 && (
+                                        <span
+                                          style={{
+                                            position: 'absolute',
+                                            left: `${(deposit / 97905418) * 100}%`,
+                                            transform: 'translateX(5px)',
+                                            color: 'black',
+                                          }}
+                                        >
+                                          {`${getFormattedPrice(deposit)}`}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span
+                                      style={{
+                                        marginLeft: '15px', // Add spacing between the blue progress bar and the target value
+                                        color: 'black',
+                                        whiteSpace: 'nowrap', // Prevents text from wrapping
+                                      }}
+                                    >
+                                      {`${getFormattedPrice(target)}`}
+                                    </span>
+                                  </>
+                                )}
                               </div>
-                            );
-                          })}
-
-                          <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'center' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', marginRight: '15px' }}>
-                              <div
-                                style={{
-                                  width: '20px',
-                                  height: '10px',
-                                  backgroundColor: 'SteelBlue',
-                                  marginRight: '5px',
-                                }}
-                              ></div>
-                              <span>Expectation</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                              <div
-                                style={{
-                                  width: '20px',
-                                  height: '10px',
-                                  backgroundColor: 'DarkOrange',
-                                  marginRight: '5px',
-                                }}
-                              ></div>
-                              <span>Progress</span>
                             </div>
                           </div>
+                        );
+                      })}
+
+                      <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', marginRight: '15px' }}>
+                          <div
+                            style={{
+                              width: '20px',
+                              height: '10px',
+                              backgroundColor: 'SteelBlue',
+                              marginRight: '5px',
+                            }}
+                          ></div>
+                          <span>Expectation</span>
                         </div>
-                      );
-                    })()
-                  : null}
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <div
+                            style={{
+                              width: '20px',
+                              height: '10px',
+                              backgroundColor: 'DarkOrange',
+                              marginRight: '5px',
+                            }}
+                          ></div>
+                          <span>Progress</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </AccordionDetails>
             </Accordion>
             <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
