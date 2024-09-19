@@ -830,7 +830,6 @@ export default function DisplayCharts() {
   const handleDateFilter = async () => {
     let filteredSummaryData = summaryCustomerList;
     let filteredData = USERSLIST;
-
     if (filterInfo.from && filterInfo.to) {
       const toDate = parseDate(filterInfo.to);
       const fromDate = parseDate(filterInfo.from);
@@ -882,7 +881,7 @@ export default function DisplayCharts() {
     }
 
     if (filterInfo.amount) {
-      filteredSummaryData = filteredSummaryData.filter((item) => item.amount === filterInfo.amount);
+      filteredSummaryData = filteredSummaryData.filter((item) => item.deposit_amount === filterInfo.amount);
     }
 
     if (filterInfo.group) {
