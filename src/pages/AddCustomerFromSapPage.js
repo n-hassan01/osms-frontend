@@ -28,12 +28,16 @@ export default function TestSapApiPage() {
 
   const addCustomer = async () => {
     const customers = await getCustomers();
+
     if (customers && customers.data) {
       const customerList = customers.data;
       console.log(customerList);
+
       try {
         await Promise.all(
           customerList.map(async (element) => {
+            await new Promise((resolve) => setTimeout(resolve, 100));
+
             const requestBody = {
               businessPartner: element.BusinessPartner || '',
               businessPartnerFullname: element.BusinessPartnerFullName || '',
@@ -42,15 +46,16 @@ export default function TestSapApiPage() {
               businessPartnerIdByExtSystem: element.BusinessPartnerIDByExtSystem || '',
               businessPartnerType: element.BusinessPartnerType || '',
             };
+
             const response = await addCustomersFromSap(requestBody);
 
             if (response.status !== 200) {
-              const requestBody = {
+              const errorRequestBody = {
                 businessPartner: element.BusinessPartner || '',
                 errorCode: response.code || '',
                 errorMessage: response.message || '',
               };
-              await addCustomersFromSapErrorLog(requestBody);
+              await addCustomersFromSapErrorLog(errorRequestBody);
             }
           })
         );
@@ -58,9 +63,10 @@ export default function TestSapApiPage() {
         alert('Successfully added!');
       } catch (error) {
         console.error('Error adding customers:', error);
+        alert('Error adding customers. Please check the console for details.');
       }
     } else {
-      alert('Process failed! Try again');
+      alert('Process failed! Try again.');
     }
   };
 
