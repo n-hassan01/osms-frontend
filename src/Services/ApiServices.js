@@ -2475,3 +2475,13 @@ export const getCustomerSummaryList = async () => {
     return err.message;
   }
 };
+
+export const getCustomerTotalList = async () => {
+  try {
+    return await axios.get(`${usersUrl}customer-summary/total`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

@@ -2,33 +2,21 @@
 /* eslint-disable camelcase */
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Progress_bar = ({ target, deposit, maxDeposit, height }) => {
-  console.log(target, deposit, maxDeposit, height);
+const Progress_bar = ({ target, deposit, height, viewMode }) => {
+  function getFormattedPrice(value) {
+    const formattedPrice = new Intl.NumberFormat().format(Math.floor(value));
+    return formattedPrice;
+  }
 
-  // Calculate the progress as a percentage of the maxDeposit
-  const progress = maxDeposit > 0 ? (deposit / maxDeposit) * 100 : 0;
-  console.log(progress);
+  const validTarget = target > 0 ? target : 1; // Avoid division by zero
+  const progressPercentage = Math.min((deposit / validTarget) * 100, 100);
+  console.log(progressPercentage);
 
-  // Determine the background color based on the progress value
   let bgColor;
-  if (progress < 10) {
-    bgColor = 'Red';
-  } else if (progress < 20) {
-    bgColor = 'Crimson';
-  } else if (progress < 30) {
-    bgColor = 'IndianRed';
-  } else if (progress < 40) {
-    bgColor = 'Orange';
-  } else if (progress < 50) {
-    bgColor = 'DarkOrange';
-  } else if (progress < 60) {
-    bgColor = 'SeaGreen';
-  } else if (progress < 70) {
-    bgColor = 'Olive';
-  } else if (progress < 80) {
-    bgColor = 'SpringGreen';
-  } else if (progress < 90) {
-    bgColor = 'MediumSeaGreen';
+  if (progressPercentage <= 30) {
+    bgColor = 'red';
+  } else if (progressPercentage < 20) {
+    bgColor = 'yellow';
   } else {
     bgColor = 'green';
   }
@@ -40,46 +28,68 @@ const Progress_bar = ({ target, deposit, maxDeposit, height }) => {
         display: 'flex',
         alignItems: 'center',
         height: height,
-        width: '100%',
-        maxWidth: '500px',
+        width: '80%', // Adjusted container width
         backgroundColor: 'SteelBlue',
         margin: '0px 0',
-        border: 'none', // Ensures no border is applied
-        borderRadius: '0px', // Ensures no border-radius is applied
-        position: 'relative', // Set parent div to relative for absolute positioning within
+        border: 'none',
+        borderRadius: '0px',
+        position: 'relative',
       }}
     >
       <div
         className="progress-bar progress-bar-striped progress-bar-animated"
         role="progressbar"
-        aria-valuenow={progress.toFixed(2)}
+        aria-valuenow={deposit.toFixed(2)}
         aria-valuemin="0"
-        aria-valuemax="100"
+        aria-valuemax={validTarget.toFixed(2)}
         style={{
-          width: `${Math.min(progress, 100)}%`, // Width based on progress percentage
-          backgroundColor: 'darkorange', // Dynamic color based on progress value
-          height: height * 0.5, // Child div height
-          color: 'black',
-          position: 'relative', // Set to relative to keep the text aligned inside
+          width: `${progressPercentage}%`, // Dynamic width based on progress
+          backgroundColor: 'orange',
+          height: height * 0.5,
+          position: 'absolute',
+          top: 10,
+          left: 0,
         }}
       >
-        {/* If progress is >= 90, display the text inside the progress bar */}
-        {progress >= 95 && <span style={{ marginLeft: '90%' }}>{`${progress.toFixed(2)}%`}</span>}
+        {viewMode === 'percentage' ? (
+          <>
+            {progressPercentage >= 90 ? (
+              // Text inside the orange line for progress >= 90
+              <span
+                style={{
+                  position: 'absolute',
+                  left: `calc(${progressPercentage}% - 50px)`, // Keep the text inside
+                  color: 'black',
+                }}
+              >
+                {`${progressPercentage.toFixed(2)}%`}
+              </span>
+            ) : (
+              // Text outside the orange line for progress < 90
+              <span
+                style={{
+                  position: 'absolute',
+                  left: `calc(${progressPercentage}% + 10px)`, // Place text after orange line
+                  color: 'black',
+                }}
+              >
+                {`${progressPercentage.toFixed(2)}%`}
+              </span>
+            )}
+          </>
+        ) : (
+          <span style={{ marginLeft: '80%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
+          // <>
+          //   {deposit > target ? (
+          //     // Text inside the orange line for progress >= 90
+          //     <span style={{ marginLeft: '95%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
+          //   ) : (
+          //     // Text outside the orange line for progress < 90
+          //     <span style={{ marginLeft: '95%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
+          //   )}
+          // </>
+        )}
       </div>
-
-      {/* If progress is < 90, display the text outside but close to the progress bar */}
-      {progress < 90 && (
-        <span
-          style={{
-            position: 'absolute', // Position text absolutely within the parent
-            left: `${progress}%`, // Position the text based on the progress percentage
-            transform: 'translateX(5px)', // Add some space between the bar and the text
-            color: 'black', // Ensure text color stands out from the background
-          }}
-        >
-          {`${progress.toFixed(2)}%`}
-        </span>
-      )}
     </div>
   );
 };
