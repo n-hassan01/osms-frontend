@@ -1784,7 +1784,17 @@ export const addCustomersFromSap = async (bodyInfo) => {
   } catch (err) {
     console.log(err.message);
 
-    return err.message;
+    return err;
+  }
+};
+
+export const addCustomersFromSapErrorLog = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-customer-from-sap/add/error`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
   }
 };
 
@@ -2459,6 +2469,16 @@ export const getCustomerGroupService = async (loginToken) => {
 export const getCustomerSummaryList = async () => {
   try {
     return await axios.get(`${usersUrl}customer-summary`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getCustomerTotalList = async () => {
+  try {
+    return await axios.get(`${usersUrl}customer-summary/total`);
   } catch (err) {
     console.log(err.message);
 
