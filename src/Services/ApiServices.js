@@ -1778,9 +1778,29 @@ export const getCustomersFromSap = async () => {
   }
 };
 
+export const getItemsFromSapService = async () => {
+  try {
+    return await axios.get(`${usersUrl}item-from-sap`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const addCustomersFromSap = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}add-customer-from-sap/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
+
+export const addItemsFromSapService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}item-from-sap/add`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 
