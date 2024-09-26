@@ -269,27 +269,40 @@ export default function DisplayCharts() {
   }, [user]);
   console.log(summaryCustomerList);
 
-  const [total, setTotal] = useState([]);
+  const [total, setTotal] = useState(null); // Initial state is null, not an array
+  const [loadingScreen, setLoadingScreen] = useState(true); // Loading state to track async operation
+
   useEffect(() => {
     async function fetchData() {
       try {
         if (user) {
           const totalDetails = await getCustomerTotalList(); // Call your async function here
           if (totalDetails.status === 200) {
-            console.log(totalDetails.data);
-
-            setTotal(totalDetails.data);
-          } // Set the account details in the component's state
+            console.log('Response data:', totalDetails.data);
+            setTotal(totalDetails.data); // Store the data in state
+          }
         }
       } catch (error) {
-        // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
+      } finally {
+        setLoadingScreen(false); // Always stop loading after fetch attempt
       }
     }
 
-    fetchData(); // Call the async function when the component mounts
+    fetchData(); // Fetch data on component mount
   }, [user]);
-  console.log(total);
+
+  // Use an effect to safely log or access the 'total' data
+  useEffect(() => {
+    if (!loadingScreen) {
+      if (total && Array.isArray(total) && total.length > 0) {
+        console.log('Total data:', total);
+        console.log('ctr value:', total[0].ctr); // Access 'ctr' safely
+      } else {
+        console.log('No data available or invalid structure');
+      }
+    }
+  }, [total, loadingScreen]);
 
   const [bankReconIdAll, setBankReconIdAll] = useState([]);
   useEffect(() => {
@@ -1107,7 +1120,7 @@ export default function DisplayCharts() {
                         >
                           <div
                             style={{
-                              width: '20px',
+                              width: '40px',
                               height: '10px',
                               backgroundColor: 'SteelBlue',
                               marginRight: '5px',
@@ -1118,9 +1131,9 @@ export default function DisplayCharts() {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <div
                             style={{
-                              width: '20px',
+                              width: '40px',
                               height: '10px',
-                              backgroundColor: 'DarkOrange',
+                              background: 'linear-gradient(to right, Crimson, Gold, LimeGreen)',
                               marginRight: '5px',
                             }}
                           ></div>
@@ -1394,8 +1407,19 @@ export default function DisplayCharts() {
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
               }}
             >
-              <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5>
-              <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>{getFormattedPrice(8924)}</p>
+              {/* <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5> */}
+              {total && Array.isArray(total) && total.length > 0 ? (
+                <>
+                  <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5>
+                  <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>
+                    {getFormattedPrice(total[0].ctr)}
+                  </p>
+                </>
+              ) : (
+                // <div>CTR: {total[0].ctr}</div> // Render 'ctr' safely
+                <div>No data available</div>
+              )}
+              {/* <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>{getFormattedPrice(total[0].ctr)}</p> */}
             </div>
 
             {/* Card 2: Total Amount */}
@@ -1408,8 +1432,21 @@ export default function DisplayCharts() {
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
               }}
             >
-              <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5>
-              <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>{getFormattedPrice(184744742)}</p>
+              {/* <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5> */}
+              {/* <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>
+                {getFormattedPrice(total[0].total_amount)}
+              </p> */}
+              {total && Array.isArray(total) && total.length > 0 ? (
+                <>
+                  <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5>
+                  <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>
+                    {getFormattedPrice(total[0].total_amount)}
+                  </p>
+                </>
+              ) : (
+                // <div>CTR: {total[0].ctr}</div> // Render 'ctr' safely
+                <div>No data available</div>
+              )}
             </div>
           </div>
 
@@ -1461,7 +1498,7 @@ export default function DisplayCharts() {
                     id="amount"
                     name="amount"
                     className="form-control"
-                    style={{ width: '224px' }}
+                    style={{ width: '220px' }}
                     value={filterInfo.amount}
                     onChange={handleFilterInfo}
                   />
@@ -1524,7 +1561,7 @@ export default function DisplayCharts() {
                     id="username"
                     name="username"
                     className="form-control"
-                    style={{ width: '224px' }}
+                    style={{ width: '220px' }}
                     value={filterInfo.username}
                     onChange={handleFilterInfo}
                   />
