@@ -53,6 +53,7 @@ import {
   getBrandingAssetsItemImagesService,
   getBrandingAssetsItemsService,
   getCustomerSummaryList,
+  getCustomerTotalList,
   getRegionService,
   getShopsListService,
   getUserProfileDetails,
@@ -267,6 +268,28 @@ export default function DisplayCharts() {
     fetchData(); // Call the async function when the component mounts
   }, [user]);
   console.log(summaryCustomerList);
+
+  const [total, setTotal] = useState([]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (user) {
+          const totalDetails = await getCustomerTotalList(); // Call your async function here
+          if (totalDetails.status === 200) {
+            console.log(totalDetails.data);
+
+            setTotal(totalDetails.data);
+          } // Set the account details in the component's state
+        }
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [user]);
+  console.log(total);
 
   const [bankReconIdAll, setBankReconIdAll] = useState([]);
   useEffect(() => {
@@ -938,6 +961,10 @@ export default function DisplayCharts() {
     setSummaryCustomerList(filteredSummaryData);
   };
   const [viewMode, setViewMode] = useState('percentage');
+  const commonWidthStyle = { width: '220px' };
+  const commonLabelStyle = { marginRight: '10px', width: '100px', textAlign: 'right' };
+  const labelWidth = '150px'; // Adjust this width for labels
+  const inputWidth = '220px';
 
   return (
     <>
@@ -966,25 +993,23 @@ export default function DisplayCharts() {
               </AccordionSummary>
               <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
                 <div style={{ height: '50%', overflowY: 'auto' }}>
-                  {/* Flex container to align heading and radio buttons side by side */}
                   <div
                     style={{
                       display: 'flex',
-                      // justifyContent: 'space-between',
                       alignItems: 'center',
                       marginBottom: '20px',
                     }}
                   >
                     <h3 className="heading">Progress Bars</h3>
 
-                    {/* Radio buttons aligned to the right of the heading */}
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4%' }}>
-                      <label style={{ marginRight: '10px' }}>
+                      <label style={{ marginRight: '30px' }}>
                         <input
                           type="radio"
                           value="percentage"
                           checked={viewMode === 'percentage'}
                           onChange={() => setViewMode('percentage')}
+                          style={{ marginRight: '5px' }}
                         />
                         Percentage
                       </label>
@@ -994,13 +1019,13 @@ export default function DisplayCharts() {
                           value="amount"
                           checked={viewMode === 'amount'}
                           onChange={() => setViewMode('amount')}
+                          style={{ marginRight: '5px' }}
                         />
                         Amount
                       </label>
                     </div>
                   </div>
 
-                  {/* Rest of the code with the progress bars */}
                   {filteredSummaryUsers.length > 0 && (
                     <div>
                       {filteredSummaryUsers.map((customer, index) => {
@@ -1009,76 +1034,56 @@ export default function DisplayCharts() {
 
                         return (
                           <div key={index} style={{ marginBottom: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                              <h6 style={{ marginRight: '15px', width: '150px', whiteSpace: 'nowrap' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                width: '100%',
+                              }}
+                            >
+                              <h6
+                                style={{
+                                  marginRight: '15px',
+                                  width: '150px', // Fixed width to align all headings
+                                  whiteSpace: 'nowrap',
+                                  textAlign: 'left', // Left align the customer group names
+                                  fontSize: '12px',
+                                }}
+                              >
                                 {customer.customer_group}
                               </h6>
 
-                              <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', marginLeft: '50px' }}>
+                              <div
+                                style={{
+                                  flexGrow: 1,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  marginLeft: '0px',
+                                }}
+                              >
+                                <Progressbar target={target} deposit={deposit} height={35} viewMode={viewMode} />
                                 {viewMode === 'percentage' ? (
-                                  <>
-                                    <Progressbar target={target} deposit={deposit} maxDeposit={99999999} height={35} />
-                                    <h6 style={{ marginLeft: '15px', marginTop: '5px', whiteSpace: 'nowrap' }}>100%</h6>
-                                  </>
+                                  <h6
+                                    style={{
+                                      marginLeft: '15px',
+                                      marginTop: '5px',
+                                      whiteSpace: 'nowrap',
+                                      fontSize: '12px',
+                                    }}
+                                  >
+                                    100%
+                                  </h6>
                                 ) : (
-                                  <>
-                                    <div
-                                      className="progress"
-                                      style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        height: 35,
-                                        width: '100%',
-                                        maxWidth: '500px',
-                                        backgroundColor: 'SteelBlue',
-                                        margin: '0px 0',
-                                        border: 'none',
-                                        borderRadius: '0px',
-                                        position: 'relative',
-                                      }}
-                                    >
-                                      <div
-                                        className="progress-bar progress-bar-striped progress-bar-animated"
-                                        role="progressbar"
-                                        aria-valuenow={deposit.toFixed(2)}
-                                        aria-valuemin="0"
-                                        aria-valuemax="100"
-                                        style={{
-                                          width: `${Math.min((deposit / 99999999) * 100, 100)}%`,
-                                          backgroundColor: 'darkorange',
-                                          height: 35 * 0.5,
-                                          color: 'black',
-                                          position: 'relative',
-                                        }}
-                                      >
-                                        {deposit >= 97905418 && (
-                                          <span style={{ marginLeft: '85%' }}>{`${getFormattedPrice(deposit)}`}</span>
-                                        )}
-                                      </div>
-
-                                      {deposit < 97905418 && (
-                                        <span
-                                          style={{
-                                            position: 'absolute',
-                                            left: `${(deposit / 97905418) * 100}%`,
-                                            transform: 'translateX(5px)',
-                                            color: 'black',
-                                          }}
-                                        >
-                                          {`${getFormattedPrice(deposit)}`}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span
-                                      style={{
-                                        marginLeft: '15px', // Add spacing between the blue progress bar and the target value
-                                        color: 'black',
-                                        whiteSpace: 'nowrap', // Prevents text from wrapping
-                                      }}
-                                    >
-                                      {`${getFormattedPrice(target)}`}
-                                    </span>
-                                  </>
+                                  <span
+                                    style={{
+                                      marginLeft: '20px',
+                                      color: 'black',
+                                      whiteSpace: 'nowrap',
+                                      fontSize: '12px',
+                                    }}
+                                  >
+                                    {`${getFormattedPrice(target)}`}
+                                  </span>
                                 )}
                               </div>
                             </div>
@@ -1086,8 +1091,20 @@ export default function DisplayCharts() {
                         );
                       })}
 
-                      <div style={{ display: 'flex', marginTop: '10px', justifyContent: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', marginRight: '15px' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          marginTop: '10px',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            marginRight: '15px',
+                          }}
+                        >
                           <div
                             style={{
                               width: '20px',
@@ -1365,16 +1382,48 @@ export default function DisplayCharts() {
         </div>
 
         <div style={{ borderLeft: '1px solid lightGray' }}>
-          <div style={{ width: '80%', marginLeft: '10%' }}>
-            <h6>Filter </h6>
+          {/* Information Cards */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', marginLeft: '30px' }}>
+            {/* Card 1: CTR */}
+            <div
+              style={{
+                width: '48%', // Increased from 48% to 60%
+                padding: '20px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px',
+                boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+              }}
+            >
+              <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5>
+              <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>{getFormattedPrice(8924)}</p>
+            </div>
+
+            {/* Card 2: Total Amount */}
+            <div
+              style={{
+                width: '48%', // Increased from 48% to 60%
+                padding: '20px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px',
+                boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+              }}
+            >
+              <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5>
+              <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>{getFormattedPrice(184744742)}</p>
+            </div>
+          </div>
+
+          <hr style={{ width: '100%', borderTop: '3px solid lightGray' }} />
+
+          {/* Adapt Filters Section */}
+          <div style={{ width: '90%', marginLeft: '10%', marginTop: '10%' }}>
+            <h6 style={{ marginLeft: '8px', fontSize: '30px', marginBottom: '20px' }}>Adapt Filters</h6>
 
             <Stack ml={1} mr={1} direction="column" spacing={2}>
               {/* From Date */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="col-form-label" style={{ marginRight: '10px' }}>
-                  From
-                </span>
-                <div style={{ width: '160px', marginLeft: '18%' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>From Date</span>
+                <div style={{ flexGrow: 1 }}>
                   <DatePicker
                     selected={filterInfo.from ? parse(filterInfo.from, 'dd/MM/yy', new Date()) : null}
                     onChange={(date) => handleDateChange(date, 'from')}
@@ -1382,16 +1431,15 @@ export default function DisplayCharts() {
                     maxDate={new Date()}
                     placeholderText="dd/mm/yy"
                     className="form-control"
+                    style={{ width: '220px' }}
                   />
                 </div>
               </div>
 
               {/* To Date */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="col-form-label" style={{ marginRight: '10px' }}>
-                  To
-                </span>
-                <div style={{ width: '160px', marginLeft: '25%' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>To Date</span>
+                <div style={{ flexGrow: 1 }}>
                   <DatePicker
                     selected={filterInfo.to ? parse(filterInfo.to, 'dd/MM/yy', new Date()) : null}
                     onChange={(date) => handleDateChange(date, 'to')}
@@ -1399,93 +1447,88 @@ export default function DisplayCharts() {
                     maxDate={new Date()}
                     placeholderText="dd/mm/yy"
                     className="form-control"
+                    style={{ width: '220px' }}
                   />
                 </div>
               </div>
 
               {/* Amount */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <label htmlFor="amount" className="col-form-label" style={{ marginRight: '10px' }}>
-                  Amount
-                </label>
-                <input
-                  required
-                  id="amount"
-                  name="amount"
-                  className="form-control"
-                  style={{ width: '220px', marginLeft: '12%' }}
-                  value={filterInfo.amount}
-                  onChange={handleFilterInfo}
-                />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>Amount</span>
+                <div style={{ flexGrow: 1 }}>
+                  <input
+                    required
+                    id="amount"
+                    name="amount"
+                    className="form-control"
+                    style={{ width: '224px' }}
+                    value={filterInfo.amount}
+                    onChange={handleFilterInfo}
+                  />
+                </div>
               </div>
 
               {/* Bank Status */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="col-form-label" style={{ marginRight: '10px' }}>
-                  Bank Status
-                </span>
-                <div style={{ width: '220px', marginLeft: '13px' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>Bank Status</span>
+                <div style={{ flexGrow: 1 }}>
                   <Select
                     value={filterInfo.status ? { value: filterInfo.status, label: filterInfo.status } : null}
                     onChange={handleStatusChange}
-                    onInputChange={handleStatusInputChange}
                     options={filteredStatusOptions}
                     placeholder="Type to select..."
                     isClearable
+                    style={{ width: '220px' }}
                   />
                 </div>
               </div>
 
               {/* Customer */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="col-form-label" style={{ marginRight: '10px' }}>
-                  Customer
-                </span>
-                <div style={{ width: '220px', marginLeft: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>Customer</span>
+                <div style={{ flexGrow: 1 }}>
                   <Select
                     id="customer"
                     name="customer"
                     value={filterInfo.customer ? { value: filterInfo.customer, label: filterInfo.customer } : null}
                     onChange={handlesChange}
-                    onInputChange={handleInputChange}
                     options={filteredOptions}
                     placeholder="Type to select..."
                     isClearable
+                    style={{ width: '220px' }}
                   />
                 </div>
               </div>
 
               {/* Customer Group */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="col-form-label" style={{ marginRight: '10px' }}>
-                  Customer Group
-                </span>
-                <div style={{ width: '250px' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>Customer Group</span>
+                <div style={{ flexGrow: 1 }}>
                   <Select
                     value={filterInfo.group ? { value: filterInfo.group, label: filterInfo.group } : null}
                     onChange={handleGroupChange}
-                    onInputChange={handleGroupInputChange}
                     options={filteredGroupOptions}
                     placeholder="Type to select..."
                     isClearable
+                    style={{ width: '220px' }}
                   />
                 </div>
               </div>
 
               {/* Username */}
-              <div className="col-auto" style={{ display: 'flex', alignItems: 'center' }}>
-                <span className="col-form-label" style={{ marginRight: '10px' }}>
-                  Username
-                </span>
-                <input
-                  required
-                  id="username"
-                  name="username"
-                  className="form-control"
-                  style={{ width: '220px', marginLeft: '10px' }}
-                  value={filterInfo.username}
-                  onChange={handleFilterInfo}
-                />
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>UserName</span>
+                <div style={{ flexGrow: 1 }}>
+                  <input
+                    required
+                    id="username"
+                    name="username"
+                    className="form-control"
+                    style={{ width: '224px' }}
+                    value={filterInfo.username}
+                    onChange={handleFilterInfo}
+                  />
+                </div>
               </div>
 
               {/* Filter and Clear Buttons */}
@@ -1498,19 +1541,10 @@ export default function DisplayCharts() {
                 </Button>
               </Stack>
             </Stack>
-
-            {/* <Stack direction="row" gap={1}>
-              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleFilterShops}>
-                Filter
-              </Button>
-
-              <Button variant="contained" size="medium" style={{ width: '45%' }} onClick={handleClearFilterShop}>
-                Clear
-              </Button>
-            </Stack> */}
           </div>
         </div>
       </div>
+
       {/* <Button onClick={showItemsList}>Show Items</Button> */}
       {/* <div style={{ width: '40%' }}> */}
     </>
