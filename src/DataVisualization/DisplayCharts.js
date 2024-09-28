@@ -1394,67 +1394,120 @@ export default function DisplayCharts() {
           </div>
         </div>
 
-        <div style={{ borderLeft: '1px solid lightGray' }}>
+        <div style={{ borderLeft: '1px solid lightGray', width: '40%' }}>
           {/* Information Cards */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', marginLeft: '30px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: '30px',
+              marginLeft: '15px',
+              marginRight: '7px',
+            }}
+          >
             {/* Card 1: CTR */}
             <div
               style={{
-                width: '48%', // Increased from 48% to 60%
-                padding: '20px',
+                width: '48%',
+                height: '150px', // Ensure the height is fixed and consistent
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column', // Arrange content vertically
               }}
             >
-              {/* <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5> */}
-              {total && Array.isArray(total) && total.length > 0 ? (
-                <>
-                  <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5>
-                  <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>
-                    {getFormattedPrice(total[0].ctr)}
-                  </p>
-                </>
-              ) : (
-                // <div>CTR: {total[0].ctr}</div> // Render 'ctr' safely
-                <div>No data available</div>
-              )}
-              {/* <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>{getFormattedPrice(total[0].ctr)}</p> */}
+              {/* Upper 40% - Header section with new colors */}
+              <div
+                style={{
+                  backgroundColor: 'rgb(53, 74, 95)', // New background color
+                  color: 'white',
+                  padding: '10px',
+                  textAlign: 'left',
+                  height: '40%', // Ensure the height is 40% of the card
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center', // Vertically center the heading
+                  boxShadow: 'rgb(206, 212, 218) 1px 1px', // New shadow
+                }}
+              >
+                <h5 style={{ margin: 0 }}>Total Transactions</h5>
+              </div>
+
+              {/* Lower 60% - Original content */}
+              <div
+                style={{
+                  padding: '10px',
+                  textAlign: 'center',
+                  height: '60%', // Ensure the height is 60% of the card
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center', // Vertically center the value
+                }}
+              >
+                {total && Array.isArray(total) && total.length > 0 ? (
+                  <p style={{ fontSize: '32px', marginTop: '8px' }}>{getFormattedPrice(total[0].ctr)}</p>
+                ) : (
+                  <div>No data available</div>
+                )}
+              </div>
             </div>
 
             {/* Card 2: Total Amount */}
             <div
               style={{
-                width: '48%', // Increased from 48% to 60%
-                padding: '20px',
+                width: '48%',
+                height: '150px', // Ensure the height is fixed and consistent
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column', // Arrange content vertically
               }}
             >
-              {/* <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5> */}
-              {/* <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>
-                {getFormattedPrice(total[0].total_amount)}
-              </p> */}
-              {total && Array.isArray(total) && total.length > 0 ? (
-                <>
-                  <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5>
-                  <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>
-                    {getFormattedPrice(total[0].total_amount)}
-                  </p>
-                </>
-              ) : (
-                // <div>CTR: {total[0].ctr}</div> // Render 'ctr' safely
-                <div>No data available</div>
-              )}
+              {/* Upper 30% - Blue section */}
+              <div
+                style={{
+                  backgroundColor: 'rgb(53, 74, 95)', // Blue color for the upper section
+                  color: 'white',
+                  padding: '10px',
+                  height: '47%', // Ensure the height is 30% of the card
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center', // Vertically center the heading
+                  boxShadow: 'rgb(206, 212, 218) 1px 1px',
+                }}
+              >
+                <h5 style={{ margin: 0 }}>Total Amount</h5>
+              </div>
+
+              {/* Lower 70% - Original content */}
+              <div
+                style={{
+                  padding: '10px',
+                  textAlign: 'right',
+                  height: '70%', // Ensure the height is 70% of the card
+                  display: 'flex',
+                  justifyContent: 'right',
+                  alignItems: 'right', // Vertically center the value
+                }}
+              >
+                {total && Array.isArray(total) && total.length > 0 ? (
+                  <p style={{ fontSize: '32px', marginTop: '5px' }}>{getFormattedPrice(total[0].total_amount)}</p>
+                ) : (
+                  <div>No data available</div>
+                )}
+              </div>
             </div>
           </div>
 
           <hr style={{ width: '100%', borderTop: '3px solid lightGray' }} />
 
           {/* Adapt Filters Section */}
-          <div style={{ width: '90%', marginLeft: '10%', marginTop: '10%' }}>
-            <h6 style={{ marginLeft: '8px', fontSize: '30px', marginBottom: '20px' }}>Adapt Filters</h6>
+          <div style={{ width: '90%', marginLeft: '5%', marginTop: '10%' }}>
+            <h6 style={{ marginLeft: '0px', fontSize: '20px', marginBottom: '20px' }}>Adapt Filters</h6>
 
             <Stack ml={1} mr={1} direction="column" spacing={2}>
               {/* From Date */}
@@ -1498,7 +1551,7 @@ export default function DisplayCharts() {
                     id="amount"
                     name="amount"
                     className="form-control"
-                    style={{ width: '220px' }}
+                    style={{ width: '222px' }}
                     value={filterInfo.amount}
                     onChange={handleFilterInfo}
                   />
@@ -1561,7 +1614,7 @@ export default function DisplayCharts() {
                     id="username"
                     name="username"
                     className="form-control"
-                    style={{ width: '220px' }}
+                    style={{ width: '222px' }}
                     value={filterInfo.username}
                     onChange={handleFilterInfo}
                   />
