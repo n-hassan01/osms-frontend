@@ -14,11 +14,11 @@ const Progress_bar = ({ target, deposit, height, viewMode }) => {
 
   let bgColor;
   if (progressPercentage <= 30) {
-    bgColor = 'red';
-  } else if (progressPercentage < 20) {
-    bgColor = 'yellow';
+    bgColor = 'Crimson';
+  } else if (progressPercentage <= 80) {
+    bgColor = 'Gold';
   } else {
-    bgColor = 'green';
+    bgColor = 'LimeGreen';
   }
 
   return (
@@ -44,7 +44,7 @@ const Progress_bar = ({ target, deposit, height, viewMode }) => {
         aria-valuemax={validTarget.toFixed(2)}
         style={{
           width: `${progressPercentage}%`, // Dynamic width based on progress
-          backgroundColor: 'orange',
+          backgroundColor: bgColor,
           height: height * 0.5,
           position: 'absolute',
           top: 10,
@@ -58,7 +58,7 @@ const Progress_bar = ({ target, deposit, height, viewMode }) => {
               <span
                 style={{
                   position: 'absolute',
-                  left: `calc(${progressPercentage}% - 50px)`, // Keep the text inside
+                  left: `calc(${progressPercentage}% - 60px)`, // Keep the text inside
                   color: 'black',
                 }}
               >
@@ -69,7 +69,7 @@ const Progress_bar = ({ target, deposit, height, viewMode }) => {
               <span
                 style={{
                   position: 'absolute',
-                  left: `calc(${progressPercentage}% + 10px)`, // Place text after orange line
+                  left: `calc(${progressPercentage}% + 55px)`, // Place text after orange line
                   color: 'black',
                 }}
               >
@@ -78,16 +78,16 @@ const Progress_bar = ({ target, deposit, height, viewMode }) => {
             )}
           </>
         ) : (
-          <span style={{ marginLeft: '80%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
-          // <>
-          //   {deposit > target ? (
-          //     // Text inside the orange line for progress >= 90
-          //     <span style={{ marginLeft: '95%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
-          //   ) : (
-          //     // Text outside the orange line for progress < 90
-          //     <span style={{ marginLeft: '95%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
-          //   )}
-          // </>
+          // <span style={{ marginLeft: '80%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
+          <>
+            {deposit > target ? (
+              // Text inside the orange line for progress >= 90
+              <span style={{ marginLeft: '85%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
+            ) : (
+              // Text outside the orange line for progress < 90
+              <span style={{ marginLeft: '75%', color: 'black' }}>{`${getFormattedPrice(deposit)}`}</span>
+            )}
+          </>
         )}
       </div>
     </div>
