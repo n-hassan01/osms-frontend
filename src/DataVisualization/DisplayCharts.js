@@ -1006,13 +1006,7 @@ export default function DisplayCharts() {
               </AccordionSummary>
               <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
                 <div style={{ height: '50%', overflowY: 'auto' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: '20px',
-                    }}
-                  >
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <h3 className="heading">Progress Bars</h3>
 
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4%' }}>
@@ -1044,16 +1038,13 @@ export default function DisplayCharts() {
                       {filteredSummaryUsers.map((customer, index) => {
                         const target = Number(customer.target_amount);
                         const deposit = Number(customer.deposit_amount);
+                        const threshold_1 = Number(customer.threshold_1);
+                        const threshold_2 = Number(customer.threshold_2);
+                        const threshold_3 = Number(customer.threshold_3);
 
                         return (
-                          <div key={index} style={{ marginBottom: '10px' }}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                width: '100%',
-                              }}
-                            >
+                          <div key={index} style={{ marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                               <h6
                                 style={{
                                   marginRight: '15px',
@@ -1066,38 +1057,125 @@ export default function DisplayCharts() {
                                 {customer.customer_group}
                               </h6>
 
-                              <div
-                                style={{
-                                  flexGrow: 1,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  marginLeft: '0px',
-                                }}
-                              >
-                                <Progressbar target={target} deposit={deposit} height={35} viewMode={viewMode} />
-                                {viewMode === 'percentage' ? (
-                                  <h6
+                              <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', marginLeft: '0px' }}>
+                                {/* Progress bar section */}
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <Progressbar
+                                    target={target}
+                                    deposit={deposit}
+                                    height={35}
+                                    viewMode={viewMode}
+                                    threshold_1={threshold_1}
+                                    threshold_2={threshold_2}
+                                    threshold_3={threshold_3}
+                                  />
+                                  {viewMode === 'percentage' ? (
+                                    <h6
+                                      style={{
+                                        marginLeft: '15px',
+                                        marginTop: '5px',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      100%
+                                    </h6>
+                                  ) : (
+                                    <span
+                                      style={{
+                                        marginLeft: '20px',
+                                        color: 'black',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      {`${getFormattedPrice(target)}`}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Indicator line section */}
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    marginTop: '2px', // Adjust spacing below the progress bar
+                                    height: '10px', // Height of the indicator line
+                                    width: '80%', // Same width as the parent flex container (matches progress bar width)
+                                    background: 'white', // Background for the entire line
+                                    // border: '1px solid black', // Black border for the entire line
+                                    position: 'relative', // Positioning context for the labels
+                                  }}
+                                >
+                                  {/* Left Segment (30%) */}
+                                  <div
                                     style={{
-                                      marginLeft: '15px',
-                                      marginTop: '5px',
-                                      whiteSpace: 'nowrap',
-                                      fontSize: '12px',
+                                      height: '100%',
+                                      width: '30%', // 30% width for the left segment
+                                      backgroundColor: 'white', // Black color for the left segment
+                                      position: 'relative',
                                     }}
                                   >
-                                    100%
-                                  </h6>
-                                ) : (
-                                  <span
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        color: 'black',
+                                        fontSize: '10px',
+                                        top: '50%', // Center the text vertically
+                                        left: '100%', // Align text to the right
+                                        transform: 'translate(-100%, -50%)', // Move text back to fully show it and center it vertically
+                                      }}
+                                    >
+                                      {threshold_1}%
+                                    </span>
+                                  </div>
+
+                                  {/* Middle Segment (40%) - from 30% to 70% */}
+                                  <div
                                     style={{
-                                      marginLeft: '20px',
-                                      color: 'black',
-                                      whiteSpace: 'nowrap',
-                                      fontSize: '12px',
+                                      height: '100%',
+                                      width: '40%', // 40% width for the middle segment (70%-30%)
+                                      backgroundColor: 'white', // Black color for the middle segment
+                                      position: 'relative',
                                     }}
                                   >
-                                    {`${getFormattedPrice(target)}`}
-                                  </span>
-                                )}
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        color: 'black',
+                                        fontSize: '10px',
+                                        top: '50%', // Center the text vertically
+                                        left: '100%', // Align text to the right
+                                        transform: 'translate(-100%, -50%)', // Move text back to fully show it and center it vertically
+                                      }}
+                                    >
+                                      {threshold_1 + threshold_2}%
+                                    </span>
+                                  </div>
+
+                                  {/* Right Segment (30%) - from 70% to 100% */}
+                                  <div
+                                    style={{
+                                      height: '100%',
+                                      width: '30%', // 30% width for the right segment
+                                      backgroundColor: 'white', // Black color for the right segment
+                                      position: 'relative',
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        color: 'black',
+                                        fontSize: '10px',
+                                        top: '50%', // Center the text vertically
+                                        left: '100%', // Align text to the right
+                                        transform: 'translate(-100%, -50%)', // Move text back to fully show it and center it vertically
+                                      }}
+                                    >
+                                      {threshold_1 + threshold_2 + threshold_3}%
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1133,7 +1211,7 @@ export default function DisplayCharts() {
                             style={{
                               width: '40px',
                               height: '10px',
-                              background: 'linear-gradient(to right, Crimson, Gold, LimeGreen)',
+                              background: 'linear-gradient(to right, FireBrick, Gold, ForestGreen)',
                               marginRight: '5px',
                             }}
                           ></div>
@@ -1447,7 +1525,9 @@ export default function DisplayCharts() {
                 }}
               >
                 {total && Array.isArray(total) && total.length > 0 ? (
-                  <p style={{ fontSize: '32px', marginTop: '8px' }}>{getFormattedPrice(total[0].ctr)}</p>
+                  <p style={{ fontSize: '27px', marginTop: '5px', fontWeight: 'bold' }}>
+                    {getFormattedPrice(total[0].ctr)}
+                  </p>
                 ) : (
                   <div>No data available</div>
                 )}
@@ -1495,7 +1575,9 @@ export default function DisplayCharts() {
                 }}
               >
                 {total && Array.isArray(total) && total.length > 0 ? (
-                  <p style={{ fontSize: '32px', marginTop: '5px' }}>{getFormattedPrice(total[0].total_amount)}</p>
+                  <p style={{ fontSize: '27px', marginTop: '5px', fontWeight: 'bold' }}>
+                    {getFormattedPrice(total[0].total_amount)}
+                  </p>
                 ) : (
                   <div>No data available</div>
                 )}
