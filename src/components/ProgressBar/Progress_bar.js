@@ -23,7 +23,7 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
         const isOverComplete = deposit - target;
         console.log(isOverComplete);
 
-        setTooltipContent(`✔️ Progress complete! 🎉 with ${getFormattedPrice(isOverComplete)} more deposit`);
+        setTooltipContent(`✔️ Progress complete! 🎉 Now ${getFormattedPrice(isOverComplete)} deposit ahead.`);
       } else {
         setTooltipContent('✔️Congratulations 🏆 Progress complete! 🎉');
       }
