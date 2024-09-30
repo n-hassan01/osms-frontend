@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 /* eslint-disable object-shorthand */
 /* eslint-disable camelcase */
@@ -15,20 +15,31 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
   const incompleteAmount = target - deposit;
   const isComplete = deposit >= target;
 
-  // Update tooltip content based on hover state
-  useEffect(() => {
-    if (isHovered) {
-      if (isComplete) {
-        setTooltipContent('✔️ Progress complete! 🎉');
+  // Directly set tooltip content in event handlers
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (isComplete) {
+      if (target < deposit) {
+        const isOverComplete = deposit - target;
+        console.log(isOverComplete);
+
+        setTooltipContent(`✔️ Progress complete! 🎉 Now ${getFormattedPrice(isOverComplete)} deposit ahead.`);
       } else {
-        setTooltipContent(
-          `💡 Incomplete: ${getFormattedPrice(incompleteAmount)} (${(100 - progressPercentage).toFixed(2)}% remaining)`
-        );
+        setTooltipContent('✔️Congratulations 🏆 Progress complete! 🎉');
       }
     } else {
-      setTooltipContent('');
+      console.log(progressPercentage);
+
+      setTooltipContent(
+        `💡 Incomplete: ${getFormattedPrice(incompleteAmount)} (${(100 - progressPercentage).toFixed(2)}% remaining)`
+      );
     }
-  }, [isHovered, deposit, target, progressPercentage, incompleteAmount, isComplete]);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setTooltipContent('');
+  };
 
   // Dynamic background gradient based on thresholds
   const gradientBackground = `linear-gradient(to right,
@@ -46,13 +57,13 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
       margin: '0px 0',
       position: 'relative',
       background: gradientBackground,
-      overflow: 'hidden',
+      overflow: 'visible', // Allow tooltip to overflow the progress container
       boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
       transition: 'background 0.4s ease',
     },
     progressBar: {
       width: `${progressPercentage}%`,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      backgroundColor: 'rgb(211, 211, 211)',
       height: height * 0.5,
       position: 'absolute',
       top: 10,
@@ -63,6 +74,10 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
       transition: 'width 0.4s ease, transform 0.2s ease',
       boxShadow: isHovered ? '0 4px 10px rgba(0, 0, 0, 0.5)' : '0 2px 5px rgba(0, 0, 0, 0.2)',
       transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+      border: '2px solid rgba(0, 0, 0, 0.3)', // Added subtle border
+      backgroundImage: `linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 75%, transparent 75%, transparent)`,
+      backgroundSize: '10px 10px', // Smaller stripes (size of each stripe)
+      animation: 'move-stripes 0.1s linear infinite', // Animated stripes
     },
     progressText: {
       position: 'absolute',
@@ -73,17 +88,17 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
     },
     tooltip: {
       position: 'absolute',
-      bottom: '120%',
+      bottom: `${height + 20}px`, // Set above the progress bar (height + extra space)
       left: '50%',
       transform: 'translateX(-50%)',
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
       color: 'white',
       padding: '5px 10px',
       borderRadius: '5px',
-      visibility: isHovered ? 'visible' : 'hidden',
-      opacity: isHovered ? 1 : 0,
-      transition: 'opacity 0.3s ease',
-      zIndex: 2,
+      visibility: isHovered ? 'visible' : 'hidden', // Show on hover
+      opacity: isHovered ? 1 : 0, // Control appearance with opacity
+      transition: 'opacity 0.2s ease',
+      zIndex: 10, // Ensure tooltip is on top of the progress bar
       whiteSpace: 'nowrap',
     },
   };
@@ -92,8 +107,8 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
     <div
       className="progress-container"
       style={styles.progressContainer}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* Tooltip for progress information */}
       <div style={styles.tooltip}>{tooltipContent}</div>
