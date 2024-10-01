@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 
@@ -16,36 +17,70 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
   const isComplete = deposit >= target;
 
   // Directly set tooltip content in event handlers
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (viewMode) => {
     setIsHovered(true);
-    if (isComplete) {
-      if (target < deposit) {
-        const isOverComplete = deposit - target;
-        console.log(isOverComplete);
+
+    if (viewMode === 'percentage') {
+      if (isComplete) {
+        if (target < deposit) {
+          const isOverComplete = deposit - target;
+          console.log(typeof isOverComplete);
+
+          console.log(isOverComplete);
+
+          setTooltipContent(
+            <>
+              ✔️Target complete! Now <span style={{ color: 'LawnGreen' }}>{getFormattedPrice(isOverComplete)}</span>{' '}
+              deposit ahead.
+            </>
+          );
+        } else {
+          setTooltipContent(
+            <>
+              <span style={{ color: 'green' }}>✔️Congratulations</span> 🏆 Target complete!{' '}
+              <span style={{ color: 'blue' }}>🎉</span>
+            </>
+          );
+        }
+      } else {
+        console.log(progressPercentage);
 
         setTooltipContent(
           <>
-            ✔️Target complete!! Now <span style={{ color: 'LawnGreen' }}>{getFormattedPrice(isOverComplete)}</span>{' '}
-            deposit ahead.
-          </>
-        );
-      } else {
-        setTooltipContent(
-          <>
-            <span style={{ color: 'green' }}>✔️Congratulations</span> 🏆 Target complete!{' '}
-            <span style={{ color: 'blue' }}>🎉</span>
+            💡 Incomplete: <span style={{ color: 'orange' }}>{(100 - progressPercentage).toFixed(2)}%</span> remaining
           </>
         );
       }
     } else {
-      console.log(progressPercentage);
+      if (isComplete) {
+        if (target < deposit) {
+          const isOverComplete = deposit - target;
+          console.log(isOverComplete);
 
-      setTooltipContent(
-        <>
-          💡 Incomplete: <span style={{ color: 'OrangeRed' }}>{getFormattedPrice(incompleteAmount)}</span>(
-          <span style={{ color: 'orange' }}>{(100 - progressPercentage).toFixed(2)}%</span> remaining)
-        </>
-      );
+          setTooltipContent(
+            <>
+              ✔️Target complete!! Now <span style={{ color: 'LawnGreen' }}>{getFormattedPrice(isOverComplete)}</span>{' '}
+              deposit ahead.
+            </>
+          );
+        } else {
+          setTooltipContent(
+            <>
+              <span style={{ color: 'green' }}>✔️Congratulations</span> 🏆 Target complete!{' '}
+              <span style={{ color: 'blue' }}>🎉</span>
+            </>
+          );
+        }
+      } else {
+        console.log(progressPercentage);
+
+        setTooltipContent(
+          <>
+            💡 Incomplete: <span style={{ color: 'OrangeRed' }}>{getFormattedPrice(incompleteAmount)}</span> (
+            <span style={{ color: 'orange' }}>{(100 - progressPercentage).toFixed(2)}%</span> remaining)
+          </>
+        );
+      }
     }
   };
 
@@ -120,7 +155,7 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
     <div
       className="progress-container"
       style={styles.progressContainer}
-      onMouseEnter={handleMouseEnter}
+      onMouseEnter={() => handleMouseEnter(viewMode)}
       onMouseLeave={handleMouseLeave}
     >
       {/* Tooltip for progress information */}
