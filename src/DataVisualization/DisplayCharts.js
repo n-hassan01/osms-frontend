@@ -269,27 +269,40 @@ export default function DisplayCharts() {
   }, [user]);
   console.log(summaryCustomerList);
 
-  const [total, setTotal] = useState([]);
+  const [total, setTotal] = useState(null); // Initial state is null, not an array
+  const [loadingScreen, setLoadingScreen] = useState(true); // Loading state to track async operation
+
   useEffect(() => {
     async function fetchData() {
       try {
         if (user) {
           const totalDetails = await getCustomerTotalList(); // Call your async function here
           if (totalDetails.status === 200) {
-            console.log(totalDetails.data);
-
-            setTotal(totalDetails.data);
-          } // Set the account details in the component's state
+            console.log('Response data:', totalDetails.data);
+            setTotal(totalDetails.data); // Store the data in state
+          }
         }
       } catch (error) {
-        // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
+      } finally {
+        setLoadingScreen(false); // Always stop loading after fetch attempt
       }
     }
 
-    fetchData(); // Call the async function when the component mounts
+    fetchData(); // Fetch data on component mount
   }, [user]);
-  console.log(total);
+
+  // Use an effect to safely log or access the 'total' data
+  useEffect(() => {
+    if (!loadingScreen) {
+      if (total && Array.isArray(total) && total.length > 0) {
+        console.log('Total data:', total);
+        console.log('ctr value:', total[0].ctr); // Access 'ctr' safely
+      } else {
+        console.log('No data available or invalid structure');
+      }
+    }
+  }, [total, loadingScreen]);
 
   const [bankReconIdAll, setBankReconIdAll] = useState([]);
   useEffect(() => {
@@ -993,13 +1006,7 @@ export default function DisplayCharts() {
               </AccordionSummary>
               <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
                 <div style={{ height: '50%', overflowY: 'auto' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      marginBottom: '20px',
-                    }}
-                  >
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <h3 className="heading">Progress Bars</h3>
 
                     <div style={{ display: 'flex', alignItems: 'center', marginLeft: '4%' }}>
@@ -1031,16 +1038,13 @@ export default function DisplayCharts() {
                       {filteredSummaryUsers.map((customer, index) => {
                         const target = Number(customer.target_amount);
                         const deposit = Number(customer.deposit_amount);
+                        const threshold_1 = Number(customer.threshold_1);
+                        const threshold_2 = Number(customer.threshold_2);
+                        const threshold_3 = Number(customer.threshold_3);
 
                         return (
-                          <div key={index} style={{ marginBottom: '10px' }}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                width: '100%',
-                              }}
-                            >
+                          <div key={index} style={{ marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                               <h6
                                 style={{
                                   marginRight: '15px',
@@ -1053,38 +1057,125 @@ export default function DisplayCharts() {
                                 {customer.customer_group}
                               </h6>
 
-                              <div
-                                style={{
-                                  flexGrow: 1,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  marginLeft: '0px',
-                                }}
-                              >
-                                <Progressbar target={target} deposit={deposit} height={35} viewMode={viewMode} />
-                                {viewMode === 'percentage' ? (
-                                  <h6
+                              <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', marginLeft: '0px' }}>
+                                {/* Progress bar section */}
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <Progressbar
+                                    target={target}
+                                    deposit={deposit}
+                                    height={35}
+                                    viewMode={viewMode}
+                                    threshold_1={threshold_1}
+                                    threshold_2={threshold_2}
+                                    threshold_3={threshold_3}
+                                  />
+                                  {viewMode === 'percentage' ? (
+                                    <h6
+                                      style={{
+                                        marginLeft: '15px',
+                                        marginTop: '5px',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      100%
+                                    </h6>
+                                  ) : (
+                                    <span
+                                      style={{
+                                        marginLeft: '20px',
+                                        color: 'black',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: '12px',
+                                      }}
+                                    >
+                                      {`${getFormattedPrice(target)}`}
+                                    </span>
+                                  )}
+                                </div>
+
+                                {/* Indicator line section */}
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    marginTop: '2px', // Adjust spacing below the progress bar
+                                    height: '10px', // Height of the indicator line
+                                    width: '80%', // Same width as the parent flex container (matches progress bar width)
+                                    background: 'white', // Background for the entire line
+                                    // border: '1px solid black', // Black border for the entire line
+                                    position: 'relative', // Positioning context for the labels
+                                  }}
+                                >
+                                  {/* Left Segment (30%) */}
+                                  <div
                                     style={{
-                                      marginLeft: '15px',
-                                      marginTop: '5px',
-                                      whiteSpace: 'nowrap',
-                                      fontSize: '12px',
+                                      height: '100%',
+                                      width: '30%', // 30% width for the left segment
+                                      backgroundColor: 'white', // Black color for the left segment
+                                      position: 'relative',
                                     }}
                                   >
-                                    100%
-                                  </h6>
-                                ) : (
-                                  <span
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        color: 'black',
+                                        fontSize: '10px',
+                                        top: '50%', // Center the text vertically
+                                        left: '100%', // Align text to the right
+                                        transform: 'translate(-100%, -50%)', // Move text back to fully show it and center it vertically
+                                      }}
+                                    >
+                                      {threshold_1}%
+                                    </span>
+                                  </div>
+
+                                  {/* Middle Segment (40%) - from 30% to 70% */}
+                                  <div
                                     style={{
-                                      marginLeft: '20px',
-                                      color: 'black',
-                                      whiteSpace: 'nowrap',
-                                      fontSize: '12px',
+                                      height: '100%',
+                                      width: '40%', // 40% width for the middle segment (70%-30%)
+                                      backgroundColor: 'white', // Black color for the middle segment
+                                      position: 'relative',
                                     }}
                                   >
-                                    {`${getFormattedPrice(target)}`}
-                                  </span>
-                                )}
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        color: 'black',
+                                        fontSize: '10px',
+                                        top: '50%', // Center the text vertically
+                                        left: '100%', // Align text to the right
+                                        transform: 'translate(-100%, -50%)', // Move text back to fully show it and center it vertically
+                                      }}
+                                    >
+                                      {threshold_1 + threshold_2}%
+                                    </span>
+                                  </div>
+
+                                  {/* Right Segment (30%) - from 70% to 100% */}
+                                  <div
+                                    style={{
+                                      height: '100%',
+                                      width: '30%', // 30% width for the right segment
+                                      backgroundColor: 'white', // Black color for the right segment
+                                      position: 'relative',
+                                    }}
+                                  >
+                                    <span
+                                      style={{
+                                        position: 'absolute',
+                                        color: 'black',
+                                        fontSize: '10px',
+                                        top: '50%', // Center the text vertically
+                                        left: '100%', // Align text to the right
+                                        transform: 'translate(-100%, -50%)', // Move text back to fully show it and center it vertically
+                                      }}
+                                    >
+                                      {threshold_1 + threshold_2 + threshold_3}%
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -1107,7 +1198,7 @@ export default function DisplayCharts() {
                         >
                           <div
                             style={{
-                              width: '20px',
+                              width: '40px',
                               height: '10px',
                               backgroundColor: 'SteelBlue',
                               marginRight: '5px',
@@ -1118,9 +1209,9 @@ export default function DisplayCharts() {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <div
                             style={{
-                              width: '20px',
+                              width: '40px',
                               height: '10px',
-                              backgroundColor: 'DarkOrange',
+                              background: 'linear-gradient(to right, FireBrick, Gold, ForestGreen)',
                               marginRight: '5px',
                             }}
                           ></div>
@@ -1381,43 +1472,124 @@ export default function DisplayCharts() {
           </div>
         </div>
 
-        <div style={{ borderLeft: '1px solid lightGray' }}>
+        <div style={{ borderLeft: '1px solid lightGray', width: '40%' }}>
           {/* Information Cards */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px', marginLeft: '30px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: '30px',
+              marginLeft: '15px',
+              marginRight: '7px',
+            }}
+          >
             {/* Card 1: CTR */}
             <div
               style={{
-                width: '48%', // Increased from 48% to 60%
-                padding: '20px',
+                width: '48%',
+                height: '150px', // Ensure the height is fixed and consistent
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column', // Arrange content vertically
               }}
             >
-              <h5 style={{ marginBottom: '10px', textAlign: 'center', fontSize: '21px' }}>Total Transactions</h5>
-              <p style={{ fontSize: '24px', margin: '0', textAlign: 'center' }}>{getFormattedPrice(8924)}</p>
+              {/* Upper 40% - Header section with new colors */}
+              <div
+                style={{
+                  backgroundColor: 'rgb(53, 74, 95)', // New background color
+                  color: 'white',
+                  padding: '10px',
+                  textAlign: 'left',
+                  height: '40%', // Ensure the height is 40% of the card
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center', // Vertically center the heading
+                  boxShadow: 'rgb(206, 212, 218) 1px 1px', // New shadow
+                }}
+              >
+                <h5 style={{ margin: 0 }}>Total Transactions</h5>
+              </div>
+
+              {/* Lower 60% - Original content */}
+              <div
+                style={{
+                  padding: '10px',
+                  textAlign: 'center',
+                  height: '60%', // Ensure the height is 60% of the card
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center', // Vertically center the value
+                }}
+              >
+                {total && Array.isArray(total) && total.length > 0 ? (
+                  <p style={{ fontSize: '27px', marginTop: '5px', fontWeight: 'bold' }}>
+                    {getFormattedPrice(total[0].ctr)}
+                  </p>
+                ) : (
+                  <div>No data available</div>
+                )}
+              </div>
             </div>
 
             {/* Card 2: Total Amount */}
             <div
               style={{
-                width: '48%', // Increased from 48% to 60%
-                padding: '20px',
+                width: '48%',
+                height: '150px', // Ensure the height is fixed and consistent
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column', // Arrange content vertically
               }}
             >
-              <h5 style={{ marginBottom: '10px', textAlign: 'left', fontSize: '28px' }}>Total Amount</h5>
-              <p style={{ fontSize: '24px', margin: '0', textAlign: 'left' }}>{getFormattedPrice(184744742)}</p>
+              {/* Upper 30% - Blue section */}
+              <div
+                style={{
+                  backgroundColor: 'rgb(53, 74, 95)', // Blue color for the upper section
+                  color: 'white',
+                  padding: '10px',
+                  height: '47%', // Ensure the height is 30% of the card
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center', // Vertically center the heading
+                  boxShadow: 'rgb(206, 212, 218) 1px 1px',
+                }}
+              >
+                <h5 style={{ margin: 0 }}>Total Amount</h5>
+              </div>
+
+              {/* Lower 70% - Original content */}
+              <div
+                style={{
+                  padding: '10px',
+                  textAlign: 'right',
+                  height: '70%', // Ensure the height is 70% of the card
+                  display: 'flex',
+                  justifyContent: 'right',
+                  alignItems: 'right', // Vertically center the value
+                }}
+              >
+                {total && Array.isArray(total) && total.length > 0 ? (
+                  <p style={{ fontSize: '27px', marginTop: '5px', fontWeight: 'bold' }}>
+                    {getFormattedPrice(total[0].total_amount)}
+                  </p>
+                ) : (
+                  <div>No data available</div>
+                )}
+              </div>
             </div>
           </div>
 
           <hr style={{ width: '100%', borderTop: '3px solid lightGray' }} />
 
           {/* Adapt Filters Section */}
-          <div style={{ width: '90%', marginLeft: '10%', marginTop: '10%' }}>
-            <h6 style={{ marginLeft: '8px', fontSize: '30px', marginBottom: '20px' }}>Adapt Filters</h6>
+          <div style={{ width: '90%', marginLeft: '5%', marginTop: '10%' }}>
+            <h6 style={{ marginLeft: '0px', fontSize: '20px', marginBottom: '20px' }}>Adapt Filters</h6>
 
             <Stack ml={1} mr={1} direction="column" spacing={2}>
               {/* From Date */}
@@ -1461,7 +1633,7 @@ export default function DisplayCharts() {
                     id="amount"
                     name="amount"
                     className="form-control"
-                    style={{ width: '224px' }}
+                    style={{ width: '222px' }}
                     value={filterInfo.amount}
                     onChange={handleFilterInfo}
                   />
@@ -1524,7 +1696,7 @@ export default function DisplayCharts() {
                     id="username"
                     name="username"
                     className="form-control"
-                    style={{ width: '224px' }}
+                    style={{ width: '222px' }}
                     value={filterInfo.username}
                     onChange={handleFilterInfo}
                   />
