@@ -191,8 +191,8 @@ export default function TestSapApiPage() {
       <Dialog open={open}>
         {/* <Dialog open={open} onClose={handleClose}> */}
         <Stack />
-        <DialogContent>
-          <Stack spacing={1.5} direction="row" alignItems={'center'} alignContent={'center'}>
+        <DialogContent style={{ overflow: 'hidden' }}>
+          <Stack spacing={1.5} direction="row" style={{ justifyContent: 'center' }}>
             <CircularProgress />
           </Stack>
           <Stack spacing={1.5} direction="row">
