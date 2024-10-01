@@ -23,15 +23,28 @@ const Progress_bar = ({ target, deposit, height, viewMode, threshold_1, threshol
         const isOverComplete = deposit - target;
         console.log(isOverComplete);
 
-        setTooltipContent(`✔️ Progress complete! 🎉 Now ${getFormattedPrice(isOverComplete)} deposit ahead.`);
+        setTooltipContent(
+          <>
+            ✔️Target complete!! Now <span style={{ color: 'LawnGreen' }}>{getFormattedPrice(isOverComplete)}</span>{' '}
+            deposit ahead.
+          </>
+        );
       } else {
-        setTooltipContent('✔️Congratulations 🏆 Progress complete! 🎉');
+        setTooltipContent(
+          <>
+            <span style={{ color: 'green' }}>✔️Congratulations</span> 🏆 Target complete!{' '}
+            <span style={{ color: 'blue' }}>🎉</span>
+          </>
+        );
       }
     } else {
       console.log(progressPercentage);
 
       setTooltipContent(
-        `💡 Incomplete: ${getFormattedPrice(incompleteAmount)} (${(100 - progressPercentage).toFixed(2)}% remaining)`
+        <>
+          💡 Incomplete: <span style={{ color: 'OrangeRed' }}>{getFormattedPrice(incompleteAmount)}</span>(
+          <span style={{ color: 'orange' }}>{(100 - progressPercentage).toFixed(2)}%</span> remaining)
+        </>
       );
     }
   };
