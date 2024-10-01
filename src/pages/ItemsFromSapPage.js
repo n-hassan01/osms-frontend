@@ -7,10 +7,10 @@ import { useEffect, useState } from 'react';
 import { useUser } from '../context/UserContext';
 // services
 import {
-    addItemsFromSapService,
-    getCustomerGroupService,
-    getItemsFromSapService,
-    getUserProfileDetails,
+  addItemsFromSapService,
+  getCustomerGroupService,
+  getItemsFromSapService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 // css
 import '../_css/Utils.css';
@@ -169,12 +169,17 @@ export default function TestSapApiPage() {
       <Dialog open={open}>
         {/* <Dialog open={open} onClose={handleClose}> */}
         <Stack />
-        <DialogContent>
-          <Stack spacing={1.5} direction="row" alignItems={'center'} alignContent={'center'}>
-            <CircularProgress />
+        <DialogContent style={{ overflow: 'hidden' }}>
+          <Stack spacing={1.5} direction="row" style={{ justifyContent: 'center' }}>
+            <div>
+              <CircularProgress />
+            </div>
           </Stack>
+
           <Stack spacing={1.5} direction="row">
-            <p>Customers are loading. Please keep patient until process is completed.</p>
+            <p style={{ justifyContent: 'center' }}>
+              Items are loading. Please keep patient until process is completed.
+            </p>
           </Stack>
         </DialogContent>
       </Dialog>
