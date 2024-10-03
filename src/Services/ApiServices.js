@@ -1803,7 +1803,15 @@ export const addItemsFromSapService = async (bodyInfo) => {
     return await axios.post(`${usersUrl}item-from-sap/add`, bodyInfo);
   } catch (err) {
     console.log(err.message);
+    return err;
+  }
+};
 
+export const addAllItemFromSapService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}item-from-sap/add/all`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
     return err;
   }
 };
