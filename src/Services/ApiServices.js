@@ -1778,6 +1778,16 @@ export const getCustomersFromSap = async () => {
   }
 };
 
+export const getCustomersByGroupFromSap = async (id) => {
+  try {
+    return await axios.get(`${usersUrl}add-customer-from-sap/filter/${id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getItemsFromSapService = async () => {
   try {
     return await axios.get(`${usersUrl}item-from-sap`);
@@ -1798,12 +1808,30 @@ export const addCustomersFromSap = async (bodyInfo) => {
   }
 };
 
+export const addAllCustomersFromSap = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-customer-from-sap/add/all`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
+
 export const addItemsFromSapService = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}item-from-sap/add`, bodyInfo);
   } catch (err) {
     console.log(err.message);
+    return err;
+  }
+};
 
+export const addAllItemFromSapService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}item-from-sap/add/all`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
     return err;
   }
 };

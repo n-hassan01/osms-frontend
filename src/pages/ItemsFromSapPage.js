@@ -7,10 +7,10 @@ import { useEffect, useState } from 'react';
 import { useUser } from '../context/UserContext';
 // services
 import {
-  addItemsFromSapService,
+  addAllItemFromSapService,
   getCustomerGroupService,
   getItemsFromSapService,
-  getUserProfileDetails,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 // css
 import '../_css/Utils.css';
@@ -92,27 +92,15 @@ export default function TestSapApiPage() {
       console.log(customerList);
 
       try {
-        await Promise.all(
-          customerList.map(async (element) => {
-            // if (
-            //   element.BusinessPartnerGrouping === 'ZDOC' &&
-            //   element.BusinessPartnerType === selectedGroup.toString()
-            // ) {
-            const requestBody = {
-              product: element.Product || '',
-              productType: element.ProductType || '',
-              creationDateTime: element.CreationDateTime || '',
-              createdByUser: element.CreatedByUser || '',
-              baseUnit: element.BaseUnit || '',
-            };
+        const requestBody = {
+          content: customerList || [],
+        };
+        const response = await addAllItemFromSapService(requestBody);
 
-            const response = await addItemsFromSapService(requestBody);
-            // }
-          })
-        );
-
-        // alert('Successfully added!');
-        // handleClose();
+        if (response.status !== 200) {
+          alert('Error adding customers. Please check the console for details.');
+          console.log(response.data);
+        }
       } catch (error) {
         console.error('Error adding customers:', error);
         alert('Error adding customers. Please check the console for details.');
