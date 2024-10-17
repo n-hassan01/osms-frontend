@@ -6,7 +6,7 @@ import { Container, Grid, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { gsap } from 'gsap/gsap-core';
+
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
@@ -72,35 +72,6 @@ export default function AddFndUser() {
 
   const [customerGroups, setCustomerGroups] = useState([]);
   const tdRef = useRef(null);
-
-  useEffect(() => {
-    const tdElement = tdRef.current;
-
-    // GSAP animation for hover
-    tdElement.addEventListener('mouseenter', () => {
-      gsap.to(tdElement, {
-        scale: 1.05,
-        backgroundColor: '#f0f0f0',
-        duration: 0.3,
-        ease: 'power1.out',
-      });
-    });
-
-    tdElement.addEventListener('mouseleave', () => {
-      gsap.to(tdElement, {
-        scale: 1,
-        backgroundColor: '#fff',
-        duration: 0.3,
-        ease: 'power1.out',
-      });
-    });
-
-    // Cleanup on component unmount
-    return () => {
-      tdElement.removeEventListener('mouseenter', null);
-      tdElement.removeEventListener('mouseleave', null);
-    };
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
