@@ -1395,11 +1395,19 @@ export default function DisplayCharts() {
         <div style={{ width: '65%' }}>
           <h6>Data Visualization</h6>
           <div>
-            <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+            <Accordion
+              expanded={expanded === 'panel1'}
+              onChange={handleChange('panel1')}
+              style={{ backgroundColor: '#ade8f4', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Customer Summary</Typography>
+                <Typography style={{ fontFamily: 'cursive' }}>Customer Summary</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
+              <AccordionDetails
+                style={{ height: '50%', overflowY: 'auto', backgroundColor: '#03045e', color: 'white' }}
+              >
                 <div style={{ height: '50%', overflowY: 'auto' }}>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <h3 className="heading">Progress Bars</h3>
@@ -1479,7 +1487,7 @@ export default function DisplayCharts() {
                                     <span
                                       style={{
                                         marginLeft: '20px',
-                                        color: 'black',
+                                        color: 'white',
                                         whiteSpace: 'nowrap',
                                         fontSize: '12px',
                                       }}
@@ -1618,9 +1626,15 @@ export default function DisplayCharts() {
                 </div>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+            <Accordion
+              expanded={expanded === 'panel2'}
+              onChange={handleChange('panel2')}
+              style={{ backgroundColor: '#90e0ef', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-                <Typography>View Collections</Typography>
+                <Typography style={{ fontFamily: 'cursive' }}>View Collections</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Scrollbar>
@@ -1685,64 +1699,124 @@ export default function DisplayCharts() {
                                   view
                                 </button>
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {bank_status}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {remarks}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {getFormattedDateWithTime(deposit_date)}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {getFormattedDateWithTime(creation_date)}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {company_bank}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {company_account}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {company_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {customer_code}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {customer_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {customer_group}
                               </TableCell>
-                              <TableCell align="right" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="right"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {getFormattedPrice(amount)}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {invoice_number}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {deposit_type_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {depositor_bank}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {depositor_branch}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {receipt_number}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {depositor_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {employee_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {user_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '10px', whiteSpace: 'nowrap', fontFamily: 'cursive' }}
+                              >
                                 {reject_reason}
                               </TableCell>
                             </TableRow>
@@ -1787,9 +1861,15 @@ export default function DisplayCharts() {
                 </Scrollbar>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+            <Accordion
+              expanded={expanded === 'panel3'}
+              onChange={handleChange('panel3')}
+              style={{ backgroundColor: '#48cae4', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-                <Typography>All Deposites According to the Time Period</Typography>
+                <Typography style={{ fontFamily: 'cursive' }}>All Deposites According to the Time Period</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <>
@@ -1816,11 +1896,17 @@ export default function DisplayCharts() {
                 </>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+            <Accordion
+              expanded={expanded === 'panel4'}
+              onChange={handleChange('panel4')}
+              style={{ backgroundColor: '#00b4d8', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Gauge Data</Typography>
+                <Typography style={{ fontFamily: 'cursive' }}>Gauge Data</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
+              <AccordionDetails style={{ height: '50%', overflowY: 'auto', backgroundColor: 'white' }}>
                 <div id="gauge-demo">
                   <CircularGauge id="gauge" value={valuess} subvalues={subvalues}>
                     <Scale startValue={10} endValue={100} tickInterval={5}>
@@ -1848,9 +1934,15 @@ export default function DisplayCharts() {
                 </div>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+            <Accordion
+              expanded={expanded === 'panel5'}
+              onChange={handleChange('panel5')}
+              style={{ backgroundColor: '#0096c7', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Drill Down with list</Typography>
+                <Typography style={{ fontFamily: 'cursive' }}>Drill Down with list</Typography>
               </AccordionSummary>
               <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
                 <div>
@@ -1870,11 +1962,21 @@ export default function DisplayCharts() {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+            <Accordion
+              expanded={expanded === 'panel6'}
+              onChange={handleChange('panel6')}
+              style={{
+                backgroundColor: '#0077b6',
+                color: 'black',
+                transition: 'transform 0.3s ease-in-out', // Smooth transition
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Drill Down with Charts</Typography>
+                <Typography style={{ fontFamily: 'cursive' }}>Drill Down with Charts</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
+              <AccordionDetails style={{ height: '50%', overflowY: 'auto', backgroundColor: 'white' }}>
                 <div>
                   <Chart
                     id="chart"
@@ -1888,16 +1990,7 @@ export default function DisplayCharts() {
                     <ValueAxis showZero={false} />
                     <Legend visible={false} />
                   </Chart>
-                  {/* <Button
-                    className="button-container"
-                    text="Back"
-                    icon="chevronleft"
-                    visible={!isFirstLevel}
-                    onClick={onButtonClick}
-                    height={200}
-                  /> */}
                   <Button
-                    // variant="contained"
                     className="button-container"
                     size="medium"
                     icon="chevronleft"
@@ -1928,27 +2021,30 @@ export default function DisplayCharts() {
             <div
               style={{
                 width: '48%',
-                height: '150px', // Ensure the height is fixed and consistent
+                height: '150px',
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
                 display: 'flex',
-                flexDirection: 'column', // Arrange content vertically
+                flexDirection: 'column',
+                transition: 'transform 0.3s ease', // Smooth transition for the hover effect
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up effect
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on mouse leave
             >
               {/* Upper 40% - Header section with new colors */}
               <div
                 style={{
-                  backgroundColor: 'rgb(53, 74, 95)', // New background color
+                  backgroundColor: 'rgb(53, 74, 95)',
                   color: 'white',
                   padding: '10px',
                   textAlign: 'left',
-                  height: '40%', // Ensure the height is 40% of the card
+                  height: '40%',
                   display: 'flex',
                   justifyContent: 'flex-start',
-                  alignItems: 'center', // Vertically center the heading
-                  boxShadow: 'rgb(206, 212, 218) 1px 1px', // New shadow
+                  alignItems: 'center',
+                  boxShadow: 'rgb(206, 212, 218) 1px 1px',
                 }}
               >
                 <h5 style={{ margin: 0 }}>Total Transactions</h5>
@@ -1959,10 +2055,10 @@ export default function DisplayCharts() {
                 style={{
                   padding: '10px',
                   textAlign: 'center',
-                  height: '60%', // Ensure the height is 60% of the card
+                  height: '60%',
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center', // Vertically center the value
+                  alignItems: 'center',
                 }}
               >
                 {total && Array.isArray(total) && total.length > 0 ? (
@@ -1979,40 +2075,43 @@ export default function DisplayCharts() {
             <div
               style={{
                 width: '48%',
-                height: '150px', // Ensure the height is fixed and consistent
+                height: '150px',
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
                 display: 'flex',
-                flexDirection: 'column', // Arrange content vertically
+                flexDirection: 'column',
+                transition: 'transform 0.3s ease', // Smooth transition for the hover effect
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up effect
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on mouse leave
             >
-              {/* Upper 30% - Blue section */}
+              {/* Upper 47% - Blue section */}
               <div
                 style={{
-                  backgroundColor: 'rgb(53, 74, 95)', // Blue color for the upper section
+                  backgroundColor: 'rgb(53, 74, 95)',
                   color: 'white',
                   padding: '10px',
-                  height: '47%', // Ensure the height is 30% of the card
+                  height: '40%',
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  alignItems: 'center', // Vertically center the heading
+                  alignItems: 'center',
                   boxShadow: 'rgb(206, 212, 218) 1px 1px',
                 }}
               >
                 <h5 style={{ margin: 0 }}>Total Amount</h5>
               </div>
 
-              {/* Lower 70% - Original content */}
+              {/* Lower 53% - Original content */}
               <div
                 style={{
                   padding: '10px',
                   textAlign: 'right',
-                  height: '70%', // Ensure the height is 70% of the card
+                  height: '53%',
                   display: 'flex',
                   justifyContent: 'right',
-                  alignItems: 'right', // Vertically center the value
+                  alignItems: 'center',
                 }}
               >
                 {total && Array.isArray(total) && total.length > 0 ? (
