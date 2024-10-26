@@ -1212,6 +1212,7 @@ export default function UserPage() {
                             <div
                               key={`competitor-${index}`}
                               style={{
+                                padding: '5px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
