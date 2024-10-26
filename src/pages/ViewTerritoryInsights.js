@@ -310,11 +310,15 @@ export default function UserPage() {
 
   useEffect(() => {
     async function fetchTerritoryDetails() {
+      console.log(selectedTerritoryId);
+
       if (selectedTerritoryId) {
         console.log(selectedTerritoryId);
 
         try {
           const territoryResponse = await getTerritoryListsService(selectedTerritoryId);
+          console.log(territoryResponse.data);
+
           if (territoryResponse.status === 200) setTerritoryLists(territoryResponse.data);
 
           const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(selectedTerritoryId);
@@ -1086,7 +1090,39 @@ export default function UserPage() {
                       {territoryIds.map((territory) => (
                         <Button
                           key={territory.territory_id}
-                          onClick={() => setSelectedTerritoryId(territory.territory_id)}
+                          onClick={async () => {
+                            // Set selected territory ID
+                            setSelectedTerritoryId(territory.territory_id);
+
+                            // Clear existing data
+                            setTerritoryLists([]); // Clear previous territory lists
+                            setCompetitors([]); // Clear previous competitors
+                            setAllCompetitors([]); // Clear previous all competitors
+
+                            // Fetch new data based on selected territory
+                            try {
+                              const territoryResponse = await getTerritoryListsService(territory.territory_id);
+                              if (territoryResponse.status === 200) {
+                                setTerritoryLists(territoryResponse.data);
+                              }
+
+                              const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(
+                                territory.territory_id
+                              );
+                              if (competitorsResponse.status === 200) {
+                                setCompetitors(competitorsResponse.data);
+                              }
+
+                              const allCompetitorsResponse = await getTerritoryCompetitorsService(
+                                territory.territory_id
+                              );
+                              if (allCompetitorsResponse.status === 200) {
+                                setAllCompetitors(allCompetitorsResponse.data);
+                              }
+                            } catch (error) {
+                              console.error('Error fetching data for selected territory:', error);
+                            }
+                          }}
                           variant={territory.territory_id === selectedTerritoryId ? 'contained' : 'outlined'}
                           sx={{ margin: '0 8px' }}
                         >
