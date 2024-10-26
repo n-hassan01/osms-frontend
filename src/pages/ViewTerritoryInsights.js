@@ -1089,6 +1089,7 @@ export default function UserPage() {
                       <strong>Select Territory:</strong>
                       {territoryIds.map((territory) => (
                         <Button
+                          style={{ margin: '5px' }}
                           key={territory.territory_id}
                           onClick={async () => {
                             // Set selected territory ID
