@@ -1162,7 +1162,14 @@ export default function UserPage() {
                       align="left"
                       sx={{ width: '40%', verticalAlign: 'top', border: '1px solid #000' }} // Add border to each cell
                     >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '20px' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          fontSize: '20px',
+                        }}
+                      >
                         {competitors.map((competitorRow, index) => (
                           <>
                             <div
@@ -1171,6 +1178,7 @@ export default function UserPage() {
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
+                                borderBottom: '1px solid #000',
                               }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Distributor Count:</strong>
@@ -1180,7 +1188,12 @@ export default function UserPage() {
                             </div>
                             <div
                               key={`sales-officer-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: '1px solid #000',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Sales Officer Count:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
@@ -1189,7 +1202,12 @@ export default function UserPage() {
                             </div>
                             <div
                               key={`total-outlet-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: '1px solid #000',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Total Outlet Count:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
@@ -1198,7 +1216,12 @@ export default function UserPage() {
                             </div>
                             <div
                               key={`company-outlet-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Company Outlet Count:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
@@ -1207,7 +1230,12 @@ export default function UserPage() {
                             </div>
                             <div
                               key={`population-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Population Count:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
@@ -1216,40 +1244,70 @@ export default function UserPage() {
                             </div>
                             <div
                               key={`monthly-sales-actual-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Monthly Sales Actual:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
-                                {competitorRow.monthly_sales_actual}
+                                {getFormattedPrice(competitorRow.monthly_sales_actual)}
                               </span>
                             </div>
                             <div
                               key={`monthly-sales-target-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Monthly Sales Target:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
-                                {competitorRow.monthly_sales_target}
+                                {getFormattedPrice(competitorRow.monthly_sales_target)}
                               </span>
                             </div>
                             <div
                               key={`monthly-collection-actual-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              style={{
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
                             >
                               <strong style={{ flex: '0 0 auto' }}>Monthly Collection Actual:</strong>
                               <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
-                                {competitorRow.monthly_collection_actual}
+                                {getFormattedPrice(competitorRow.monthly_collection_actual)}
                               </span>
                             </div>
                             <div
-                              key={`monthly-collection-target-${index}`}
-                              style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                              key={`monthly-collection-target-${index}`} // Fixed the key syntax
+                              style={{
+                                borderBottom: '1px solid #000', // Add border here
+                                paddingBottom: '8px', // Add padding for spacing
+                                paddingTop: '8px', // Add padding for spacing
+                                width: '100%', // Ensure full width
+                              }}
                             >
-                              <strong style={{ flex: '0 0 auto' }}>Monthly Collection Target:</strong>
-                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
-                                {competitorRow.monthly_collection_target}
-                              </span>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  width: '100%', // Ensure this div also takes full width
+                                }}
+                              >
+                                <strong style={{ flex: '0 0 auto' }}>Monthly Collection Target:</strong>
+                                <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                  {getFormattedPrice(competitorRow.monthly_collection_target)}
+                                </span>
+                              </div>
                             </div>
+
                             <hr />
                           </>
                         ))}
@@ -1270,7 +1328,7 @@ export default function UserPage() {
                                 <strong>Competitor Name</strong>
                               </TableCell>
                               <TableCell align="right" sx={{ border: '1px solid #000' }}>
-                                <strong>Competitor Monthly Sales</strong>
+                                <strong>Competitor Monthly Average Sales</strong>
                               </TableCell>
                               <TableCell align="right" sx={{ border: '1px solid #000' }}>
                                 <strong>Bill Board Count</strong>
@@ -1284,7 +1342,7 @@ export default function UserPage() {
                                   {allCompetitorRow.competitor_name}
                                 </TableCell>
                                 <TableCell align="right" sx={{ border: '1px solid #000' }}>
-                                  {allCompetitorRow.competitor_monthly_sales}
+                                  {getFormattedPrice(allCompetitorRow.competitor_monthly_sales)}
                                 </TableCell>
                                 <TableCell align="right" sx={{ border: '1px solid #000' }}>
                                   {allCompetitorRow.bill_board_count}
