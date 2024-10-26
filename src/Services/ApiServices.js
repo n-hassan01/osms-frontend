@@ -1401,9 +1401,9 @@ export const getAllBankDepositsForAccountsService = async (loginToken) => {
   }
 };
 
-export const getTerritoryListsService = async () => {
+export const getTerritoryListsService = async (selectedTerritoryId) => {
   try {
-    return await axios.post(`${usersUrl}get-territory-insights/territoryLists`);
+    return await axios.post(`${usersUrl}get-territory-insights/territoryLists`, { selectedTerritoryId });
   } catch (err) {
     console.log(err.message);
 
@@ -1421,9 +1421,9 @@ export const getTerritoryAllIdsService = async () => {
   }
 };
 
-export const getTerritoryPerInsightsCompetitorsService = async () => {
+export const getTerritoryPerInsightsCompetitorsService = async (selectedTerritoryId) => {
   try {
-    return await axios.post(`${usersUrl}get-territory-insights/perInsights`);
+    return await axios.post(`${usersUrl}get-territory-insights/perInsights`, { selectedTerritoryId });
   } catch (err) {
     console.log(err.message);
 
@@ -1431,9 +1431,9 @@ export const getTerritoryPerInsightsCompetitorsService = async () => {
   }
 };
 
-export const getTerritoryCompetitorsService = async () => {
+export const getTerritoryCompetitorsService = async (selectedTerritoryId) => {
   try {
-    return await axios.post(`${usersUrl}get-territory-insights/perCompetitors`);
+    return await axios.post(`${usersUrl}get-territory-insights/perCompetitors`, { selectedTerritoryId });
   } catch (err) {
     console.log(err.message);
 
