@@ -1086,7 +1086,7 @@ export default function UserPage() {
                   {/* Territory ID Selection Row */}
                   <TableRow>
                     <TableCell colSpan={3} align="left" sx={{ borderBottom: '1px solid #000', paddingBottom: '8px' }}>
-                      <strong>Select Territory:</strong>
+                      <strong style={{ marginRight: '10px', fontSize: '15px' }}>Select Territory:</strong>
                       {territoryIds.map((territory) => (
                         <Button
                           style={{ margin: '5px' }}
