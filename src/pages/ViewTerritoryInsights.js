@@ -1226,6 +1226,7 @@ export default function UserPage() {
                             <div
                               key={`sales-officer-${index}`}
                               style={{
+                                padding: '5px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
@@ -1240,6 +1241,7 @@ export default function UserPage() {
                             <div
                               key={`total-outlet-${index}`}
                               style={{
+                                padding: '5px',
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
@@ -1254,6 +1256,7 @@ export default function UserPage() {
                             <div
                               key={`company-outlet-${index}`}
                               style={{
+                                padding: '5px',
                                 borderBottom: '1px solid #000',
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -1268,6 +1271,7 @@ export default function UserPage() {
                             <div
                               key={`population-${index}`}
                               style={{
+                                padding: '5px',
                                 borderBottom: '1px solid #000',
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -1282,6 +1286,7 @@ export default function UserPage() {
                             <div
                               key={`monthly-sales-actual-${index}`}
                               style={{
+                                padding: '5px',
                                 borderBottom: '1px solid #000',
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -1296,6 +1301,7 @@ export default function UserPage() {
                             <div
                               key={`monthly-sales-target-${index}`}
                               style={{
+                                padding: '5px',
                                 borderBottom: '1px solid #000',
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -1310,6 +1316,7 @@ export default function UserPage() {
                             <div
                               key={`monthly-collection-actual-${index}`}
                               style={{
+                                padding: '5px',
                                 borderBottom: '1px solid #000',
                                 display: 'flex',
                                 justifyContent: 'space-between',
@@ -1324,7 +1331,8 @@ export default function UserPage() {
                             <div
                               key={`monthly-collection-target-${index}`} // Fixed the key syntax
                               style={{
-                                borderBottom: '1px solid #000', // Add border here
+                                padding: '5px',
+                                // borderBottom: '1px solid #000', // Add border here
                                 paddingBottom: '8px', // Add padding for spacing
                                 paddingTop: '8px', // Add padding for spacing
                                 width: '100%', // Ensure full width
@@ -1344,8 +1352,6 @@ export default function UserPage() {
                                 </span>
                               </div>
                             </div>
-
-                            <hr />
                           </>
                         ))}
                       </div>
