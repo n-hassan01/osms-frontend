@@ -88,6 +88,8 @@ import UploadReconciledDepositsExcel from './pages/UploadReconciledDepositsExcel
 import UserActionAssignmentPage from './pages/UserActionAssignmentPage';
 import VatposIntegrationService from './pages/VatposIntegrationService';
 import DepositsViewPage from './pages/ViewCollectionsPage';
+import ViewTerritoryDetails from './pages/ViewTerritoryDetails';
+import ViewTerritoryInsights from './pages/ViewTerritoryInsights';
 import ForgetPassword from './pages/forgetPassword';
 
 // ----------------------------------------------------------------------
@@ -204,6 +206,9 @@ export default function Router() {
         { path: 'itemsFromSap', element: <ItemsFromSapPage /> },
         { path: 'manage-so/admin', element: <ManageSoAdminPage /> },
         { path: 'displayCharts', element: <DisplayCharts /> },
+        { path: 'viewTerritoryDetails', element: <ViewTerritoryDetails /> },
+        { path: 'viewTerritoryInsights', element: <ViewTerritoryInsights /> },
+        { path: 'viewTerritoryCompetitors', element: <viewTerritoryCompetitors /> },
       ],
     },
 
