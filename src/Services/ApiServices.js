@@ -1401,6 +1401,46 @@ export const getAllBankDepositsForAccountsService = async (loginToken) => {
   }
 };
 
+export const getTerritoryListsService = async (selectedTerritoryId) => {
+  try {
+    return await axios.post(`${usersUrl}get-territory-insights/territoryLists`, { selectedTerritoryId });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getTerritoryAllIdsService = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-territory-insights/allIds`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getTerritoryPerInsightsCompetitorsService = async (selectedTerritoryId) => {
+  try {
+    return await axios.post(`${usersUrl}get-territory-insights/perInsights`, { selectedTerritoryId });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getTerritoryCompetitorsService = async (selectedTerritoryId) => {
+  try {
+    return await axios.post(`${usersUrl}get-territory-insights/perCompetitors`, { selectedTerritoryId });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getShopsListService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}shop-master/view`, {

@@ -19,7 +19,13 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-restricted-globals */
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PersonIcon from '@mui/icons-material/Person';
+import SpeedIcon from '@mui/icons-material/Speed';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
@@ -1373,7 +1379,28 @@ export default function DisplayCharts() {
   const commonLabelStyle = { marginRight: '10px', width: '100px', textAlign: 'right' };
   const labelWidth = '150px'; // Adjust this width for labels
   const inputWidth = '220px';
-
+  const [highlightedItem, setHighLightedItem] = React.useState(null);
+  const pieChartProps = {
+    series: [
+      {
+        id: 'sync',
+        data: [
+          { value: 3, label: 'A', id: 'A' },
+          { value: 4, label: 'B', id: 'B' },
+          { value: 1, label: 'C', id: 'C' },
+          { value: 6, label: 'D', id: 'D' },
+          { value: 5, label: 'E', id: 'E' },
+        ],
+        highlightScope: { highlight: 'item', fade: 'global' },
+      },
+    ],
+    height: 400,
+    slotProps: {
+      legend: {
+        hidden: true,
+      },
+    },
+  };
   return (
     <>
       <Helmet>
@@ -1383,7 +1410,6 @@ export default function DisplayCharts() {
       <div
         style={{
           height: '100%',
-
           display: 'flex',
           flexDirection: 'row',
           // border: '1px solid lightgrey',
@@ -1393,13 +1419,33 @@ export default function DisplayCharts() {
         }}
       >
         <div style={{ width: '65%' }}>
-          <h6>Data Visualization</h6>
           <div>
-            <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+            <h6
+              style={{
+                color: 'Lavender',
+                textAlign: 'center',
+
+                marginBottom: '10px',
+                backgroundColor: 'steelblue',
+                padding: '20px',
+              }}
+            >
+              Data Visualization
+            </h6>
+            <Accordion
+              expanded={expanded === 'panel1'}
+              onChange={handleChange('panel1')}
+              style={{ backgroundColor: 'white', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Customer Summary</Typography>
+                <PersonIcon style={{ marginRight: '10px' }} />
+                <Typography style={{ fontFamily: 'Tahoma', color: 'blue' }}>Customer Summary</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
+              <AccordionDetails
+                style={{ height: '50%', overflowY: 'auto', backgroundColor: 'DarkCyan', color: 'white' }}
+              >
                 <div style={{ height: '50%', overflowY: 'auto' }}>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                     <h3 className="heading">Progress Bars</h3>
@@ -1479,7 +1525,7 @@ export default function DisplayCharts() {
                                     <span
                                       style={{
                                         marginLeft: '20px',
-                                        color: 'black',
+                                        color: 'white',
                                         whiteSpace: 'nowrap',
                                         fontSize: '12px',
                                       }}
@@ -1618,9 +1664,20 @@ export default function DisplayCharts() {
                 </div>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+            <Accordion
+              expanded={expanded === 'panel2'}
+              onChange={handleChange('panel2')}
+              style={{
+                backgroundColor: expanded === 'panel2' ? '#white' : '#white', // Dynamic background color for active panel
+                color: 'black',
+                transition: 'background-color 0.3s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
-                <Typography>View Collections</Typography>
+                <ViewListIcon style={{ marginRight: '10px' }} />
+                <Typography style={{ fontFamily: 'Tahoma', color: 'FireBrick' }}>View Collections</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Scrollbar>
@@ -1637,7 +1694,7 @@ export default function DisplayCharts() {
                         enableReadonly
                       />
                       <TableBody>
-                        {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                        {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                           const {
                             bank_recon_id,
                             bank_status,
@@ -1675,74 +1732,138 @@ export default function DisplayCharts() {
                               tabIndex={-1}
                               role="checkbox"
                               selected={selectedUser}
-                              style={{ height: '30px' }} // Adjust row height
+                              style={{
+                                backgroundColor: index % 2 === 0 ? '#f6f6f6' : '#ffffff', // Alternating row colors for contrast
+                                height: '30px', // Adjust row height
+                                borderBottom: '1px solid #ccc', // Add a border between rows
+                              }}
                             >
-                              <TableCell align="left" style={{ fontSize: '10px', padding: '5px' }}>
+                              <TableCell align="left" style={{ fontSize: '12px', padding: '5px' }}>
                                 <button
-                                  style={{ width: '100%', fontSize: '10px' }} // Button font size
+                                  style={{ width: '100%', fontSize: '12px' }} // Button font size
                                   onClick={() => viewAttachment(uploaded_filename)}
                                 >
-                                  view
+                                  View
                                 </button>
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {bank_status}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {remarks}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {getFormattedDateWithTime(deposit_date)}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {getFormattedDateWithTime(creation_date)}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {company_bank}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {company_account}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {company_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {customer_code}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {customer_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {customer_group}
                               </TableCell>
-                              <TableCell align="right" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="right"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {getFormattedPrice(amount)}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {invoice_number}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {deposit_type_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {depositor_bank}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {depositor_branch}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {receipt_number}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {depositor_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {employee_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {user_name}
                               </TableCell>
-                              <TableCell align="left" style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>
+                              <TableCell
+                                align="left"
+                                style={{ fontSize: '12px', whiteSpace: 'nowrap', fontFamily: 'Tahoma' }}
+                              >
                                 {reject_reason}
                               </TableCell>
                             </TableRow>
@@ -1787,9 +1908,19 @@ export default function DisplayCharts() {
                 </Scrollbar>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+
+            <Accordion
+              expanded={expanded === 'panel3'}
+              onChange={handleChange('panel3')}
+              style={{ backgroundColor: 'white', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-                <Typography>All Deposites According to the Time Period</Typography>
+                <AccessTimeIcon style={{ marginRight: '10px' }} />
+                <Typography style={{ fontFamily: 'Tahoma', color: 'RebeccaPurple' }}>
+                  All Deposites According to the Time Period
+                </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <>
@@ -1816,11 +1947,18 @@ export default function DisplayCharts() {
                 </>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+            <Accordion
+              expanded={expanded === 'panel4'}
+              onChange={handleChange('panel4')}
+              style={{ backgroundColor: '#white', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Gauge Data</Typography>
+                <SpeedIcon style={{ marginRight: '10px' }} />
+                <Typography style={{ fontFamily: 'Tahoma', color: 'DarkCyan' }}>Gauge Data</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
+              <AccordionDetails style={{ height: '50%', overflowY: 'auto', backgroundColor: 'white' }}>
                 <div id="gauge-demo">
                   <CircularGauge id="gauge" value={valuess} subvalues={subvalues}>
                     <Scale startValue={10} endValue={100} tickInterval={5}>
@@ -1848,9 +1986,18 @@ export default function DisplayCharts() {
                 </div>
               </AccordionDetails>
             </Accordion>
-            <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+            <Accordion
+              expanded={expanded === 'panel5'}
+              onChange={handleChange('panel5')}
+              style={{ backgroundColor: '#white', color: 'black' }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Drill Down with list</Typography>
+                <ExpandMoreIcon style={{ marginRight: '10px' }} />
+                <Typography style={{ fontFamily: 'Tahoma', color: 'SteelBlue' }}>
+                  Drill Down with Item Master
+                </Typography>
               </AccordionSummary>
               <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
                 <div>
@@ -1870,11 +2017,24 @@ export default function DisplayCharts() {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion expanded={expanded === 'panel5'} onChange={handleChange('panel5')}>
+            {/* <Tooltip title="Click to view charts and drill down data" arrow> */}
+            <Accordion
+              expanded={expanded === 'panel6'}
+              onChange={handleChange('panel6')}
+              style={{
+                backgroundColor: '#white',
+                color: 'black',
+                transition: 'transform 0.3s ease-in-out', // Smooth transition
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on leave
+            >
               <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-                <Typography>Drill Down with Charts</Typography>
+                <Typography style={{ fontFamily: 'Tahoma', color: 'DarkSalmon' }}>
+                  Drill Down with Charts & Lists
+                </Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ height: '50%', overflowY: 'auto' }}>
+              <AccordionDetails style={{ height: '50%', overflowY: 'auto', backgroundColor: 'white' }}>
                 <div>
                   <Chart
                     id="chart"
@@ -1888,16 +2048,7 @@ export default function DisplayCharts() {
                     <ValueAxis showZero={false} />
                     <Legend visible={false} />
                   </Chart>
-                  {/* <Button
-                    className="button-container"
-                    text="Back"
-                    icon="chevronleft"
-                    visible={!isFirstLevel}
-                    onClick={onButtonClick}
-                    height={200}
-                  /> */}
                   <Button
-                    // variant="contained"
                     className="button-container"
                     size="medium"
                     icon="chevronleft"
@@ -1928,27 +2079,30 @@ export default function DisplayCharts() {
             <div
               style={{
                 width: '48%',
-                height: '150px', // Ensure the height is fixed and consistent
+                height: '150px',
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
                 display: 'flex',
-                flexDirection: 'column', // Arrange content vertically
+                flexDirection: 'column',
+                transition: 'transform 0.3s ease',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up effect
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on mouse leave
             >
-              {/* Upper 40% - Header section with new colors */}
+              {/* Upper 40% - Header section with vivid color */}
               <div
                 style={{
-                  backgroundColor: 'rgb(53, 74, 95)', // New background color
+                  backgroundColor: '#ff6f61', // Vivid coral color for emphasis
                   color: 'white',
                   padding: '10px',
                   textAlign: 'left',
-                  height: '40%', // Ensure the height is 40% of the card
+                  height: '40%',
                   display: 'flex',
                   justifyContent: 'flex-start',
-                  alignItems: 'center', // Vertically center the heading
-                  boxShadow: 'rgb(206, 212, 218) 1px 1px', // New shadow
+                  alignItems: 'center',
+                  boxShadow: 'rgb(206, 212, 218) 1px 1px',
                 }}
               >
                 <h5 style={{ margin: 0 }}>Total Transactions</h5>
@@ -1959,14 +2113,16 @@ export default function DisplayCharts() {
                 style={{
                   padding: '10px',
                   textAlign: 'center',
-                  height: '60%', // Ensure the height is 60% of the card
+                  height: '60%',
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center', // Vertically center the value
+                  alignItems: 'center',
                 }}
               >
                 {total && Array.isArray(total) && total.length > 0 ? (
-                  <p style={{ fontSize: '27px', marginTop: '5px', fontWeight: 'bold' }}>
+                  <p style={{ fontSize: '30px', marginTop: '5px', fontWeight: '700', color: '#ff6f61' }}>
+                    {' '}
+                    {/* Increased size and boldness */}
                     {getFormattedPrice(total[0].ctr)}
                   </p>
                 ) : (
@@ -1979,44 +2135,49 @@ export default function DisplayCharts() {
             <div
               style={{
                 width: '48%',
-                height: '150px', // Ensure the height is fixed and consistent
+                height: '150px',
                 backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
                 boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
                 overflow: 'hidden',
                 display: 'flex',
-                flexDirection: 'column', // Arrange content vertically
+                flexDirection: 'column',
+                transition: 'transform 0.3s ease',
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-10px)')} // Hover up effect
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')} // Reset on mouse leave
             >
-              {/* Upper 30% - Blue section */}
+              {/* Upper 47% - Vivid blue section */}
               <div
                 style={{
-                  backgroundColor: 'rgb(53, 74, 95)', // Blue color for the upper section
+                  backgroundColor: '#1e88e5', // Vivid blue color for emphasis
                   color: 'white',
                   padding: '10px',
-                  height: '47%', // Ensure the height is 30% of the card
+                  height: '40%',
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  alignItems: 'center', // Vertically center the heading
+                  alignItems: 'center',
                   boxShadow: 'rgb(206, 212, 218) 1px 1px',
                 }}
               >
                 <h5 style={{ margin: 0 }}>Total Amount</h5>
               </div>
 
-              {/* Lower 70% - Original content */}
+              {/* Lower 53% - Original content */}
               <div
                 style={{
                   padding: '10px',
                   textAlign: 'right',
-                  height: '70%', // Ensure the height is 70% of the card
+                  height: '53%',
                   display: 'flex',
                   justifyContent: 'right',
-                  alignItems: 'right', // Vertically center the value
+                  alignItems: 'center',
                 }}
               >
                 {total && Array.isArray(total) && total.length > 0 ? (
-                  <p style={{ fontSize: '27px', marginTop: '5px', fontWeight: 'bold' }}>
+                  <p style={{ fontSize: '30px', marginTop: '15px', fontWeight: '700', color: '#1e88e5' }}>
+                    {' '}
+                    {/* Increased size and boldness */}
                     {getFormattedPrice(total[0].total_amount)}
                   </p>
                 ) : (
@@ -2025,10 +2186,9 @@ export default function DisplayCharts() {
               </div>
             </div>
           </div>
-
           <hr style={{ width: '100%', borderTop: '3px solid lightGray' }} />
-
           {/* Adapt Filters Section */}
+
           <div style={{ width: '90%', marginLeft: '5%', marginTop: '10%' }}>
             <h6 style={{ marginLeft: '0px', fontSize: '20px', marginBottom: '20px' }}>Adapt Filters</h6>
 
@@ -2036,7 +2196,8 @@ export default function DisplayCharts() {
               {/* From Date */}
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>From Date</span>
-                <div style={{ flexGrow: 1 }}>
+                <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                  <CalendarTodayIcon style={{ marginRight: '10px', color: '#888' }} /> {/* Calendar icon */}
                   <DatePicker
                     selected={filterInfo.from ? parse(filterInfo.from, 'dd/MM/yy', new Date()) : null}
                     onChange={(date) => handleDateChange(date, 'from')}
@@ -2052,7 +2213,8 @@ export default function DisplayCharts() {
               {/* To Date */}
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ width: '150px', textAlign: 'left', minWidth: '150px' }}>To Date</span>
-                <div style={{ flexGrow: 1 }}>
+                <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                  <CalendarTodayIcon style={{ marginRight: '10px', color: '#888' }} /> {/* Calendar icon */}
                   <DatePicker
                     selected={filterInfo.to ? parse(filterInfo.to, 'dd/MM/yy', new Date()) : null}
                     onChange={(date) => handleDateChange(date, 'to')}
@@ -2074,7 +2236,8 @@ export default function DisplayCharts() {
                     id="amount"
                     name="amount"
                     className="form-control"
-                    style={{ width: '222px' }}
+                    style={{ width: '220px' }}
+                    placeholder="Type here"
                     value={filterInfo.amount}
                     onChange={handleFilterInfo}
                   />
@@ -2137,7 +2300,8 @@ export default function DisplayCharts() {
                     id="username"
                     name="username"
                     className="form-control"
-                    style={{ width: '222px' }}
+                    placeholder="Type here"
+                    style={{ width: '230px' }}
                     value={filterInfo.username}
                     onChange={handleFilterInfo}
                   />
