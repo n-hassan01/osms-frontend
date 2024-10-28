@@ -5,31 +5,30 @@
 // import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import { sentenceCase } from 'change-case';
 import { useEffect, useRef, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Button,
-  Card,
-  CircularProgress,
-  DialogTitle,
-  Grid,
-  IconButton,
-  MenuItem,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  TextField,
-  TextareaAutosize,
-  Typography,
+    Button,
+    Card,
+    CircularProgress,
+    DialogTitle,
+    Grid,
+    IconButton,
+    MenuItem,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    TextField,
+    TextareaAutosize,
+    Typography,
 } from '@mui/material';
 import { format, parse } from 'date-fns';
 import { useUser } from '../context/UserContext';
@@ -37,22 +36,23 @@ import { useUser } from '../context/UserContext';
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
-  checkUserActionAssignment,
-  deleteBankDepositAttachmentService,
-  dowloadBankDepositReceiptService,
-  getAllBankDepositsForAccountsService,
-  getAllCustomerService,
-  getBankAccountsViewService,
-  getBankBranchesByBankService,
-  getBankDepositViewFilterByDateService,
-  getBankDepositViewFilterByFromDateService,
-  getBankDepositViewFilterByToDateService,
-  getBankListService,
-  getBankReconIdDetails,
-  getDepositTypesService,
-  getUserProfileDetails,
-  upldateBankDepositService,
-  uploadBankDepositAttachmentService,
+    checkUserActionAssignment,
+    deleteBankDepositAttachmentService,
+    dowloadBankDepositReceiptService,
+    getAllBankDepositsForAccountsService,
+    getAllCustomerService,
+    getBankAccountsViewService,
+    getBankBranchesByBankService,
+    getBankDepositViewFilterByDateService,
+    getBankDepositViewFilterByFromDateService,
+    getBankDepositViewFilterByToDateService,
+    getBankListService,
+    getBankReconIdDetails,
+    getDepositTypesService,
+    getTerritoryCompetitorsService,
+    getUserProfileDetails,
+    upldateBankDepositService,
+    uploadBankDepositAttachmentService,
 } from '../Services/ApiServices';
 import Iconify from '../components/iconify';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
@@ -201,15 +201,15 @@ export default function UserPage() {
       try {
         if (account) {
           console.log(account.user_id);
-          const response = await getAllBankDepositsForAccountsService(user);
+          const response = await getTerritoryCompetitorsService();
 
           if (response.status === 200) {
             // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
             setUserList(response.data);
-            const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-            const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-            setCustomerGroups(customerGroupList);
-            setCustomers(customerList);
+            //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
+            // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
+            //  setCustomerGroups(customerGroupList);
+            //  setCustomers(customerList);
           }
         }
       } catch (error) {
@@ -380,57 +380,20 @@ export default function UserPage() {
   let TABLE_HEAD = [];
   if (canEdit) {
     TABLE_HEAD = [
-      { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
-      { id: 'status', label: 'Status', alignRight: false },
-      { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
-      { id: 'remarks', label: 'Remarks', alignRight: false },
-      { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-      { id: 'entry_date', label: 'Entry Date', alignRight: false },
-      { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
-      { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
-      { id: 'company_name', label: 'Company Name', alignRight: false },
-      { id: 'customer_code', label: 'Customer Code', alignRight: false },
-      { id: 'customer', label: 'Customer Name', alignRight: false },
-      { id: 'customer_group', label: 'Customer Group', alignRight: false },
-      { id: 'amount', label: sentenceCase('amount'), alignRight: true },
-      { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-      { id: 'type', label: 'Deposit Type', alignRight: false },
-      { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
-      { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
-      { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-      { id: 'depositor', label: 'Depositor', alignRight: false },
-      { id: 'employee_name', label: 'Employee', alignRight: false },
-      { id: 'user_name', label: 'User Name', alignRight: false },
-      { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
+      { id: 'competitor_name', label: 'Competitor Name', alignRight: false },
+      { id: 'competitor_monthly_sales', label: 'Competitor Monthly Sales', alignRight: false },
+      { id: 'bill_board_count', label: 'Bill Board Count', alignRight: false },
+
       { id: 'edit', label: 'Edit', alignRight: false },
       // { id: '' },
     ];
   } else {
     TABLE_HEAD = [
-      { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
-      { id: 'status', label: 'Status', alignRight: false },
-      { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
-      { id: 'remarks', label: 'Remarks', alignRight: false },
-      { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-      { id: 'entry_date', label: 'Entry Date', alignRight: false },
-      { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
-      { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
-      { id: 'company_name', label: 'Company Name', alignRight: false },
-      { id: 'customer_code', label: 'Customer Code', alignRight: false },
-      { id: 'customer', label: 'Customer Name', alignRight: false },
-      { id: 'customer_group', label: 'Customer Group', alignRight: false },
-      { id: 'amount', label: sentenceCase('amount'), alignRight: true },
-      { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-      { id: 'type', label: 'Deposit Type', alignRight: false },
-      { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
-      { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
-      { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-      { id: 'depositor', label: 'Depositor', alignRight: false },
-      { id: 'employee_name', label: 'Employee', alignRight: false },
-      { id: 'user_name', label: 'User Name', alignRight: false },
-      { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
+      { id: 'competitor_name', label: 'Competitor Name', alignRight: false },
+      { id: 'competitor_monthly_sales', label: 'Competitor Monthly Sales', alignRight: false },
+      { id: 'bill_board_count', label: 'Bill Board Count', alignRight: false },
+
       { id: 'edit', label: 'Edit', alignRight: false },
-      // { id: '' },
     ];
   }
   // const TABLE_HEAD = [
@@ -717,51 +680,28 @@ export default function UserPage() {
   };
 
   const onEditDeposit = async () => {
-    try {
-      const requestBody = {
-        depositDate: rowData.deposit_date,
-        amount: rowData.amount,
-        payFromCustomer: rowData.pay_from_customer,
-        depositTypeId: rowData.deposit_type_id,
-        depositorName: rowData.depositor_name,
-        companyCustBankId: rowData.company_cust_bank_id,
-        companyCustBankBranchId: rowData.company_cust_bank_branch_id,
-        remittanceBankAccountId: rowData.remittance_bank_account_id,
-        receiptNumber: rowData.receipt_number,
-        invoiceNumber: rowData.invoice_number,
-        uploadedFilename: rowData.uploaded_filename,
-        remarks: rowData.remarks,
-        lastUpdatedBy: account.user_id,
-        cashReceiptId: rowData.cash_receipt_id,
-      };
+    const requestBody = {
+      depositDate: rowData.deposit_date,
+      amount: rowData.amount,
+      payFromCustomer: rowData.pay_from_customer,
+      depositTypeId: rowData.deposit_type_id,
+      depositorName: rowData.depositor_name,
+      companyCustBankId: rowData.company_cust_bank_id,
+      companyCustBankBranchId: rowData.company_cust_bank_branch_id,
+      remittanceBankAccountId: rowData.remittance_bank_account_id,
+      receiptNumber: rowData.receipt_number,
+      invoiceNumber: rowData.invoice_number,
+      uploadedFilename: rowData.uploaded_filename,
+      remarks: rowData.remarks,
+      lastUpdatedBy: account.user_id,
+      cashReceiptId: rowData.cash_receipt_id,
+    };
+    const response = await upldateBankDepositService(user, requestBody);
 
-      const response = await upldateBankDepositService(user, requestBody);
-
-      if (response.status === 200) {
-        await setDefaultUSER();
-        alert('Updated successfully');
-      } else {
-        alert('Process failed! Try again');
-      }
-    } catch (error) {
-      console.error('Error updating deposit:', error);
-      alert('An error occurred! Please try again.');
-    } finally {
-      closeDialog(); // Ensure dialog is closed even if there’s an error
-    }
+    const alertMessage = response.status === 200 ? 'Updated successfully' : 'Process failed! Try again';
+    alert(alertMessage);
+    closeDialog();
   };
-
-  async function setDefaultUSER() {
-    const response = await getAllBankDepositsForAccountsService(user);
-
-    if (response.status === 200) {
-      setUserList(response.data);
-      const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-      const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-      setCustomerGroups(customerGroupList);
-      setCustomers(customerList);
-    }
-  }
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
   const [showCustomerList, setShowFilteredCustomerList] = useState(false);
@@ -980,25 +920,6 @@ export default function UserPage() {
 
       <div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} className="actionButton">
-          {/* <Typography variant="h4" gutterBottom>
-            Deposit Collections
-          </Typography> */}
-          {/* <Button
-            variant="text"
-            startIcon={<Iconify icon="icon-park:reject" />}
-            color="primary"
-            onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Back to New
-          </Button>
-          <Button
-            startIcon={<Iconify icon="mdi-chevron-double-down" />}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
-            onClick={onDownload}
-          >
-            Export
-          </Button> */}
           <CSVLink data={exportData} className="btn btn-success">
             Export Table
           </CSVLink>
@@ -1039,114 +960,30 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      bank_recon_id,
-                      bank_status,
-                      amount,
-                      cash_receipt_id,
-                      company_account,
-                      company_bank,
-                      company_name,
-                      deposit_date,
-                      deposit_type_name,
-                      depositor_bank,
-                      depositor_branch,
-                      depositor_name,
-                      full_name,
-                      receipt_number,
-                      remarks,
-                      status,
-                      uploaded_filename,
-                      user_name,
-                      employee_name,
-                      invoice_number,
-                      customer_name,
-                      reject_reason,
-                      customer_code,
-                      customer_group,
-                      creation_date,
-                      doc_sequence_value,
-                      pay_from_customer,
-                    } = row;
+                    const { territory_id, competitor_name, competitor_monthly_sales, bill_board_count } = row;
 
-                    const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
+                    const selectedUser = selected.indexOf(territory_id) !== -1;
 
                     return (
-                      <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={territory_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cash_receipt_id)} />
                         </TableCell> */}
-                        <TableCell align="left" className="viewTable">
+                        {/* <TableCell align="left" className="viewTable">
                           <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
                             view
                           </button>
+                        </TableCell> */}
+                        <TableCell align="left" className="viewTable">
+                          {competitor_name}
                         </TableCell>
                         <TableCell align="left" className="viewTable">
-                          {bank_status}
+                          {competitor_monthly_sales}
                         </TableCell>
                         <TableCell align="left" className="viewTable">
-                          {doc_sequence_value}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {remarks}
+                          {bill_board_count}
                         </TableCell>
 
-                        <TableCell align="left" className="viewTable">
-                          {/* {getFormattedDate(deposit_date)} */}
-                          {getFormattedDateWithTime(deposit_date)}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {/* {getFormattedDate(deposit_date)} */}
-                          {getFormattedDateWithTime(creation_date)}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {company_bank}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {company_account}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {company_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {customer_code}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {customer_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {customer_group}
-                        </TableCell>
-                        <TableCell align="right" className="viewTable">
-                          {getFormattedPrice(amount)}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {invoice_number}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {deposit_type_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {depositor_bank}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {depositor_branch}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {receipt_number}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {depositor_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {employee_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {user_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {reject_reason}
-                        </TableCell>
                         {canEdit && (
                           <TableCell padding="checkbox">
                             <IconButton size="large" color="primary" onClick={(e) => openEditDialog(row)}>

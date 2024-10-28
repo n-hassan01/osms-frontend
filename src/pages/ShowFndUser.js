@@ -5,12 +5,10 @@ import { filter } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-
 // @mui
 import {
   Button,
   Card,
-  Checkbox,
   Container,
   IconButton,
   MenuItem,
@@ -32,13 +30,20 @@ import FndUserToollist from '../sections/@dashboard/user/fndUserToollist';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { getFndUserService } from '../Services/Admin/Getfnduser';
+import { getUsers } from '../Services/ApiServices';
 import { UserListHead } from '../sections/@dashboard/user';
+// styles
+import '../_css/Utils.css';
+// custom hooks
+import { getFormattedDateWithTime } from '../hooks/GetFormattedDateWithTime';
+// import { useFormattedDate } from '../hooks/getFormattedDate';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'userId', label: 'User ID', alignRight: false },
-  { id: 'userName', label: 'User Name', alignRight: false },
+  { id: 'user_name', label: 'Username', alignRight: false },
+  { id: 'start_date', label: 'Start Date', alignRight: false },
+  { id: 'end_date', label: 'End Date', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: 'action', label: 'Action', alignRight: false },
 ];
 const selectedUsers = [];
@@ -76,6 +81,7 @@ function applySortFilter(array, comparator, query) {
 
 export default function ShowFndUser() {
   const navigate = useNavigate();
+
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -98,12 +104,26 @@ export default function ShowFndUser() {
 
   const [selectedUserEmail, setSelectedUserEmail] = useState('');
 
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const usersDetails = await getFndUserService();
+
+  //       if (usersDetails) setUserList(usersDetails.data);
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const usersDetails = await getFndUserService();
+        const usersDetails = await getUsers();
 
-        if (usersDetails) setUserList(usersDetails.data);
+        if (usersDetails) setUserList(usersDetails.data.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -111,6 +131,7 @@ export default function ShowFndUser() {
 
     fetchData();
   }, []);
+  console.log(USERLIST);
 
   const handleOpenMenu = (event, status, email) => {
     if (status === 'approved') setIsDisableApprove(true);
@@ -207,8 +228,8 @@ export default function ShowFndUser() {
         <title> Users Table | COMS </title>
       </Helmet>
 
-      <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+      <Container className="indexing fullWidth">
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
@@ -242,6 +263,7 @@ export default function ShowFndUser() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
+                  enableReadonly
                   rowCount={USERLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
@@ -249,16 +271,18 @@ export default function ShowFndUser() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { user_id, user_name } = row;
+                    const { user_id, user_name, start_date, end_date, status } = row;
                     const selectedUser = selected.indexOf(user_id) !== -1;
 
                     return (
                       <TableRow hover key={user_id} tabIndex={-1} role="checkbox">
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
-                        </TableCell>
-                        <TableCell align="left">{user_id}</TableCell>
+                        </TableCell> */}
                         <TableCell align="left">{user_name}</TableCell>
+                        <TableCell align="left">{getFormattedDateWithTime(start_date)}</TableCell>
+                        <TableCell align="left">{end_date}</TableCell>
+                        <TableCell align="left">{status}</TableCell>
 
                         <TableCell align="left">
                           <IconButton

@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import {
@@ -71,6 +71,7 @@ export default function AddFndUser() {
   console.log(userList);
 
   const [customerGroups, setCustomerGroups] = useState([]);
+  const tdRef = useRef(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -294,7 +295,7 @@ export default function AddFndUser() {
                   {showMenuLines &&
                     fnduser.map((row, index) => (
                       <tr key={index}>
-                        <td style={{ width: '500px' }}>
+                        <td style={{ width: '500px' }} ref={tdRef}>
                           <input
                             type="text"
                             className="form-control"
@@ -341,6 +342,10 @@ export default function AddFndUser() {
                               options={filteredUsersOptions}
                               placeholder="Type to select..."
                               isClearable
+                              menuPortalTarget={document.body}
+                              styles={{
+                                menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+                              }}
                             />
                           </div>
                         </td>
@@ -357,6 +362,10 @@ export default function AddFndUser() {
                               options={filteredCustomerGroupOptions}
                               placeholder="Type to select..."
                               isClearable
+                              menuPortalTarget={document.body}
+                              styles={{
+                                menuPortal: (base) => ({ ...base, zIndex: 999 }),
+                              }}
                             />
                           </div>
                         </td>

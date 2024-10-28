@@ -3,9 +3,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable camelcase */
 // import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import { sentenceCase } from 'change-case';
 import { useEffect, useRef, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
@@ -14,22 +11,14 @@ import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Card,
-  CircularProgress,
-  DialogTitle,
-  Grid,
-  IconButton,
-  MenuItem,
-  Paper,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
+  TableHead,
   TablePagination,
   TableRow,
-  TextField,
-  TextareaAutosize,
-  Typography,
 } from '@mui/material';
 import { format, parse } from 'date-fns';
 import { useUser } from '../context/UserContext';
@@ -50,13 +39,15 @@ import {
   getBankListService,
   getBankReconIdDetails,
   getDepositTypesService,
+  getTerritoryAllIdsService,
+  getTerritoryCompetitorsService,
+  getTerritoryListsService,
+  getTerritoryPerInsightsCompetitorsService,
   getUserProfileDetails,
   upldateBankDepositService,
   uploadBankDepositAttachmentService,
 } from '../Services/ApiServices';
-import Iconify from '../components/iconify';
 import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
-import { UserListHead } from '../sections/@dashboard/user';
 // css
 import '../sections/@dashboard/deposits/depositStyle.css';
 
@@ -196,30 +187,152 @@ export default function UserPage() {
   }, [account]);
   console.log(canEdit);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (account) {
-          console.log(account.user_id);
-          const response = await getAllBankDepositsForAccountsService(user);
+  // const [territoryIds, setTerritoryIds] = useState([]);
 
-          if (response.status === 200) {
-            // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
-            setUserList(response.data);
-            const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-            const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-            setCustomerGroups(customerGroupList);
-            setCustomers(customerList);
-          }
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (account) {
+  //         console.log(account.user_id);
+  //         const response = await getTerritoryAllIdsService();
+
+  //         if (response.status === 200) {
+  //           // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+  //           setTerritoryIds(response.data);
+  //           //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
+  //           // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
+  //           //  setCustomerGroups(customerGroupList);
+  //           //  setCustomers(customerList);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, [account]);
+  // console.log(territoryIds);
+
+  // const [territoryLists, setTerritoryLists] = useState([]);
+
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (account) {
+  //         console.log(account.user_id);
+  //         const response = await getTerritoryListsService();
+
+  //         if (response.status === 200) {
+  //           // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+  //           setTerritoryLists(response.data);
+  //           //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
+  //           // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
+  //           //  setCustomerGroups(customerGroupList);
+  //           //  setCustomers(customerList);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, [account, territoryIds]);
+  // console.log(territoryLists);
+
+  // const [competittors, setCompetittors] = useState([]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (account && account.user_id) {
+  //         const response = await getTerritoryPerInsightsCompetitorsService(); // Use user_id or territory_id based on your requirement
+  //         console.log(response.data);
+
+  //         if (response.status === 200) {
+  //           // Update state with fetched data
+  //           setCompetittors(response.data); // Ensure response.data is in the correct format
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, [account, territoryIds]);
+  // console.log(competittors);
+
+  // const [allCompetittors, setAllCompetittors] = useState([]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       if (account) {
+  //         console.log(account.user_id);
+  //         const response = await getTerritoryCompetitorsService();
+
+  //         if (response.status === 200) {
+  //           // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+  //           setAllCompetittors(response.data);
+  //           //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
+  //           // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
+  //           //  setCustomerGroups(customerGroupList);
+  //           //  setCustomers(customerList);
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, [account, territoryIds]);
+  // console.log(allCompetittors);
+  const [territoryIds, setTerritoryIds] = useState([]);
+  const [territoryLists, setTerritoryLists] = useState([]);
+  const [competitors, setCompetitors] = useState([]);
+  const [allCompetitors, setAllCompetitors] = useState([]);
+  const [selectedTerritoryId, setSelectedTerritoryId] = useState(null);
+  useEffect(() => {
+    async function fetchTerritoryIds() {
+      if (account) {
+        try {
+          const response = await getTerritoryAllIdsService();
+          if (response.status === 200) setTerritoryIds(response.data);
+        } catch (error) {
+          console.error('Error fetching territory IDs:', error);
         }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
       }
     }
-
-    fetchData();
+    fetchTerritoryIds();
   }, [account]);
-  console.log(USERLIST);
+  console.log(territoryIds);
+
+  useEffect(() => {
+    async function fetchTerritoryDetails() {
+      console.log(selectedTerritoryId);
+
+      if (selectedTerritoryId) {
+        console.log(selectedTerritoryId);
+
+        try {
+          const territoryResponse = await getTerritoryListsService(selectedTerritoryId);
+          console.log(territoryResponse.data);
+
+          if (territoryResponse.status === 200) setTerritoryLists(territoryResponse.data);
+
+          const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(selectedTerritoryId);
+          if (competitorsResponse.status === 200) setCompetitors(competitorsResponse.data);
+
+          const allCompetitorsResponse = await getTerritoryCompetitorsService(selectedTerritoryId);
+          if (allCompetitorsResponse.status === 200) setAllCompetitors(allCompetitorsResponse.data);
+        } catch (error) {
+          console.error('Error fetching territory details:', error);
+        }
+      }
+    }
+    fetchTerritoryDetails();
+  }, [selectedTerritoryId]);
 
   const [customerList, setCustomerList] = useState([]);
   useEffect(() => {
@@ -380,57 +493,41 @@ export default function UserPage() {
   let TABLE_HEAD = [];
   if (canEdit) {
     TABLE_HEAD = [
-      { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
-      { id: 'status', label: 'Status', alignRight: false },
-      { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
-      { id: 'remarks', label: 'Remarks', alignRight: false },
-      { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-      { id: 'entry_date', label: 'Entry Date', alignRight: false },
-      { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
-      { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
-      { id: 'company_name', label: 'Company Name', alignRight: false },
-      { id: 'customer_code', label: 'Customer Code', alignRight: false },
-      { id: 'customer', label: 'Customer Name', alignRight: false },
-      { id: 'customer_group', label: 'Customer Group', alignRight: false },
-      { id: 'amount', label: sentenceCase('amount'), alignRight: true },
-      { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-      { id: 'type', label: 'Deposit Type', alignRight: false },
-      { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
-      { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
-      { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-      { id: 'depositor', label: 'Depositor', alignRight: false },
-      { id: 'employee_name', label: 'Employee', alignRight: false },
-      { id: 'user_name', label: 'User Name', alignRight: false },
-      { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-      { id: 'edit', label: 'Edit', alignRight: false },
+      { id: 'territory_name', label: 'Territory Name', alignRight: false },
+      { id: 'town_name', label: 'Town Name', alignRight: false },
+      { id: 'ambassador_name', label: 'Ambassador Name', alignRight: false },
+      { id: 'distributor_count', label: 'Distributor Count', alignRight: false },
+      { id: 'sales_officer_count', label: 'Sales Officer Count', alignRight: false },
+      { id: 'total_outlet_count', label: 'Total Outlet Count', alignRight: false },
+      { id: 'company_outlet_count', label: 'Company Outlet Count', alignRight: false },
+      { id: 'population_count', label: 'Population Count', alignRight: false },
+      { id: 'monthly_sales_actual', label: 'Monthly Sales Actual', alignRight: false },
+      { id: 'monthly_sales_target', label: 'Monthly Sales Target', alignRight: false },
+      { id: 'monthly_collection_actual', label: 'Monthly Collection Actual', alignRight: false },
+      { id: 'monthly_collection_target', label: 'Monthly Collection Target', alignRight: false },
+      { id: 'competitor_name', label: 'Competitor Name', alignRight: false },
+      { id: 'competitor_monthly_sales', label: 'Competitor Monthly Sales', alignRight: false },
+      { id: 'bill_board_count', label: 'Bill Board Count', alignRight: false },
+
       // { id: '' },
     ];
   } else {
     TABLE_HEAD = [
-      { id: 'attachment', label: 'Receipt Attachment', alignRight: false },
-      { id: 'status', label: 'Status', alignRight: false },
-      { id: 'statudoc_sequence_values', label: 'Doc Value', alignRight: false },
-      { id: 'remarks', label: 'Remarks', alignRight: false },
-      { id: 'deposit_date', label: 'Deposit Date', alignRight: false },
-      { id: 'entry_date', label: 'Entry Date', alignRight: false },
-      { id: 'company_bank_name', label: 'Company Bank', alignRight: false },
-      { id: 'deposit_bank_account', label: 'Company Account', alignRight: false },
-      { id: 'company_name', label: 'Company Name', alignRight: false },
-      { id: 'customer_code', label: 'Customer Code', alignRight: false },
-      { id: 'customer', label: 'Customer Name', alignRight: false },
-      { id: 'customer_group', label: 'Customer Group', alignRight: false },
-      { id: 'amount', label: sentenceCase('amount'), alignRight: true },
-      { id: 'invoice_number', label: 'Invoice Number', alignRight: false },
-      { id: 'type', label: 'Deposit Type', alignRight: false },
-      { id: 'deposit_bank', label: 'Deposit From Bank', alignRight: false },
-      { id: 'deposit_bank_branch', label: 'Deposit From Branch', alignRight: false },
-      { id: 'receipt_number', label: 'Receipt Number', alignRight: false },
-      { id: 'depositor', label: 'Depositor', alignRight: false },
-      { id: 'employee_name', label: 'Employee', alignRight: false },
-      { id: 'user_name', label: 'User Name', alignRight: false },
-      { id: 'reject_reason', label: 'Reject Reason', alignRight: false },
-      { id: 'edit', label: 'Edit', alignRight: false },
-      // { id: '' },
+      { id: 'territory_name', label: 'Territory Name', alignRight: false },
+      { id: 'town_name', label: 'Town Name', alignRight: false },
+      { id: 'ambassador_name', label: 'Ambassador Name', alignRight: false },
+      { id: 'distributor_count', label: 'Distributor Count', alignRight: false },
+      { id: 'sales_officer_count', label: 'Sales Officer Count', alignRight: false },
+      { id: 'total_outlet_count', label: 'Total Outlet Count', alignRight: false },
+      { id: 'company_outlet_count', label: 'Company Outlet Count', alignRight: false },
+      { id: 'population_count', label: 'Population Count', alignRight: false },
+      { id: 'monthly_sales_actual', label: 'Monthly Sales Actual', alignRight: false },
+      { id: 'monthly_sales_target', label: 'Monthly Sales Target', alignRight: false },
+      { id: 'monthly_collection_actual', label: 'Monthly Collection Actual', alignRight: false },
+      { id: 'monthly_collection_target', label: 'Monthly Collection Target', alignRight: false },
+      { id: 'competitor_name', label: 'Competitor Name', alignRight: false },
+      { id: 'competitor_monthly_sales', label: 'Competitor Monthly Sales', alignRight: false },
+      { id: 'bill_board_count', label: 'Bill Board Count', alignRight: false },
     ];
   }
   // const TABLE_HEAD = [
@@ -654,7 +751,7 @@ export default function UserPage() {
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(competitors, getComparator(order, orderBy), filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const exportData = filteredUsers.map((item) => ({
@@ -717,51 +814,28 @@ export default function UserPage() {
   };
 
   const onEditDeposit = async () => {
-    try {
-      const requestBody = {
-        depositDate: rowData.deposit_date,
-        amount: rowData.amount,
-        payFromCustomer: rowData.pay_from_customer,
-        depositTypeId: rowData.deposit_type_id,
-        depositorName: rowData.depositor_name,
-        companyCustBankId: rowData.company_cust_bank_id,
-        companyCustBankBranchId: rowData.company_cust_bank_branch_id,
-        remittanceBankAccountId: rowData.remittance_bank_account_id,
-        receiptNumber: rowData.receipt_number,
-        invoiceNumber: rowData.invoice_number,
-        uploadedFilename: rowData.uploaded_filename,
-        remarks: rowData.remarks,
-        lastUpdatedBy: account.user_id,
-        cashReceiptId: rowData.cash_receipt_id,
-      };
+    const requestBody = {
+      depositDate: rowData.deposit_date,
+      amount: rowData.amount,
+      payFromCustomer: rowData.pay_from_customer,
+      depositTypeId: rowData.deposit_type_id,
+      depositorName: rowData.depositor_name,
+      companyCustBankId: rowData.company_cust_bank_id,
+      companyCustBankBranchId: rowData.company_cust_bank_branch_id,
+      remittanceBankAccountId: rowData.remittance_bank_account_id,
+      receiptNumber: rowData.receipt_number,
+      invoiceNumber: rowData.invoice_number,
+      uploadedFilename: rowData.uploaded_filename,
+      remarks: rowData.remarks,
+      lastUpdatedBy: account.user_id,
+      cashReceiptId: rowData.cash_receipt_id,
+    };
+    const response = await upldateBankDepositService(user, requestBody);
 
-      const response = await upldateBankDepositService(user, requestBody);
-
-      if (response.status === 200) {
-        await setDefaultUSER();
-        alert('Updated successfully');
-      } else {
-        alert('Process failed! Try again');
-      }
-    } catch (error) {
-      console.error('Error updating deposit:', error);
-      alert('An error occurred! Please try again.');
-    } finally {
-      closeDialog(); // Ensure dialog is closed even if there’s an error
-    }
+    const alertMessage = response.status === 200 ? 'Updated successfully' : 'Process failed! Try again';
+    alert(alertMessage);
+    closeDialog();
   };
-
-  async function setDefaultUSER() {
-    const response = await getAllBankDepositsForAccountsService(user);
-
-    if (response.status === 200) {
-      setUserList(response.data);
-      const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-      const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-      setCustomerGroups(customerGroupList);
-      setCustomers(customerList);
-    }
-  }
 
   const [filteredCustomerList, setFilteredCustomerList] = useState([]);
   const [showCustomerList, setShowFilteredCustomerList] = useState(false);
@@ -980,25 +1054,6 @@ export default function UserPage() {
 
       <div>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} className="actionButton">
-          {/* <Typography variant="h4" gutterBottom>
-            Deposit Collections
-          </Typography> */}
-          {/* <Button
-            variant="text"
-            startIcon={<Iconify icon="icon-park:reject" />}
-            color="primary"
-            onClick={() => approveDeposits(selected)}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-          >
-            Back to New
-          </Button>
-          <Button
-            startIcon={<Iconify icon="mdi-chevron-double-down" />}
-            style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', textAlign: 'right' }}
-            onClick={onDownload}
-          >
-            Export
-          </Button> */}
           <CSVLink data={exportData} className="btn btn-success">
             Export Table
           </CSVLink>
@@ -1026,439 +1081,324 @@ export default function UserPage() {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
-              <Table ref={tableref}>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={filteredUsers.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                  enableReadonly
-                />
+              <Table>
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const {
-                      bank_recon_id,
-                      bank_status,
-                      amount,
-                      cash_receipt_id,
-                      company_account,
-                      company_bank,
-                      company_name,
-                      deposit_date,
-                      deposit_type_name,
-                      depositor_bank,
-                      depositor_branch,
-                      depositor_name,
-                      full_name,
-                      receipt_number,
-                      remarks,
-                      status,
-                      uploaded_filename,
-                      user_name,
-                      employee_name,
-                      invoice_number,
-                      customer_name,
-                      reject_reason,
-                      customer_code,
-                      customer_group,
-                      creation_date,
-                      doc_sequence_value,
-                      pay_from_customer,
-                    } = row;
+                  {/* Territory ID Selection Row */}
+                  <TableRow>
+                    <TableCell colSpan={3} align="left" sx={{ borderBottom: '1px solid #000', paddingBottom: '8px' }}>
+                      <strong style={{ marginRight: '10px', fontSize: '15px' }}>Select Territory:</strong>
+                      {territoryIds.map((territory) => (
+                        <Button
+                          style={{ margin: '5px' }}
+                          key={territory.territory_id}
+                          onClick={async () => {
+                            // Set selected territory ID
+                            setSelectedTerritoryId(territory.territory_id);
 
-                    const selectedUser = selected.indexOf(cash_receipt_id) !== -1;
+                            // Clear existing data
+                            setTerritoryLists([]); // Clear previous territory lists
+                            setCompetitors([]); // Clear previous competitors
+                            setAllCompetitors([]); // Clear previous all competitors
 
-                    return (
-                      <TableRow hover key={cash_receipt_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, cash_receipt_id)} />
-                        </TableCell> */}
-                        <TableCell align="left" className="viewTable">
-                          <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
-                            view
-                          </button>
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {bank_status}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {doc_sequence_value}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {remarks}
-                        </TableCell>
+                            // Fetch new data based on selected territory
+                            try {
+                              const territoryResponse = await getTerritoryListsService(territory.territory_id);
+                              if (territoryResponse.status === 200) {
+                                setTerritoryLists(territoryResponse.data);
+                              }
 
-                        <TableCell align="left" className="viewTable">
-                          {/* {getFormattedDate(deposit_date)} */}
-                          {getFormattedDateWithTime(deposit_date)}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {/* {getFormattedDate(deposit_date)} */}
-                          {getFormattedDateWithTime(creation_date)}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {company_bank}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {company_account}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {company_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {customer_code}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {customer_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {customer_group}
-                        </TableCell>
-                        <TableCell align="right" className="viewTable">
-                          {getFormattedPrice(amount)}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {invoice_number}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {deposit_type_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {depositor_bank}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {depositor_branch}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {receipt_number}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {depositor_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {employee_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {user_name}
-                        </TableCell>
-                        <TableCell align="left" className="viewTable">
-                          {reject_reason}
-                        </TableCell>
-                        {canEdit && (
-                          <TableCell padding="checkbox">
-                            <IconButton size="large" color="primary" onClick={(e) => openEditDialog(row)}>
-                              <Iconify icon={'tabler:edit'} />
-                            </IconButton>
-                          </TableCell>
-                        )}
-                      </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
-                  )}
-                </TableBody>
+                              const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(
+                                territory.territory_id
+                              );
+                              if (competitorsResponse.status === 200) {
+                                setCompetitors(competitorsResponse.data);
+                              }
 
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
+                              const allCompetitorsResponse = await getTerritoryCompetitorsService(
+                                territory.territory_id
+                              );
+                              if (allCompetitorsResponse.status === 200) {
+                                setAllCompetitors(allCompetitorsResponse.data);
+                              }
+                            } catch (error) {
+                              console.error('Error fetching data for selected territory:', error);
+                            }
                           }}
+                          variant={territory.territory_id === selectedTerritoryId ? 'contained' : 'outlined'}
+                          sx={{ margin: '0 8px' }}
                         >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-
-                <Dialog open={open} onClose={handleClose}>
-                  <Stack />
-                  <DialogContent>
-                    <Stack spacing={1.5} direction="row">
-                      {imageSrc ? (
-                        <img
-                          src={imageSrc}
-                          alt="Preview"
-                          style={{ maxWidth: '100%', maxHeight: '400px' }}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <CircularProgress />
-                        // <p>No photo available</p>
-                      )}
-                    </Stack>
-                  </DialogContent>
-                </Dialog>
-
-                <Dialog open={openEdit} onClose={closeDialog}>
-                  <DialogTitle style={{ color: 'crimson' }}>Edit Collections</DialogTitle>
-                  <Stack />
-                  <DialogContent>
-                    <Stack spacing={2} direction={'column'}>
-                      <TextField
-                        type="date"
-                        name="deposit_date"
-                        label="Deposit Date"
-                        autoComplete="given-name"
-                        fullWidth
-                        style={{ backgroundColor: 'white' }}
-                        onChange={(e) => onValueChange(e)}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.deposit_date ? getFormattedDate(rowData.deposit_date) : ''}
-                      />
-                      <TextField
-                        fullWidth
-                        type="number"
-                        name="amount"
-                        label="Amount"
-                        autoComplete="given-name"
-                        onChange={(e) => onValueChange(e)}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.amount ? rowData.amount : ''}
-                      />
-                      <TextField
-                        fullWidth
-                        name="customer_name"
-                        label="Customer"
-                        autoComplete="given-name"
-                        style={{ backgroundColor: 'white' }}
-                        onChange={(e) => handleInputCustomerChange(e)}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.customer_name ? rowData.customer_name : ''}
-                      />
-                      {showCustomerList && (
-                        <ul style={{ backgroundColor: 'white', border: '1px solid #ccc', zIndex: 1 }}>
-                          {filteredCustomerList.map((suggestion, index) => (
-                            <MenuItem key={index} onClick={() => handleCustomerClick(suggestion)}>
-                              {suggestion.full_name}
-                            </MenuItem>
-                          ))}
-                        </ul>
-                      )}
-                      <TextField
-                        name="paymentMethod"
-                        label="Payment Method"
-                        autoComplete="given-name"
-                        fullWidth
-                        style={{ backgroundColor: 'white' }}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.deposit_type_name ? rowData.deposit_type_name : ''}
-                        onChange={(e) => handleInputPaymentMethodChange(e)}
-                      />
-                      {showPaymentMethodList && (
-                        <ul style={{ backgroundColor: 'white', border: '1px solid #ccc', zIndex: 1 }}>
-                          {filteredPaymentMethodList.map((suggestion, index) => (
-                            <MenuItem key={index} onClick={() => handlePaymentMethodClick(suggestion)}>
-                              {suggestion}
-                            </MenuItem>
-                          ))}
-                        </ul>
-                      )}
-                      {rowData.deposit_type_name && (
-                        <TextField
-                          name="deposit_type"
-                          label="Payment Type"
-                          autoComplete="given-name"
-                          fullWidth
-                          style={{ backgroundColor: 'white' }}
-                          InputLabelProps={{ shrink: true }}
-                          value={rowData.deposit_type ? rowData.deposit_type : ''}
-                          onChange={(e) => handleInputPaymentTypeChange(e)}
-                        />
-                      )}
-                      {showPaymentTypeList && (
-                        <ul style={{ backgroundColor: 'white', border: '1px solid #ccc', zIndex: 1 }}>
-                          {filteredPaymentTypeList.map((suggestion, index) => (
-                            <MenuItem key={index} onClick={() => handlePaymentTypeClick(suggestion)}>
-                              {suggestion.deposit_type}
-                            </MenuItem>
-                          ))}
-                        </ul>
-                      )}
-                      {rowData.deposit_type_set_id === 11 && (
-                        <TextField
-                          name="depositor_name"
-                          label="Depositor Name"
-                          autoComplete="given-name"
-                          fullWidth
-                          style={{ backgroundColor: 'white' }}
-                          InputLabelProps={{ shrink: true }}
-                          value={rowData.depositor_name ? rowData.depositor_name : ''}
-                          onChange={(e) => onValueChange(e)}
-                        />
-                      )}
-                      {rowData.deposit_type_set_id === 11 && (
-                        <TextField
-                          name="depositor_bank"
-                          label="Depositor Bank"
-                          autoComplete="given-name"
-                          fullWidth
-                          style={{ backgroundColor: 'white' }}
-                          InputLabelProps={{ shrink: true }}
-                          value={rowData.depositor_bank ? rowData.depositor_bank : ''}
-                          onChange={(e) => handleInputDepositorBankChange(e)}
-                        />
-                      )}
-                      {showDepositorBankList && (
-                        <ul style={{ backgroundColor: 'white', border: '1px solid #ccc', zIndex: 1 }}>
-                          {filteredDepositorBankList.map((suggestion, index) => (
-                            <MenuItem key={index} onClick={() => handleDepositorBankClick(suggestion)}>
-                              {suggestion.bank_name}
-                            </MenuItem>
-                          ))}
-                        </ul>
-                      )}
-                      {rowData.deposit_type_set_id === 11 && (
-                        <TextField
-                          name="depositor_branch"
-                          label="Depositor Branch"
-                          autoComplete="given-name"
-                          fullWidth
-                          style={{ backgroundColor: 'white' }}
-                          InputLabelProps={{ shrink: true }}
-                          value={rowData.depositor_branch ? rowData.depositor_branch : ''}
-                          onChange={(e) => handleInputDepositorBankBranchChange(e)}
-                        />
-                      )}
-                      {showDepositorBankBranchList && (
-                        <ul style={{ backgroundColor: 'white', border: '1px solid #ccc', zIndex: 1 }}>
-                          {filteredDepositorBankBranchList.map((suggestion, index) => (
-                            <MenuItem key={index} onClick={() => handleDepositorBankBranchClick(suggestion)}>
-                              {suggestion.bank_branch_name}
-                            </MenuItem>
-                          ))}
-                        </ul>
-                      )}
-                      {rowData.deposit_type_set_id && (
-                        <TextField
-                          fullWidth
-                          name="company_account"
-                          label={rowData.deposit_type_name === 'MFS' ? 'Company Account' : 'Company Wallet'}
-                          autoComplete="given-name"
-                          style={{ backgroundColor: 'white' }}
-                          InputLabelProps={{ shrink: true }}
-                          value={rowData.company_account ? rowData.company_account : ''}
-                          onChange={(e) => handleInputCompanyBankAccountChange(e)}
-                        />
-                      )}
-                      {showCompanyBankAccountList && (
-                        <ul style={{ backgroundColor: 'white', border: '1px solid #ccc', zIndex: 1 }}>
-                          {filteredCompanyBankAccountList.map((suggestion, index) => (
-                            <MenuItem key={index} onClick={() => handleCompanyBankAccountClick(suggestion)}>
-                              {suggestion.bank_account_name}, {suggestion.bank_name}, {suggestion.company_name}
-                            </MenuItem>
-                          ))}
-                        </ul>
-                      )}
-                      <TextField
-                        disabled
-                        name="company_bank"
-                        label="Company Bank"
-                        autoComplete="given-name"
-                        fullWidth
-                        style={{ backgroundColor: 'white' }}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.company_bank ? rowData.company_bank : ''}
-                      />
-                      <TextField
-                        disabled
-                        name="company_name"
-                        label="Company Name"
-                        autoComplete="given-name"
-                        fullWidth
-                        style={{ backgroundColor: 'white' }}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.company_name ? rowData.company_name : ''}
-                      />
-                      {rowData.deposit_type_set_id && (
-                        <TextField
-                          fullWidth
-                          name="receipt_number"
-                          label={
-                            rowData.deposit_type_name === 'CHEQUE'
-                              ? 'Cheque Number'
-                              : rowData.deposit_type_name === 'MFS'
-                              ? 'Transaction ID'
-                              : 'Receipt Number'
-                          }
-                          autoComplete="given-name"
-                          style={{ backgroundColor: 'white' }}
-                          InputLabelProps={{ shrink: true }}
-                          value={rowData.receipt_number ? rowData.receipt_number : ''}
-                          onChange={(e) => onValueChange(e)}
-                        />
-                      )}
-                      <TextField
-                        name="invoice_number"
-                        label="Invoice Number"
-                        autoComplete="given-name"
-                        fullWidth
-                        style={{ backgroundColor: 'white' }}
-                        InputLabelProps={{ shrink: true }}
-                        value={rowData.invoice_number ? rowData.invoice_number : ''}
-                        onChange={(e) => onValueChange(e)}
-                      />
-                      <div style={{ display: 'flex' }}>
-                        <TextField
-                          required
-                          type="file"
-                          name="uploaded_filename"
-                          label="Deposit Attachment"
-                          autoComplete="given-name"
-                          fullWidth
-                          onChange={(e) => uplodPhoto(e, rowData.uploaded_filename)}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                        <Button
-                          style={{ marginLeft: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                          onClick={() => viewAttachment(rowData.uploaded_filename)}
-                        >
-                          View
+                          {territory.territory_name || `ID: ${territory.territory_id}`}
                         </Button>
+                      ))}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell
+                      colSpan={4} // Adjust to match the total columns in your layout
+                      align="center"
+                      sx={{
+                        borderBottom: '1px solid #000',
+                        paddingBottom: '8px',
+                        fontWeight: 'bold',
+                        fontSize: '20px',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <strong>Territory Name:</strong> {territoryLists[0]?.territory_name || 'N/A'}
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <strong>TSM Manager Name:</strong> {territoryLists[0]?.full_name || 'N/A'}
+                    </TableCell>
+                  </TableRow>
+
+                  {/* Territory Details Row */}
+                  <TableRow>
+                    {/* Territory Lists Table */}
+
+                    <TableCell
+                      colSpan={1}
+                      align="left"
+                      sx={{ width: '30%', verticalAlign: 'top', border: '1px solid #000' }} // Add border to each cell
+                    >
+                      <TableContainer>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell align="left" sx={{ border: '1px solid #000' }}>
+                                <strong>Town Name</strong>
+                              </TableCell>
+                              <TableCell align="left" sx={{ border: '1px solid #000' }}>
+                                <strong>Ambassador Name</strong>
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {territoryLists.map((territoryRow, index) => (
+                              <TableRow key={`territory-${index}`}>
+                                <TableCell
+                                  align="left"
+                                  sx={{ border: '1px solid #000' }} // Add border to each cell
+                                >
+                                  {territoryRow.town_name}
+                                </TableCell>
+                                <TableCell
+                                  align="left"
+                                  sx={{ border: '1px solid #000' }} // Add border to each cell
+                                >
+                                  {territoryRow.ambassador_name}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </TableCell>
+
+                    {/* Competitors Data in Middle Table Cell */}
+                    <TableCell
+                      colSpan={1}
+                      align="left"
+                      sx={{ width: '40%', verticalAlign: 'top', border: '1px solid #000' }} // Add border to each cell
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px',
+                          fontSize: '20px',
+                        }}
+                      >
+                        {competitors.map((competitorRow, index) => (
+                          <>
+                            <div
+                              key={`competitor-${index}`}
+                              style={{
+                                padding: '5px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: '1px solid #000',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Distributor Count:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {competitorRow.distributor_count}
+                              </span>
+                            </div>
+                            <div
+                              key={`sales-officer-${index}`}
+                              style={{
+                                padding: '5px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: '1px solid #000',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Sales Officer Count:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {competitorRow.sales_officer_count}
+                              </span>
+                            </div>
+                            <div
+                              key={`total-outlet-${index}`}
+                              style={{
+                                padding: '5px',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: '1px solid #000',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Total Outlet Count:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {competitorRow.total_outlet_count}
+                              </span>
+                            </div>
+                            <div
+                              key={`company-outlet-${index}`}
+                              style={{
+                                padding: '5px',
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Company Outlet Count:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {competitorRow.company_outlet_count}
+                              </span>
+                            </div>
+                            <div
+                              key={`population-${index}`}
+                              style={{
+                                padding: '5px',
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Population Count:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {competitorRow.population_count}
+                              </span>
+                            </div>
+                            <div
+                              key={`monthly-sales-actual-${index}`}
+                              style={{
+                                padding: '5px',
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Monthly Sales Actual:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {getFormattedPrice(competitorRow.monthly_sales_actual)}
+                              </span>
+                            </div>
+                            <div
+                              key={`monthly-sales-target-${index}`}
+                              style={{
+                                padding: '5px',
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Monthly Sales Target:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {getFormattedPrice(competitorRow.monthly_sales_target)}
+                              </span>
+                            </div>
+                            <div
+                              key={`monthly-collection-actual-${index}`}
+                              style={{
+                                padding: '5px',
+                                borderBottom: '1px solid #000',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <strong style={{ flex: '0 0 auto' }}>Monthly Collection Actual:</strong>
+                              <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                {getFormattedPrice(competitorRow.monthly_collection_actual)}
+                              </span>
+                            </div>
+                            <div
+                              key={`monthly-collection-target-${index}`} // Fixed the key syntax
+                              style={{
+                                padding: '5px',
+                                // borderBottom: '1px solid #000', // Add border here
+                                paddingBottom: '8px', // Add padding for spacing
+                                paddingTop: '8px', // Add padding for spacing
+                                width: '100%', // Ensure full width
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  width: '100%', // Ensure this div also takes full width
+                                }}
+                              >
+                                <strong style={{ flex: '0 0 auto' }}>Monthly Collection Target:</strong>
+                                <span style={{ flex: '1 1 auto', textAlign: 'right' }}>
+                                  {getFormattedPrice(competitorRow.monthly_collection_target)}
+                                </span>
+                              </div>
+                            </div>
+                          </>
+                        ))}
                       </div>
-                      <TextareaAutosize
-                        name="remarks"
-                        placeholder="Remarks"
-                        style={{ width: '100%', height: '55px' }}
-                        value={rowData.remarks ? rowData.remarks : ''}
-                        onChange={(e) => onValueChange(e)}
-                      />
-                    </Stack>
-                    <Grid container spacing={2} style={{ marginTop: '5px' }}>
-                      <Grid item xs={3} style={{ display: 'flex' }}>
-                        <Button
-                          style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                          onClick={onEditDeposit}
-                        >
-                          Submit
-                        </Button>
-                        <Button
-                          style={{ marginRight: '10px', backgroundColor: 'lightgray', color: 'black' }}
-                          onClick={closeDialog}
-                        >
-                          Cancel
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </DialogContent>
-                </Dialog>
+                    </TableCell>
+
+                    {/* All Competitors Data in Last Table Cell */}
+                    <TableCell
+                      colSpan={1}
+                      align="left"
+                      sx={{ width: '30%', verticalAlign: 'top', border: '1px solid #000' }} // Add border to each cell
+                    >
+                      <TableContainer>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell align="left" sx={{ border: '1px solid #000' }}>
+                                <strong>Competitor Name</strong>
+                              </TableCell>
+                              <TableCell align="right" sx={{ border: '1px solid #000' }}>
+                                <strong>Competitor Monthly Average Sales</strong>
+                              </TableCell>
+                              <TableCell align="right" sx={{ border: '1px solid #000' }}>
+                                <strong>Bill Board Count</strong>
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {allCompetitors.map((allCompetitorRow, index) => (
+                              <TableRow key={`allCompetitor-${index}`}>
+                                <TableCell align="left" sx={{ border: '1px solid #000' }}>
+                                  {allCompetitorRow.competitor_name}
+                                </TableCell>
+                                <TableCell align="right" sx={{ border: '1px solid #000' }}>
+                                  {getFormattedPrice(allCompetitorRow.competitor_monthly_sales)}
+                                </TableCell>
+                                <TableCell align="right" sx={{ border: '1px solid #000' }}>
+                                  {allCompetitorRow.bill_board_count}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
               </Table>
             </TableContainer>
           </Scrollbar>
