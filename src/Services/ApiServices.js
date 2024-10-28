@@ -1656,7 +1656,7 @@ export const getTerritoriesService = async (bodyInfo) => {
 
 export const getAllTerritoryService = async () => {
   try {
-    return await axios.get(`${usersUrl}territory/`);
+    return await axios.get(`${usersUrl}territory/view`);
   } catch (err) {
     console.log(err.message);
 

@@ -23,29 +23,29 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import Select from 'react-select';
 import {
-    dowloadBankDepositReceiptService,
-    getAllTerritoryService,
-    getAreaService,
-    getBeatsService,
-    getBrandingAssetsChildItemsService,
-    getBrandingAssetsItemImagesService,
-    getBrandingAssetsItemsService,
-    getRegionService,
-    getTerritoriesService,
-    getTownsService,
-    getUserProfileDetails
+  dowloadBankDepositReceiptService,
+  getAllTerritoryService,
+  getAreaService,
+  getBeatsService,
+  getBrandingAssetsChildItemsService,
+  getBrandingAssetsItemImagesService,
+  getBrandingAssetsItemsService,
+  getRegionService,
+  getTerritoriesService,
+  getTownsService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 
 // @mui
@@ -82,9 +82,12 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 const TABLE_HEAD = [
-  { id: 'territory_code', label: 'Territory Code', alignRight: false },
-  { id: 'tsm_code', label: 'Tsm Code', alignRight: false },
   { id: 'territory_name', label: 'Territory Name', alignRight: false },
+  { id: 'tsm_code', label: 'Tsm Code', alignRight: false },
+  { id: 'tsm_name', label: 'Tsm Name', alignRight: false },
+  { id: 'distributor_count', label: 'Distributor Count', alignRight: false },
+  { id: 'sales_officer_count', label: 'Sales Officer Count', alignRight: false },
+  { id: 'population_count', label: 'Population Count', alignRight: false },
 ];
 export default function ItemsDashBoard() {
   const navigate = useNavigate();
@@ -766,7 +769,14 @@ export default function ItemsDashBoard() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { territory_code, tsm_code, territory_name } = row;
+                    const {
+                      tsm_name,
+                      tsm_code,
+                      territory_name,
+                      distributor_count,
+                      sales_officer_count,
+                      population_count,
+                    } = row;
 
                     return (
                       <TableRow hover key={index}>
@@ -774,13 +784,22 @@ export default function ItemsDashBoard() {
                             <Radio checked={selectedUser} onChange={(event) => handleClick(event, shop_id)} />
                           </TableCell> */}
                         <TableCell style={combinedStylingForTableCell} align="left">
-                          {territory_code}
+                          {territory_name}
                         </TableCell>
                         <TableCell style={combinedStylingForTableCell} align="left">
                           {tsm_code}
                         </TableCell>
                         <TableCell style={combinedStylingForTableCell} align="left">
-                          {territory_name}
+                          {tsm_name}
+                        </TableCell>
+                        <TableCell style={combinedStylingForTableCell} align="left">
+                          {distributor_count}
+                        </TableCell>
+                        <TableCell style={combinedStylingForTableCell} align="left">
+                          {sales_officer_count}
+                        </TableCell>
+                        <TableCell style={combinedStylingForTableCell} align="left">
+                          {population_count}
                         </TableCell>
                       </TableRow>
                     );
