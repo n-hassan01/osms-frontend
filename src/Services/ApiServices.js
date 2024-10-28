@@ -455,6 +455,17 @@ export const getfnduserDetails = async () => {
     return err.message;
   }
 };
+
+export const getUsers = async () => {
+  try {
+    return await axios.get(`${usersUrl}get-fnd-user/view`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getMainSystemMenuDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-main-system-menu/`);
@@ -1636,6 +1647,16 @@ export const getAreaService = async (bodyInfo) => {
 export const getTerritoriesService = async (bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}territory/`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllTerritoryService = async () => {
+  try {
+    return await axios.get(`${usersUrl}territory/`);
   } catch (err) {
     console.log(err.message);
 
