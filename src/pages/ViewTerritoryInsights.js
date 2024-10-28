@@ -187,107 +187,6 @@ export default function UserPage() {
   }, [account]);
   console.log(canEdit);
 
-  // const [territoryIds, setTerritoryIds] = useState([]);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (account) {
-  //         console.log(account.user_id);
-  //         const response = await getTerritoryAllIdsService();
-
-  //         if (response.status === 200) {
-  //           // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
-  //           setTerritoryIds(response.data);
-  //           //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-  //           // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-  //           //  setCustomerGroups(customerGroupList);
-  //           //  setCustomers(customerList);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, [account]);
-  // console.log(territoryIds);
-
-  // const [territoryLists, setTerritoryLists] = useState([]);
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (account) {
-  //         console.log(account.user_id);
-  //         const response = await getTerritoryListsService();
-
-  //         if (response.status === 200) {
-  //           // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
-  //           setTerritoryLists(response.data);
-  //           //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-  //           // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-  //           //  setCustomerGroups(customerGroupList);
-  //           //  setCustomers(customerList);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, [account, territoryIds]);
-  // console.log(territoryLists);
-
-  // const [competittors, setCompetittors] = useState([]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (account && account.user_id) {
-  //         const response = await getTerritoryPerInsightsCompetitorsService(); // Use user_id or territory_id based on your requirement
-  //         console.log(response.data);
-
-  //         if (response.status === 200) {
-  //           // Update state with fetched data
-  //           setCompetittors(response.data); // Ensure response.data is in the correct format
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, [account, territoryIds]);
-  // console.log(competittors);
-
-  // const [allCompetittors, setAllCompetittors] = useState([]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       if (account) {
-  //         console.log(account.user_id);
-  //         const response = await getTerritoryCompetitorsService();
-
-  //         if (response.status === 200) {
-  //           // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
-  //           setAllCompetittors(response.data);
-  //           //  const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-  //           // const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
-  //           //  setCustomerGroups(customerGroupList);
-  //           //  setCustomers(customerList);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, [account, territoryIds]);
-  // console.log(allCompetittors);
   const [territoryIds, setTerritoryIds] = useState([]);
   const [territoryLists, setTerritoryLists] = useState([]);
   const [competitors, setCompetitors] = useState([]);
@@ -1163,7 +1062,7 @@ export default function UserPage() {
                         <Table>
                           <TableHead>
                             <TableRow>
-                              <TableCell align="left" sx={{ border: '1px solid #000' }}>
+                              <TableCell align="left" sx={{ border: '1px solid #000', height: '80px' }}>
                                 <strong>Town Name</strong>
                               </TableCell>
                               <TableCell align="left" sx={{ border: '1px solid #000' }}>

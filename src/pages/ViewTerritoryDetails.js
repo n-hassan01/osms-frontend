@@ -56,8 +56,8 @@ export default function BasicTabs() {
     <div>
       <Box className="indexing">
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab {...a11yProps(0)} label="View Territory Insights" />
-          <Tab {...a11yProps(1)} label="View Territory Competitors" />
+          <Tab {...a11yProps(0)} label="View Territory Lists" />
+          <Tab {...a11yProps(1)} label="Give Territory Ratings" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
