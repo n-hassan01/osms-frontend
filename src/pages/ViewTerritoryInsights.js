@@ -6,20 +6,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { CSVLink } from 'react-csv';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // @mui
-import {
-  Button,
-  Card,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-} from '@mui/material';
+import { Card, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { format, parse } from 'date-fns';
 import { useUser } from '../context/UserContext';
 // components
@@ -39,7 +28,6 @@ import {
   getBankListService,
   getBankReconIdDetails,
   getDepositTypesService,
-  getTerritoryAllIdsService,
   getTerritoryCompetitorsService,
   getTerritoryListsService,
   getTerritoryPerInsightsCompetitorsService,
@@ -47,7 +35,6 @@ import {
   upldateBankDepositService,
   uploadBankDepositAttachmentService,
 } from '../Services/ApiServices';
-import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 // css
 import '../sections/@dashboard/deposits/depositStyle.css';
 
@@ -188,50 +175,47 @@ export default function UserPage() {
   console.log(canEdit);
 
   const [territoryIds, setTerritoryIds] = useState([]);
+
+  const [selectedTerritoryId, setSelectedTerritoryId] = useState(null);
+  const { territory_id } = useParams(); // Get territory_id from URL params
   const [territoryLists, setTerritoryLists] = useState([]);
   const [competitors, setCompetitors] = useState([]);
   const [allCompetitors, setAllCompetitors] = useState([]);
-  const [selectedTerritoryId, setSelectedTerritoryId] = useState(null);
-  useEffect(() => {
-    async function fetchTerritoryIds() {
-      if (account) {
-        try {
-          const response = await getTerritoryAllIdsService();
-          if (response.status === 200) setTerritoryIds(response.data);
-        } catch (error) {
-          console.error('Error fetching territory IDs:', error);
-        }
-      }
-    }
-    fetchTerritoryIds();
-  }, [account]);
-  console.log(territoryIds);
+  console.log(territory_id);
 
   useEffect(() => {
-    async function fetchTerritoryDetails() {
-      console.log(selectedTerritoryId);
+    if (territory_id) {
+      console.log(territory_id);
 
-      if (selectedTerritoryId) {
-        console.log(selectedTerritoryId);
-
+      const fetchData = async () => {
         try {
-          const territoryResponse = await getTerritoryListsService(selectedTerritoryId);
-          console.log(territoryResponse.data);
+          const territoryResponse = await getTerritoryListsService(territory_id);
+          console.log(territoryResponse);
 
-          if (territoryResponse.status === 200) setTerritoryLists(territoryResponse.data);
+          if (territoryResponse.status === 200) {
+            setTerritoryLists(territoryResponse.data);
+          }
+          console.log(territoryLists);
 
-          const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(selectedTerritoryId);
-          if (competitorsResponse.status === 200) setCompetitors(competitorsResponse.data);
+          const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(territory_id);
+          if (competitorsResponse.status === 200) {
+            setCompetitors(competitorsResponse.data);
+          }
+          console.log(competitors);
 
-          const allCompetitorsResponse = await getTerritoryCompetitorsService(selectedTerritoryId);
-          if (allCompetitorsResponse.status === 200) setAllCompetitors(allCompetitorsResponse.data);
+          const allCompetitorsResponse = await getTerritoryCompetitorsService(territory_id);
+          if (allCompetitorsResponse.status === 200) {
+            setAllCompetitors(allCompetitorsResponse.data);
+          }
         } catch (error) {
-          console.error('Error fetching territory details:', error);
+          console.error('Error fetching data for selected territory:', error);
         }
-      }
+      };
+
+      fetchData();
     }
-    fetchTerritoryDetails();
-  }, [selectedTerritoryId]);
+  }, [territory_id]);
+  console.log(territoryLists);
 
   const [customerList, setCustomerList] = useState([]);
   useEffect(() => {
@@ -959,7 +943,7 @@ export default function UserPage() {
         </Stack>
 
         <Card>
-          <DepositListToolbar
+          {/* <DepositListToolbar
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
@@ -976,7 +960,7 @@ export default function UserPage() {
             customerList={customers}
             onDateChange={handleDateChange}
             bankstatuslist={bankReconIdAll}
-          />
+          /> */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -984,51 +968,15 @@ export default function UserPage() {
                 <TableBody>
                   {/* Territory ID Selection Row */}
                   <TableRow>
-                    <TableCell colSpan={3} align="left" sx={{ borderBottom: '1px solid #000', paddingBottom: '8px' }}>
-                      <strong style={{ marginRight: '10px', fontSize: '15px' }}>Select Territory:</strong>
-                      {territoryIds.map((territory) => (
-                        <Button
-                          style={{ margin: '5px' }}
-                          key={territory.territory_id}
-                          onClick={async () => {
-                            // Set selected territory ID
-                            setSelectedTerritoryId(territory.territory_id);
-
-                            // Clear existing data
-                            setTerritoryLists([]); // Clear previous territory lists
-                            setCompetitors([]); // Clear previous competitors
-                            setAllCompetitors([]); // Clear previous all competitors
-
-                            // Fetch new data based on selected territory
-                            try {
-                              const territoryResponse = await getTerritoryListsService(territory.territory_id);
-                              if (territoryResponse.status === 200) {
-                                setTerritoryLists(territoryResponse.data);
-                              }
-
-                              const competitorsResponse = await getTerritoryPerInsightsCompetitorsService(
-                                territory.territory_id
-                              );
-                              if (competitorsResponse.status === 200) {
-                                setCompetitors(competitorsResponse.data);
-                              }
-
-                              const allCompetitorsResponse = await getTerritoryCompetitorsService(
-                                territory.territory_id
-                              );
-                              if (allCompetitorsResponse.status === 200) {
-                                setAllCompetitors(allCompetitorsResponse.data);
-                              }
-                            } catch (error) {
-                              console.error('Error fetching data for selected territory:', error);
-                            }
-                          }}
-                          variant={territory.territory_id === selectedTerritoryId ? 'contained' : 'outlined'}
-                          sx={{ margin: '0 8px' }}
-                        >
-                          {territory.territory_name || `ID: ${territory.territory_id}`}
-                        </Button>
-                      ))}
+                    <TableCell colSpan={3} align="center" sx={{ borderBottom: '1px solid #000', paddingBottom: '8px' }}>
+                      <strong style={{ marginRight: '10px', fontSize: '15px' }}>Selected Territory:</strong>
+                      {territoryLists.length > 0 ? (
+                        <div key={territoryLists.territory_id} style={{ margin: '5px' }}>
+                          <strong>{territoryLists[0].territory_name || `ID: ${territoryLists[0].territory_id}`}</strong>
+                        </div>
+                      ) : (
+                        <div>No territory data available</div>
+                      )}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -1302,7 +1250,7 @@ export default function UserPage() {
             </TableContainer>
           </Scrollbar>
 
-          <TablePagination
+          {/* <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={filteredUsers.length}
@@ -1310,7 +1258,7 @@ export default function UserPage() {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          /> */}
         </Card>
       </div>
     </>

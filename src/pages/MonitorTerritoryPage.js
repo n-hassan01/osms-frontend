@@ -18,7 +18,13 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-restricted-globals */
+import Star from '@mui/icons-material/Star';
+import StarBorder from '@mui/icons-material/StarBorder';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
 import { useEffect, useState } from 'react';
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
@@ -46,8 +52,8 @@ import {
   getTerritoriesService,
   getTownsService,
   getUserProfileDetails,
+  updateTerritoryRating,
 } from '../Services/ApiServices';
-
 // @mui
 import { useUser } from '../context/UserContext';
 import NewListHead from '../sections/@dashboard/user/NewListHead';
@@ -88,7 +94,18 @@ const TABLE_HEAD = [
   { id: 'distributor_count', label: 'Distributor Count', alignRight: false },
   { id: 'sales_officer_count', label: 'Sales Officer Count', alignRight: false },
   { id: 'population_count', label: 'Population Count', alignRight: false },
+  { id: 'population_count', label: 'Sales View', alignRight: false },
+  { id: 'population_count', label: 'Collection View', alignRight: false },
+  { id: 'population_count', label: 'Rating', alignRight: false },
 ];
+
+const labels = {
+  1: 'Useless',
+  2: 'Poor',
+  3: 'Ok',
+  4: 'Good',
+  5: 'Excellent',
+};
 export default function ItemsDashBoard() {
   const navigate = useNavigate();
 
@@ -106,6 +123,9 @@ export default function ItemsDashBoard() {
   const [selected, setSelected] = useState([]);
   const [selectedItem, setSelectedItem] = useState([]);
   const [account, setAccount] = useState({});
+  const [territoryIds, setTerritoryIds] = useState([]);
+  const [ratings, setRatings] = useState([]);
+  const [hover, setHover] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -146,6 +166,27 @@ export default function ItemsDashBoard() {
     fetchData();
   }, []);
   console.log(USERLIST);
+
+  useEffect(() => {
+    async function fetchTerritoryIds() {
+      if (account) {
+        try {
+          const response = await getAllTerritoryService();
+          if (response.status === 200) {
+            setTerritoryIds(response.data);
+            console.log(territoryIds);
+
+            setRatings(response.data.map((territory) => territory.rating)); // Set initial ratings from response
+            setHover(Array(response.data.length).fill(-1)); // Initialize hover array
+          }
+        } catch (error) {
+          console.error('Error fetching territory IDs:', error);
+        }
+      }
+    }
+    fetchTerritoryIds();
+  }, [account]);
+  console.log(ratings);
 
   //   selecting Region
   const [regions, setRegions] = useState([]);
@@ -643,6 +684,42 @@ export default function ItemsDashBoard() {
     flexDirection: 'column',
   };
 
+  const handleRatingChange = async (index, newValue) => {
+    const updatedRatings = [...ratings];
+    updatedRatings[index] = newValue;
+    setRatings(updatedRatings);
+    console.log(ratings);
+
+    const territoryId = territoryIds[index].territory_id;
+    console.log(territoryId);
+    console.log(newValue);
+
+    try {
+      await saveRating(territoryId, newValue);
+    } catch (error) {
+      console.error('Error saving rating:', error);
+    }
+  };
+
+  const saveRating = async (territoryId, rating) => {
+    try {
+      const response = await updateTerritoryRating(territoryId, rating);
+      if (response.status === 200) {
+        console.log(`Rating for territory ${territoryId} updated successfully.`);
+      } else {
+        console.error('Failed to update rating.');
+      }
+    } catch (error) {
+      console.error('Error saving rating:', error);
+    }
+  };
+
+  const handleHoverChange = (index, newHover) => {
+    const updatedHover = [...hover];
+    updatedHover[index] = newHover;
+    setHover(updatedHover);
+  };
+
   return (
     <>
       <Helmet>
@@ -762,24 +839,37 @@ export default function ItemsDashBoard() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={territoryIds.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                  {territoryIds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const {
+                      territory_id,
                       tsm_name,
                       tsm_code,
                       territory_name,
                       distributor_count,
                       sales_officer_count,
                       population_count,
+                      monthly_sales_actual,
+                      monthly_sales_target,
+                      monthly_collection_actual,
+                      monthly_collection_target,
                     } = row;
 
                     return (
-                      <TableRow hover key={index}>
+                      <TableRow
+                        hover
+                        key={index}
+                        // onClick={() => navigate(`/dashboard/viewTerritoryInsights/${territory_id}`)}
+                        sx={{
+                          cursor: 'pointer',
+                          '&:hover': { backgroundColor: '#f5f5f5' }, // Optional hover background color
+                        }}
+                      >
                         {/* <TableCell style={combinedStylingForRadioTableCell}>
                             <Radio checked={selectedUser} onChange={(event) => handleClick(event, shop_id)} />
                           </TableCell> */}
@@ -800,6 +890,91 @@ export default function ItemsDashBoard() {
                         </TableCell>
                         <TableCell style={combinedStylingForTableCell} align="left">
                           {population_count}
+                        </TableCell>
+                        <TableCell
+                          style={{
+                            display: 'flex',
+                            gap: '10px',
+                            alignItems: 'center',
+                            marginTop: '5px',
+                          }}
+                        >
+                          <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
+                            <CircularProgressbar
+                              value={(monthly_sales_actual / monthly_sales_target) * 100}
+                              text={`${monthly_sales_actual}`}
+                            />
+                          </div>
+                          <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
+                            <CircularProgressbar
+                              value={(monthly_collection_actual / monthly_collection_target) * 100}
+                              text={`${monthly_collection_actual}`}
+                            />
+                          </div>
+                          <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
+                            <CircularProgressbar
+                              value={(monthly_collection_actual / monthly_collection_target) * 100}
+                              // text={`${((monthly_collection_actual / monthly_collection_target) * 100).toFixed(1)}%`}
+                              text={`${monthly_collection_actual}`}
+                            />
+                          </div>
+                        </TableCell>
+
+                        <TableCell>
+                          {territoryIds.map((territory, index) => (
+                            <TableRow key={territory.territory_name}>
+                              {/* <TableCell>{territory.territory_name}</TableCell> */}
+                              <TableCell>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  {[1, 2, 3, 4, 5].map((num) => (
+                                    <Box
+                                      key={num}
+                                      onClick={() => handleRatingChange(index, num)}
+                                      onMouseEnter={() => handleHoverChange(index, num)}
+                                      onMouseLeave={() => handleHoverChange(index, -1)}
+                                      sx={{
+                                        cursor: 'pointer',
+                                        mx: 0.5,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                      }}
+                                    >
+                                      {/* Highlight stars up to the current rating */}
+                                      {ratings[index] >= num ? (
+                                        <Star
+                                          sx={{
+                                            color: num <= ratings[index] ? '#1976d2' : '#e0e0e0', // Color last star in the rating range
+                                            fontSize: 30,
+                                            transition: 'color 0.3s',
+                                          }}
+                                        />
+                                      ) : (
+                                        <StarBorder
+                                          sx={{
+                                            color: '#e0e0e0',
+                                            fontSize: 30,
+                                            transition: 'color 0.3s',
+                                          }}
+                                        />
+                                      )}
+                                    </Box>
+                                  ))}
+                                  <Box sx={{ ml: 2, width: 75, textAlign: 'left' }}>
+                                    {labels[hover[index] !== -1 ? hover[index] : ratings[index]]}
+                                  </Box>
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  onClick={() => navigate(`/dashboard/viewTerritoryInsights/${territory_id}`)}
+                                  variant="contained" // You can choose a variant, like 'outlined' or 'text' as per your design
+                                >
+                                  View
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
                         </TableCell>
                       </TableRow>
                     );

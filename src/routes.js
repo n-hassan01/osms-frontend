@@ -208,7 +208,7 @@ export default function Router() {
         { path: 'manage-so/admin', element: <ManageSoAdminPage /> },
         { path: 'displayCharts', element: <DisplayCharts /> },
         { path: 'viewTerritoryDetails', element: <ViewTerritoryDetails /> },
-        { path: 'viewTerritoryInsights', element: <ViewTerritoryInsights /> },
+        { path: 'viewTerritoryInsights/:territory_id', element: <ViewTerritoryInsights /> },
         { path: 'viewTerritoryCompetitors', element: <viewTerritoryCompetitors /> },
         { path: 'monitorTerritory', element: <MonitorTerritoryPage /> },
       ],
