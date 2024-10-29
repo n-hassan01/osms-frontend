@@ -88,14 +88,15 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 const TABLE_HEAD = [
-  { id: 'territory_name', label: 'Territory Name', alignRight: false },
-  { id: 'tsm_code', label: 'Tsm Code', alignRight: false },
-  { id: 'tsm_name', label: 'Tsm Name', alignRight: false },
+  { id: 'territory_name', label: 'Name', alignRight: false },
+  { id: 'tsm_code', label: 'TSM Code', alignRight: false },
+  { id: 'tsm_name', label: 'TSM Name', alignRight: false },
   { id: 'distributor_count', label: 'Distributor Count', alignRight: false },
   { id: 'sales_officer_count', label: 'Sales Officer Count', alignRight: false },
   { id: 'population_count', label: 'Population Count', alignRight: false },
-  { id: 'population_count', label: 'Sales View', alignRight: false },
-  { id: 'population_count', label: 'Collection View', alignRight: false },
+  { id: 'population_count', label: 'Sales Analysis', alignRight: false },
+  { id: 'population_count', label: 'Collection Analysis', alignRight: false },
+  { id: 'population_count', label: 'Coverage Analysis', alignRight: false },
   { id: 'population_count', label: 'Rating', alignRight: false },
 ];
 
@@ -923,60 +924,55 @@ export default function ItemsDashBoard() {
                         </TableCell>
 
                         <TableCell>
-                          {territoryIds.map((territory, index) => (
-                            <TableRow key={territory.territory_name}>
-                              {/* <TableCell>{territory.territory_name}</TableCell> */}
-                              <TableCell>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                  {[1, 2, 3, 4, 5].map((num) => (
-                                    <Box
-                                      key={num}
-                                      onClick={() => handleRatingChange(index, num)}
-                                      onMouseEnter={() => handleHoverChange(index, num)}
-                                      onMouseLeave={() => handleHoverChange(index, -1)}
-                                      sx={{
-                                        cursor: 'pointer',
-                                        mx: 0.5,
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                      }}
-                                    >
-                                      {/* Highlight stars up to the current rating */}
-                                      {ratings[index] >= num ? (
-                                        <Star
-                                          sx={{
-                                            color: num <= ratings[index] ? '#1976d2' : '#e0e0e0', // Color last star in the rating range
-                                            fontSize: 30,
-                                            transition: 'color 0.3s',
-                                          }}
-                                        />
-                                      ) : (
-                                        <StarBorder
-                                          sx={{
-                                            color: '#e0e0e0',
-                                            fontSize: 30,
-                                            transition: 'color 0.3s',
-                                          }}
-                                        />
-                                      )}
-                                    </Box>
-                                  ))}
-                                  <Box sx={{ ml: 2, width: 75, textAlign: 'left' }}>
-                                    {labels[hover[index] !== -1 ? hover[index] : ratings[index]]}
+                          <TableRow key={territory_id}>
+                            {/* <TableCell>{territory.territory_name}</TableCell> */}
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                {[1, 2, 3, 4, 5].map((num) => (
+                                  <Box
+                                    key={num}
+                                    onClick={() => handleRatingChange(index, num)}
+                                    onMouseEnter={() => handleHoverChange(index, num)}
+                                    onMouseLeave={() => handleHoverChange(index, -1)}
+                                    sx={{
+                                      cursor: 'pointer',
+                                      mx: 0.5,
+                                      display: 'flex',
+                                      justifyContent: 'center',
+                                      alignItems: 'center',
+                                    }}
+                                  >
+                                    {/* Highlight stars up to the current rating */}
+                                    {ratings[index] >= num ? (
+                                      <Star
+                                        sx={{
+                                          color: num <= ratings[index] ? '#1976d2' : '#e0e0e0', // Color last star in the rating range
+                                          fontSize: 30,
+                                          transition: 'color 0.3s',
+                                        }}
+                                      />
+                                    ) : (
+                                      <StarBorder
+                                        sx={{
+                                          color: '#e0e0e0',
+                                          fontSize: 30,
+                                          transition: 'color 0.3s',
+                                        }}
+                                      />
+                                    )}
                                   </Box>
-                                </Box>
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  onClick={() => navigate(`/dashboard/viewTerritoryInsights/${territory_id}`)}
-                                  variant="contained" // You can choose a variant, like 'outlined' or 'text' as per your design
-                                >
-                                  View
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
+                                ))}
+                              </Box>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                onClick={() => navigate(`/dashboard/viewTerritoryDetails/${territory_id}`)}
+                                variant="contained" // You can choose a variant, like 'outlined' or 'text' as per your design
+                              >
+                                Details
+                              </Button>
+                            </TableCell>
+                          </TableRow>
                         </TableCell>
                       </TableRow>
                     );

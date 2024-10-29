@@ -969,7 +969,6 @@ export default function UserPage() {
                   {/* Territory ID Selection Row */}
                   <TableRow>
                     <TableCell colSpan={3} align="center" sx={{ borderBottom: '1px solid #000', paddingBottom: '8px' }}>
-                      <strong style={{ marginRight: '10px', fontSize: '15px' }}>Selected Territory:</strong>
                       {territoryLists.length > 0 ? (
                         <div key={territoryLists.territory_id} style={{ margin: '5px' }}>
                           <strong>{territoryLists[0].territory_name || `ID: ${territoryLists[0].territory_id}`}</strong>
