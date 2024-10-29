@@ -858,6 +858,8 @@ export default function ItemsDashBoard() {
                       monthly_sales_target,
                       monthly_collection_actual,
                       monthly_collection_target,
+                      company_outlet_count,
+                      total_outlet_count,
                     } = row;
 
                     return (
@@ -913,9 +915,9 @@ export default function ItemsDashBoard() {
                           </div>
                           <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
                             <CircularProgressbar
-                              value={(monthly_collection_actual / monthly_collection_target) * 100}
+                              value={(company_outlet_count / total_outlet_count) * 100}
                               // text={`${((monthly_collection_actual / monthly_collection_target) * 100).toFixed(1)}%`}
-                              text={`${monthly_collection_actual}`}
+                              text={`${company_outlet_count}`}
                             />
                           </div>
                         </TableCell>
