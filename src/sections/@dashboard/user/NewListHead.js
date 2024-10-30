@@ -58,7 +58,7 @@ export default function NewListHead({
             key={headCell.id}
             align={headCell.alignRight ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
-            style={{ whiteSpace: 'nowrap', padding: '5px 2px', margin: '0' }}
+            style={{ whiteSpace: 'nowrap', margin: '0' }}
           >
             <TableSortLabel
               hideSortIcon
