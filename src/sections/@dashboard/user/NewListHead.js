@@ -7,7 +7,7 @@ import { Box, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/materi
 const visuallyHidden = {
   border: 0,
   margin: -1,
-  padding: 0,
+  paddingRight: 0,
   width: '1px',
   height: '1px',
   overflow: 'hidden',
@@ -64,7 +64,7 @@ export default function NewListHead({
               hideSortIcon
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
-              style={{ whiteSpace: 'nowrap', padding: '0', margin: '0' }}
+              style={{ whiteSpace: 'nowrap', paddingRight: '20px', margin: '0' }}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}
