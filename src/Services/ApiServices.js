@@ -1432,6 +1432,16 @@ export const getTerritoryAllIdsService = async () => {
   }
 };
 
+export async function updateTerritoryRating(territoryId, rating) {
+  try {
+    return await axios.post(`${usersUrl}get-territory-insights/updateRatings`, { territoryId, rating });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+}
+
 export const getTerritoryPerInsightsCompetitorsService = async (selectedTerritoryId) => {
   try {
     return await axios.post(`${usersUrl}get-territory-insights/perInsights`, { selectedTerritoryId });
@@ -1646,7 +1656,7 @@ export const getTerritoriesService = async (bodyInfo) => {
 
 export const getAllTerritoryService = async () => {
   try {
-    return await axios.get(`${usersUrl}territory/`);
+    return await axios.get(`${usersUrl}territory/view`);
   } catch (err) {
     console.log(err.message);
 

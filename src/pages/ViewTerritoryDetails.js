@@ -1,13 +1,16 @@
+/* eslint-disable camelcase */
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // import ShowIdentifiedDepositsPage from '../sections/@dashboard/deposits/ShowIdentifiedDepositsPage';
 import ViewTerritoryCompetitors from './ViewTerritoryCompetitors';
 import ViewTerritoryInsights from './ViewTerritoryInsights';
+
+// Inside the BasicTabs component:
 
 // css
 import '../_css/Utils.css';
@@ -46,6 +49,7 @@ function a11yProps(index) {
 }
 
 export default function BasicTabs() {
+  const { territory_id } = useParams();
   const [value, setValue] = React.useState(0);
   const navigate = useNavigate();
   const handleChange = (event, newValue) => {
@@ -56,19 +60,16 @@ export default function BasicTabs() {
     <div>
       <Box className="indexing">
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-          <Tab {...a11yProps(0)} label="View Territory Insights" />
-          <Tab {...a11yProps(1)} label="View Territory Competitors" />
+          <Tab {...a11yProps(0)} label="Territory Insights" />
+          <Tab {...a11yProps(1)} label="Customer Insights" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <ViewTerritoryInsights />
+        <ViewTerritoryInsights territory_id={territory_id} /> {/* Pass as prop */}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <ViewTerritoryCompetitors />
       </CustomTabPanel>
-      {/* <CustomTabPanel value={value} index={1}>
-        <ShowIdentifiedDepositsPage />
-      </CustomTabPanel> */}
     </div>
   );
 }
