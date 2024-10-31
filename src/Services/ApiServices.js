@@ -466,6 +466,16 @@ export const getUsers = async () => {
   }
 };
 
+export const updateUser = async (requestInfo) => {
+  try {
+    return await axios.put(`${usersUrl}get-fnd-user/`, requestInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getMainSystemMenuDetails = async () => {
   try {
     return await axios.get(`${usersUrl}get-main-system-menu/`);
