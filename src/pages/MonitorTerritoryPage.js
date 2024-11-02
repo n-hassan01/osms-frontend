@@ -88,25 +88,61 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 const TABLE_HEAD = [
-  { id: 'territory_name', label: 'Name', alignRight: false },
-  { id: 'tsm_code', label: 'TSM Code', alignRight: false },
-  { id: 'tsm_name', label: 'TSM Name', alignRight: false },
-  { id: 'distributor_count', label: 'Distributor Count', alignRight: false },
-  { id: 'sales_officer_count', label: 'Sales Officer Count', alignRight: false },
-  { id: 'population_count', label: 'Population Count', alignRight: false },
-  { id: 'population_count', label: 'Sales Analysis', alignRight: false },
-  { id: 'population_count', label: 'Collection Analysis', alignRight: false },
-  { id: 'population_count', label: 'Coverage Analysis', alignRight: false },
-  { id: 'population_count', label: 'Rating', alignRight: false },
+  { id: 'territory_name', label: 'Name' },
+  { id: 'tsm_code', label: 'TSM Code' },
+  { id: 'tsm_name', label: 'TSM Name' },
+  {
+    id: 'distributor_count',
+    label: (
+      <>
+        Distributor <br /> Count
+      </>
+    ),
+  },
+  {
+    id: 'sales_officer_count',
+    label: (
+      <>
+        SO <br /> Count
+      </>
+    ),
+  },
+  {
+    id: 'population_count',
+    label: (
+      <>
+        Population <br /> Count
+      </>
+    ),
+  },
+  {
+    id: 'sales_analysis',
+    label: (
+      <>
+        Sales <br /> Analysis
+      </>
+    ),
+  },
+  {
+    id: 'collection_analysis',
+    label: (
+      <>
+        Collection <br /> Analysis
+      </>
+    ),
+  },
+  {
+    id: 'coverage_analysis',
+    label: (
+      <>
+        Coverage <br /> Analysis
+      </>
+    ),
+  },
+  { id: 'rating', label: 'Rating' },
+  { id: 'rating' },
 ];
 
-const labels = {
-  1: 'Useless',
-  2: 'Poor',
-  3: 'Ok',
-  4: 'Good',
-  5: 'Excellent',
-};
 export default function ItemsDashBoard() {
   const navigate = useNavigate();
 
@@ -876,45 +912,43 @@ export default function ItemsDashBoard() {
                         {/* <TableCell style={combinedStylingForRadioTableCell}>
                             <Radio checked={selectedUser} onChange={(event) => handleClick(event, shop_id)} />
                           </TableCell> */}
-                        <TableCell style={combinedStylingForTableCell} align="left">
+                        <TableCell align="left" style={{ paddingRight: '20px' }}>
                           {territory_name}
                         </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
-                          {tsm_code}
+                        <TableCell align="left" style={{ paddingRight: '20px' }}>
+                          {tsm_code}{' '}
                         </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
+                        <TableCell align="left" style={{ paddingRight: '20px' }}>
                           {tsm_name}
                         </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
+                        <TableCell align="right" style={{ paddingRight: '20px' }}>
                           {distributor_count}
                         </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
+                        <TableCell align="right" style={{ paddingRight: '20px' }}>
                           {sales_officer_count}
                         </TableCell>
-                        <TableCell style={combinedStylingForTableCell} align="left">
+                        <TableCell align="right" style={{ paddingRight: '20px' }}>
                           {population_count}
                         </TableCell>
-                        <TableCell
-                          style={{
-                            display: 'flex',
-                            gap: '10px',
-                            alignItems: 'center',
-                            marginTop: '5px',
-                          }}
-                        >
-                          <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
+                        <TableCell>
+                          <div style={{ width: '50px', height: '50px', marginLeft: '0px' }}>
                             <CircularProgressbar
                               value={(monthly_sales_actual / monthly_sales_target) * 100}
                               text={`${monthly_sales_actual}`}
                             />
                           </div>
-                          <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
+                        </TableCell>
+
+                        <TableCell>
+                          <div style={{ width: '50px', height: '50px', marginLeft: '0px' }}>
                             <CircularProgressbar
                               value={(monthly_collection_actual / monthly_collection_target) * 100}
                               text={`${monthly_collection_actual}`}
                             />
                           </div>
-                          <div style={{ width: '50px', height: '50px', marginLeft: '20px' }}>
+                        </TableCell>
+                        <TableCell>
+                          <div style={{ width: '50px', height: '50px', marginLeft: '0px' }}>
                             <CircularProgressbar
                               value={(company_outlet_count / total_outlet_count) * 100}
                               // text={`${((monthly_collection_actual / monthly_collection_target) * 100).toFixed(1)}%`}
@@ -924,55 +958,52 @@ export default function ItemsDashBoard() {
                         </TableCell>
 
                         <TableCell>
-                          <TableRow key={territory_id}>
-                            {/* <TableCell>{territory.territory_name}</TableCell> */}
-                            <TableCell>
-                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                {[1, 2, 3, 4, 5].map((num) => (
-                                  <Box
-                                    key={num}
-                                    onClick={() => handleRatingChange(index, num)}
-                                    onMouseEnter={() => handleHoverChange(index, num)}
-                                    onMouseLeave={() => handleHoverChange(index, -1)}
-                                    sx={{
-                                      cursor: 'pointer',
-                                      mx: 0.5,
-                                      display: 'flex',
-                                      justifyContent: 'center',
-                                      alignItems: 'center',
-                                    }}
-                                  >
-                                    {/* Highlight stars up to the current rating */}
-                                    {ratings[index] >= num ? (
-                                      <Star
-                                        sx={{
-                                          color: num <= ratings[index] ? '#1976d2' : '#e0e0e0', // Color last star in the rating range
-                                          fontSize: 30,
-                                          transition: 'color 0.3s',
-                                        }}
-                                      />
-                                    ) : (
-                                      <StarBorder
-                                        sx={{
-                                          color: '#e0e0e0',
-                                          fontSize: 30,
-                                          transition: 'color 0.3s',
-                                        }}
-                                      />
-                                    )}
-                                  </Box>
-                                ))}
-                              </Box>
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                onClick={() => navigate(`/dashboard/viewTerritoryDetails/${territory_id}`)}
-                                variant="contained" // You can choose a variant, like 'outlined' or 'text' as per your design
+                          {/* <TableCell>{territory.territory_name}</TableCell> */}
+
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            {[1, 2, 3, 4, 5].map((num) => (
+                              <Box
+                                key={num}
+                                onClick={() => handleRatingChange(index, num)}
+                                onMouseEnter={() => handleHoverChange(index, num)}
+                                onMouseLeave={() => handleHoverChange(index, -1)}
+                                sx={{
+                                  cursor: 'pointer',
+                                  mx: 0.5,
+                                  display: 'flex',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                }}
                               >
-                                Details
-                              </Button>
-                            </TableCell>
-                          </TableRow>
+                                {/* Highlight stars up to the current rating */}
+                                {ratings[index] >= num ? (
+                                  <Star
+                                    sx={{
+                                      color: num <= ratings[index] ? '#1976d2' : '#e0e0e0', // Color last star in the rating range
+                                      fontSize: 30,
+                                      transition: 'color 0.3s',
+                                    }}
+                                  />
+                                ) : (
+                                  <StarBorder
+                                    sx={{
+                                      color: '#e0e0e0',
+                                      fontSize: 30,
+                                      transition: 'color 0.3s',
+                                    }}
+                                  />
+                                )}
+                              </Box>
+                            ))}
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => navigate(`/dashboard/viewTerritoryDetails/${territory_id}`)}
+                            variant="contained" // You can choose a variant, like 'outlined' or 'text' as per your design
+                          >
+                            Details
+                          </Button>
                         </TableCell>
                       </TableRow>
                     );
