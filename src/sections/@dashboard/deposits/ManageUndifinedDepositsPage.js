@@ -214,14 +214,14 @@ export default function UserPage() {
   console.log(exceldata);
 
   function convertDateFormat(dateStr) {
-    const [day, month, year] = dateStr.split(/[-\\/]/);
+    const [day, month, yearPart] = dateStr.split(/[-\\/]/);
+    const year = yearPart.length === 2 ? `20${yearPart}` : yearPart;
     const formattedDate = `${year}-${month}-${day}`;
     const currentTime = new Date();
     const hours = String(currentTime.getHours()).padStart(2, '0');
     const minutes = String(currentTime.getMinutes()).padStart(2, '0');
     const seconds = String(currentTime.getSeconds()).padStart(2, '0');
     const formattedTime = `${hours}:${minutes}:${seconds}`;
-
     return `${formattedDate} ${formattedTime}`;
   }
 
