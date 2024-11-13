@@ -289,7 +289,6 @@ export default function ItemsDashBoard() {
     filterDetails.area = selectedOption.value;
     filterDetails.areaName = selectedOption.label;
   };
-  
 
   const handleAreaInputChange = (inputValue) => {
     setInputValue(inputValue);
