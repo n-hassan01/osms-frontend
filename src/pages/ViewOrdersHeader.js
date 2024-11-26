@@ -208,8 +208,8 @@ export default function Page404() {
     navigate(`/dashboard/updateSalesOrderForm/${header_id}`, { replace: true });
   };
 
-  const exportData = mergedDetails.map((item) => ({
-    'Serial Number': item.order_number,
+  const exportData = mergedDetails.map((item, index) => ({
+    'Serial Number': index + 1,
     'Item Name': item.ordered_item,
     'Item Code': item.inventory_item_code,
     'Item Quantity': item.ordered_quantity,
