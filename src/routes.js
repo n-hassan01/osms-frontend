@@ -61,6 +61,8 @@ import AccountFormPage from './pages/AccountFormPage';
 import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
+import AddSalesTarget from './pages/BA Incentive Module/SalesTarget/AddSalesTargets';
+import ViewSalesTarget from './pages/BA Incentive Module/SalesTarget/ViewSalesTargets';
 import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
 import BrandingAssetsViewPage from './pages/BrandingAssetsReportPage';
@@ -211,6 +213,8 @@ export default function Router() {
         { path: 'viewTerritoryInsights/:territory_id', element: <ViewTerritoryInsights /> },
         { path: 'viewTerritoryCompetitors', element: <viewTerritoryCompetitors /> },
         { path: 'monitorTerritory', element: <MonitorTerritoryPage /> },
+        { path: 'viewSalesTarget', element: <ViewSalesTarget /> },
+        { path: 'addSalesTarget', element: <AddSalesTarget /> },
       ],
     },
 
@@ -230,6 +234,7 @@ export default function Router() {
       path: 'sap',
       element: <TestSapApiPage />,
     },
+
     {
       path: 'vatSalesMaster',
       element: <VatposIntegrationService />,
