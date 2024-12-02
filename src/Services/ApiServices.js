@@ -2614,3 +2614,24 @@ export const getCustomerTotalList = async () => {
     return err.message;
   }
 };
+
+export const getAllSalesTargets = async () => {
+  try {
+    return await axios.get(`${usersUrl}get/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postSalesTargetExcelDataService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
