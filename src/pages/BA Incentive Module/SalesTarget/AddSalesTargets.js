@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { read, utils } from 'xlsx';
 import {
-  getCustomerGroupService,
+  getAllCustomerService,
   getPerAllPeoplesDetails,
   getUserProfileDetails,
   postSalesTargetExcelDataService,
@@ -76,19 +76,19 @@ export default function AddSalesTarget() {
   }, [account, user]);
   console.log(userList);
 
-  const [customerGroups, setCustomerGroups] = useState([]);
+  const [customerAll, setCustomerALL] = useState([]);
   const tdRef = useRef(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         if (account) {
-          const response = await getCustomerGroupService(user);
+          const response = await getAllCustomerService(user);
           console.log(response.data);
 
           if (response.status === 200) {
             // const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-            setCustomerGroups(response.data);
+            setCustomerALL(response.data);
           }
         }
       } catch (error) {
@@ -98,7 +98,7 @@ export default function AddSalesTarget() {
 
     fetchData();
   }, [account, user]);
-  console.log(customerGroups);
+  console.log(customerAll);
 
   const [fnduser, setFnduser] = useState([
     {
@@ -106,12 +106,16 @@ export default function AddSalesTarget() {
       startDate: '',
       endDate: '',
       amount: '',
-
+      custAccountId: '',
+      custgroupid: '',
+      customerNumber: '',
       customerGroupName: '',
       customerGroupId: '',
     },
   ]);
   const handleMenuChange = (index, name, value) => {
+    console.log(name, value);
+
     const updatedRows = [...fnduser];
     updatedRows[index][name] = value;
     setFnduser(updatedRows);
@@ -125,10 +129,10 @@ export default function AddSalesTarget() {
       setFnduser([
         ...fnduser,
         {
-          customer: '',
           startDate: '',
           endDate: '',
           amount: '',
+          customerNumber: '',
           customerGroupName: '',
           customerGroupId: '',
         },
@@ -147,6 +151,7 @@ export default function AddSalesTarget() {
     setFnduser((prevFnduser) =>
       prevFnduser.map((user) => ({
         ...user,
+        customerNumber: selectedOption.number,
         customerGroupName: selectedOption.label,
         customerGroupId: selectedOption.value,
       }))
@@ -157,11 +162,12 @@ export default function AddSalesTarget() {
     setInputValue(inputValue);
   };
 
-  const filteredCustomerGroupOptions = customerGroups
-    .filter((option) => option.cust_group_name.toLowerCase().includes(inputValue.toLowerCase()))
+  const filteredCustomerGroupOptions = customerAll
+    .filter((option) => option.full_name.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({
       value: option.cust_group_id,
-      label: option.cust_group_name,
+      label: option.full_name,
+      number: option.account_number,
     }));
 
   const handleUsersChange = (selectedOption) => {
@@ -236,6 +242,8 @@ export default function AddSalesTarget() {
   const date = new Date();
 
   const handleClick = async () => {
+    console.log(fnduser);
+
     try {
       // const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
 
@@ -245,12 +253,13 @@ export default function AddSalesTarget() {
         creationDate: date,
         createdBy: account.user_id,
         lastUpdateLogin: account.user_id,
-        custgroupid: 3,
-        custAccountId: account.user_id,
-        startDate: date,
-        endDate: '02-12-2028',
-        amount: 5000,
+        custgroupid: fnduser[0].customerGroupId,
+        custAccountId: fnduser[0].customerNumber,
+        startDate: fnduser[0].start_date,
+        endDate: fnduser[0].end_date,
+        amount: fnduser[0].amount,
       };
+      console.log(requestBody);
 
       const response = await postSalesTargetExcelDataService(requestBody);
       console.log('Pass to home after request ');
@@ -273,7 +282,9 @@ export default function AddSalesTarget() {
   const [dates, setDates] = useState([]);
 
   const handleDateChange = (date, index, type) => {
-    setDates((prevDates) => {
+    console.log(date, index, type);
+
+    setFnduser((prevDates) => {
       const updatedDates = [...prevDates];
       if (!updatedDates[index]) updatedDates[index] = { start_date: null, end_date: null };
 
@@ -339,11 +350,11 @@ export default function AddSalesTarget() {
           creationDate: date,
           createdBy: account.user_id,
           lastUpdateLogin: account.user_id,
-          custgroupid: 5,
-          custAccountId: account.user_id,
-          startDate: date,
-          endDate: '02-12-2028',
-          amount: 5000,
+          custgroupid: fnduser[0].customerGroupId,
+          custAccountId: fnduser[0].customerNumber,
+          startDate: fnduser[0].start_date,
+          endDate: fnduser[0].end_date,
+          amount: fnduser[0].amount,
         };
         postData = await postSalesTargetExcelDataService(requestBody);
       }
@@ -439,17 +450,10 @@ export default function AddSalesTarget() {
                             />
                           </div>
                         </td>
-                        {/* <td style={{ width: '500px' }} ref={tdRef}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="employeeCode"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td> */}
+
                         <td>
                           <DatePicker
-                            selected={dates[index]?.start_date || null} // Bind start date
+                            selected={fnduser[index]?.start_date || null} // Bind start date
                             onChange={(date) => handleDateChange(date, index, 'start_date')} // Update start date
                             dateFormat="dd/MM/yy"
                             placeholderText="dd/mm/yy"
@@ -457,7 +461,7 @@ export default function AddSalesTarget() {
                         </td>
                         <td>
                           <DatePicker
-                            selected={dates[index]?.end_date || null} // Bind end date
+                            selected={fnduser[index]?.end_date || null} // Bind end date
                             onChange={(date) => handleDateChange(date, index, 'end_date')} // Update end date
                             dateFormat="dd/MM/yy"
                             placeholderText="dd/mm/yy"
@@ -468,7 +472,7 @@ export default function AddSalesTarget() {
                           <input
                             type="text"
                             className="form-control"
-                            name="email"
+                            name="amount"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
