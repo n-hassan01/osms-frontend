@@ -333,7 +333,19 @@ export default function AddSalesTarget() {
 
     try {
       if (exceldata) {
-        postData = await postSalesTargetExcelDataService(exceldata);
+        const requestBody = {
+          lastUpdateDate: date,
+          lastUpdatedBy: account.user_id,
+          creationDate: date,
+          createdBy: account.user_id,
+          lastUpdateLogin: account.user_id,
+          custgroupid: 5,
+          custAccountId: account.user_id,
+          startDate: date,
+          endDate: '02-12-2028',
+          amount: 5000,
+        };
+        postData = await postSalesTargetExcelDataService(requestBody);
       }
       console.log('Hola', postData);
     } catch (error) {
