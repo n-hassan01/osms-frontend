@@ -2,7 +2,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-undef */
-
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -10,6 +9,7 @@ import DialogContent from '@mui/material/DialogContent';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { read, utils } from 'xlsx';
@@ -102,12 +102,11 @@ export default function AddSalesTarget() {
 
   const [fnduser, setFnduser] = useState([
     {
-      employeeCode: '',
-      password: '',
-      employeeName: '',
-      email: '',
-      supervisorName: '',
-      supervisorId: '',
+      customer: '',
+      startDate: '',
+      endDate: '',
+      amount: '',
+
       customerGroupName: '',
       customerGroupId: '',
     },
@@ -126,12 +125,10 @@ export default function AddSalesTarget() {
       setFnduser([
         ...fnduser,
         {
-          employeeCode: '',
-          password: '',
-          employeeName: '',
-          email: '',
-          supervisorName: '',
-          supervisorId: '',
+          customer: '',
+          startDate: '',
+          endDate: '',
+          amount: '',
           customerGroupName: '',
           customerGroupId: '',
         },
@@ -248,15 +245,16 @@ export default function AddSalesTarget() {
         creationDate: date,
         createdBy: account.user_id,
         lastUpdateLogin: account.user_id,
-        custgroupid: 1,
+        custgroupid: 3,
         custAccountId: account.user_id,
         startDate: date,
         endDate: '02-12-2028',
-        amount: 2222,
+        amount: 5000,
       };
 
       const response = await postSalesTargetExcelDataService(requestBody);
       console.log('Pass to home after request ');
+      alert('Success');
       if (response.status === 200) {
         handleClose();
       }
@@ -272,20 +270,33 @@ export default function AddSalesTarget() {
 
     setOpen(false);
   };
-  const handleDateChange = (date, index) => {
-    const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...USERLIST];
-    const name = 'end_date';
-    updatedList[index][name] = formattedDate;
+  const [dates, setDates] = useState([]);
 
-    console.log('before', editedUsers);
-    if (!editedUsers.includes(index)) {
-      editedUsers.push(index);
-    }
-    console.log('after', editedUsers);
+  const handleDateChange = (date, index, type) => {
+    setDates((prevDates) => {
+      const updatedDates = [...prevDates];
+      if (!updatedDates[index]) updatedDates[index] = { start_date: null, end_date: null };
 
-    setUserList(updatedList);
+      // Update the correct date (start or end)
+      updatedDates[index][type] = date;
+
+      return updatedDates;
+    });
   };
+  // const handleDateChange = (date, index) => {
+  //   const formattedDate = format(date, 'dd/MM/yy');
+  //   const updatedList = [...fnduser];
+  //   const name = 'end_date';
+  //   updatedList[index][name] = formattedDate;
+
+  //   // console.log('before', editedUsers);
+  //   // if (!editedUsers.includes(index)) {
+  //   //   editedUsers.push(index);
+  //   // }
+  //   // console.log('after', editedUsers);
+
+  //   setUserList(updatedList);
+  // };
   const file_type = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel',
@@ -380,19 +391,16 @@ export default function AddSalesTarget() {
                 <thead>
                   <tr>
                     <th>
-                      Employee Code <span style={{ color: 'red' }}>*</span>
+                      Customer <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Password <span style={{ color: 'red' }}>*</span>
+                      Start Date <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Employee Name <span style={{ color: 'red' }}>*</span>
+                      End Date <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Email <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Supervisor Code <span style={{ color: 'red' }}>*</span>
+                      Amount <span style={{ color: 'red' }}>*</span>
                     </th>
                   </tr>
                 </thead>
@@ -400,49 +408,6 @@ export default function AddSalesTarget() {
                   {showMenuLines &&
                     fnduser.map((row, index) => (
                       <tr key={index}>
-                        <td style={{ width: '500px' }} ref={tdRef}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="employeeCode"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-                        <td style={{ width: '500px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="password"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-
-                        <td style={{ width: '500px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="employeeName"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-
-                        <td style={{ width: '700px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="email"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-                        {/* <td>
-                          <DatePicker
-                            selected={end_date ? parseDate(end_date) : null}
-                            onChange={(date) => handleDateChange(date, index)}
-                            dateFormat="dd/MM/yy"
-                            placeholderText="dd/mm/yy"
-                          />
-                        </td> */}
-
                         <td style={{ width: '150px' }}>
                           <div style={{ width: '190px' }}>
                             {/* Customer Group */}
@@ -461,6 +426,39 @@ export default function AddSalesTarget() {
                               }}
                             />
                           </div>
+                        </td>
+                        {/* <td style={{ width: '500px' }} ref={tdRef}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="employeeCode"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td> */}
+                        <td>
+                          <DatePicker
+                            selected={dates[index]?.start_date || null} // Bind start date
+                            onChange={(date) => handleDateChange(date, index, 'start_date')} // Update start date
+                            dateFormat="dd/MM/yy"
+                            placeholderText="dd/mm/yy"
+                          />
+                        </td>
+                        <td>
+                          <DatePicker
+                            selected={dates[index]?.end_date || null} // Bind end date
+                            onChange={(date) => handleDateChange(date, index, 'end_date')} // Update end date
+                            dateFormat="dd/MM/yy"
+                            placeholderText="dd/mm/yy"
+                          />
+                        </td>
+
+                        <td style={{ width: '700px' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="email"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
                         </td>
                       </tr>
                     ))}
