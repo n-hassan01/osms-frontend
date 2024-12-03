@@ -14,11 +14,10 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { read, utils } from 'xlsx';
 import {
-    addFndUserDetailsByProcedure,
-    getCustomerGroupService,
-    getPerAllPeoplesDetails,
-    getUserProfileDetails,
-    postSalesTargetExcelDataService,
+  getCustomerGroupService,
+  getPerAllPeoplesDetails,
+  getUserProfileDetails,
+  postSalesTargetExcelDataService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 // styles
@@ -207,29 +206,59 @@ export default function AddSalesTarget() {
   //   setFnduser({ ...fnduser, [e.target.name]: e.target.value });
   // };
 
+  // const handleClick = async () => {
+  //   try {
+  //     const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
+
+  //     let c;
+  //     for (c = 0; c < filteredArray.length; c++) {
+  //       const lineInfo = filteredArray[c];
+  //       console.log(lineInfo);
+
+  //       const requestBody = {
+  //         employeeCode: lineInfo.employeeCode || '',
+  //         password: lineInfo.password || '',
+  //         employeeName: lineInfo.employeeName || '',
+  //         email: lineInfo.email || '',
+  //         supervisorId: lineInfo.supervisorId || null,
+  //         customerGroupId: lineInfo.customerGroupId || null,
+  //       };
+
+  //       const response = await addFndUserDetailsByProcedure(requestBody);
+  //       console.log('Pass to home after request ');
+  //       if (response.status === 200) {
+  //         handleClose();
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.log(err.message);
+  //     alert('Process failed! Try again later');
+  //   }
+  // };
+
+  const date = new Date();
+
   const handleClick = async () => {
     try {
-      const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
+      // const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
 
-      let c;
-      for (c = 0; c < filteredArray.length; c++) {
-        const lineInfo = filteredArray[c];
-        console.log(lineInfo);
+      const requestBody = {
+        lastUpdateDate: date,
+        lastUpdatedBy: account.user_id,
+        creationDate: date,
+        createdBy: account.user_id,
+        lastUpdateLogin: account.user_id,
+        custgroupid: 1,
+        custAccountId: account.user_id,
+        startDate: date,
+        endDate: '02-12-2028',
+        amount: 2222,
+      };
 
-        const requestBody = {
-          employeeCode: lineInfo.employeeCode || '',
-          password: lineInfo.password || '',
-          employeeName: lineInfo.employeeName || '',
-          email: lineInfo.email || '',
-          supervisorId: lineInfo.supervisorId || null,
-          customerGroupId: lineInfo.customerGroupId || null,
-        };
-
-        const response = await addFndUserDetailsByProcedure(requestBody);
-        console.log('Pass to home after request ');
-        if (response.status === 200) {
-          handleClose();
-        }
+      const response = await postSalesTargetExcelDataService(requestBody);
+      console.log('Pass to home after request ');
+      if (response.status === 200) {
+        handleClose();
       }
     } catch (err) {
       console.log(err.message);
@@ -239,7 +268,7 @@ export default function AddSalesTarget() {
 
   const handleClose = () => {
     alert('Successfully Added!!!');
-    navigate('/dashboard/showfnduser');
+    // navigate('/dashboard/showfnduser');
 
     setOpen(false);
   };
@@ -364,9 +393,6 @@ export default function AddSalesTarget() {
                     </th>
                     <th>
                       Supervisor Code <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Customer Group <span style={{ color: 'red' }}>*</span>
                     </th>
                   </tr>
                 </thead>
