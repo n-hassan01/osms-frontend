@@ -2628,7 +2628,7 @@ export const getAllSalesTargets = async () => {
 export const postSalesTargetExcelDataService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
-    return await axios.post(`${usersUrl}add`, bodyInfo);
+    return await axios.post(`${usersUrl}add/add`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 

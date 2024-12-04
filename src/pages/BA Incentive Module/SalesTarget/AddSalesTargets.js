@@ -2,7 +2,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-undef */
-
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -10,15 +9,15 @@ import DialogContent from '@mui/material/DialogContent';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { read, utils } from 'xlsx';
 import {
-    addFndUserDetailsByProcedure,
-    getCustomerGroupService,
-    getPerAllPeoplesDetails,
-    getUserProfileDetails,
-    postSalesTargetExcelDataService,
+  getAllCustomerService,
+  getPerAllPeoplesDetails,
+  getUserProfileDetails,
+  postSalesTargetExcelDataService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 // styles
@@ -77,19 +76,19 @@ export default function AddSalesTarget() {
   }, [account, user]);
   console.log(userList);
 
-  const [customerGroups, setCustomerGroups] = useState([]);
+  const [customerAll, setCustomerALL] = useState([]);
   const tdRef = useRef(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         if (account) {
-          const response = await getCustomerGroupService(user);
+          const response = await getAllCustomerService(user);
           console.log(response.data);
 
           if (response.status === 200) {
             // const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
-            setCustomerGroups(response.data);
+            setCustomerALL(response.data);
           }
         }
       } catch (error) {
@@ -99,21 +98,24 @@ export default function AddSalesTarget() {
 
     fetchData();
   }, [account, user]);
-  console.log(customerGroups);
+  console.log(customerAll);
 
   const [fnduser, setFnduser] = useState([
     {
-      employeeCode: '',
-      password: '',
-      employeeName: '',
-      email: '',
-      supervisorName: '',
-      supervisorId: '',
+      customer: '',
+      startDate: '',
+      endDate: '',
+      amount: '',
+      custAccountId: '',
+      custgroupid: '',
+      customerNumber: '',
       customerGroupName: '',
       customerGroupId: '',
     },
   ]);
   const handleMenuChange = (index, name, value) => {
+    console.log(name, value);
+
     const updatedRows = [...fnduser];
     updatedRows[index][name] = value;
     setFnduser(updatedRows);
@@ -127,12 +129,10 @@ export default function AddSalesTarget() {
       setFnduser([
         ...fnduser,
         {
-          employeeCode: '',
-          password: '',
-          employeeName: '',
-          email: '',
-          supervisorName: '',
-          supervisorId: '',
+          startDate: '',
+          endDate: '',
+          amount: '',
+          customerNumber: '',
           customerGroupName: '',
           customerGroupId: '',
         },
@@ -151,6 +151,7 @@ export default function AddSalesTarget() {
     setFnduser((prevFnduser) =>
       prevFnduser.map((user) => ({
         ...user,
+        customerNumber: selectedOption.number,
         customerGroupName: selectedOption.label,
         customerGroupId: selectedOption.value,
       }))
@@ -161,11 +162,12 @@ export default function AddSalesTarget() {
     setInputValue(inputValue);
   };
 
-  const filteredCustomerGroupOptions = customerGroups
-    .filter((option) => option.cust_group_name.toLowerCase().includes(inputValue.toLowerCase()))
+  const filteredCustomerGroupOptions = customerAll
+    .filter((option) => option.full_name.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({
       value: option.cust_group_id,
-      label: option.cust_group_name,
+      label: option.full_name,
+      number: option.account_number,
     }));
 
   const handleUsersChange = (selectedOption) => {
@@ -207,29 +209,63 @@ export default function AddSalesTarget() {
   //   setFnduser({ ...fnduser, [e.target.name]: e.target.value });
   // };
 
+  // const handleClick = async () => {
+  //   try {
+  //     const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
+
+  //     let c;
+  //     for (c = 0; c < filteredArray.length; c++) {
+  //       const lineInfo = filteredArray[c];
+  //       console.log(lineInfo);
+
+  //       const requestBody = {
+  //         employeeCode: lineInfo.employeeCode || '',
+  //         password: lineInfo.password || '',
+  //         employeeName: lineInfo.employeeName || '',
+  //         email: lineInfo.email || '',
+  //         supervisorId: lineInfo.supervisorId || null,
+  //         customerGroupId: lineInfo.customerGroupId || null,
+  //       };
+
+  //       const response = await addFndUserDetailsByProcedure(requestBody);
+  //       console.log('Pass to home after request ');
+  //       if (response.status === 200) {
+  //         handleClose();
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.log(err.message);
+  //     alert('Process failed! Try again later');
+  //   }
+  // };
+
+  const date = new Date();
+
   const handleClick = async () => {
+    console.log(fnduser);
+
     try {
-      const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
+      // const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
 
-      let c;
-      for (c = 0; c < filteredArray.length; c++) {
-        const lineInfo = filteredArray[c];
-        console.log(lineInfo);
+      const requestBody = {
+        lastUpdateDate: date,
+        lastUpdatedBy: account.user_id,
+        creationDate: date,
+        createdBy: account.user_id,
+        lastUpdateLogin: account.user_id,
+        custgroupid: fnduser[0].customerGroupId,
+        custAccountId: fnduser[0].customerNumber,
+        startDate: fnduser[0].start_date,
+        endDate: fnduser[0].end_date,
+        amount: fnduser[0].amount,
+      };
+      console.log(requestBody);
 
-        const requestBody = {
-          employeeCode: lineInfo.employeeCode || '',
-          password: lineInfo.password || '',
-          employeeName: lineInfo.employeeName || '',
-          email: lineInfo.email || '',
-          supervisorId: lineInfo.supervisorId || null,
-          customerGroupId: lineInfo.customerGroupId || null,
-        };
-
-        const response = await addFndUserDetailsByProcedure(requestBody);
-        console.log('Pass to home after request ');
-        if (response.status === 200) {
-          handleClose();
-        }
+      const response = await postSalesTargetExcelDataService(requestBody);
+      console.log('Pass to home after request ');
+      alert('Success');
+      if (response.status === 200) {
+        handleClose();
       }
     } catch (err) {
       console.log(err.message);
@@ -239,24 +275,39 @@ export default function AddSalesTarget() {
 
   const handleClose = () => {
     alert('Successfully Added!!!');
-    navigate('/dashboard/showfnduser');
+    // navigate('/dashboard/showfnduser');
 
     setOpen(false);
   };
-  const handleDateChange = (date, index) => {
-    const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...USERLIST];
-    const name = 'end_date';
-    updatedList[index][name] = formattedDate;
+  const [dates, setDates] = useState([]);
 
-    console.log('before', editedUsers);
-    if (!editedUsers.includes(index)) {
-      editedUsers.push(index);
-    }
-    console.log('after', editedUsers);
+  const handleDateChange = (date, index, type) => {
+    console.log(date, index, type);
 
-    setUserList(updatedList);
+    setFnduser((prevDates) => {
+      const updatedDates = [...prevDates];
+      if (!updatedDates[index]) updatedDates[index] = { start_date: null, end_date: null };
+
+      // Update the correct date (start or end)
+      updatedDates[index][type] = date;
+
+      return updatedDates;
+    });
   };
+  // const handleDateChange = (date, index) => {
+  //   const formattedDate = format(date, 'dd/MM/yy');
+  //   const updatedList = [...fnduser];
+  //   const name = 'end_date';
+  //   updatedList[index][name] = formattedDate;
+
+  //   // console.log('before', editedUsers);
+  //   // if (!editedUsers.includes(index)) {
+  //   //   editedUsers.push(index);
+  //   // }
+  //   // console.log('after', editedUsers);
+
+  //   setUserList(updatedList);
+  // };
   const file_type = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel',
@@ -293,7 +344,19 @@ export default function AddSalesTarget() {
 
     try {
       if (exceldata) {
-        postData = await postSalesTargetExcelDataService(exceldata);
+        const requestBody = {
+          lastUpdateDate: date,
+          lastUpdatedBy: account.user_id,
+          creationDate: date,
+          createdBy: account.user_id,
+          lastUpdateLogin: account.user_id,
+          custgroupid: fnduser[0].customerGroupId,
+          custAccountId: fnduser[0].customerNumber,
+          startDate: fnduser[0].start_date,
+          endDate: fnduser[0].end_date,
+          amount: fnduser[0].amount,
+        };
+        postData = await postSalesTargetExcelDataService(requestBody);
       }
       console.log('Hola', postData);
     } catch (error) {
@@ -351,22 +414,16 @@ export default function AddSalesTarget() {
                 <thead>
                   <tr>
                     <th>
-                      Employee Code <span style={{ color: 'red' }}>*</span>
+                      Customer <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Password <span style={{ color: 'red' }}>*</span>
+                      Start Date <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Employee Name <span style={{ color: 'red' }}>*</span>
+                      End Date <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Email <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Supervisor Code <span style={{ color: 'red' }}>*</span>
-                    </th>
-                    <th>
-                      Customer Group <span style={{ color: 'red' }}>*</span>
+                      Amount <span style={{ color: 'red' }}>*</span>
                     </th>
                   </tr>
                 </thead>
@@ -374,49 +431,6 @@ export default function AddSalesTarget() {
                   {showMenuLines &&
                     fnduser.map((row, index) => (
                       <tr key={index}>
-                        <td style={{ width: '500px' }} ref={tdRef}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="employeeCode"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-                        <td style={{ width: '500px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="password"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-
-                        <td style={{ width: '500px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="employeeName"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-
-                        <td style={{ width: '700px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="email"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
-                        {/* <td>
-                          <DatePicker
-                            selected={end_date ? parseDate(end_date) : null}
-                            onChange={(date) => handleDateChange(date, index)}
-                            dateFormat="dd/MM/yy"
-                            placeholderText="dd/mm/yy"
-                          />
-                        </td> */}
-
                         <td style={{ width: '150px' }}>
                           <div style={{ width: '190px' }}>
                             {/* Customer Group */}
@@ -435,6 +449,32 @@ export default function AddSalesTarget() {
                               }}
                             />
                           </div>
+                        </td>
+
+                        <td>
+                          <DatePicker
+                            selected={fnduser[index]?.start_date || null} // Bind start date
+                            onChange={(date) => handleDateChange(date, index, 'start_date')} // Update start date
+                            dateFormat="dd/MM/yy"
+                            placeholderText="dd/mm/yy"
+                          />
+                        </td>
+                        <td>
+                          <DatePicker
+                            selected={fnduser[index]?.end_date || null} // Bind end date
+                            onChange={(date) => handleDateChange(date, index, 'end_date')} // Update end date
+                            dateFormat="dd/MM/yy"
+                            placeholderText="dd/mm/yy"
+                          />
+                        </td>
+
+                        <td style={{ width: '700px' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="amount"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
                         </td>
                       </tr>
                     ))}
