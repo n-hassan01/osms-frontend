@@ -2635,3 +2635,24 @@ export const postSalesTargetExcelDataService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const getAllIncentiveFormulaService = async () => {
+  try {
+    return await axios.get(`${usersUrl}inventiveFormula/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveFormulaService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}inventiveFormula/addFormula`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
