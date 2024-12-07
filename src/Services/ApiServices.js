@@ -2617,7 +2617,7 @@ export const getCustomerTotalList = async () => {
 
 export const getAllSalesTargets = async () => {
   try {
-    return await axios.get(`${usersUrl}get/getAll`);
+    return await axios.get(`${usersUrl}salesTarget/getAll`);
   } catch (err) {
     console.log(err.message);
 
@@ -2628,7 +2628,28 @@ export const getAllSalesTargets = async () => {
 export const postSalesTargetExcelDataService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
-    return await axios.post(`${usersUrl}add/add`, bodyInfo);
+    return await axios.post(`${usersUrl}salesTarget/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllIncentiveFormulaService = async () => {
+  try {
+    return await axios.get(`${usersUrl}inventiveFormula/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveFormulaService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}inventiveFormula/addFormula`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 
