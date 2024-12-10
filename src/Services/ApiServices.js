@@ -2656,3 +2656,13 @@ export const postIncentiveFormulaService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const getAllRecipientsService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentiveRecipientGroups/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

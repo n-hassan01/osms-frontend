@@ -62,8 +62,10 @@ import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
 import AddPageIncentiveFormula from './pages/BA Incentive Module/SalesTarget/AddIncentiveForm';
+import AddIncentiveRecipients from './pages/BA Incentive Module/SalesTarget/AddIncentiveRecipientGroups';
 import AddSalesTarget from './pages/BA Incentive Module/SalesTarget/AddSalesTargets';
 import ViewIncentiveFormula from './pages/BA Incentive Module/SalesTarget/ViewIncentiveFormula';
+import ViewIncentiveRecipient from './pages/BA Incentive Module/SalesTarget/ViewIncentiveRecipientGroups';
 import ViewSalesTarget from './pages/BA Incentive Module/SalesTarget/ViewSalesTargets';
 import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
@@ -219,6 +221,8 @@ export default function Router() {
         { path: 'addSalesTarget', element: <AddSalesTarget /> },
         { path: 'viewIncentiveFormula', element: <ViewIncentiveFormula /> },
         { path: 'addIncentiveFormula', element: <AddPageIncentiveFormula /> },
+        { path: 'viewIncentiveRecipient', element: <ViewIncentiveRecipient /> },
+        { path: 'addIncentiveRecipient', element: <AddIncentiveRecipients /> },
       ],
     },
 
