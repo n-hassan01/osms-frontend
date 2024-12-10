@@ -9,13 +9,15 @@ import DialogContent from '@mui/material/DialogContent';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useEffect, useRef, useState } from 'react';
+import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 import { read, utils } from 'xlsx';
 import {
-  getAllCustomerService,
-  getPerAllPeoplesDetails,
-  getUserProfileDetails,
-  postIncentiveRecipientsService,
+    getAllCustomerService,
+    getPerAllPeoplesDetails,
+    getUserProfileDetails,
+    postSKUService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 // styles
@@ -100,10 +102,19 @@ export default function AddSalesTarget() {
 
   const [fnduser, setFnduser] = useState([
     {
-      recipientGroupsId: '',
-      recipientGroupsName: '',
+      incentiveTypeId: '',
+      custAccountId: '',
+      custgroupid: '',
+      startDate: '',
+      endDate: '',
+      inventoryItemId: '',
+      amount: '',
+      customerNumber: '',
+      customerGroupName: '',
+      customerGroupId: '',
     },
   ]);
+
   const handleMenuChange = (index, name, value) => {
     console.log(name, value);
 
@@ -120,8 +131,12 @@ export default function AddSalesTarget() {
       setFnduser([
         ...fnduser,
         {
-          recipientGroupsId: '',
-          recipientGroupsName: '',
+          startDate: '',
+          endDate: '',
+          amount: '',
+          customerNumber: '',
+          customerGroupName: '',
+          customerGroupId: '',
         },
       ]);
       console.log(fnduser);
@@ -235,18 +250,22 @@ export default function AddSalesTarget() {
       // const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
 
       const requestBody = {
-        recipientGroupsId: fnduser[0].recipientGroupsId,
-        recipientGroupsName: fnduser[0].recipientGroupsName,
+        incentiveTypeId: fnduser[0].incentiveTypeId,
+        custgroupid: fnduser[0].customerGroupId,
+        custAccountId: fnduser[0].customerNumber,
+        inventoryItemId: fnduser[0].inventoryItemId,
+        startDate: fnduser[0].start_date,
+        endDate: fnduser[0].end_date,
+        amount: fnduser[0].amount,
         lastUpdateDate: date,
         lastUpdatedBy: account.user_id,
         creationDate: date,
         createdBy: account.user_id,
         lastUpdateLogin: account.user_id,
       };
-
       console.log(requestBody);
 
-      const response = await postIncentiveRecipientsService(requestBody);
+      const response = await postSKUService(requestBody);
       console.log('Pass to home after request ');
       alert('Success');
       if (response.status === 200) {
@@ -341,7 +360,7 @@ export default function AddSalesTarget() {
           endDate: fnduser[0].end_date,
           amount: fnduser[0].amount,
         };
-        postData = await postIncentiveRecipientsService(requestBody);
+        postData = await postSKUService(requestBody);
       }
       console.log('Hola', postData);
     } catch (error) {
@@ -388,7 +407,7 @@ export default function AddSalesTarget() {
               }
             }}
           >
-            Upload (Incentive Recipient){' '}
+            Upload (Sales Target SKU ){' '}
           </Button>
         </Grid>
 
@@ -399,10 +418,23 @@ export default function AddSalesTarget() {
                 <thead>
                   <tr>
                     <th>
-                      Recipient Groups Id <span style={{ color: 'red' }}>*</span>
+                      Customer <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Recipient Groups Name <span style={{ color: 'red' }}>*</span>
+                      Incentive Type Id <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th>
+                      Inventory Item Id <span style={{ color: 'red' }}>*</span>
+                    </th>
+
+                    <th>
+                      Start Date <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th>
+                      End Date <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th>
+                      Amount <span style={{ color: 'red' }}>*</span>
                     </th>
                   </tr>
                 </thead>
@@ -410,12 +442,56 @@ export default function AddSalesTarget() {
                   {showMenuLines &&
                     fnduser.map((row, index) => (
                       <tr key={index}>
+                        <td style={{ width: '150px' }}>
+                          <div style={{ width: '190px' }}>
+                            {/* Customer Group */}
+                            <Select
+                              value={fnduser.customerGroupName}
+                              // value={selectedOption}
+                              // onChange={onFilterDetails}
+                              onChange={handleCustomerGroupChange}
+                              onInputChange={handleCustomerGroupInputChange}
+                              options={filteredCustomerGroupOptions}
+                              placeholder="Type to select..."
+                              isClearable
+                              menuPortalTarget={document.body}
+                              styles={{
+                                menuPortal: (base) => ({ ...base, zIndex: 999 }),
+                              }}
+                            />
+                          </div>
+                        </td>
                         <td style={{ width: '700px' }}>
                           <input
-                            type="number"
+                            type="text"
                             className="form-control"
-                            name="recipientGroupsId"
+                            name="incentiveTypeId"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td style={{ width: '700px' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="inventoryItemId"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+
+                        <td>
+                          <DatePicker
+                            selected={fnduser[index]?.start_date || null} // Bind start date
+                            onChange={(date) => handleDateChange(date, index, 'start_date')} // Update start date
+                            dateFormat="dd/MM/yy"
+                            placeholderText="dd/mm/yy"
+                          />
+                        </td>
+                        <td>
+                          <DatePicker
+                            selected={fnduser[index]?.end_date || null} // Bind end date
+                            onChange={(date) => handleDateChange(date, index, 'end_date')} // Update end date
+                            dateFormat="dd/MM/yy"
+                            placeholderText="dd/mm/yy"
                           />
                         </td>
 
@@ -423,7 +499,7 @@ export default function AddSalesTarget() {
                           <input
                             type="text"
                             className="form-control"
-                            name="recipientGroupsName"
+                            name="amount"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>

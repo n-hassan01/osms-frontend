@@ -2666,3 +2666,45 @@ export const getAllRecipientsService = async () => {
     return err.message;
   }
 };
+
+export const postIncentiveRecipientsService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveRecipientGroups/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllSalesSKUTargets = async () => {
+  try {
+    return await axios.get(`${usersUrl}salesTargetsSkuAll/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postSKUService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}salesTargetsSkuAll/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSoSalesTargetIncentiveService = async () => {
+  try {
+    return await axios.get(`${usersUrl}salesTargetIncentiveView/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
