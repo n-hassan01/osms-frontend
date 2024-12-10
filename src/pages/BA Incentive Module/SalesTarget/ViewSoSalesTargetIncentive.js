@@ -8,20 +8,20 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-  Button,
-  Card,
-  Container,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Container,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -33,7 +33,12 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { getAllRecipientsService, getUserProfileDetails, getUsers, updateUser } from '../../../Services/ApiServices';
+import {
+    getSoSalesTargetIncentiveService,
+    getUserProfileDetails,
+    getUsers,
+    updateUser,
+} from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 import { UserListHead } from '../../../sections/@dashboard/user';
 // styles
@@ -43,8 +48,9 @@ import '../../../_css/Utils.css';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'recipient_groups_id', label: 'Recipient Groups ID', alignRight: false },
-  { id: 'recipient_groups_name', label: 'Recipient Group Name', alignRight: false },
+  { id: 'sum', label: 'Sum', alignRight: false },
+
+  { id: 'sales_taregt', label: 'Sales Target', alignRight: false },
 ];
 const selectedUsers = [];
 
@@ -79,7 +85,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowFndUser() {
+export default function ViewSoSalesTargetIncentive() {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -97,7 +103,7 @@ export default function ShowFndUser() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [recipients, setRecipients] = useState([]);
+  const [soTargetIncentive, setSoTargetIncentive] = useState([]);
 
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
@@ -112,7 +118,7 @@ export default function ShowFndUser() {
   //     try {
   //       const usersDetails = await getFndUserService();
 
-  //       if (usersDetails) setRecipients(usersDetails.data);
+  //       if (usersDetails) setSoTargetIncentive(usersDetails.data);
   //     } catch (error) {
   //       console.error('Error fetching account details:', error);
   //     }
@@ -120,14 +126,14 @@ export default function ShowFndUser() {
 
   //   fetchData();
   // }, []);
-  // const [recipients, setRecipients] = useState([]);
+  // const [soTargetIncentive, setSoTargetIncentive] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllRecipientsService();
+        const response = await getSoSalesTargetIncentiveService();
         console.log(response.data);
 
-        if (response) setRecipients(response.data);
+        if (response) setSoTargetIncentive(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -135,14 +141,14 @@ export default function ShowFndUser() {
 
     fetchData();
   }, []);
-  console.log(recipients);
+  console.log(soTargetIncentive);
 
   //   useEffect(() => {
   //     async function fetchData() {
   //       try {
   //         const usersDetails = await getUsers();
 
-  //         if (usersDetails) setRecipients(usersDetails.data.data);
+  //         if (usersDetails) setSoTargetIncentive(usersDetails.data.data);
   //       } catch (error) {
   //         console.error('Error fetching account details:', error);
   //       }
@@ -150,7 +156,7 @@ export default function ShowFndUser() {
 
   //     fetchData();
   //   }, []);
-  //   console.log(recipients);
+  //   console.log(soTargetIncentive);
 
   // selecting status
   const [filterDetails, setFilterDetails] = useState({});
@@ -167,7 +173,7 @@ export default function ShowFndUser() {
   ];
 
   const handleOptionChange = (value, index) => {
-    const updatedList = [...recipients];
+    const updatedList = [...soTargetIncentive];
     const name = 'status';
     updatedList[index][name] = value;
 
@@ -175,7 +181,7 @@ export default function ShowFndUser() {
       editedUsers.push(index);
     }
 
-    setRecipients(updatedList);
+    setSoTargetIncentive(updatedList);
   };
 
   const handleOptionInputChange = (inputValue) => {
@@ -227,7 +233,7 @@ export default function ShowFndUser() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = recipients.map((n) => n.email);
+      const newSelecteds = soTargetIncentive.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -269,7 +275,7 @@ export default function ShowFndUser() {
 
   const handleDateChange = (date, index) => {
     const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...recipients];
+    const updatedList = [...soTargetIncentive];
     const name = 'end_date';
     updatedList[index][name] = formattedDate;
 
@@ -279,7 +285,7 @@ export default function ShowFndUser() {
     }
     console.log('after', editedUsers);
 
-    setRecipients(updatedList);
+    setSoTargetIncentive(updatedList);
   };
 
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -318,10 +324,10 @@ export default function ShowFndUser() {
       handleBackdropOpen();
       const promises = editedUsers.map((value) => {
         const requestBody = {
-          userId: recipients[value].user_id,
+          userId: soTargetIncentive[value].user_id,
           lastUpdatedBy: account.user_id,
-          endDate: recipients[value].end_date,
-          status: recipients[value].status,
+          endDate: soTargetIncentive[value].end_date,
+          status: soTargetIncentive[value].status,
         };
         return updateUser(requestBody);
       });
@@ -329,7 +335,7 @@ export default function ShowFndUser() {
       await Promise.all(promises); // Wait for all updates to complete.
 
       const usersDetails = await getUsers();
-      if (usersDetails) setRecipients(usersDetails.data.data);
+      if (usersDetails) setSoTargetIncentive(usersDetails.data.data);
 
       handleBackdropOpenClose();
     } catch (error) {
@@ -337,9 +343,9 @@ export default function ShowFndUser() {
     }
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - recipients.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - soTargetIncentive.length) : 0;
 
-  const filteredUsers = applySortFilter(recipients, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(soTargetIncentive, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -352,7 +358,7 @@ export default function ShowFndUser() {
       <Container className="indexing fullWidth">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Sales Targets
+            Incentive Targets
           </Typography>
           <div>
             <Button
@@ -370,10 +376,10 @@ export default function ShowFndUser() {
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/dashboard/addIncentiveRecipient');
+                navigate('/dashboard/addIncentiveFormula');
               }}
             >
-              Add Incentive Recipient
+              Add Incentive Formula
             </Button>
           </div>
         </Stack>
@@ -394,24 +400,24 @@ export default function ShowFndUser() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={recipients.length}
+                  rowCount={soTargetIncentive.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { recipient_groups_name, start_date, end_date, recipient_groups_id } = row;
-                    const selectedUser = selected.indexOf(recipient_groups_name) !== -1;
+                    const { sum, sales_target } = row;
+                    const selectedUser = selected.indexOf(sum) !== -1;
 
                     return (
-                      <TableRow hover key={recipient_groups_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={sum} tabIndex={-1} role="checkbox">
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
                         </TableCell> */}
-                        <TableCell align="left">{recipient_groups_id}</TableCell>
+                        <TableCell align="left">{sum}</TableCell>
 
-                        <TableCell align="left">{recipient_groups_name}</TableCell>
+                        <TableCell align="left">{sales_target}</TableCell>
                         {/* <TableCell align="left">
                           <DatePicker
                             selected={end_date ? parseDate(end_date) : null}
@@ -424,7 +430,7 @@ export default function ShowFndUser() {
                           <div className="col-auto">
                             <div>
                               <Select
-                                value={{ value: recipient_groups_id, label: recipient_groups_id }}
+                                value={{ value: amount, label: amount }}
                                 onChange={(value) => handleOptionChange(value.label, index)}
                                 // onInputChange={handleOptionInputChange}
                                 options={filteredOptions}
@@ -517,7 +523,7 @@ export default function ShowFndUser() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={recipients.length}
+            count={soTargetIncentive.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
