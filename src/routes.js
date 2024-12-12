@@ -61,6 +61,15 @@ import AccountFormPage from './pages/AccountFormPage';
 import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
+import AddPageIncentiveFormula from './pages/BA Incentive Module/SalesTarget/AddIncentiveForm';
+import AddIncentiveRecipients from './pages/BA Incentive Module/SalesTarget/AddIncentiveRecipientGroups';
+import AddSalesTarget from './pages/BA Incentive Module/SalesTarget/AddSalesTargets';
+import AddSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/AddSalesTargetsSKUAll';
+import ViewIncentiveFormula from './pages/BA Incentive Module/SalesTarget/ViewIncentiveFormula';
+import ViewIncentiveRecipient from './pages/BA Incentive Module/SalesTarget/ViewIncentiveRecipientGroups';
+import ViewSalesTarget from './pages/BA Incentive Module/SalesTarget/ViewSalesTargets';
+import ViewSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/ViewSalesTargetsSKUAll';
+import ViewSoSalesTargetIncentive from './pages/BA Incentive Module/SalesTarget/ViewSoSalesTargetIncentive';
 import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
 import BrandingAssetsViewPage from './pages/BrandingAssetsReportPage';
@@ -211,6 +220,15 @@ export default function Router() {
         { path: 'viewTerritoryInsights/:territory_id', element: <ViewTerritoryInsights /> },
         { path: 'viewTerritoryCompetitors', element: <viewTerritoryCompetitors /> },
         { path: 'monitorTerritory', element: <MonitorTerritoryPage /> },
+        { path: 'viewSalesTarget', element: <ViewSalesTarget /> },
+        { path: 'addSalesTarget', element: <AddSalesTarget /> },
+        { path: 'viewIncentiveFormula', element: <ViewIncentiveFormula /> },
+        { path: 'addIncentiveFormula', element: <AddPageIncentiveFormula /> },
+        { path: 'viewIncentiveRecipient', element: <ViewIncentiveRecipient /> },
+        { path: 'addIncentiveRecipient', element: <AddIncentiveRecipients /> },
+        { path: 'viewSalesTargetsSKUAll', element: <ViewSalesTargetsSKUAll /> },
+        { path: 'addSalesTargetsSKUAll', element: <AddSalesTargetsSKUAll /> },
+        { path: 'viewsosalestargetincentive', element: <ViewSoSalesTargetIncentive /> },
       ],
     },
 
@@ -230,6 +248,7 @@ export default function Router() {
       path: 'sap',
       element: <TestSapApiPage />,
     },
+
     {
       path: 'vatSalesMaster',
       element: <VatposIntegrationService />,
