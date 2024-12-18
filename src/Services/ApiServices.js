@@ -2708,3 +2708,24 @@ export const getSoSalesTargetIncentiveService = async () => {
     return err.message;
   }
 };
+
+export const getAllSalesDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}salesDetailsAll/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postSalesDetailsService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}salesDetailsAll/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};

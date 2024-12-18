@@ -3,8 +3,6 @@
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-undef */
 /* eslint-disable camelcase */
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import { filter } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -13,23 +11,25 @@ import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 // @mui
 import {
-  Button,
-  Card,
-  Container,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Container,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 // components
 import { format, parse } from 'date-fns';
 import Iconify from '../../../components/iconify';
@@ -39,29 +39,27 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-  getAllSalesSKUTargets,
-  getUserProfileDetails,
-  getUsers,
-  postSKUService,
-  updateUser,
+    getAllSalesDetails,
+    getUserProfileDetails,
+    getUsers,
+    postSalesDetailsService,
+    updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 import { UserListHead } from '../../../sections/@dashboard/user';
 // styles
 import '../../../_css/Utils.css';
 // custom hooks
-import { getFormattedDateWithTime } from '../../../hooks/GetFormattedDateWithTime';
 // import { useFormattedDate } from '../hooks/getFormattedDate';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'incentive_type_id', label: 'Incentive Type Id', alignRight: false },
-  { id: 'cust_group_id', label: 'Cust Group Id', alignRight: false },
+  { id: 'order_date', label: 'Order Date', alignRight: false },
+  { id: 'order_number', label: 'Order Number', alignRight: false },
   { id: 'cust_account_id', label: 'Cust Account Id', alignRight: false },
+  { id: 'cust_group_id', label: 'Cust Group Id', alignRight: false },
   { id: 'inventory_item_id', label: 'Inventory Item Id', alignRight: false },
-
-  { id: 'start_date', label: 'Start Date', alignRight: false },
-  { id: 'end_date', label: 'End Date', alignRight: false },
+  { id: 'quantity', label: 'Quantity', alignRight: false },
   { id: 'amount', label: 'Amount', alignRight: false },
 ];
 const selectedUsers = [];
@@ -97,7 +95,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowFndUser() {
+export default function ViewSalesDetails() {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -115,7 +113,9 @@ export default function ShowFndUser() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [salesSKUData, setSalesSKUData] = useState([]);
+  const [exceldata, setExceldata] = useState([]);
+
+  const [salesDetailsData, setSalesDetailsData] = useState([]);
 
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
@@ -125,29 +125,27 @@ export default function ShowFndUser() {
 
   const [editedUsers, setEditedUsers] = useState([]);
 
-  const [exceldata, setExceldata] = useState([]);
-
   // useEffect(() => {
   //   async function fetchData() {
   //     try {
   //       const usersDetails = await getFndUserService();
 
-  //       if (usersDetails) setSalesSKUData(usersDetails.data);
+  //       if (usersDetails) setSalesDetailsData(usersDetails.data);
   //     } catch (error) {
   //       console.error('Error fetching account details:', error);
   //     }
   //   }
 
   //   fetchData();
-  // }, []);getAllSalesSKUTargets,postSKUService
-  // const [salesSKUData, setSalesSKUData] = useState([]);
+  // }, []);
+  // const [salesDetailsData, setSalesDetailsData] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllSalesSKUTargets();
+        const response = await getAllSalesDetails();
         console.log(response.data);
 
-        if (response) setSalesSKUData(response.data);
+        if (response) setSalesDetailsData(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -155,14 +153,14 @@ export default function ShowFndUser() {
 
     fetchData();
   }, []);
-  console.log(salesSKUData);
+  console.log(salesDetailsData);
 
   //   useEffect(() => {
   //     async function fetchData() {
   //       try {
   //         const usersDetails = await getUsers();
 
-  //         if (usersDetails) setSalesSKUData(usersDetails.data.data);
+  //         if (usersDetails) setSalesDetailsData(usersDetails.data.data);
   //       } catch (error) {
   //         console.error('Error fetching account details:', error);
   //       }
@@ -170,7 +168,7 @@ export default function ShowFndUser() {
 
   //     fetchData();
   //   }, []);
-  //   console.log(salesSKUData);
+  //   console.log(salesDetailsData);
 
   // selecting status
   const [filterDetails, setFilterDetails] = useState({});
@@ -187,7 +185,7 @@ export default function ShowFndUser() {
   ];
 
   const handleOptionChange = (value, index) => {
-    const updatedList = [...salesSKUData];
+    const updatedList = [...salesDetailsData];
     const name = 'status';
     updatedList[index][name] = value;
 
@@ -195,7 +193,7 @@ export default function ShowFndUser() {
       editedUsers.push(index);
     }
 
-    setSalesSKUData(updatedList);
+    setSalesDetailsData(updatedList);
   };
 
   const handleOptionInputChange = (inputValue) => {
@@ -247,7 +245,7 @@ export default function ShowFndUser() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = salesSKUData.map((n) => n.email);
+      const newSelecteds = salesDetailsData.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -289,7 +287,7 @@ export default function ShowFndUser() {
 
   const handleDateChange = (date, index) => {
     const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...salesSKUData];
+    const updatedList = [...salesDetailsData];
     const name = 'end_date';
     updatedList[index][name] = formattedDate;
 
@@ -299,7 +297,7 @@ export default function ShowFndUser() {
     }
     console.log('after', editedUsers);
 
-    setSalesSKUData(updatedList);
+    setSalesDetailsData(updatedList);
   };
 
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -338,10 +336,10 @@ export default function ShowFndUser() {
       handleBackdropOpen();
       const promises = editedUsers.map((value) => {
         const requestBody = {
-          userId: salesSKUData[value].user_id,
+          userId: salesDetailsData[value].user_id,
           lastUpdatedBy: account.user_id,
-          endDate: salesSKUData[value].end_date,
-          status: salesSKUData[value].status,
+          endDate: salesDetailsData[value].end_date,
+          status: salesDetailsData[value].status,
         };
         return updateUser(requestBody);
       });
@@ -349,7 +347,7 @@ export default function ShowFndUser() {
       await Promise.all(promises); // Wait for all updates to complete.
 
       const usersDetails = await getUsers();
-      if (usersDetails) setSalesSKUData(usersDetails.data.data);
+      if (usersDetails) setSalesDetailsData(usersDetails.data.data);
 
       handleBackdropOpenClose();
     } catch (error) {
@@ -394,6 +392,8 @@ export default function ShowFndUser() {
       if (exceldata && Array.isArray(exceldata)) {
         for (const row of exceldata) {
           const requestBody = {
+            orderDate: date,
+            orderNumber: row.order_number,
             lastUpdateDate: date,
             lastUpdatedBy: account.user_id,
             creationDate: date,
@@ -401,24 +401,24 @@ export default function ShowFndUser() {
             lastUpdateLogin: account.user_id,
             custgroupid: row.cust_group_id,
             custAccountId: row.cust_account_id,
-            startDate: date,
-            endDate: date,
+            inventoryItemId: row.inventory_item_id, // Ensure these fields exist in the data
+            quantity: row.quantity, // Ensure these fields exist in the data
+            unitPrice: row.unit_price,
+            empCode: row.emp_code,
             amount: row.amount,
-            incentiveTypeId: row.incentive_type_id,
-            inventoryItemId: row.inventory_item_id,
           };
           console.log(requestBody);
 
           try {
-            const postData = await postSKUService(requestBody);
+            const postData = await postSalesDetailsService(requestBody);
 
             if (postData.status === 200) {
-              console.log(`Row with emp_code ${row.incentive_type_id} successfully added.`);
+              console.log(`Row with emp_code ${row.emp_code} successfully added.`);
             } else {
-              console.error(`Failed to save row with incentive_type_id ${row.incentive_type_id}`);
+              console.error(`Failed to save row with emp_code ${row.emp_code}`);
             }
           } catch (error) {
-            console.error(`Error saving row with incentive_type_id ${row.incentive_type_id}:`, error);
+            console.error(`Error saving row with emp_code ${row.emp_code}:`, error);
           }
         }
       }
@@ -429,22 +429,22 @@ export default function ShowFndUser() {
     }
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesSKUData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesDetailsData.length) : 0;
 
-  const filteredUsers = applySortFilter(salesSKUData, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(salesDetailsData, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
     <>
       <Helmet>
-        <title> Users Table | COMS </title>
+        <title> SalesDetails Table | COMS </title>
       </Helmet>
 
       <Container className="indexing fullWidth">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Sales Targets SKU All
+            Sales Details
           </Typography>
           <div>
             <Button
@@ -465,7 +465,7 @@ export default function ShowFndUser() {
                 }
               }}
             >
-              Upload (Sales Targets SKU All){' '}
+              Upload (Sales Details){' '}
             </Button>
             {/* <Button
               variant="text"
@@ -473,10 +473,10 @@ export default function ShowFndUser() {
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/dashboard/addSalesTargetsSKUAll');
+                navigate('/dashboard/addSalesDetails');
               }}
             >
-              Add Sales Targets SKU All
+              Add Sales Details
             </Button> */}
           </div>
         </Stack>
@@ -497,7 +497,7 @@ export default function ShowFndUser() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={salesSKUData.length}
+                  rowCount={salesDetailsData.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -505,65 +505,25 @@ export default function ShowFndUser() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const {
-                      incentive_type_id,
+                      order_date,
+                      order_number,
                       cust_account_id,
                       cust_group_id,
-                      start_date,
-                      end_date,
                       inventory_item_id,
+                      quantity,
                       amount,
                     } = row;
-                    const selectedUser = selected.indexOf(incentive_type_id) !== -1;
+                    const selectedUser = selected.indexOf(cust_account_id) !== -1;
 
                     return (
-                      <TableRow hover key={incentive_type_id} tabIndex={-1} role="checkbox">
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
-                        </TableCell> */}
-                        <TableCell align="left">{incentive_type_id}</TableCell>
-                        <TableCell align="left">{cust_group_id}</TableCell>
+                      <TableRow hover key={cust_account_id} tabIndex={-1} role="checkbox">
+                        <TableCell align="left">{order_date}</TableCell>
+                        <TableCell align="left">{order_number}</TableCell>
                         <TableCell align="left">{cust_account_id}</TableCell>
+                        <TableCell align="left">{cust_group_id}</TableCell>
                         <TableCell align="left">{inventory_item_id}</TableCell>
-
-                        <TableCell align="left">{getFormattedDateWithTime(start_date)}</TableCell>
-                        <TableCell align="left">{getFormattedDateWithTime(end_date)}</TableCell>
+                        <TableCell align="left">{quantity}</TableCell>
                         <TableCell align="left">{amount}</TableCell>
-                        {/* <TableCell align="left">
-                          <DatePicker
-                            selected={end_date ? parseDate(end_date) : null}
-                            onChange={(date) => handleDateChange(date, index)}
-                            dateFormat="dd/MM/yy"
-                            placeholderText="dd/mm/yy"
-                          />
-                        </TableCell> */}
-                        {/* <TableCell align="left">
-                          <div className="col-auto">
-                            <div>
-                              <Select
-                                value={{ value: amount, label: amount }}
-                                onChange={(value) => handleOptionChange(value.label, index)}
-                                // onInputChange={handleOptionInputChange}
-                                options={filteredOptions}
-                                placeholder="Type to select..."
-                                isClearable
-                              />
-                            </div>
-                          </div>
-                        </TableCell> */}
-
-                        {/* <TableCell align="left">
-                          <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={() => {
-                              const userId = user_id;
-
-                              navigate(`/dashboard/updatefnduser/${userId}`);
-                            }}
-                          >
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}
@@ -633,7 +593,7 @@ export default function ShowFndUser() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={salesSKUData.length}
+            count={salesDetailsData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

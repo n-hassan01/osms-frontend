@@ -8,20 +8,20 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 // @mui
 import {
-    Button,
-    Card,
-    Container,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  Container,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -34,10 +34,10 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-    getAllIncentiveFormulaService,
-    getUserProfileDetails,
-    getUsers,
-    updateUser,
+  getAllIncentiveFormulaService,
+  getUserProfileDetails,
+  getUsers,
+  updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 import { UserListHead } from '../../../sections/@dashboard/user';
@@ -105,7 +105,7 @@ export default function ViewIncentiveFormula() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [incentiveFormula, setIncentiveFormula] = useState([]);
+  const [recipients, setRecipients] = useState([]);
 
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
@@ -120,7 +120,7 @@ export default function ViewIncentiveFormula() {
   //     try {
   //       const usersDetails = await getFndUserService();
 
-  //       if (usersDetails) setIncentiveFormula(usersDetails.data);
+  //       if (usersDetails) setRecipients(usersDetails.data);
   //     } catch (error) {
   //       console.error('Error fetching account details:', error);
   //     }
@@ -128,14 +128,14 @@ export default function ViewIncentiveFormula() {
 
   //   fetchData();
   // }, []);
-  // const [incentiveFormula, setIncentiveFormula] = useState([]);
+  // const [recipients, setRecipients] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
         const response = await getAllIncentiveFormulaService();
         console.log(response.data);
 
-        if (response) setIncentiveFormula(response.data);
+        if (response) setRecipients(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -143,14 +143,14 @@ export default function ViewIncentiveFormula() {
 
     fetchData();
   }, []);
-  console.log(incentiveFormula);
+  console.log(recipients);
 
   //   useEffect(() => {
   //     async function fetchData() {
   //       try {
   //         const usersDetails = await getUsers();
 
-  //         if (usersDetails) setIncentiveFormula(usersDetails.data.data);
+  //         if (usersDetails) setRecipients(usersDetails.data.data);
   //       } catch (error) {
   //         console.error('Error fetching account details:', error);
   //       }
@@ -158,7 +158,7 @@ export default function ViewIncentiveFormula() {
 
   //     fetchData();
   //   }, []);
-  //   console.log(incentiveFormula);
+  //   console.log(recipients);
 
   // selecting status
   const [filterDetails, setFilterDetails] = useState({});
@@ -175,7 +175,7 @@ export default function ViewIncentiveFormula() {
   ];
 
   const handleOptionChange = (value, index) => {
-    const updatedList = [...incentiveFormula];
+    const updatedList = [...recipients];
     const name = 'status';
     updatedList[index][name] = value;
 
@@ -183,7 +183,7 @@ export default function ViewIncentiveFormula() {
       editedUsers.push(index);
     }
 
-    setIncentiveFormula(updatedList);
+    setRecipients(updatedList);
   };
 
   const handleOptionInputChange = (inputValue) => {
@@ -235,7 +235,7 @@ export default function ViewIncentiveFormula() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = incentiveFormula.map((n) => n.email);
+      const newSelecteds = recipients.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -277,7 +277,7 @@ export default function ViewIncentiveFormula() {
 
   const handleDateChange = (date, index) => {
     const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...incentiveFormula];
+    const updatedList = [...recipients];
     const name = 'end_date';
     updatedList[index][name] = formattedDate;
 
@@ -287,7 +287,7 @@ export default function ViewIncentiveFormula() {
     }
     console.log('after', editedUsers);
 
-    setIncentiveFormula(updatedList);
+    setRecipients(updatedList);
   };
 
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -326,10 +326,10 @@ export default function ViewIncentiveFormula() {
       handleBackdropOpen();
       const promises = editedUsers.map((value) => {
         const requestBody = {
-          userId: incentiveFormula[value].user_id,
+          userId: recipients[value].user_id,
           lastUpdatedBy: account.user_id,
-          endDate: incentiveFormula[value].end_date,
-          status: incentiveFormula[value].status,
+          endDate: recipients[value].end_date,
+          status: recipients[value].status,
         };
         return updateUser(requestBody);
       });
@@ -337,7 +337,7 @@ export default function ViewIncentiveFormula() {
       await Promise.all(promises); // Wait for all updates to complete.
 
       const usersDetails = await getUsers();
-      if (usersDetails) setIncentiveFormula(usersDetails.data.data);
+      if (usersDetails) setRecipients(usersDetails.data.data);
 
       handleBackdropOpenClose();
     } catch (error) {
@@ -345,9 +345,9 @@ export default function ViewIncentiveFormula() {
     }
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - incentiveFormula.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - recipients.length) : 0;
 
-  const filteredUsers = applySortFilter(incentiveFormula, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(recipients, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -402,7 +402,7 @@ export default function ViewIncentiveFormula() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={incentiveFormula.length}
+                  rowCount={recipients.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -526,7 +526,7 @@ export default function ViewIncentiveFormula() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={incentiveFormula.length}
+            count={recipients.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

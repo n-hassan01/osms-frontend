@@ -1,27 +1,32 @@
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-undef */
 /* eslint-disable camelcase */
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import { filter } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import { read, utils } from 'xlsx';
 // @mui
 import {
-    Button,
-    Card,
-    Container,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  Container,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -33,7 +38,13 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
-import { getAllSalesTargets, getUserProfileDetails, getUsers, updateUser } from '../../../Services/ApiServices';
+import {
+  getAllSalesTargets,
+  getUserProfileDetails,
+  getUsers,
+  postSalesTargetExcelDataService,
+  updateUser,
+} from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 import { UserListHead } from '../../../sections/@dashboard/user';
 // styles
@@ -97,6 +108,8 @@ export default function ShowFndUser() {
   const [orderBy, setOrderBy] = useState('name');
 
   const [filterName, setFilterName] = useState('');
+
+  const [exceldata, setExceldata] = useState([]);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -339,6 +352,75 @@ export default function ShowFndUser() {
       console.error('Error in submitting users or fetching account details:', error);
     }
   };
+  const file_type = [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-excel',
+    'text/csv',
+  ];
+  const handleChange = (e) => {
+    const selected_file = e.target.files[0];
+    console.log(selected_file.type);
+    if (selected_file && file_type.includes(selected_file.type)) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const workbook = read(e.target.result);
+        const sheet = workbook.SheetNames;
+        if (sheet.length) {
+          const data = utils.sheet_to_json(workbook.Sheets[sheet[0]]);
+          setExceldata(data);
+        }
+      };
+      reader.readAsArrayBuffer(selected_file);
+    }
+  };
+  console.log(exceldata);
+
+  const [openUploadExcelDialog, setOpenUploadExcelDialog] = useState(false);
+  const handleCloseDialog = () => {
+    setOpenUploadExcelDialog(false);
+  };
+
+  const handleOpenDialog = () => {
+    setOpenUploadExcelDialog(true);
+  };
+  const date = new Date();
+  const saveExcelData = async () => {
+    try {
+      if (exceldata && Array.isArray(exceldata)) {
+        for (const row of exceldata) {
+          const requestBody = {
+            lastUpdateDate: date,
+            lastUpdatedBy: account.user_id,
+            creationDate: date,
+            createdBy: account.user_id,
+            lastUpdateLogin: account.user_id,
+            custgroupid: row.cust_group_id,
+            custAccountId: row.cust_account_id,
+            startDate: date,
+            endDate: date,
+            amount: row.amount,
+          };
+          console.log(requestBody);
+
+          try {
+            const postData = await postSalesTargetExcelDataService(requestBody);
+
+            if (postData.status === 200) {
+              console.log(`Row with emp_code ${row.emp_code} successfully added.`);
+            } else {
+              console.error(`Failed to save row with emp_code ${row.emp_code}`);
+            }
+          } catch (error) {
+            console.error(`Error saving row with emp_code ${row.emp_code}:`, error);
+          }
+        }
+      }
+      alert('Submitted Successfully.');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error processing excel data:', error);
+    }
+  };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesTargetData.length) : 0;
 
@@ -367,7 +449,7 @@ export default function ShowFndUser() {
             >
               Submit
             </Button>
-            <Button
+            {/* <Button
               variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
               color="primary"
@@ -377,6 +459,17 @@ export default function ShowFndUser() {
               }}
             >
               Add Sales Targets
+            </Button> */}
+            <Button
+              style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
+              onClick={handleOpenDialog}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleOpenDialog();
+                }
+              }}
+            >
+              Upload (Sales Targets All){' '}
             </Button>
           </div>
         </Stack>
@@ -536,6 +629,22 @@ export default function ShowFndUser() {
         >
           <CircularProgress color="inherit" />
         </Backdrop>
+        <Dialog open={openUploadExcelDialog} onClose={handleCloseDialog}>
+          <Stack />
+          <DialogContent>
+            <Stack spacing={2.5} direction="row">
+              <Typography sx={{ fontWeight: 'bold' }}>Upload Excel -&gt;</Typography>
+              <div style={{ marginLeft: '10px' }}>
+                <input type="file" onChange={handleChange} />
+              </div>
+              <div>
+                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={saveExcelData}>
+                  Upload
+                </Button>
+              </div>
+            </Stack>
+          </DialogContent>
+        </Dialog>
       </Container>
     </>
   );

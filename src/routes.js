@@ -63,10 +63,12 @@ import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
 import AddPageIncentiveFormula from './pages/BA Incentive Module/SalesTarget/AddIncentiveForm';
 import AddIncentiveRecipients from './pages/BA Incentive Module/SalesTarget/AddIncentiveRecipientGroups';
+import AddSalesDetails from './pages/BA Incentive Module/SalesTarget/AddSalesDetailsAll';
 import AddSalesTarget from './pages/BA Incentive Module/SalesTarget/AddSalesTargets';
 import AddSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/AddSalesTargetsSKUAll';
 import ViewIncentiveFormula from './pages/BA Incentive Module/SalesTarget/ViewIncentiveFormula';
 import ViewIncentiveRecipient from './pages/BA Incentive Module/SalesTarget/ViewIncentiveRecipientGroups';
+import ViewSalesDetails from './pages/BA Incentive Module/SalesTarget/ViewSalesDetailsAll';
 import ViewSalesTarget from './pages/BA Incentive Module/SalesTarget/ViewSalesTargets';
 import ViewSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/ViewSalesTargetsSKUAll';
 import ViewSoSalesTargetIncentive from './pages/BA Incentive Module/SalesTarget/ViewSoSalesTargetIncentive';
@@ -229,6 +231,8 @@ export default function Router() {
         { path: 'viewSalesTargetsSKUAll', element: <ViewSalesTargetsSKUAll /> },
         { path: 'addSalesTargetsSKUAll', element: <AddSalesTargetsSKUAll /> },
         { path: 'viewsosalestargetincentive', element: <ViewSoSalesTargetIncentive /> },
+        { path: 'viewsalesdetails', element: <ViewSalesDetails /> },
+        { path: 'addsalesdetails', element: <AddSalesDetails /> },
       ],
     },
 
