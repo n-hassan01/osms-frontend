@@ -1,16 +1,11 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-undef */
 /* eslint-disable camelcase */
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import { filter } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
-import { read, utils } from 'xlsx';
 // @mui
 import {
   Button,
@@ -39,10 +34,9 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-  getAllSalesTargets,
+  getAllIncentiveFormulaService,
   getUserProfileDetails,
   getUsers,
-  postSalesTargetExcelDataService,
   updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
@@ -55,10 +49,10 @@ import { getFormattedDateWithTime } from '../../../hooks/GetFormattedDateWithTim
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'user_name', label: 'Username', alignRight: false },
+  { id: 'so_pct', label: 'So Pct', alignRight: false },
   { id: 'start_date', label: 'Start Date', alignRight: false },
   { id: 'end_date', label: 'End Date', alignRight: false },
-  { id: 'amount', label: 'Amount', alignRight: false },
+  { id: 'incentive_pct', label: 'Incentive Pct', alignRight: false },
 ];
 const selectedUsers = [];
 
@@ -93,7 +87,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowFndUser() {
+export default function ViewIncentiveFormula() {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -109,11 +103,9 @@ export default function ShowFndUser() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [exceldata, setExceldata] = useState([]);
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [salesTargetData, setSalesTargetData] = useState([]);
+  const [recipients, setRecipients] = useState([]);
 
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
@@ -128,7 +120,7 @@ export default function ShowFndUser() {
   //     try {
   //       const usersDetails = await getFndUserService();
 
-  //       if (usersDetails) setSalesTargetData(usersDetails.data);
+  //       if (usersDetails) setRecipients(usersDetails.data);
   //     } catch (error) {
   //       console.error('Error fetching account details:', error);
   //     }
@@ -136,14 +128,14 @@ export default function ShowFndUser() {
 
   //   fetchData();
   // }, []);
-  // const [salesTargetData, setSalesTargetData] = useState([]);
+  // const [recipients, setRecipients] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllSalesTargets();
+        const response = await getAllIncentiveFormulaService();
         console.log(response.data);
 
-        if (response) setSalesTargetData(response.data);
+        if (response) setRecipients(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -151,14 +143,14 @@ export default function ShowFndUser() {
 
     fetchData();
   }, []);
-  console.log(salesTargetData);
+  console.log(recipients);
 
   //   useEffect(() => {
   //     async function fetchData() {
   //       try {
   //         const usersDetails = await getUsers();
 
-  //         if (usersDetails) setSalesTargetData(usersDetails.data.data);
+  //         if (usersDetails) setRecipients(usersDetails.data.data);
   //       } catch (error) {
   //         console.error('Error fetching account details:', error);
   //       }
@@ -166,7 +158,7 @@ export default function ShowFndUser() {
 
   //     fetchData();
   //   }, []);
-  //   console.log(salesTargetData);
+  //   console.log(recipients);
 
   // selecting status
   const [filterDetails, setFilterDetails] = useState({});
@@ -183,7 +175,7 @@ export default function ShowFndUser() {
   ];
 
   const handleOptionChange = (value, index) => {
-    const updatedList = [...salesTargetData];
+    const updatedList = [...recipients];
     const name = 'status';
     updatedList[index][name] = value;
 
@@ -191,7 +183,7 @@ export default function ShowFndUser() {
       editedUsers.push(index);
     }
 
-    setSalesTargetData(updatedList);
+    setRecipients(updatedList);
   };
 
   const handleOptionInputChange = (inputValue) => {
@@ -243,7 +235,7 @@ export default function ShowFndUser() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = salesTargetData.map((n) => n.email);
+      const newSelecteds = recipients.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -285,7 +277,7 @@ export default function ShowFndUser() {
 
   const handleDateChange = (date, index) => {
     const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...salesTargetData];
+    const updatedList = [...recipients];
     const name = 'end_date';
     updatedList[index][name] = formattedDate;
 
@@ -295,7 +287,7 @@ export default function ShowFndUser() {
     }
     console.log('after', editedUsers);
 
-    setSalesTargetData(updatedList);
+    setRecipients(updatedList);
   };
 
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -334,10 +326,10 @@ export default function ShowFndUser() {
       handleBackdropOpen();
       const promises = editedUsers.map((value) => {
         const requestBody = {
-          userId: salesTargetData[value].user_id,
+          userId: recipients[value].user_id,
           lastUpdatedBy: account.user_id,
-          endDate: salesTargetData[value].end_date,
-          status: salesTargetData[value].status,
+          endDate: recipients[value].end_date,
+          status: recipients[value].status,
         };
         return updateUser(requestBody);
       });
@@ -345,86 +337,17 @@ export default function ShowFndUser() {
       await Promise.all(promises); // Wait for all updates to complete.
 
       const usersDetails = await getUsers();
-      if (usersDetails) setSalesTargetData(usersDetails.data.data);
+      if (usersDetails) setRecipients(usersDetails.data.data);
 
       handleBackdropOpenClose();
     } catch (error) {
       console.error('Error in submitting users or fetching account details:', error);
     }
   };
-  const file_type = [
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-excel',
-    'text/csv',
-  ];
-  const handleChange = (e) => {
-    const selected_file = e.target.files[0];
-    console.log(selected_file.type);
-    if (selected_file && file_type.includes(selected_file.type)) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const workbook = read(e.target.result);
-        const sheet = workbook.SheetNames;
-        if (sheet.length) {
-          const data = utils.sheet_to_json(workbook.Sheets[sheet[0]]);
-          setExceldata(data);
-        }
-      };
-      reader.readAsArrayBuffer(selected_file);
-    }
-  };
-  console.log(exceldata);
 
-  const [openUploadExcelDialog, setOpenUploadExcelDialog] = useState(false);
-  const handleCloseDialog = () => {
-    setOpenUploadExcelDialog(false);
-  };
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - recipients.length) : 0;
 
-  const handleOpenDialog = () => {
-    setOpenUploadExcelDialog(true);
-  };
-  const date = new Date();
-  const saveExcelData = async () => {
-    try {
-      if (exceldata && Array.isArray(exceldata)) {
-        for (const row of exceldata) {
-          const requestBody = {
-            lastUpdateDate: date,
-            lastUpdatedBy: account.user_id,
-            creationDate: date,
-            createdBy: account.user_id,
-            lastUpdateLogin: account.user_id,
-            custgroupid: row.cust_group_id,
-            custAccountId: row.cust_account_id,
-            startDate: date,
-            endDate: date,
-            amount: row.amount,
-          };
-          console.log(requestBody);
-
-          try {
-            const postData = await postSalesTargetExcelDataService(requestBody);
-
-            if (postData.status === 200) {
-              console.log(`Row with emp_code ${row.emp_code} successfully added.`);
-            } else {
-              console.error(`Failed to save row with emp_code ${row.emp_code}`);
-            }
-          } catch (error) {
-            console.error(`Error saving row with emp_code ${row.emp_code}:`, error);
-          }
-        }
-      }
-      alert('Submitted Successfully.');
-      window.location.reload();
-    } catch (error) {
-      console.error('Error processing excel data:', error);
-    }
-  };
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesTargetData.length) : 0;
-
-  const filteredUsers = applySortFilter(salesTargetData, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(recipients, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -437,7 +360,7 @@ export default function ShowFndUser() {
       <Container className="indexing fullWidth">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Sales Targets
+            Incentive Targets
           </Typography>
           <div>
             <Button
@@ -449,27 +372,16 @@ export default function ShowFndUser() {
             >
               Submit
             </Button>
-            {/* <Button
+            <Button
               variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/dashboard/addSalesTarget');
+                navigate('/dashboard/addIncentiveFormula');
               }}
             >
-              Add Sales Targets
-            </Button> */}
-            <Button
-              style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
-              onClick={handleOpenDialog}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleOpenDialog();
-                }
-              }}
-            >
-              Upload (Sales Targets All){' '}
+              Add Incentive Formula
             </Button>
           </div>
         </Stack>
@@ -490,25 +402,25 @@ export default function ShowFndUser() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={salesTargetData.length}
+                  rowCount={recipients.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { cust_account_id, start_date, end_date, amount } = row;
-                    const selectedUser = selected.indexOf(cust_account_id) !== -1;
+                    const { so_pct, start_date, end_date, incentive_pct } = row;
+                    const selectedUser = selected.indexOf(so_pct) !== -1;
 
                     return (
-                      <TableRow hover key={cust_account_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={so_pct} tabIndex={-1} role="checkbox">
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
                         </TableCell> */}
-                        <TableCell align="left">{cust_account_id}</TableCell>
+                        <TableCell align="left">{so_pct}</TableCell>
                         <TableCell align="left">{getFormattedDateWithTime(start_date)}</TableCell>
                         <TableCell align="left">{getFormattedDateWithTime(end_date)}</TableCell>
-                        <TableCell align="left">{amount}</TableCell>
+                        <TableCell align="left">{incentive_pct}</TableCell>
                         {/* <TableCell align="left">
                           <DatePicker
                             selected={end_date ? parseDate(end_date) : null}
@@ -614,7 +526,7 @@ export default function ShowFndUser() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={salesTargetData.length}
+            count={recipients.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -629,22 +541,6 @@ export default function ShowFndUser() {
         >
           <CircularProgress color="inherit" />
         </Backdrop>
-        <Dialog open={openUploadExcelDialog} onClose={handleCloseDialog}>
-          <Stack />
-          <DialogContent>
-            <Stack spacing={2.5} direction="row">
-              <Typography sx={{ fontWeight: 'bold' }}>Upload Excel -&gt;</Typography>
-              <div style={{ marginLeft: '10px' }}>
-                <input type="file" onChange={handleChange} />
-              </div>
-              <div>
-                <Button style={{ backgroundColor: 'lightgray', color: 'black' }} onClick={saveExcelData}>
-                  Upload
-                </Button>
-              </div>
-            </Stack>
-          </DialogContent>
-        </Dialog>
       </Container>
     </>
   );

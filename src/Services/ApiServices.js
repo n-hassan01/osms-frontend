@@ -2617,7 +2617,7 @@ export const getCustomerTotalList = async () => {
 
 export const getAllSalesTargets = async () => {
   try {
-    return await axios.get(`${usersUrl}get/getAll`);
+    return await axios.get(`${usersUrl}salesTarget/getAll`);
   } catch (err) {
     console.log(err.message);
 
@@ -2628,7 +2628,101 @@ export const getAllSalesTargets = async () => {
 export const postSalesTargetExcelDataService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
-    return await axios.post(`${usersUrl}add/add`, bodyInfo);
+    return await axios.post(`${usersUrl}salesTarget/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllIncentiveFormulaService = async () => {
+  try {
+    return await axios.get(`${usersUrl}inventiveFormula/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveFormulaService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}inventiveFormula/addFormula`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllRecipientsService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentiveRecipientGroups/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveRecipientsService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveRecipientGroups/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllSalesSKUTargets = async () => {
+  try {
+    return await axios.get(`${usersUrl}salesTargetsSkuAll/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postSKUService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}salesTargetsSkuAll/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSoSalesTargetIncentiveService = async () => {
+  try {
+    return await axios.get(`${usersUrl}salesTargetIncentiveView/`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllSalesDetails = async () => {
+  try {
+    return await axios.get(`${usersUrl}salesDetailsAll/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postSalesDetailsService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}salesDetailsAll/add`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 

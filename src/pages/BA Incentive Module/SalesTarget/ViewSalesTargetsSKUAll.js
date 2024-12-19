@@ -39,10 +39,10 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-  getAllSalesTargets,
+  getAllSalesSKUTargets,
   getUserProfileDetails,
   getUsers,
-  postSalesTargetExcelDataService,
+  postSKUService,
   updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
@@ -55,7 +55,11 @@ import { getFormattedDateWithTime } from '../../../hooks/GetFormattedDateWithTim
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'user_name', label: 'Username', alignRight: false },
+  { id: 'incentive_type_id', label: 'Incentive Type Id', alignRight: false },
+  { id: 'cust_group_id', label: 'Cust Group Id', alignRight: false },
+  { id: 'cust_account_id', label: 'Cust Account Id', alignRight: false },
+  { id: 'inventory_item_id', label: 'Inventory Item Id', alignRight: false },
+
   { id: 'start_date', label: 'Start Date', alignRight: false },
   { id: 'end_date', label: 'End Date', alignRight: false },
   { id: 'amount', label: 'Amount', alignRight: false },
@@ -109,11 +113,9 @@ export default function ShowFndUser() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [exceldata, setExceldata] = useState([]);
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [salesTargetData, setSalesTargetData] = useState([]);
+  const [salesSKUData, setSalesSKUData] = useState([]);
 
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
@@ -123,27 +125,29 @@ export default function ShowFndUser() {
 
   const [editedUsers, setEditedUsers] = useState([]);
 
+  const [exceldata, setExceldata] = useState([]);
+
   // useEffect(() => {
   //   async function fetchData() {
   //     try {
   //       const usersDetails = await getFndUserService();
 
-  //       if (usersDetails) setSalesTargetData(usersDetails.data);
+  //       if (usersDetails) setSalesSKUData(usersDetails.data);
   //     } catch (error) {
   //       console.error('Error fetching account details:', error);
   //     }
   //   }
 
   //   fetchData();
-  // }, []);
-  // const [salesTargetData, setSalesTargetData] = useState([]);
+  // }, []);getAllSalesSKUTargets,postSKUService
+  // const [salesSKUData, setSalesSKUData] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllSalesTargets();
+        const response = await getAllSalesSKUTargets();
         console.log(response.data);
 
-        if (response) setSalesTargetData(response.data);
+        if (response) setSalesSKUData(response.data);
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -151,14 +155,14 @@ export default function ShowFndUser() {
 
     fetchData();
   }, []);
-  console.log(salesTargetData);
+  console.log(salesSKUData);
 
   //   useEffect(() => {
   //     async function fetchData() {
   //       try {
   //         const usersDetails = await getUsers();
 
-  //         if (usersDetails) setSalesTargetData(usersDetails.data.data);
+  //         if (usersDetails) setSalesSKUData(usersDetails.data.data);
   //       } catch (error) {
   //         console.error('Error fetching account details:', error);
   //       }
@@ -166,7 +170,7 @@ export default function ShowFndUser() {
 
   //     fetchData();
   //   }, []);
-  //   console.log(salesTargetData);
+  //   console.log(salesSKUData);
 
   // selecting status
   const [filterDetails, setFilterDetails] = useState({});
@@ -183,7 +187,7 @@ export default function ShowFndUser() {
   ];
 
   const handleOptionChange = (value, index) => {
-    const updatedList = [...salesTargetData];
+    const updatedList = [...salesSKUData];
     const name = 'status';
     updatedList[index][name] = value;
 
@@ -191,7 +195,7 @@ export default function ShowFndUser() {
       editedUsers.push(index);
     }
 
-    setSalesTargetData(updatedList);
+    setSalesSKUData(updatedList);
   };
 
   const handleOptionInputChange = (inputValue) => {
@@ -243,7 +247,7 @@ export default function ShowFndUser() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = salesTargetData.map((n) => n.email);
+      const newSelecteds = salesSKUData.map((n) => n.email);
       setSelected(newSelecteds);
       return;
     }
@@ -285,7 +289,7 @@ export default function ShowFndUser() {
 
   const handleDateChange = (date, index) => {
     const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...salesTargetData];
+    const updatedList = [...salesSKUData];
     const name = 'end_date';
     updatedList[index][name] = formattedDate;
 
@@ -295,7 +299,7 @@ export default function ShowFndUser() {
     }
     console.log('after', editedUsers);
 
-    setSalesTargetData(updatedList);
+    setSalesSKUData(updatedList);
   };
 
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -334,10 +338,10 @@ export default function ShowFndUser() {
       handleBackdropOpen();
       const promises = editedUsers.map((value) => {
         const requestBody = {
-          userId: salesTargetData[value].user_id,
+          userId: salesSKUData[value].user_id,
           lastUpdatedBy: account.user_id,
-          endDate: salesTargetData[value].end_date,
-          status: salesTargetData[value].status,
+          endDate: salesSKUData[value].end_date,
+          status: salesSKUData[value].status,
         };
         return updateUser(requestBody);
       });
@@ -345,13 +349,14 @@ export default function ShowFndUser() {
       await Promise.all(promises); // Wait for all updates to complete.
 
       const usersDetails = await getUsers();
-      if (usersDetails) setSalesTargetData(usersDetails.data.data);
+      if (usersDetails) setSalesSKUData(usersDetails.data.data);
 
       handleBackdropOpenClose();
     } catch (error) {
       console.error('Error in submitting users or fetching account details:', error);
     }
   };
+
   const file_type = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel',
@@ -399,19 +404,21 @@ export default function ShowFndUser() {
             startDate: date,
             endDate: date,
             amount: row.amount,
+            incentiveTypeId: row.incentive_type_id,
+            inventoryItemId: row.inventory_item_id,
           };
           console.log(requestBody);
 
           try {
-            const postData = await postSalesTargetExcelDataService(requestBody);
+            const postData = await postSKUService(requestBody);
 
             if (postData.status === 200) {
-              console.log(`Row with emp_code ${row.emp_code} successfully added.`);
+              console.log(`Row with emp_code ${row.incentive_type_id} successfully added.`);
             } else {
-              console.error(`Failed to save row with emp_code ${row.emp_code}`);
+              console.error(`Failed to save row with incentive_type_id ${row.incentive_type_id}`);
             }
           } catch (error) {
-            console.error(`Error saving row with emp_code ${row.emp_code}:`, error);
+            console.error(`Error saving row with incentive_type_id ${row.incentive_type_id}:`, error);
           }
         }
       }
@@ -422,9 +429,9 @@ export default function ShowFndUser() {
     }
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesTargetData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesSKUData.length) : 0;
 
-  const filteredUsers = applySortFilter(salesTargetData, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(salesSKUData, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -437,7 +444,7 @@ export default function ShowFndUser() {
       <Container className="indexing fullWidth">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Sales Targets
+            Sales Targets SKU All
           </Typography>
           <div>
             <Button
@@ -449,17 +456,6 @@ export default function ShowFndUser() {
             >
               Submit
             </Button>
-            {/* <Button
-              variant="text"
-              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
-              color="primary"
-              startIcon={<Iconify icon="eva:plus-fill" />}
-              onClick={() => {
-                navigate('/dashboard/addSalesTarget');
-              }}
-            >
-              Add Sales Targets
-            </Button> */}
             <Button
               style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
               onClick={handleOpenDialog}
@@ -469,8 +465,19 @@ export default function ShowFndUser() {
                 }
               }}
             >
-              Upload (Sales Targets All){' '}
+              Upload (Sales Targets SKU All){' '}
             </Button>
+            {/* <Button
+              variant="text"
+              style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
+              color="primary"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              onClick={() => {
+                navigate('/dashboard/addSalesTargetsSKUAll');
+              }}
+            >
+              Add Sales Targets SKU All
+            </Button> */}
           </div>
         </Stack>
 
@@ -490,22 +497,34 @@ export default function ShowFndUser() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={salesTargetData.length}
+                  rowCount={salesSKUData.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { cust_account_id, start_date, end_date, amount } = row;
-                    const selectedUser = selected.indexOf(cust_account_id) !== -1;
+                    const {
+                      incentive_type_id,
+                      cust_account_id,
+                      cust_group_id,
+                      start_date,
+                      end_date,
+                      inventory_item_id,
+                      amount,
+                    } = row;
+                    const selectedUser = selected.indexOf(incentive_type_id) !== -1;
 
                     return (
-                      <TableRow hover key={cust_account_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={incentive_type_id} tabIndex={-1} role="checkbox">
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
                         </TableCell> */}
+                        <TableCell align="left">{incentive_type_id}</TableCell>
+                        <TableCell align="left">{cust_group_id}</TableCell>
                         <TableCell align="left">{cust_account_id}</TableCell>
+                        <TableCell align="left">{inventory_item_id}</TableCell>
+
                         <TableCell align="left">{getFormattedDateWithTime(start_date)}</TableCell>
                         <TableCell align="left">{getFormattedDateWithTime(end_date)}</TableCell>
                         <TableCell align="left">{amount}</TableCell>
@@ -614,7 +633,7 @@ export default function ShowFndUser() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={salesTargetData.length}
+            count={salesSKUData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
