@@ -391,7 +391,11 @@ export default function ShowFndUser() {
     const response = await getAllSalesTargets();
 
     if (response.status === 200) {
-      setSalesTargetData(response.data);
+      setSalesTargetData([]); // Clear the state first
+      setTimeout(() => {
+        setSalesTargetData(response.data); // Update with new filtered data
+      }, 0);
+
       setToDate('');
       setFromDate('');
       setFilterInfo({
@@ -485,8 +489,10 @@ export default function ShowFndUser() {
     if (filterInfo.customer) {
       filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
     }
-
-    setSalesTargetData(filteredData);
+    setSalesTargetData([]); // Clear the state first
+    setTimeout(() => {
+      setSalesTargetData(filteredData); // Update with new filtered data
+    }, 0);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesTargetData.length) : 0;
@@ -568,7 +574,7 @@ export default function ShowFndUser() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={salesTargetData.length}
+                  rowCount={filteredUsers.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -580,49 +586,10 @@ export default function ShowFndUser() {
 
                     return (
                       <TableRow hover key={cust_account_id} tabIndex={-1} role="checkbox">
-                        {/* <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
-                        </TableCell> */}
                         <TableCell align="left">{cust_account_id}</TableCell>
                         <TableCell align="left">{getFormattedDateWithTime(start_date)}</TableCell>
                         <TableCell align="left">{getFormattedDateWithTime(end_date)}</TableCell>
                         <TableCell align="left">{amount}</TableCell>
-                        {/* <TableCell align="left">
-                          <DatePicker
-                            selected={end_date ? parseDate(end_date) : null}
-                            onChange={(date) => handleDateChange(date, index)}
-                            dateFormat="dd/MM/yy"
-                            placeholderText="dd/mm/yy"
-                          />
-                        </TableCell> */}
-                        {/* <TableCell align="left">
-                          <div className="col-auto">
-                            <div>
-                              <Select
-                                value={{ value: amount, label: amount }}
-                                onChange={(value) => handleOptionChange(value.label, index)}
-                                // onInputChange={handleOptionInputChange}
-                                options={filteredOptions}
-                                placeholder="Type to select..."
-                                isClearable
-                              />
-                            </div>
-                          </div>
-                        </TableCell> */}
-
-                        {/* <TableCell align="left">
-                          <IconButton
-                            size="large"
-                            color="primary"
-                            onClick={() => {
-                              const userId = user_id;
-
-                              navigate(`/dashboard/updatefnduser/${userId}`);
-                            }}
-                          >
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell> */}
 
                         <Popover
                           open={Boolean(open)}

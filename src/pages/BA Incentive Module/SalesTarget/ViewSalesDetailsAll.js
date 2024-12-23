@@ -43,6 +43,9 @@ import BaSalesIncentiveFilter from '../../../sections/@dashboard/baIncentiveTool
 import {
   getAllBankDepositsForAccountsService,
   getAllSalesDetails,
+  getSalesDetailsFilterByDateService,
+  getSalesDetailsFilterByFromDateService,
+  getSalesDetailsFilterByToDateService,
   getUserProfileDetails,
   getUsers,
   postSalesDetailsService,
@@ -481,10 +484,14 @@ export default function ViewSalesDetails() {
   console.log(toDate);
 
   const handleClearDate = async (event) => {
-    const response = await getAllSalesTargets();
+    const response = await getAllSalesDetails();
 
     if (response.status === 200) {
-      setSalesTargetData(response.data);
+      setSalesDetailsData([]); // Clear the state first
+      setTimeout(() => {
+        setSalesDetailsData(response.data); // Update with new filtered data
+      }, 0);
+
       setToDate('');
       setFromDate('');
       setFilterInfo({
@@ -521,7 +528,7 @@ export default function ViewSalesDetails() {
   }
 
   const handleDateFilter = async () => {
-    let filteredData = salesTargetData;
+    let filteredData = salesDetailsData;
     console.log(filteredData);
     console.log(filterInfo);
 
@@ -534,7 +541,7 @@ export default function ViewSalesDetails() {
         toDate: toDepositDateBackend,
         fromDate: fromDepositDateBackend,
       };
-      const response = await getBASalesFilterByDateService(user, requestBody);
+      const response = await getSalesDetailsFilterByDateService(user, requestBody);
 
       console.log(response.data);
 
@@ -548,7 +555,7 @@ export default function ViewSalesDetails() {
       const requestBody = {
         fromDate: filterInfo.from,
       };
-      const response = await getBASalesFilterByFromDateService(user, requestBody);
+      const response = await getSalesDetailsFilterByFromDateService(user, requestBody);
 
       console.log(response.data);
 
@@ -562,7 +569,7 @@ export default function ViewSalesDetails() {
       const requestBody = {
         toDate: filterInfo.to,
       };
-      const response = await getBASalesFilterByToDateService(user, requestBody);
+      const response = await getSalesDetailsFilterByToDateService(user, requestBody);
 
       console.log(response.data);
 
@@ -579,7 +586,10 @@ export default function ViewSalesDetails() {
       filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
     }
 
-    setSalesTargetData(filteredData);
+    setSalesDetailsData([]); // Clear the state first
+    setTimeout(() => {
+      setSalesDetailsData(filteredData); // Update with new filtered data
+    }, 0);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesDetailsData.length) : 0;
@@ -661,7 +671,7 @@ export default function ViewSalesDetails() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={salesDetailsData.length}
+                  rowCount={filteredUsers.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
