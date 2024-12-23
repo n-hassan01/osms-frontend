@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-irregular-whitespace */
@@ -34,11 +35,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { format, parse } from 'date-fns';
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
+import BaSalesIncentiveFilter from '../../../sections/@dashboard/baIncentiveToolbar/baSalesIncentiveFilter';
+
 // sections
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
+  getAllBankDepositsForAccountsService,
   getAllSalesSKUTargets,
   getUserProfileDetails,
   getUsers,
@@ -117,6 +120,10 @@ export default function ShowFndUser() {
 
   const [salesSKUData, setSalesSKUData] = useState([]);
 
+  const [customerGroups, setCustomerGroups] = useState([]);
+
+  const [customers, setCustomers] = useState([]);
+
   const [isDisableApprove, setIsDisableApprove] = useState(false);
 
   const [isDisableBan, setIsDisableBan] = useState(false);
@@ -141,6 +148,26 @@ export default function ShowFndUser() {
   //   fetchData();
   // }, []);getAllSalesSKUTargets,postSKUService
   // const [salesSKUData, setSalesSKUData] = useState([]);
+  const [account, setAccount] = useState({});
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (user) {
+          const accountDetails = await getUserProfileDetails(user); // Call your async function here
+          if (accountDetails.status === 200) {
+            setAccount(accountDetails.data);
+          } // Set the account details in the component's state
+        }
+      } catch (error) {
+        // Handle any errors that might occur during the async operation
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData(); // Call the async function when the component mounts
+  }, [user]);
+  console.log(account);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -156,6 +183,30 @@ export default function ShowFndUser() {
     fetchData();
   }, []);
   console.log(salesSKUData);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        if (account) {
+          console.log(account.user_id);
+          const response = await getAllBankDepositsForAccountsService(user);
+
+          if (response.status === 200) {
+            // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
+            // setUserList(response.data);
+            const customerGroupList = [...new Set(response.data.map((obj) => obj.customer_group))];
+            const customerList = [...new Set(response.data.map((obj) => obj.customer_name))];
+            setCustomerGroups(customerGroupList);
+            setCustomers(customerList);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, [account]);
 
   //   useEffect(() => {
   //     async function fetchData() {
@@ -287,19 +338,10 @@ export default function ShowFndUser() {
 
   const parseDate = (dateString) => parse(dateString, 'dd/MM/yy', new Date());
 
-  const handleDateChange = (date, index) => {
+  const handleDateChange = (date, name) => {
     const formattedDate = format(date, 'dd/MM/yy');
-    const updatedList = [...salesSKUData];
-    const name = 'end_date';
-    updatedList[index][name] = formattedDate;
-
-    console.log('before', editedUsers);
-    if (!editedUsers.includes(index)) {
-      editedUsers.push(index);
-    }
-    console.log('after', editedUsers);
-
-    setSalesSKUData(updatedList);
+    setFilterInfo({ ...filterInfo, [name]: formattedDate });
+    // setFilterDetails1({ ...filterDetails1, from: formattedDate });
   };
 
   const [backdropOpen, setBackdropOpen] = React.useState(false);
@@ -309,26 +351,6 @@ export default function ShowFndUser() {
   const handleBackdropOpen = () => {
     setBackdropOpen(true);
   };
-
-  const [account, setAccount] = useState({});
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        if (user) {
-          const accountDetails = await getUserProfileDetails(user); // Call your async function here
-          if (accountDetails.status === 200) {
-            setAccount(accountDetails.data);
-          } // Set the account details in the component's state
-        }
-      } catch (error) {
-        // Handle any errors that might occur during the async operation
-        console.error('Error fetching account details:', error);
-      }
-    }
-
-    fetchData(); // Call the async function when the component mounts
-  }, [user]);
-  console.log(account);
 
   const submitUsers = async () => {
     if (!editedUsers.length > 0) {
@@ -429,6 +451,137 @@ export default function ShowFndUser() {
     }
   };
 
+  const [filterInfo, setFilterInfo] = useState({
+    from: '',
+    to: '',
+    customer: '',
+    group: '',
+  });
+
+  const handleFilterInfo = (e) => {
+    console.log(e);
+
+    console.log(e.target.name, e.target.value);
+    setFilterInfo({ ...filterInfo, [e.target.name]: e.target.value });
+  };
+  console.log(filterInfo);
+
+  const [fromDate, setFromDate] = useState(null);
+  const handleFromDate = (event) => {
+    setPage(0);
+    setFromDate(event.target.value);
+  };
+  console.log(fromDate);
+
+  const [toDate, setToDate] = useState(null);
+  const handleToDate = (event) => {
+    setPage(0);
+    setToDate(event.target.value);
+  };
+  console.log(toDate);
+
+  const handleClearDate = async (event) => {
+    const response = await getAllSalesTargets();
+
+    if (response.status === 200) {
+      setSalesTargetData(response.data);
+      setToDate('');
+      setFromDate('');
+      setFilterInfo({
+        from: '',
+        to: '',
+        customer: '',
+        group: '',
+      });
+    } else {
+      alert('Process failed! Please try again');
+    }
+  };
+
+  function convertToFrontendDate(backendDateString) {
+    try {
+      const date = new Date(backendDateString);
+
+      if (isNaN(date.getTime())) {
+        throw new Error('Invalid date');
+      }
+      const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+      const month = date.toLocaleDateString('en-US', { month: 'short' });
+      const dayOfMonth = date.getDate().toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const time = date.toTimeString().split(' ')[0];
+      // const timezone = date.toTimeString().split(' ')[1];
+      const frontendDateString = `${day} ${month} ${dayOfMonth} ${year} ${time}`;
+
+      return frontendDateString;
+    } catch (error) {
+      console.error('Error while converting date:', error);
+      return null;
+    }
+  }
+
+  const handleDateFilter = async () => {
+    let filteredData = salesTargetData;
+    console.log(filteredData);
+    console.log(filterInfo);
+
+    if (filterInfo.from && filterInfo.to) {
+      const toDate = parseDate(filterInfo.to);
+      const fromDate = parseDate(filterInfo.from);
+      const fromDepositDateBackend = convertToFrontendDate(fromDate);
+      const toDepositDateBackend = convertToFrontendDate(toDate);
+      const requestBody = {
+        toDate: toDepositDateBackend,
+        fromDate: fromDepositDateBackend,
+      };
+      const response = await getBASalesFilterByDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
+    if (filterInfo.from && !filterInfo.to) {
+      console.log('from');
+      const requestBody = {
+        fromDate: filterInfo.from,
+      };
+      const response = await getBASalesFilterByFromDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
+    if (filterInfo.to && !filterInfo.from) {
+      console.log('to');
+      const requestBody = {
+        toDate: filterInfo.to,
+      };
+      const response = await getBASalesFilterByToDateService(user, requestBody);
+
+      console.log(response.data);
+
+      if (response.status === 200) {
+        filteredData = response.data;
+      }
+    }
+
+    if (filterInfo.group) {
+      filteredData = filteredData.filter((item) => item.customer_group === filterInfo.group);
+    }
+
+    if (filterInfo.customer) {
+      filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
+    }
+
+    setSalesTargetData(filteredData);
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesSKUData.length) : 0;
 
   const filteredUsers = applySortFilter(salesSKUData, getComparator(order, orderBy), filterName);
@@ -482,11 +635,22 @@ export default function ShowFndUser() {
         </Stack>
 
         <Card>
-          <FndUserToollist
+          <BaSalesIncentiveFilter
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
+            onFilterDate={handleDateFilter}
             selectedUsers={selected}
+            onFromDate={handleFromDate}
+            onToDate={handleToDate}
+            onClearDate={handleClearDate}
+            toDepositDate={toDate}
+            fromDepositDate={fromDate}
+            filterDetails={filterInfo}
+            onFilterDetails={handleFilterInfo}
+            customerGroupList={customerGroups}
+            customerList={customers}
+            onDateChange={handleDateChange}
           />
 
           <Scrollbar>

@@ -1488,7 +1488,7 @@ export const getShopsListService = async (loginToken) => {
 
 export const getItemsListService = async (loginToken) => {
   try {
-    return await axios.get(`${usersUrl}get-item-master/2`, {
+    return await axios.get(`${usersUrl}get-item-master/51`, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
@@ -1752,7 +1752,7 @@ export const rejectBankDepositService = async (loginToken, bodyInfo) => {
 
 export const dowloadBankDepositReceiptService = async (loginToken, bodyInfo) => {
   try {
-    return await axios.post(`${usersUrl}branding-assets/image/download`, bodyInfo, {
+    return await axios.post(`${usersUrl}bank-deposit/download`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
@@ -2420,6 +2420,31 @@ export const getBrandingAssetsViewData = async (loginToken) => {
   }
 };
 
+export const dowloadBrandingAssetService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}branding-assets/image/download`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+      responseType: 'arraybuffer',
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const auditBrandingAssetService = async (bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}branding-assets/audit`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getDivisionsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}get-bd-area-lists/division`, {
@@ -2723,6 +2748,48 @@ export const postSalesDetailsService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
     return await axios.post(`${usersUrl}salesDetailsAll/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBASalesFilterByDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}filterService/view/filterByDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBASalesFilterByFromDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}filterService/view/filterByFromDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBASalesFilterByToDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}filterService/view/filterByToDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
   } catch (err) {
     console.log(err.message);
 
