@@ -2406,6 +2406,20 @@ export const getBrandingAssetsItemImagesService = async (loginToken, itemId) => 
   }
 };
 
+export const getBrandingAssetsShopPerItemImages = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}branding-assets/viewItemsPerShop`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBrandingAssetsViewData = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}branding-assets`, {
@@ -2757,7 +2771,7 @@ export const postSalesDetailsService = async (bodyInfo) => {
 
 export const getBASalesFilterByDateService = async (loginToken, requestBody) => {
   try {
-    return await axios.post(`${usersUrl}filterService/view/filterByDate`, requestBody, {
+    return await axios.post(`${usersUrl}salestargetallfilter/view/filterByDate`, requestBody, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
@@ -2771,7 +2785,7 @@ export const getBASalesFilterByDateService = async (loginToken, requestBody) => 
 
 export const getBASalesFilterByFromDateService = async (loginToken, requestBody) => {
   try {
-    return await axios.post(`${usersUrl}filterService/view/filterByFromDate`, requestBody, {
+    return await axios.post(`${usersUrl}salestargetallfilter/view/filterByFromDate`, requestBody, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
@@ -2785,7 +2799,91 @@ export const getBASalesFilterByFromDateService = async (loginToken, requestBody)
 
 export const getBASalesFilterByToDateService = async (loginToken, requestBody) => {
   try {
-    return await axios.post(`${usersUrl}filterService/view/filterByToDate`, requestBody, {
+    return await axios.post(`${usersUrl}salestargetallfilter/view/filterByToDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesDetailsFilterByDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salesdetailsallfilter/view/filterByDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesDetailsFilterByFromDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salesdetailsallfilter/view/filterByFromDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesDetailsFilterByToDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salesdetailsallfilter/view/filterByToDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesTargetSKUFilterByDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salestargetsskullfilter/view/filterByDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesTargetSKUFilterByFromDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salestargetsskullfilter/view/filterByFromDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesTargetSKUFilterByToDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salestargetsskullfilter/view/filterByToDate`, requestBody, {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },

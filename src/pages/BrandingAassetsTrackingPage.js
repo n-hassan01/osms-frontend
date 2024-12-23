@@ -43,13 +43,13 @@ import {
   getAreaService,
   getBeatsService,
   getBrandingAssetsChildItemsService,
-  getBrandingAssetsItemImagesService,
   getBrandingAssetsItemsService,
+  getBrandingAssetsShopPerItemImages,
   getRegionService,
   getShopsListService,
   getTerritoriesService,
   getTownsService,
-  getUserProfileDetails
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 
 // @mui
@@ -126,6 +126,7 @@ export default function ItemsDashBoard() {
   const [selected, setSelected] = useState([]);
   const [selectedItem, setSelectedItem] = useState([]);
   const [account, setAccount] = useState({});
+  const [selectedShopId, setSelectedShopId] = useState(null);
 
   console.log(user);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -412,20 +413,22 @@ export default function ItemsDashBoard() {
       console.error('Error fetching account details:', error);
     }
   };
-  const fetchDataForSpecificItem = async (specificElements) => {
-    try {
-      setChildItems([]);
-      setShowChilds(false);
+  const fetchDataForSpecificItem = async (shopId, inventoryItemId) => {
+    console.log('Fetching child data for:', inventoryItemId);
 
-      let response = {};
-      response = await getBrandingAssetsChildItemsService(user, specificElements);
-      console.log(response.data);
+    try {
+      setChildItems([]); // Clear existing data
+      setShowChilds(false); // Reset visibility of child items
+
+      const response = await getBrandingAssetsChildItemsService(user, inventoryItemId);
+      console.log('Child Data Response:', response.data);
+
       if (response.status === 200) {
-        setChildItems(response.data);
-        setShowChilds(true);
+        setChildItems(response.data); // Update child items
+        setShowChilds(true); // Show child items
       }
     } catch (error) {
-      console.error('Error fetching account details:', error);
+      console.error('Error fetching child data:', error);
     }
   };
 
@@ -458,32 +461,41 @@ export default function ItemsDashBoard() {
   console.log(imageSrc);
 
   const [images, setImages] = useState([]);
-  const fetchImageForSpecificItem = async (specificElements) => {
+  const fetchImageForSpecificItem = async (shopId, inventoryItemId) => {
+    const requestBody = {
+      assetId: inventoryItemId,
+      shopId: shopId,
+    };
+
     try {
-      const response = await getBrandingAssetsItemImagesService(user, specificElements);
-      console.log(response.data);
+      const response = await getBrandingAssetsShopPerItemImages(user, requestBody);
+      console.log('Image Response:', response.data);
+
       if (response.status === 200 && response.data.length > 0) {
-        setImages(response.data);
-        response.data.forEach((image) => {
-          if (image.uploaded_filename) {
-            viewAttachment(image.uploaded_filename);
-          } else {
-            setImageSrc(['https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png']);
-          }
-        });
+        setImages(response.data); // Update images
+        const imageSources = response.data.map((image) =>
+          image.uploaded_filename
+            ? viewAttachment(image.uploaded_filename)
+            : 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png'
+        );
+        setImageSrc(imageSources); // Set image sources
       } else {
-        setNoImages(true);
+        setNoImages(true); // Indicate no images are available
       }
     } catch (error) {
       console.error('Error fetching images:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading
     }
   };
+
   console.log(images);
   console.log(imageSrc);
 
   const handleClick = (event, name) => {
+    console.log(name);
+
+    setSelectedShopId(name);
     // Fetch data for the selected shop
     fetchDataForSpecificShop(name);
 
@@ -498,25 +510,34 @@ export default function ItemsDashBoard() {
 
     console.log('to selectedUsers : ', selectedUsers);
   };
-
   const [showimage, setShowImage] = useState(false);
-  const handleItemClick = async (event, inventoryItemId) => {
-    // Clear the existing images and set loading state
+  const handleItemClick = async (event, shopId, inventoryItemId) => {
+    console.log('Selected Shop ID:', shopId);
+    console.log('Selected Inventory Item ID:', inventoryItemId);
+
+    // Clear states and set loading
+    setChildItems([]);
+    setImages([]);
     setImageSrc([]);
-    setLoading(true);
     setNoImages(false);
+    setLoading(true);
     setActivateIndex(0);
 
-    // Fetch data and images for the selected item
-    await fetchDataForSpecificItem(inventoryItemId);
-    await fetchImageForSpecificItem(inventoryItemId);
+    try {
+      // Fetch child data for the selected item
+      await fetchDataForSpecificItem(shopId, inventoryItemId);
 
-    console.log(inventoryItemId);
-    console.log(images);
+      // Fetch images for the selected item
+      await fetchImageForSpecificItem(shopId, inventoryItemId);
 
-    // Update the selected item
-    setSelectedItem([inventoryItemId]); // Only one item can be selected with a radio button
-    setShowImage(true);
+      // Set the selected item
+      setSelectedItem([inventoryItemId]); // Only one item can be selected
+      setShowImage(true);
+    } catch (error) {
+      console.error('Error fetching data or images:', error);
+    } finally {
+      setLoading(false); // Ensure loading stops even if there's an error
+    }
   };
 
   const handleFilterByName = (event) => {
@@ -1001,24 +1022,20 @@ export default function ItemsDashBoard() {
                 <TableBody>
                   {showItems ? (
                     filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { inventory_item_id, item_category, item_name } = row;
-
-                      const selectedUser = selectedItem.includes(inventory_item_id);
+                      const { inventory_item_id, item_name } = row;
+                      const isSelected = selectedItem.includes(inventory_item_id);
 
                       return (
                         <TableRow hover key={inventory_item_id} tabIndex={-1} role="radio">
                           <TableCell style={combinedStylingForRadioTableCell}>
                             <Radio
-                              checked={selectedUser}
-                              onChange={(event) => handleItemClick(event, inventory_item_id)}
+                              checked={isSelected}
+                              onChange={(event) => handleItemClick(event, selectedShopId, inventory_item_id)}
                             />
                           </TableCell>
                           <TableCell style={combinedStylingForTableCell} align="left">
                             {item_name}
                           </TableCell>
-                          {/* <TableCell style={combinedStylingForTableCell} align="left">
-                            {item_category}
-                          </TableCell> */}
                         </TableRow>
                       );
                     })
