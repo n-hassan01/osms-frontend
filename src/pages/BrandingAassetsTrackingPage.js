@@ -38,7 +38,8 @@ import {
 import Dialog from '@mui/material/Dialog';
 import Select from 'react-select';
 import {
-  dowloadBankDepositReceiptService,
+  auditBrandingAssetService,
+  dowloadBrandingAssetService,
   getAreaService,
   getBeatsService,
   getBrandingAssetsChildItemsService,
@@ -48,7 +49,7 @@ import {
   getShopsListService,
   getTerritoriesService,
   getTownsService,
-  getUserProfileDetails,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 
 // @mui
@@ -435,7 +436,7 @@ export default function ItemsDashBoard() {
     try {
       const filename = value;
       const requestBody = { fileName: filename };
-      const response = await dowloadBankDepositReceiptService(user, requestBody);
+      const response = await dowloadBrandingAssetService(user, requestBody);
       if (response.status === 200) {
         const base64String = btoa(
           new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
@@ -483,15 +484,21 @@ export default function ItemsDashBoard() {
   console.log(imageSrc);
 
   const handleClick = (event, name) => {
-    console.log(event);
-    console.log(event.target.checked);
-    console.log(name);
+    // Fetch data for the selected shop
     fetchDataForSpecificShop(name);
+
+    // Update the selected shop
     setSelected([name]);
+
+    // Reset selected items and image display states
+    setSelectedItem([]); // Clear previously selected items
+    setImageSrc([]); // Clear any existing images
     setShowImage(false);
     setShowChilds(false);
-    console.log('toselectedUsers : ', selectedUsers);
+
+    console.log('to selectedUsers : ', selectedUsers);
   };
+
   const [showimage, setShowImage] = useState(false);
   const handleItemClick = async (event, inventoryItemId) => {
     // Clear the existing images and set loading state
@@ -500,15 +507,18 @@ export default function ItemsDashBoard() {
     setNoImages(false);
     setActivateIndex(0);
 
+    // Fetch data and images for the selected item
     await fetchDataForSpecificItem(inventoryItemId);
     await fetchImageForSpecificItem(inventoryItemId);
 
     console.log(inventoryItemId);
     console.log(images);
 
-    setSelectedItem([inventoryItemId]); // Only one item can be selected with radio button
+    // Update the selected item
+    setSelectedItem([inventoryItemId]); // Only one item can be selected with a radio button
     setShowImage(true);
   };
+
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
@@ -710,6 +720,38 @@ export default function ItemsDashBoard() {
     flexDirection: 'column',
     width: '45%',
     // marginBottom: '5px',
+  };
+
+  const onApprove = async () => {
+    if (!images[0].distribution_id) {
+      alert('Please select an item!');
+    }
+    try {
+      const requestBody = {
+        pDistributionId: images[0].distribution_id,
+        pApprovalType: 'A',
+      };
+      const response = await auditBrandingAssetService(requestBody);
+      alert('Successfully approved!');
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
+  };
+
+  const onReject = async () => {
+    if (!images[0].distribution_id) {
+      alert('Please select an item!');
+    }
+    try {
+      const requestBody = {
+        pDistributionId: images[0].distribution_id,
+        pApprovalType: 'R',
+      };
+      const response = await auditBrandingAssetService(requestBody);
+      alert('Successfully rejected!');
+    } catch (error) {
+      console.error('Error fetching account details:', error);
+    }
   };
 
   return (
@@ -1253,6 +1295,15 @@ export default function ItemsDashBoard() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </div>
+        </div>
+
+        <div style={{ textAlign: 'right', paddingRight: '1rem' }}>
+          <Button variant="contained" size="medium" style={{ marginRight: '1rem' }} onClick={onApprove}>
+            APPROVE
+          </Button>
+          <Button variant="contained" size="medium" onClick={onReject}>
+            REJECT
+          </Button>
         </div>
       </div>
 
