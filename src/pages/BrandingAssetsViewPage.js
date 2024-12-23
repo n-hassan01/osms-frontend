@@ -34,11 +34,11 @@ import { useUser } from '../context/UserContext';
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
+  getBrandingAssetSumReport,
   getBrandingAssetsViewData,
   getItemsListService,
   getShopsListService,
   getUserProfileDetails,
-  getBrandingAssetSumReport,
 } from '../Services/ApiServices';
 // import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -252,6 +252,7 @@ export default function UserPage() {
   const [imageSrc, setImageSrc] = useState(null);
 
   const TABLE_HEAD = [
+    { id: 'authorization_status', label: 'Authorization Status', alignRight: false },
     { id: 'review_status', label: 'Review Status', alignRight: false },
     { id: 'item_name', label: 'Item Name', alignRight: false },
     { id: 'item_category', label: 'Item Category', alignRight: false },
@@ -333,6 +334,17 @@ export default function UserPage() {
     filterInfo.status = selectedOption.value;
   };
 
+  const auditStatusOptions = [
+    { value: 'APPROVED', label: 'APPROVED' },
+    { value: 'REJECTED', label: 'REJECTED' },
+    { value: 'Incomplete', label: 'Incomplete' },
+  ];
+
+  const handleAuditStatusChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    filterInfo.audit = selectedOption.value;
+  };
+
   const filteredItemOptions = items
     .filter((option) => option.description.toLowerCase().includes(inputValue.toLowerCase()))
     .map((option) => ({ value: option.description, label: option.description }));
@@ -381,6 +393,10 @@ export default function UserPage() {
           filteredData = filteredData.filter((item) => item.review_status === filterInfo.status);
         }
 
+        if (filterInfo.audit) {
+          filteredData = filteredData.filter((item) => item.authorization_status === filterInfo.audit);
+        }
+
         setUserList(filteredData);
       }
     } catch (error) {
@@ -395,6 +411,7 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const exportData = filteredUsers.map((item) => ({
+    'Authorization Status': item.authorization_status,
     'Review Status': item.review_status,
     'Item Name': item.item_name,
     'Item Category': item.item_category,
@@ -495,10 +512,12 @@ export default function UserPage() {
                       supplier_name,
                       territory_name,
                       town_name,
-                      layout_name
+                      layout_name,
+                      authorization_status,
                     } = row;
 
                     const rowValues = [
+                      authorization_status,
                       review_status,
                       item_name,
                       item_category,
@@ -629,6 +648,19 @@ export default function UserPage() {
                               value={filterInfo.status ? { value: filterInfo.status, label: filterInfo.status } : null}
                               onChange={handleReviewStatusChange}
                               options={reviewStatusOptions}
+                              placeholder="Click to select..."
+                              isClearable
+                              isSearchable={false}
+                            />
+                          </div>
+                        </div>
+                        <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
+                          <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Audit Status</span>
+                          <div style={{ width: '180px' }}>
+                            <Select
+                              value={filterInfo.audit ? { value: filterInfo.audit, label: filterInfo.audit } : null}
+                              onChange={handleAuditStatusChange}
+                              options={auditStatusOptions}
                               placeholder="Click to select..."
                               isClearable
                               isSearchable={false}
