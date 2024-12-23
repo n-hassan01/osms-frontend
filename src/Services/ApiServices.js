@@ -2729,3 +2729,45 @@ export const postSalesDetailsService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+export const getBASalesFilterByDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}filterService/view/filterByDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBASalesFilterByFromDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}filterService/view/filterByFromDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBASalesFilterByToDateService = async (loginToken, requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}filterService/view/filterByToDate`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
