@@ -43,6 +43,9 @@ import BaSalesIncentiveFilter from '../../../sections/@dashboard/baIncentiveTool
 import {
   getAllBankDepositsForAccountsService,
   getAllSalesSKUTargets,
+  getSalesTargetSKUFilterByDateService,
+  getSalesTargetSKUFilterByFromDateService,
+  getSalesTargetSKUFilterByToDateService,
   getUserProfileDetails,
   getUsers,
   postSKUService,
@@ -236,34 +239,6 @@ export default function ShowFndUser() {
     { value: 'inactive', label: 'inactive' },
     { value: 'hold', label: 'hold' },
   ];
-
-  const handleOptionChange = (value, index) => {
-    const updatedList = [...salesSKUData];
-    const name = 'status';
-    updatedList[index][name] = value;
-
-    if (!editedUsers.includes(index)) {
-      editedUsers.push(index);
-    }
-
-    setSalesSKUData(updatedList);
-  };
-
-  const handleOptionInputChange = (inputValue) => {
-    setInputValue(inputValue);
-  };
-
-  const handleOpenMenu = (event, status, email) => {
-    if (status === 'approved') setIsDisableApprove(true);
-    else setIsDisableApprove(false);
-
-    if (status === 'banned') setIsDisableBan(true);
-    else setIsDisableBan(false);
-
-    setSelectedUserEmail(email);
-
-    setOpen(event.currentTarget);
-  };
 
   const handleCloseMenu = () => {
     setOpen(null);
@@ -481,10 +456,14 @@ export default function ShowFndUser() {
   console.log(toDate);
 
   const handleClearDate = async (event) => {
-    const response = await getAllSalesTargets();
+    const response = await getAllSalesSKUTargets();
 
     if (response.status === 200) {
-      setSalesTargetData(response.data);
+      setSalesSKUData([]); // Clear the state first
+      setTimeout(() => {
+        setSalesSKUData(response.data); // Update with new filtered data
+      }, 0);
+
       setToDate('');
       setFromDate('');
       setFilterInfo({
@@ -521,65 +500,66 @@ export default function ShowFndUser() {
   }
 
   const handleDateFilter = async () => {
-    let filteredData = salesTargetData;
-    console.log(filteredData);
-    console.log(filterInfo);
+    let filteredData = salesSKUData;
+    console.log('Initial Data:', filteredData);
+    console.log('Filter Info:', filterInfo);
 
-    if (filterInfo.from && filterInfo.to) {
-      const toDate = parseDate(filterInfo.to);
-      const fromDate = parseDate(filterInfo.from);
-      const fromDepositDateBackend = convertToFrontendDate(fromDate);
-      const toDepositDateBackend = convertToFrontendDate(toDate);
-      const requestBody = {
-        toDate: toDepositDateBackend,
-        fromDate: fromDepositDateBackend,
-      };
-      const response = await getBASalesFilterByDateService(user, requestBody);
+    try {
+      if (filterInfo.from && filterInfo.to) {
+        const fromDate = parseDate(filterInfo.from);
+        const toDate = parseDate(filterInfo.to);
+        const fromDepositDateBackend = convertToFrontendDate(fromDate);
+        const toDepositDateBackend = convertToFrontendDate(toDate);
+        const requestBody = {
+          fromDate: fromDepositDateBackend,
+          toDate: toDepositDateBackend,
+        };
+        console.log('Request Body (From-To):', requestBody);
 
-      console.log(response.data);
+        const response = await getSalesTargetSKUFilterByDateService(user, requestBody);
+        console.log('API Response (From-To):', response);
 
-      if (response.status === 200) {
-        filteredData = response.data;
+        if (response.status === 200) {
+          filteredData = response.data;
+        }
+      } else if (filterInfo.from) {
+        console.log("Filtering by 'From' date only.");
+        const requestBody = { fromDate: filterInfo.from };
+        const response = await getSalesTargetSKUFilterByFromDateService(user, requestBody);
+        console.log('API Response (From):', response);
+
+        if (response.status === 200) {
+          filteredData = response.data;
+        }
+      } else if (filterInfo.to) {
+        console.log("Filtering by 'To' date only.");
+        const requestBody = { toDate: filterInfo.to };
+        const response = await getSalesTargetSKUFilterByToDateService(user, requestBody);
+        console.log('API Response (To):', response);
+
+        if (response.status === 200) {
+          filteredData = response.data;
+        }
       }
-    }
 
-    if (filterInfo.from && !filterInfo.to) {
-      console.log('from');
-      const requestBody = {
-        fromDate: filterInfo.from,
-      };
-      const response = await getBASalesFilterByFromDateService(user, requestBody);
-
-      console.log(response.data);
-
-      if (response.status === 200) {
-        filteredData = response.data;
+      if (filterInfo.group) {
+        console.log('Filtering by Customer Group:', filterInfo.group);
+        filteredData = filteredData.filter((item) => item.customer_group === filterInfo.group);
       }
-    }
 
-    if (filterInfo.to && !filterInfo.from) {
-      console.log('to');
-      const requestBody = {
-        toDate: filterInfo.to,
-      };
-      const response = await getBASalesFilterByToDateService(user, requestBody);
-
-      console.log(response.data);
-
-      if (response.status === 200) {
-        filteredData = response.data;
+      if (filterInfo.customer) {
+        console.log('Filtering by Customer Name:', filterInfo.customer);
+        filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
       }
-    }
 
-    if (filterInfo.group) {
-      filteredData = filteredData.filter((item) => item.customer_group === filterInfo.group);
+      console.log('Final Filtered Data:', filteredData);
+      setSalesSKUData([]); // Clear the state first
+      setTimeout(() => {
+        setSalesSKUData(filteredData); // Update with new filtered data
+      }, 0);
+    } catch (error) {
+      console.error('Error during filtering:', error);
     }
-
-    if (filterInfo.customer) {
-      filteredData = filteredData.filter((item) => item.customer_name === filterInfo.customer);
-    }
-
-    setSalesTargetData(filteredData);
   };
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesSKUData.length) : 0;
@@ -661,7 +641,7 @@ export default function ShowFndUser() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   enableReadonly
-                  rowCount={salesSKUData.length}
+                  rowCount={filteredUsers.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
