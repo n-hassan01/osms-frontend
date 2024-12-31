@@ -13,20 +13,20 @@ import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 // @mui
 import {
-  Button,
-  Card,
-  Container,
-  MenuItem,
-  Paper,
-  Popover,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TablePagination,
-  TableRow,
-  Typography,
+    Button,
+    Card,
+    Container,
+    MenuItem,
+    Paper,
+    Popover,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TablePagination,
+    TableRow,
+    Typography,
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -39,11 +39,11 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-  getAllRecipientsService,
-  getUserProfileDetails,
-  getUsers,
-  postIncentiveRecipientGroupsService,
-  updateUser,
+    getAllIncentiveAchievementSlabService,
+    getUserProfileDetails,
+    getUsers,
+    postIncentiveAchievementSlabService,
+    updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 import { UserListHead } from '../../../sections/@dashboard/user';
@@ -54,8 +54,11 @@ import '../../../_css/Utils.css';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'recipient_groups_id', label: 'Recipient Groups ID', alignRight: false },
-  { id: 'recipient_groups_name', label: 'Recipient Group Name', alignRight: false },
+  { id: 'achievement_range_id', label: 'Achievement Range Id', alignRight: false },
+  { id: 'cust_group_id', label: 'Cust Group Id', alignRight: false },
+  { id: 'achievement_start_pct', label: 'Achievement Start Pct', alignRight: false },
+  { id: 'achievement_end_pct', label: 'Achievement End Pct', alignRight: false },
+  { id: 'total_incentive_pct', label: 'Total Incentive Pct', alignRight: false },
 ];
 const selectedUsers = [];
 
@@ -85,12 +88,12 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.recipient_groups_name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.cust_group_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowFndUser() {
+export default function ViewIncentiveAchieveSlabAll() {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -119,24 +122,10 @@ export default function ShowFndUser() {
   const [editedUsers, setEditedUsers] = useState([]);
   const [exceldata, setExceldata] = useState([]);
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const usersDetails = await getFndUserService();
-
-  //       if (usersDetails) setRecipients(usersDetails.data);
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-  // const [recipients, setRecipients] = useState([]);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllRecipientsService();
+        const response = await getAllIncentiveAchievementSlabService();
         console.log(response.data);
 
         if (response) setRecipients(response.data);
@@ -149,22 +138,6 @@ export default function ShowFndUser() {
   }, []);
   console.log(recipients);
 
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       try {
-  //         const usersDetails = await getUsers();
-
-  //         if (usersDetails) setRecipients(usersDetails.data.data);
-  //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
-  //       }
-  //     }
-
-  //     fetchData();
-  //   }, []);
-  //   console.log(recipients);
-
-  // selecting status
   const [filterDetails, setFilterDetails] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
   const [inputValue, setInputValue] = useState('');
@@ -387,8 +360,11 @@ export default function ShowFndUser() {
       if (exceldata && Array.isArray(exceldata)) {
         for (const row of exceldata) {
           const requestBody = {
-            recipientGroupsId: row.recipient_groups_id,
-            recipientGroupsName: row.recipient_groups_name,
+            achievementRangeId: row.achievement_range_id,
+            custGroupId: row.cust_group_id,
+            achievementStartPct: row.achievement_start_pct,
+            achievementEndPct: row.achievement_end_pct,
+            totalIncentivePct: row.total_incentive_pct,
             lastUpdateDate: date,
             lastUpdatedBy: account.user_id,
             creationDate: date,
@@ -398,15 +374,15 @@ export default function ShowFndUser() {
           console.log(requestBody);
 
           try {
-            const postData = await postIncentiveRecipientGroupsService(requestBody);
+            const postData = await postIncentiveAchievementSlabService(requestBody);
 
             if (postData.status === 200) {
-              console.log(`Row with recipient_groups_id ${row.recipient_groups_id} successfully added.`);
+              console.log(`Row with achievement_range_id ${row.achievement_range_id} successfully added.`);
             } else {
-              console.error(`Failed to save row with recipient_groups_id ${row.recipient_groups_id}`);
+              console.error(`Failed to save row with achievement_range_id ${row.achievement_range_id}`);
             }
           } catch (error) {
-            console.error(`Error saving row with recipient_groups_id ${row.recipient_groups_id}:`, error);
+            console.error(`Error saving row with achievement_range_id ${row.achievement_range_id}:`, error);
           }
         }
       }
@@ -426,16 +402,16 @@ export default function ShowFndUser() {
   return (
     <>
       <Helmet>
-        <title> Incentive Groups | COMS </title>
+        <title> Incentive Achievement Slab | COMS </title>
       </Helmet>
 
       <Container className="indexing fullWidth">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Incentive Recipient Groups
+            Incentive Achievement Slab
           </Typography>
           <div>
-            {/* <Button
+            <Button
               variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '10px' }}
               // color="primary"
@@ -443,8 +419,8 @@ export default function ShowFndUser() {
               onClick={submitUsers}
             >
               Submit
-            </Button> */}
-            <Button
+            </Button>
+            {/* <Button
               variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
               color="primary"
@@ -454,7 +430,7 @@ export default function ShowFndUser() {
               }}
             >
               Add Incentive Recipient
-            </Button>
+            </Button> */}
             <Button
               style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
               onClick={handleOpenDialog}
@@ -464,7 +440,7 @@ export default function ShowFndUser() {
                 }
               }}
             >
-              Upload (Incentive Groups){' '}
+              Upload (Incentive AchievementSlab){' '}
             </Button>
           </div>
         </Stack>
@@ -492,17 +468,25 @@ export default function ShowFndUser() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { recipient_groups_name, start_date, end_date, recipient_groups_id } = row;
-                    const selectedUser = selected.indexOf(recipient_groups_name) !== -1;
+                    const {
+                      achievement_range_id,
+                      cust_group_id,
+                      achievement_start_pct,
+                      achievement_end_pct,
+                      total_incentive_pct,
+                    } = row;
+                    const selectedUser = selected.indexOf(cust_group_id) !== -1;
 
                     return (
-                      <TableRow hover key={recipient_groups_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={cust_group_id} tabIndex={-1} role="checkbox">
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
                         </TableCell> */}
-                        <TableCell align="left">{recipient_groups_id}</TableCell>
-
-                        <TableCell align="left">{recipient_groups_name}</TableCell>
+                        <TableCell align="left">{achievement_range_id}</TableCell>
+                        <TableCell align="left">{cust_group_id}</TableCell>
+                        <TableCell align="left">{achievement_start_pct}</TableCell>
+                        <TableCell align="left">{achievement_end_pct}</TableCell>
+                        <TableCell align="left">{total_incentive_pct}</TableCell>
 
                         <Popover
                           open={Boolean(open)}

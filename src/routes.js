@@ -61,13 +61,19 @@ import AccountFormPage from './pages/AccountFormPage';
 import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
+import AddIncentiveDistribution from './pages/BA Incentive Module/SalesTarget/AddIncentiveDistribution';
 import AddPageIncentiveFormula from './pages/BA Incentive Module/SalesTarget/AddIncentiveForm';
 import AddIncentiveRecipients from './pages/BA Incentive Module/SalesTarget/AddIncentiveRecipientGroups';
+import AddIncentiveTypes from './pages/BA Incentive Module/SalesTarget/AddIncentiveTypes';
 import AddSalesDetails from './pages/BA Incentive Module/SalesTarget/AddSalesDetailsAll';
 import AddSalesTarget from './pages/BA Incentive Module/SalesTarget/AddSalesTargets';
 import AddSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/AddSalesTargetsSKUAll';
+import ViewIncentiveAchievementSlabAll from './pages/BA Incentive Module/SalesTarget/ViewIncentiveAchievementSlabAll';
+
+import ViewIncentiveDistributionAll from './pages/BA Incentive Module/SalesTarget/ViewIncentiveDistributionAll';
 import ViewIncentiveFormula from './pages/BA Incentive Module/SalesTarget/ViewIncentiveFormula';
 import ViewIncentiveRecipient from './pages/BA Incentive Module/SalesTarget/ViewIncentiveRecipientGroups';
+import ViewIncentiveTypes from './pages/BA Incentive Module/SalesTarget/ViewIncentiveTypes';
 import ViewSalesDetails from './pages/BA Incentive Module/SalesTarget/ViewSalesDetailsAll';
 import ViewSalesTarget from './pages/BA Incentive Module/SalesTarget/ViewSalesTargets';
 import ViewSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/ViewSalesTargetsSKUAll';
@@ -233,6 +239,11 @@ export default function Router() {
         { path: 'viewsosalestargetincentive', element: <ViewSoSalesTargetIncentive /> },
         { path: 'viewsalesdetails', element: <ViewSalesDetails /> },
         { path: 'addsalesdetails', element: <AddSalesDetails /> },
+        { path: 'viewincentivetypes', element: <ViewIncentiveTypes /> },
+        { path: 'viewincentivedistributionall', element: <ViewIncentiveDistributionAll /> },
+        { path: 'addincentivedistribution', element: <AddIncentiveDistribution /> },
+        { path: 'viewincentiveachievementslaball', element: <ViewIncentiveAchievementSlabAll /> },
+        { path: 'addIncentiveTypes', element: <AddIncentiveTypes /> },
       ],
     },
 

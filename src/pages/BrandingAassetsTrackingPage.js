@@ -141,9 +141,10 @@ export default function ItemsDashBoard() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
   const handleChangeRowsPerPage = (event) => {
-    setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to first page when rows per page changes
   };
 
   useEffect(() => {
@@ -432,35 +433,10 @@ export default function ItemsDashBoard() {
     }
   };
 
-  const [imageSrc, setImageSrc] = useState([]);
+  const [images, setImages] = useState([]); // This holds the image data (or any metadata about the images)
+  const [imageSrc, setImageSrc] = useState([]); // This will hold the actual image URLs or Base64 data
 
-  const viewAttachment = async (value) => {
-    console.log(value);
-    try {
-      const filename = value;
-      const requestBody = { fileName: filename };
-      const response = await dowloadBrandingAssetService(user, requestBody);
-      if (response.status === 200) {
-        const base64String = btoa(
-          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        );
-        const dataURL = `data:image/jpeg;base64,${base64String}`;
-        setImageSrc((prevImageSrc) => {
-          const updatedImages = [...prevImageSrc, dataURL];
-          if (updatedImages.length === response.data.length) {
-            setLoading(false); // All images have been processed, stop loading
-          }
-          return updatedImages;
-        });
-      }
-    } catch (error) {
-      console.error('Error during image download:', error);
-      setLoading(false); // Stop loading on error
-    }
-  };
-  console.log(imageSrc);
-
-  const [images, setImages] = useState([]);
+  // Fetch images for specific item
   const fetchImageForSpecificItem = async (shopId, inventoryItemId) => {
     const requestBody = {
       assetId: inventoryItemId,
@@ -472,13 +448,25 @@ export default function ItemsDashBoard() {
       console.log('Image Response:', response.data);
 
       if (response.status === 200 && response.data.length > 0) {
-        setImages(response.data); // Update images
-        const imageSources = response.data.map((image) =>
-          image.uploaded_filename
-            ? viewAttachment(image.uploaded_filename)
-            : 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png'
-        );
-        setImageSrc(imageSources); // Set image sources
+        const imagesData = response.data;
+        console.log(imagesData);
+        setImages(imagesData);
+        // Ensure all images have correct URLs or Base64 strings for display
+        const imageSourcesPromises = imagesData.map(async (image) => {
+          if (image.uploaded_filename) {
+            // If filename exists, fetch the image data (base64 or URL)
+            const base64Image = await viewAttachment(image.uploaded_filename); // Fetch the image data
+            return base64Image;
+          }
+          // Fallback if image is not available
+          return 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png';
+        });
+
+        // Wait for all image fetching promises to resolve
+        const resolvedImageSrc = await Promise.all(imageSourcesPromises);
+
+        // Update the image sources once all are fetched
+        setImageSrc(resolvedImageSrc);
       } else {
         setNoImages(true); // Indicate no images are available
       }
@@ -489,7 +477,31 @@ export default function ItemsDashBoard() {
     }
   };
 
-  console.log(images);
+  // This function fetches the image using the filename and converts it to Base64
+  // eslint-disable-next-line consistent-return
+  const viewAttachment = async (value) => {
+    try {
+      const filename = value;
+      const requestBody = { fileName: filename };
+      const response = await dowloadBrandingAssetService(user, requestBody);
+      console.log(response.data);
+
+      if (response.status === 200) {
+        // Convert the ArrayBuffer data to Base64
+        const base64String = arrayBufferToBase64(response.data);
+        return `data:image/jpeg;base64,${base64String}`; // Return the image data URL
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
+    }
+  };
+
+  // Helper function to convert ArrayBuffer to Base64
+  const arrayBufferToBase64 = (buffer) => {
+    const binary = String.fromCharCode.apply(null, new Uint8Array(buffer)); // Convert ArrayBuffer to binary string
+    return window.btoa(binary); // Convert binary string to Base64
+  };
+
   console.log(imageSrc);
 
   const handleClick = (event, name) => {
@@ -909,7 +921,7 @@ export default function ItemsDashBoard() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={filteredUsers.length} // Make sure to use filteredUsers here
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -918,7 +930,6 @@ export default function ItemsDashBoard() {
                   {showShops ? (
                     filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                       const { shop_id, shop_name, owner_name, contact_number, category } = row;
-
                       const selectedUser = selected.indexOf(shop_id) !== -1;
 
                       return (
@@ -962,15 +973,10 @@ export default function ItemsDashBoard() {
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
+                        <Paper sx={{ textAlign: 'center' }}>
                           <Typography variant="h6" paragraph>
                             Not found
                           </Typography>
-
                           <Typography variant="body2">
                             No results found for &nbsp;
                             <strong>&quot;{filterName}&quot;</strong>.
@@ -982,10 +988,11 @@ export default function ItemsDashBoard() {
                   </TableBody>
                 )}
               </Table>
+
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={USERLIST.length}
+                count={filteredUsers.length} // Make sure filteredUsers length is passed here
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -1138,52 +1145,49 @@ export default function ItemsDashBoard() {
                         <span className="visually-hidden">Next</span>
                       </button>
                     </div>
-                    {imageSrc.map((image, index) => {
-                      const record = images[index];
-
-                      return (
-                        <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
-                          <div style={carouselContentStyle}>
-                            <div className="carousel-item active">
+                    {imageSrc.length > 0 ? (
+                      imageSrc.map((src, index) => {
+                        const record = images[index]; // Get the metadata from the images array
+                        console.log(record);
+                        return (
+                          <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
+                            <div style={carouselContentStyle}>
                               <div>
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'flex-start',
-                                  }}
-                                >
+                                <div style={{ display: 'flex', flexDirection: 'row' }}>
                                   <div style={{ width: '50%' }}>
-                                    {/* <h5>Reviews</h5> */}
                                     <table>
-                                      <th>
-                                        <td style={tdStyling}>Reviews</td>
-                                      </th>
-
-                                      <tr>
-                                        <td style={tdStyling}>Review Status: </td>
-                                        <td style={tdStyling}>{record.review_status}</td>
-                                      </tr>
-
-                                      <tr>
-                                        <td style={tdStyling}>Created By: </td>
-                                        <td style={tdStyling}>{record.created_by}</td>
-                                      </tr>
-
-                                      <tr>
-                                        <td style={tdStyling}>Created On: </td>
-                                        <td style={tdStyling}>
-                                          {record.creation_date
-                                            ? new Date(record.creation_date).toLocaleDateString()
-                                            : null}
-                                        </td>
-                                      </tr>
-
-                                      <tr>
-                                        <td style={tdStyling}>Remarks: </td>
-                                        <td style={tdStyling}>{record.remarks}</td>
-                                      </tr>
+                                      <thead>
+                                        <tr>
+                                          <th style={tdStyling} colSpan={2}>
+                                            Reviews
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td style={tdStyling}>Review Status:</td>
+                                          <td style={tdStyling}>{record?.review_status ?? 'N/A'}</td>{' '}
+                                          {/* Use record here */}
+                                        </tr>
+                                        <tr>
+                                          <td style={tdStyling}>Created By:</td>
+                                          <td style={tdStyling}>{record?.created_by ?? 'N/A'}</td>{' '}
+                                          {/* Use record here */}
+                                        </tr>
+                                        <tr>
+                                          <td style={tdStyling}>Created On:</td>
+                                          <td style={tdStyling}>
+                                            {record?.creation_date
+                                              ? new Date(record.creation_date).toLocaleDateString()
+                                              : 'N/A'}
+                                          </td>{' '}
+                                          {/* Use record here */}
+                                        </tr>
+                                        <tr>
+                                          <td style={tdStyling}>Remarks:</td>
+                                          <td style={tdStyling}>{record?.remarks ?? 'N/A'}</td> {/* Use record here */}
+                                        </tr>
+                                      </tbody>
                                     </table>
                                   </div>
 
@@ -1196,22 +1200,33 @@ export default function ItemsDashBoard() {
                                         handleOpen();
                                       }
                                     }}
-                                    style={{ display: 'inline-block', cursor: 'pointer', width: '50%', height: '50%' }}
+                                    style={{
+                                      display: 'inline-block',
+                                      cursor: 'pointer',
+                                      width: '50%',
+                                      height: '50%',
+                                    }}
                                   >
-                                    <img
-                                      src={image}
-                                      className="card-img-top"
-                                      alt={`Slide ${index + 1}`}
-                                      style={{ height: '195px' }}
-                                    />
+                                    {src ? (
+                                      <img
+                                        src={src}
+                                        className="card-img-top"
+                                        alt={`Slide ${index + 1}`}
+                                        style={{ height: '195px' }}
+                                      />
+                                    ) : (
+                                      <p>Image not available</p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })
+                    ) : (
+                      <div>Loading...</div>
+                    )}
                   </div>
                 </>
               )}
@@ -1400,44 +1415,55 @@ export default function ItemsDashBoard() {
                               <div>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                                   <div style={{ width: '50%' }}>
-                                    {/* <h5>Reviews</h5> */}
+                                    {/* Reviews Table */}
                                     <table>
-                                      <th>
-                                        <td style={tdStyling}>Reviews</td>
-                                      </th>
-
-                                      <tr>
-                                        <td style={tdStyling}>Review Status: </td>
-                                        <td style={tdStyling}>{record.review_status}</td>
-                                      </tr>
-
-                                      <tr>
-                                        <td style={tdStyling}>Created By: </td>
-                                        <td style={tdStyling}>{record.created_by}</td>
-                                      </tr>
-
-                                      <tr>
-                                        <td style={tdStyling}>Created On: </td>
-                                        <td style={tdStyling}>
-                                          {record.creation_date
-                                            ? new Date(record.creation_date).toLocaleDateString()
-                                            : null}
-                                        </td>
-                                      </tr>
-
-                                      <tr>
-                                        <td style={tdStyling}>Remarks: </td>
-                                        <td style={tdStyling}>{record.remarks}</td>
-                                      </tr>
+                                      <thead>
+                                        <tr>
+                                          <td style={tdStyling} colSpan={2}>
+                                            Reviews
+                                          </td>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td style={tdStyling}>Review Status: </td>
+                                          <td style={tdStyling}>
+                                            {record?.review_status ? record.review_status : 'N/A'}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td style={tdStyling}>Created By: </td>
+                                          <td style={tdStyling}>{record?.created_by ? record.created_by : 'N/A'}</td>
+                                        </tr>
+                                        <tr>
+                                          <td style={tdStyling}>Created On: </td>
+                                          <td style={tdStyling}>
+                                            {record?.creation_date
+                                              ? new Date(record.creation_date).toLocaleDateString()
+                                              : 'N/A'}
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td style={tdStyling}>Remarks: </td>
+                                          <td style={tdStyling}>{record?.remarks || 'N/A'}</td>
+                                        </tr>
+                                      </tbody>
                                     </table>
                                   </div>
 
-                                  <img
-                                    src={image}
-                                    className="card-img-top"
-                                    alt={`Slide ${index + 1}`}
-                                    style={{ height: '494px' }}
-                                  />
+                                  {/* Image Rendering */}
+                                  <div style={{ width: '50%' }}>
+                                    {image ? (
+                                      <img
+                                        src={image}
+                                        className="card-img-top"
+                                        alt={`Slide ${index + 1}`}
+                                        style={{ height: '494px' }}
+                                      />
+                                    ) : (
+                                      <p>Image not available</p> // Display fallback message if image is not available
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>

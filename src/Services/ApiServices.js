@@ -2740,7 +2740,7 @@ export const postSKUService = async (bodyInfo) => {
 
 export const getSoSalesTargetIncentiveService = async () => {
   try {
-    return await axios.get(`${usersUrl}salesTargetIncentiveView/`);
+    return await axios.get(`${usersUrl}salesTargetIncentiveView`);
   } catch (err) {
     console.log(err.message);
 
@@ -2888,6 +2888,80 @@ export const getSalesTargetSKUFilterByToDateService = async (loginToken, request
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveRecipientGroupsService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveRecipientGroups/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllIncentiveTypesService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentiveTypes/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveTypesService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveTypes/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllIncentiveDistributionService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentivedistributionall/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveDistributionService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentivedistributionall/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getAllIncentiveAchievementSlabService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentiveAchievementSlabAll/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveAchievementSlabService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveAchievementSlabAll/add`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 

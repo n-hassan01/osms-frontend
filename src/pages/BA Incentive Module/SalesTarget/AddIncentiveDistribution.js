@@ -12,10 +12,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 import {
-  getAllCustomerService,
-  getPerAllPeoplesDetails,
-  getUserProfileDetails,
-  postIncentiveRecipientsService,
+    getAllCustomerService,
+    getAllIncentiveDistributionService,
+    getUserProfileDetails,
+    postIncentiveDistributionService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 // styles
@@ -58,7 +58,7 @@ export default function AddSalesTarget() {
     async function fetchData() {
       try {
         if (account) {
-          const response = await getPerAllPeoplesDetails();
+          const response = await getAllIncentiveDistributionService();
           console.log(response.data);
 
           if (response.status === 200) {
@@ -100,8 +100,9 @@ export default function AddSalesTarget() {
 
   const [fnduser, setFnduser] = useState([
     {
+      custGroupId: '',
       recipientGroupsId: '',
-      recipientGroupsName: '',
+      incentivePct: '',
     },
   ]);
   const handleMenuChange = (index, name, value) => {
@@ -172,12 +173,12 @@ export default function AddSalesTarget() {
     setInputValue(inputValue);
   };
 
-  const filteredUsersOptions = userList
-    .filter((option) => option.full_name.toLowerCase().includes(inputValue.toLowerCase()))
-    .map((option) => ({
-      value: option.employee_number,
-      label: option.full_name,
-    }));
+  //   const filteredUsersOptions = userList
+  //     .filter((option) => option.recipient_groups_id.toLowerCase().includes(inputValue.toLowerCase()))
+  //     .map((option) => ({
+  //       value: option.employee_number,
+  //       label: option.recipient_groups_id,
+  //     }));
 
   const options = [
     { value: 1, label: 'Admin' },
@@ -235,31 +236,36 @@ export default function AddSalesTarget() {
       // const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
 
       const requestBody = {
+        custGroupId: fnduser[0].custGroupId,
         recipientGroupsId: fnduser[0].recipientGroupsId,
-        recipientGroupsName: fnduser[0].recipientGroupsName,
+        incentivePct: fnduser[0].incentivePct,
         lastUpdateDate: date,
         lastUpdatedBy: account.user_id,
         creationDate: date,
         createdBy: account.user_id,
         lastUpdateLogin: account.user_id,
       };
-
       console.log(requestBody);
 
-      const response = await postIncentiveRecipientsService(requestBody);
-      console.log('Pass to home after request ');
-      alert('Success');
-      if (response.status === 200) {
-        handleClose();
+      try {
+        const postData = await postIncentiveDistributionService(requestBody);
+
+        if (postData.status === 200) {
+          alert(`Successfully added.`);
+          handleClose();
+        } else {
+          console.error(`Failed to save row with cust_group_id`);
+        }
+      } catch (error) {
+        console.error(`Error saving row with cust_group_id`, error);
       }
-    } catch (err) {
-      console.log(err.message);
-      alert('Process failed! Try again later');
+    } catch (error) {
+      console.error(`Error saving `, error);
     }
   };
 
   const handleClose = () => {
-    navigate('/dashboard/viewIncentiveRecipient');
+    navigate('/dashboard/viewincentivedistributionall');
 
     setOpen(false);
   };
@@ -387,7 +393,7 @@ export default function AddSalesTarget() {
               }
             }}
           >
-            Upload (Incentive Recipient){' '}
+            Upload (Incentive Distribution){' '}
           </Button>
         </Grid>
 
@@ -398,10 +404,13 @@ export default function AddSalesTarget() {
                 <thead>
                   <tr>
                     <th>
+                      Cust Group Id <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th>
                       Recipient Groups Id <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Recipient Groups Name <span style={{ color: 'red' }}>*</span>
+                      Incentive Pct <span style={{ color: 'red' }}>*</span>
                     </th>
                   </tr>
                 </thead>
@@ -409,6 +418,14 @@ export default function AddSalesTarget() {
                   {showMenuLines &&
                     fnduser.map((row, index) => (
                       <tr key={index}>
+                        <td style={{ width: '700px' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="custGroupId"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
                         <td style={{ width: '700px' }}>
                           <input
                             type="number"
@@ -422,7 +439,7 @@ export default function AddSalesTarget() {
                           <input
                             type="text"
                             className="form-control"
-                            name="recipientGroupsName"
+                            name="incentivePct"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
