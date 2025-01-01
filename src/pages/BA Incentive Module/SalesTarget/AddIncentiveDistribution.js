@@ -12,10 +12,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 import {
-    getAllCustomerService,
-    getAllIncentiveDistributionService,
-    getUserProfileDetails,
-    postIncentiveDistributionService,
+  getAllCustomerService,
+  getAllIncentiveDistributionService,
+  getUserProfileDetails,
+  postIncentiveDistributionService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 // styles
@@ -121,8 +121,9 @@ export default function AddSalesTarget() {
       setFnduser([
         ...fnduser,
         {
+          custGroupId: '',
           recipientGroupsId: '',
-          recipientGroupsName: '',
+          incentivePct: '',
         },
       ]);
       console.log(fnduser);
@@ -232,35 +233,52 @@ export default function AddSalesTarget() {
   const handleClick = async () => {
     console.log(fnduser);
 
+    const failedEntries = []; // To track failed requests
+
     try {
-      // const filteredArray = fnduser.filter((item) => Object.values(item).some((value) => value !== ''));
+      const date = new Date().toISOString(); // Assuming date is today's date
 
-      const requestBody = {
-        custGroupId: fnduser[0].custGroupId,
-        recipientGroupsId: fnduser[0].recipientGroupsId,
-        incentivePct: fnduser[0].incentivePct,
-        lastUpdateDate: date,
-        lastUpdatedBy: account.user_id,
-        creationDate: date,
-        createdBy: account.user_id,
-        lastUpdateLogin: account.user_id,
-      };
-      console.log(requestBody);
+      fnduser.forEach(async (item, index) => {
+        if (Object.values(item).some((value) => value !== '')) {
+          const requestBody = {
+            custGroupId: 17,
+            recipientGroupsId: item.recipientGroupsId,
+            incentivePct: item.incentivePct,
+            lastUpdateDate: date,
+            lastUpdatedBy: account.user_id,
+            creationDate: date,
+            createdBy: account.user_id,
+            lastUpdateLogin: account.user_id,
+          };
 
-      try {
-        const postData = await postIncentiveDistributionService(requestBody);
+          console.log(`Request Body for entry ${index + 1}:`, requestBody);
 
-        if (postData.status === 200) {
-          alert(`Successfully added.`);
-          handleClose();
+          try {
+            const postData = await postIncentiveDistributionService(requestBody);
+
+            if (postData.status === 200) {
+              console.log(`Successfully added entry ${index + 1}.`);
+              handleClose();
+            } else {
+              console.error(`Failed to save entry ${index + 1}.`);
+              failedEntries.push(item);
+            }
+          } catch (error) {
+            console.error(`Error saving entry ${index + 1}:`, error);
+            failedEntries.push(item);
+          }
         } else {
-          console.error(`Failed to save row with cust_group_id`);
+          console.warn(`Skipping invalid entry ${index + 1}:`, item);
         }
-      } catch (error) {
-        console.error(`Error saving row with cust_group_id`, error);
+      });
+
+      if (failedEntries.length > 0) {
+        alert(`Failed to save some entries. Check console for details.`);
+      } else {
+        alert(`All entries successfully added.`);
       }
     } catch (error) {
-      console.error(`Error saving `, error);
+      console.error(`Error processing entries:`, error);
     }
   };
 
@@ -367,15 +385,15 @@ export default function AddSalesTarget() {
           </Typography> */}
         {/* </Stack> */}
         <Grid item xs={2}>
-          {/* <Button
+          <Button
             className="whiteSpace-nowrap"
             style={{ marginRight: '10px', fontWeight: 'bold', color: 'black', backgroundColor: 'lightgray' }}
             onClick={() => {
               handleAddRow();
             }}
           >
-            Add Sales 
-          </Button> */}
+            Add More
+          </Button>
 
           <Button
             className="whiteSpace-nowrap"
@@ -384,7 +402,7 @@ export default function AddSalesTarget() {
           >
             Cancel
           </Button>
-          <Button
+          {/* <Button
             style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
             onClick={handleOpenDialog}
             onKeyDown={(e) => {
@@ -394,7 +412,7 @@ export default function AddSalesTarget() {
             }}
           >
             Upload (Incentive Distribution){' '}
-          </Button>
+          </Button> */}
         </Grid>
 
         <div>
@@ -403,9 +421,6 @@ export default function AddSalesTarget() {
               <table className="table table-bordered table-striped table-highlight">
                 <thead>
                   <tr>
-                    <th>
-                      Cust Group Id <span style={{ color: 'red' }}>*</span>
-                    </th>
                     <th>
                       Recipient Groups Id <span style={{ color: 'red' }}>*</span>
                     </th>
@@ -418,14 +433,6 @@ export default function AddSalesTarget() {
                   {showMenuLines &&
                     fnduser.map((row, index) => (
                       <tr key={index}>
-                        <td style={{ width: '700px' }}>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="custGroupId"
-                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
-                          />
-                        </td>
                         <td style={{ width: '700px' }}>
                           <input
                             type="number"

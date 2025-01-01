@@ -12,10 +12,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 import {
-  getAllCustomerService,
-  getPerAllPeoplesDetails,
-  getUserProfileDetails,
-  postIncentiveRecipientsService,
+    getAllCustomerService,
+    getAllIncentiveAchievementSlabService,
+    getUserProfileDetails,
+    postIncentiveAchievementSlabService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 // styles
@@ -58,7 +58,7 @@ export default function AddSalesTarget() {
     async function fetchData() {
       try {
         if (account) {
-          const response = await getPerAllPeoplesDetails();
+          const response = await getAllIncentiveAchievementSlabService();
           console.log(response.data);
 
           if (response.status === 200) {
@@ -100,8 +100,11 @@ export default function AddSalesTarget() {
 
   const [fnduser, setFnduser] = useState([
     {
-      recipientGroupsId: '',
-      recipientGroupsName: '',
+      custGroupId: '',
+      achievementRangeId: '',
+      achievementStartPct: '',
+      achievementEndPct: '',
+      totalIncentivePct: '',
     },
   ]);
   const handleMenuChange = (index, name, value) => {
@@ -120,8 +123,10 @@ export default function AddSalesTarget() {
       setFnduser([
         ...fnduser,
         {
-          recipientGroupsId: '',
-          recipientGroupsName: '',
+          achievementRangeId: '',
+          achievementStartPct: '',
+          achievementEndPct: '',
+          totalIncentivePct: '',
         },
       ]);
       console.log(fnduser);
@@ -172,12 +177,12 @@ export default function AddSalesTarget() {
     setInputValue(inputValue);
   };
 
-  const filteredUsersOptions = userList
-    .filter((option) => option.full_name.toLowerCase().includes(inputValue.toLowerCase()))
-    .map((option) => ({
-      value: option.employee_number,
-      label: option.full_name,
-    }));
+  //   const filteredUsersOptions = userList
+  //     .filter((option) => option.recipient_groups_id.toLowerCase().includes(inputValue.toLowerCase()))
+  //     .map((option) => ({
+  //       value: option.employee_number,
+  //       label: option.recipient_groups_id,
+  //     }));
 
   const options = [
     { value: 1, label: 'Admin' },
@@ -234,13 +239,17 @@ export default function AddSalesTarget() {
     const failedEntries = []; // To track failed requests
 
     try {
-      const date = new Date().toISOString(); // Assuming today's date
+      const date = new Date().toISOString(); // Assuming date is today's date
+      const account = { user_id: '12345' }; // Replace this with actual account info if needed
 
       fnduser.forEach(async (item, index) => {
         if (Object.values(item).some((value) => value !== '')) {
           const requestBody = {
-            recipientGroupsId: item.recipientGroupsId,
-            recipientGroupsName: item.recipientGroupsName,
+            custGroupId: 17,
+            achievementRangeId: item.achievementRangeId,
+            achievementStartPct: item.achievementStartPct,
+            achievementEndPct: item.achievementEndPct,
+            totalIncentivePct: item.totalIncentivePct,
             lastUpdateDate: date,
             lastUpdatedBy: account.user_id,
             creationDate: date,
@@ -251,9 +260,9 @@ export default function AddSalesTarget() {
           console.log(`Request Body for entry ${index + 1}:`, requestBody);
 
           try {
-            const response = await postIncentiveRecipientsService(requestBody);
+            const postData = await postIncentiveAchievementSlabService(requestBody);
 
-            if (response.status === 200) {
+            if (postData.status === 200) {
               console.log(`Successfully added entry ${index + 1}.`);
               handleClose();
             } else {
@@ -276,12 +285,11 @@ export default function AddSalesTarget() {
       }
     } catch (error) {
       console.error(`Error processing entries:`, error);
-      alert('Process failed! Try again later');
     }
   };
 
   const handleClose = () => {
-    navigate('/dashboard/viewIncentiveRecipient');
+    navigate('/dashboard/viewincentiveachievementslaball');
 
     setOpen(false);
   };
@@ -356,11 +364,10 @@ export default function AddSalesTarget() {
           creationDate: date,
           createdBy: account.user_id,
           lastUpdateLogin: account.user_id,
-          custgroupid: fnduser[0].customerGroupId,
-          custAccountId: fnduser[0].customerNumber,
-          startDate: fnduser[0].start_date,
-          endDate: fnduser[0].end_date,
-          amount: fnduser[0].amount,
+          achievementRangeId: fnduser[0].achievementRangeId,
+          achievementStartPct: fnduser[0].achievementStartPct,
+          achievementEndPct: fnduser[0].achievementEndPct,
+          totalIncentivePct: fnduser[0].totalIncentivePct,
         };
         postData = await postIncentiveRecipientsService(requestBody);
       }
@@ -409,7 +416,7 @@ export default function AddSalesTarget() {
               }
             }}
           >
-            Upload (Incentive Recipient){' '}
+            Upload (Incentive Distribution){' '}
           </Button> */}
         </Grid>
 
@@ -420,10 +427,16 @@ export default function AddSalesTarget() {
                 <thead>
                   <tr>
                     <th>
-                      Recipient Groups Id <span style={{ color: 'red' }}>*</span>
+                      Achievement Range Id <span style={{ color: 'red' }}>*</span>
                     </th>
                     <th>
-                      Recipient Groups Name <span style={{ color: 'red' }}>*</span>
+                      Achievement Start Pct <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th>
+                      Achievement End Pct <span style={{ color: 'red' }}>*</span>
+                    </th>
+                    <th>
+                      Total Incentive Pct <span style={{ color: 'red' }}>*</span>
                     </th>
                   </tr>
                 </thead>
@@ -435,7 +448,15 @@ export default function AddSalesTarget() {
                           <input
                             type="number"
                             className="form-control"
-                            name="recipientGroupsId"
+                            name="achievementRangeId"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td style={{ width: '700px' }}>
+                          <input
+                            type="number"
+                            className="form-control"
+                            name="achievementStartPct"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>
@@ -444,7 +465,15 @@ export default function AddSalesTarget() {
                           <input
                             type="text"
                             className="form-control"
-                            name="recipientGroupsName"
+                            name="achievementEndPct"
+                            onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
+                          />
+                        </td>
+                        <td style={{ width: '700px' }}>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="totalIncentivePct"
                             onChange={(e) => handleMenuChange(index, e.target.name, e.target.value)}
                           />
                         </td>

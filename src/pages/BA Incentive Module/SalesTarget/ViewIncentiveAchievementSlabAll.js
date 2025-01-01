@@ -13,20 +13,20 @@ import { useNavigate } from 'react-router-dom';
 import { read, utils } from 'xlsx';
 // @mui
 import {
-    Button,
-    Card,
-    Container,
-    MenuItem,
-    Paper,
-    Popover,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TablePagination,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  Container,
+  MenuItem,
+  Paper,
+  Popover,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TablePagination,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -39,11 +39,11 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-    getAllIncentiveAchievementSlabService,
-    getUserProfileDetails,
-    getUsers,
-    postIncentiveAchievementSlabService,
-    updateUser,
+  getAllIncentiveAchievementSlabService,
+  getUserProfileDetails,
+  getUsers,
+  postIncentiveAchievementSlabService,
+  updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 import { UserListHead } from '../../../sections/@dashboard/user';
@@ -361,7 +361,7 @@ export default function ViewIncentiveAchieveSlabAll() {
         for (const row of exceldata) {
           const requestBody = {
             achievementRangeId: row.achievement_range_id,
-            custGroupId: row.cust_group_id,
+            custGroupId: 17,
             achievementStartPct: row.achievement_start_pct,
             achievementEndPct: row.achievement_end_pct,
             totalIncentivePct: row.total_incentive_pct,
@@ -411,7 +411,7 @@ export default function ViewIncentiveAchieveSlabAll() {
             Incentive Achievement Slab
           </Typography>
           <div>
-            <Button
+            {/* <Button
               variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '10px' }}
               // color="primary"
@@ -419,18 +419,18 @@ export default function ViewIncentiveAchieveSlabAll() {
               onClick={submitUsers}
             >
               Submit
-            </Button>
-            {/* <Button
+            </Button> */}
+            <Button
               variant="text"
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px' }}
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/dashboard/addIncentiveRecipient');
+                navigate('/dashboard/addIncentiveRecipientSlab');
               }}
             >
-              Add Incentive Recipient
-            </Button> */}
+              Add Incentive Achievement Slab
+            </Button>
             <Button
               style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
               onClick={handleOpenDialog}
