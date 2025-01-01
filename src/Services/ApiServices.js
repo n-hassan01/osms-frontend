@@ -2916,6 +2916,27 @@ export const getAllIncentiveTypesService = async () => {
   }
 };
 
+export const getAllIncentiveConditionsService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentiveConditions/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveConditionService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveConditions/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const postIncentiveTypesService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
