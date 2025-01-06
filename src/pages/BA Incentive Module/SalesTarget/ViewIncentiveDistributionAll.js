@@ -39,10 +39,10 @@ import FndUserToollist from '../../../sections/@dashboard/user/fndUserToollist';
 // import { getLoggedInUserDetails, updateUserStatus } from '../Services/ApiServices';
 //  import { getUsersDetailsService } from '../Services/GetAllUsersDetails';
 import {
-  getAllRecipientsService,
+  getAllIncentiveDistributionService,
   getUserProfileDetails,
   getUsers,
-  postIncentiveRecipientGroupsService,
+  postIncentiveDistributionService,
   updateUser,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
@@ -54,8 +54,9 @@ import '../../../_css/Utils.css';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'recipient_groups_id', label: 'Recipient Groups ID', alignRight: false },
-  { id: 'recipient_groups_name', label: 'Recipient Group Name', alignRight: false },
+  { id: 'cust_group_id', label: 'Cust Group Id', alignRight: false },
+  { id: 'recipient_groups_id', label: 'Recipient Groups Id', alignRight: false },
+  { id: 'incentive_pct', label: 'Incentive Pct', alignRight: false },
 ];
 const selectedUsers = [];
 
@@ -85,12 +86,12 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.recipient_groups_name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.cust_group_id.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function ShowFndUser() {
+export default function ViewIncentiveDistributionAll() {
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -136,7 +137,7 @@ export default function ShowFndUser() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllRecipientsService();
+        const response = await getAllIncentiveDistributionService();
         console.log(response.data);
 
         if (response) setRecipients(response.data);
@@ -149,22 +150,6 @@ export default function ShowFndUser() {
   }, []);
   console.log(recipients);
 
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       try {
-  //         const usersDetails = await getUsers();
-
-  //         if (usersDetails) setRecipients(usersDetails.data.data);
-  //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
-  //       }
-  //     }
-
-  //     fetchData();
-  //   }, []);
-  //   console.log(recipients);
-
-  // selecting status
   const [filterDetails, setFilterDetails] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
   const [inputValue, setInputValue] = useState('');
@@ -387,8 +372,9 @@ export default function ShowFndUser() {
       if (exceldata && Array.isArray(exceldata)) {
         for (const row of exceldata) {
           const requestBody = {
+            custGroupId: row.cust_group_id,
             recipientGroupsId: row.recipient_groups_id,
-            recipientGroupsName: row.recipient_groups_name,
+            incentivePct: row.incentive_pct,
             lastUpdateDate: date,
             lastUpdatedBy: account.user_id,
             creationDate: date,
@@ -398,15 +384,15 @@ export default function ShowFndUser() {
           console.log(requestBody);
 
           try {
-            const postData = await postIncentiveRecipientGroupsService(requestBody);
+            const postData = await postIncentiveDistributionService(requestBody);
 
             if (postData.status === 200) {
-              console.log(`Row with recipient_groups_id ${row.recipient_groups_id} successfully added.`);
+              console.log(`Row with cust_group_id ${row.cust_group_id} successfully added.`);
             } else {
-              console.error(`Failed to save row with recipient_groups_id ${row.recipient_groups_id}`);
+              console.error(`Failed to save row with cust_group_id ${row.cust_group_id}`);
             }
           } catch (error) {
-            console.error(`Error saving row with recipient_groups_id ${row.recipient_groups_id}:`, error);
+            console.error(`Error saving row with cust_group_id ${row.cust_group_id}:`, error);
           }
         }
       }
@@ -432,7 +418,7 @@ export default function ShowFndUser() {
       <Container className="indexing fullWidth">
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
           <Typography variant="h4" gutterBottom>
-            Incentive Recipient Groups
+            Incentive Distribution
           </Typography>
           <div>
             {/* <Button
@@ -450,10 +436,10 @@ export default function ShowFndUser() {
               color="primary"
               startIcon={<Iconify icon="eva:plus-fill" />}
               onClick={() => {
-                navigate('/dashboard/addIncentiveRecipient');
+                navigate('/dashboard/addincentivedistribution');
               }}
             >
-              Add Incentive Recipient
+              Add Incentive Distribution
             </Button>
             <Button
               style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
@@ -464,7 +450,7 @@ export default function ShowFndUser() {
                 }
               }}
             >
-              Upload (Incentive Groups){' '}
+              Upload (Incentive Distribution){' '}
             </Button>
           </div>
         </Stack>
@@ -492,17 +478,17 @@ export default function ShowFndUser() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { recipient_groups_name, start_date, end_date, recipient_groups_id } = row;
-                    const selectedUser = selected.indexOf(recipient_groups_name) !== -1;
+                    const { cust_group_id, recipient_groups_id, incentive_pct } = row;
+                    const selectedUser = selected.indexOf(cust_group_id) !== -1;
 
                     return (
-                      <TableRow hover key={recipient_groups_id} tabIndex={-1} role="checkbox">
+                      <TableRow hover key={cust_group_id} tabIndex={-1} role="checkbox">
                         {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, user_id)} />
                         </TableCell> */}
+                        <TableCell align="left">{cust_group_id}</TableCell>
                         <TableCell align="left">{recipient_groups_id}</TableCell>
-
-                        <TableCell align="left">{recipient_groups_name}</TableCell>
+                        <TableCell align="left">{incentive_pct}</TableCell>
 
                         <Popover
                           open={Boolean(open)}
