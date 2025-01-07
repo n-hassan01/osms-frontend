@@ -2989,3 +2989,28 @@ export const postIncentiveAchievementSlabService = async (bodyInfo) => {
     return err.message;
   }
 };
+
+// BA testing
+export const getSalesDetailsBATokenService = async () => {
+  try {
+    return await axios.post(`${usersUrl}baSalesAllData/token`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+export const getBASalesDetailsTokenDateService = async (loginToken) => {
+  try {
+    // Ensure usersUrl ends with a trailing slash to avoid concatenation issues
+    const response = await axios.get(`${usersUrl}baSalesAllData`, {
+      params: { loginToken }, // Query parameters
+    });
+    console.log(response);
+
+    return response; // Return the data portion of the response
+  } catch (err) {
+    console.error('Error in getBASalesDetailsTokenDateService:', err.message);
+    throw err; // Re-throw the error for the caller to handle
+  }
+};

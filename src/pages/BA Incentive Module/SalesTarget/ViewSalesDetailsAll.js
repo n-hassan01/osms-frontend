@@ -4,7 +4,6 @@
 /* eslint-disable no-irregular-whitespace */
 /* eslint-disable no-undef */
 /* eslint-disable camelcase */
-import { filter } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -43,6 +42,8 @@ import BaSalesIncentiveFilter from '../../../sections/@dashboard/baIncentiveTool
 import {
   getAllBankDepositsForAccountsService,
   getAllSalesDetails,
+  getBASalesDetailsTokenDateService,
+  getSalesDetailsBATokenService,
   getSalesDetailsFilterByDateService,
   getSalesDetailsFilterByFromDateService,
   getSalesDetailsFilterByToDateService,
@@ -60,13 +61,16 @@ import '../../../_css/Utils.css';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'order_date', label: 'Order Date', alignRight: false },
-  { id: 'order_number', label: 'Order Number', alignRight: false },
-  { id: 'cust_account_id', label: 'Cust Account Id', alignRight: false },
-  { id: 'cust_group_id', label: 'Cust Group Id', alignRight: false },
-  { id: 'inventory_item_id', label: 'Inventory Item Id', alignRight: false },
-  { id: 'quantity', label: 'Quantity', alignRight: false },
-  { id: 'amount', label: 'Amount', alignRight: false },
+  { id: 'CUSTOMER_NAME', label: 'CUSTOMER NAME', alignRight: false },
+  { id: 'DISC_AMT', label: 'DISC AMT', alignRight: false },
+  { id: 'INVOICE_DT', label: ' INVOICE DT', alignRight: false },
+  { id: 'INVOICE_NO', label: 'INVOICE NO', alignRight: false },
+  { id: 'MOBILE_NO', label: 'MOBILE NO', alignRight: false },
+  { id: 'MRP', label: 'MRP', alignRight: false },
+  { id: 'NET_AMT', label: 'NET AMT', alignRight: false },
+  { id: 'SQTY', label: 'SQTY', alignRight: false },
+  { id: 'STYLE_CODE', label: 'STYLE CODE', alignRight: false },
+  { id: 'TIME', label: 'TIME', alignRight: false },
 ];
 const selectedUsers = [];
 
@@ -88,16 +92,28 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
+function applySortFilter(response, comparator, query) {
+  // Check if response.data and response.data.lists exist
+  if (!response || !response.data || !Array.isArray(response.data.lists)) {
+    console.error("Invalid response format or 'lists' is not available.");
+    return []; // Return an empty array if lists are not available
+  }
+
+  const array = response.data.lists; // Extract the array of data
+
+  console.log(array);
+
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   if (query) {
-    return filter(array, (_user) => _user.user_name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return array.filter((_user) => _user.CUSTOMER_NAME.toLowerCase().includes(query.toLowerCase()));
   }
+
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -193,13 +209,37 @@ export default function ViewSalesDetails() {
   //   fetchData();
   // }, []);
   // const [salesDetailsData, setSalesDetailsData] = useState([]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const response = await getAllSalesDetails();
+  //       console.log(response.data);
+
+  //       if (response) setSalesDetailsData(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
+
+  //   fetchData();
+  // }, []);
+  // console.log(salesDetailsData);
+  const [baSalesDetailsService, setBaSalesDetailsService] = useState([]);
+  const [baTokenService, setBaTokenService] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await getAllSalesDetails();
-        console.log(response.data);
+        const tokenDetails = await getSalesDetailsBATokenService();
+        console.log(tokenDetails);
 
-        if (response) setSalesDetailsData(response.data);
+        if (tokenDetails) {
+          console.log('Okendetails', tokenDetails?.data?.token);
+          // return;
+          const salesDetails = await getBASalesDetailsTokenDateService(tokenDetails?.data?.token);
+          console.log(salesDetails);
+          await setBaSalesDetailsService(salesDetails);
+        }
       } catch (error) {
         console.error('Error fetching account details:', error);
       }
@@ -207,22 +247,200 @@ export default function ViewSalesDetails() {
 
     fetchData();
   }, []);
-  console.log(salesDetailsData);
+  console.log(baTokenService);
 
-  //   useEffect(() => {
-  //     async function fetchData() {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const tokenDetails = await getSalesDetailsBATokenService();
+        console.log(tokenDetails);
+
+        if (tokenDetails) {
+          console.log('Okendetails', tokenDetails?.data?.token);
+          const salesDetails = await getBASalesDetailsTokenDateService(tokenDetails?.data?.token);
+          console.log(salesDetails);
+          setBaSalesDetailsService(salesDetails);
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+  const formatToSQLDate = (dateStr) => {
+    const [day, month, year] = dateStr.split('.'); // Split "03.01.2025" into [day, month, year]
+    console.log(`${year}-${month}-${day}`);
+
+    return `${year}-${month}-${day}`; // Return "2025-01-03"
+  };
+  const handleSaveData = async (event, name) => {
+    console.log(baSalesDetailsService);
+
+    // Ensure baSalesDetailsService.data exists and has the 'lists' property
+    if (baSalesDetailsService && baSalesDetailsService.data && Array.isArray(baSalesDetailsService.data.lists)) {
+      const salesList = baSalesDetailsService.data.lists; // Access the 'lists' property which contains the actual data
+      console.log(salesList);
+
+      try {
+        // Mapping the salesList to add the necessary fields
+        const formattedSalesList = salesList.map((row) => ({
+          order_date: formatToSQLDate(row.INVOICE_DT), // Convert date to the SQL-compatible format
+          order_number: row.INVOICE_NO, // Integer
+          cust_account_id: 3100000001, // Default value for cust_account_id (bigint)
+          cust_group_id: 19, // Default value for cust_group_id (Integer)
+          inventory_item_id: row.STYLE_CODE, // Ensure STYLE_CODE is a valid number or convert if necessary
+          quantity: row.SQTY, // Quantity (Integer)
+          unit_price: parseFloat(row.MRP).toFixed(2), // Unit price as a float with two decimals
+          amount: row.NET_AMT || 0, // Default to 0 if NET_AMT is missing
+          last_update_date: new Date().toISOString(), // Current date in ISO format
+          last_updated_by: account.user_id, // User ID of the account
+          creation_date: new Date().toISOString(), // Current date in ISO format
+          created_by: account.user_id, // User ID of the account
+          last_update_login: account.user_id, // User ID of the account
+          emp_code: row.emp_code || '', // Use empty string if emp_code is missing
+          invoiceDt: formatToSQLDate(row.INVOICE_DT), // Same as order_date for invoice
+          invoiceTime: row.TIME || '', // Invoice time, default to empty string if not available
+          invoiceNo: row.INVOICE_NO, // Invoice number
+          customerName: row.CUSTOMER_NAME || '', // Customer name, default to empty string if not available
+          mobileNo: row.MOBILE_NO || '', // Mobile number, default to empty string if not available
+          styleCode: row.STYLE_CODE || '', // Style code, default to empty string if not available
+          netAmt: row.NET_AMT || 0, // Net amount, default to 0 if not available
+          discAmt: row.DISC_AMT || 0, // Discount amount, default to 0 if not available
+        }));
+        console.log(formattedSalesList);
+
+        const requestBody = {
+          content: formattedSalesList,
+        };
+
+        await postSalesDetailsService(requestBody);
+
+        // handleClose();
+        alert('baSalesDetailsService successfully added!');
+      } catch (error) {
+        console.error('Error adding baSalesDetailsService:', error);
+        alert('Error adding baSalesDetailsService. Please check the console for details.');
+      }
+    } else {
+      // handleClose();
+      alert('Process failed! No customer data found or data format is incorrect.');
+    }
+
+    // if (baSalesDetailsService) {
+    //   try {
+    //     for (const row of baSalesDetailsService.data.lists) {
+    //       const requestBody = {
+    //         order_date: formatToSQLDate(row.INVOICE_DT), // Assuming `date` is in the correct format (e.g., YYYY-MM-DD)
+    //         order_number: row.INVOICE_NO, // Integer
+    //         cust_account_id: 3100000001, // bigint, default to 0 if not available
+    //         cust_group_id: 19, // Integer, using a constant for cust_group_id
+    //         inventory_item_id: row.STYLE_CODE, // Integer, ensure STYLE_CODE is a valid number, or convert if necessary
+    //         quantity: row.SQTY, // Integer
+    //         unit_price: parseFloat(row.MRP).toFixed(2), // Numeric(10, 2) - Ensure unit_price is a float with two decimals
+    //         amount: row.NET_AMT || 0, // Bigint, default to 0 if NET_AMT is missing
+    //         last_update_date: date, // Date
+    //         last_updated_by: account.user_id, // Integer (user ID)
+    //         creation_date: date, // Date
+    //         created_by: account.user_id, // Integer (user ID)
+    //         last_update_login: account.user_id, // Integer (user ID)
+    //         emp_code: row.emp_code || '', // Text, default to empty string if not available
+    //         invoiceDt: formatToSQLDate(row.INVOICE_DT), // Date
+    //         invoiceTime: row.TIME, // Time (without time zone)
+    //         invoiceNo: row.INVOICE_NO, // Integer
+    //         customerName: row.CUSTOMER_NAME || '', // Character varying, default to empty string if not available
+    //         mobileNo: row.MOBILE_NO ? parseInt(row.MOBILE_NO.replace(/\D/g, ''), 10) : null, // Character varying, default to empty string if not available
+    //         styleCode: row.STYLE_CODE, // Character varying
+    //         netAmt: row.NET_AMT, // Numeric (can be float, no need for additional formatting)
+    //         discAmt: row.DISC_AMT, // Numeric (can be float, no need for additional formatting)
+    //       };
+
+    //       console.log(requestBody);
+
+    //       try {
+    //         const postData = await postSalesDetailsService(requestBody);
+
+    //         if (postData.status === 200) {
+    //           console.log(` successfully added.`);
+    //         } else {
+    //           console.error(`Failed to save`);
+    //         }
+    //       } catch (error) {
+    //         console.error(`Error saving row `, error);
+    //       }
+    //     }
+    //     alert('Submitted Successfully.');
+    //     // window.location.reload();
+    //   } catch (error) {
+    //     console.error('Error during posting data:', error);
+    //   }
+    // }
+  };
+
+  // Effect to handle POST requests after data is loaded
+  // useEffect(() => {
+  //   const postDataIfAvailable = async () => {
+  //     if (baSalesDetailsService && Array.isArray(baSalesDetailsService) && baSalesDetailsService.length > 0) {
   //       try {
-  //         const usersDetails = await getUsers();
+  //         for (const row of baSalesDetailsService) {
+  //           const requestBody = {
+  //             order_date: row.INVOICE_DT, // Assuming `date` is in the correct format (e.g., YYYY-MM-DD)
+  //             order_number: row.INVOICE_NO, // Integer
+  //             cust_account_id: row.STYLE_CODE || 0, // bigint, default to 0 if not available
+  //             cust_group_id: 19, // Integer, using a constant for cust_group_id
+  //             inventory_item_id: row.STYLE_CODE, // Integer, ensure STYLE_CODE is a valid number, or convert if necessary
+  //             quantity: row.SQTY, // Integer
+  //             unit_price: parseFloat(row.MRP).toFixed(2), // Numeric(10, 2) - Ensure unit_price is a float with two decimals
+  //             amount: row.NET_AMT || 0, // Bigint, default to 0 if NET_AMT is missing
+  //             last_update_date: date, // Date
+  //             last_updated_by: account.user_id, // Integer (user ID)
+  //             creation_date: date, // Date
+  //             created_by: account.user_id, // Integer (user ID)
+  //             last_update_login: account.user_id, // Integer (user ID)
+  //             emp_code: row.emp_code || '', // Text, default to empty string if not available
+  //             invoiceDt: row.INVOICE_DT, // Date
+  //             invoiceTime: row.TIME, // Time (without time zone)
+  //             invoiceNo: row.INVOICE_NO, // Integer
+  //             customerName: row.CUSTOMER_NAME || '', // Character varying, default to empty string if not available
+  //             mobileNo: row.MOBILE_NO || '', // Character varying, default to empty string if not available
+  //             styleCode: row.STYLE_CODE, // Character varying
+  //             netAmt: row.NET_AMT, // Numeric (can be float, no need for additional formatting)
+  //             discAmt: row.DISC_AMT, // Numeric (can be float, no need for additional formatting)
+  //           };
 
-  //         if (usersDetails) setSalesDetailsData(usersDetails.data.data);
+  //           console.log(requestBody);
+
+  //           try {
+  //             const postData = await postSalesDetailsService(requestBody);
+
+  //             if (postData.status === 200) {
+  //               console.log(`Row with emp_code ${row.emp_code} successfully added.`);
+  //             } else {
+  //               console.error(`Failed to save row with emp_code ${row.emp_code}`);
+  //             }
+  //           } catch (error) {
+  //             console.error(`Error saving row with emp_code ${row.emp_code}:`, error);
+  //           }
+  //         }
+  //         alert('Submitted Successfully.');
+  //         window.location.reload();
   //       } catch (error) {
-  //         console.error('Error fetching account details:', error);
+  //         console.error('Error during posting data:', error);
   //       }
   //     }
+  //   };
 
-  //     fetchData();
-  //   }, []);
-  //   console.log(salesDetailsData);
+  //   if (isDataLoaded) {
+  //     postDataIfAvailable();
+  //   }
+  // }, [baSalesDetailsService, isDataLoaded]); // Dependency on baSalesDetailsService and isDataLoaded
+
+  // // After setting the data, set isDataLoaded to true to trigger the post requests
+  // useEffect(() => {
+  //   if (baSalesDetailsService.length > 0) {
+  //     setIsDataLoaded(true);
+  //   }
+  // }, [baSalesDetailsService]);
 
   // selecting status
   const [filterDetails, setFilterDetails] = useState({});
@@ -592,9 +810,9 @@ export default function ViewSalesDetails() {
     }, 0);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - salesDetailsData.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - baSalesDetailsService.length) : 0;
 
-  const filteredUsers = applySortFilter(salesDetailsData, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(baSalesDetailsService, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -615,7 +833,7 @@ export default function ViewSalesDetails() {
               style={{ backgroundColor: 'lightgray', color: 'black', padding: '9px', marginRight: '10px' }}
               // color="primary"
               startIcon={<Iconify icon="mingcute:send-fill" />}
-              onClick={submitUsers}
+              onClick={handleSaveData}
             >
               Submit
             </Button>
@@ -679,25 +897,31 @@ export default function ViewSalesDetails() {
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const {
-                      order_date,
-                      order_number,
-                      cust_account_id,
-                      cust_group_id,
-                      inventory_item_id,
-                      quantity,
-                      amount,
+                      CUSTOMER_NAME,
+                      DISC_AMT,
+                      INVOICE_DT,
+                      INVOICE_NO,
+                      MOBILE_NO,
+                      MRP,
+                      NET_AMT,
+                      SQTY,
+                      STYLE_CODE,
+                      TIME,
                     } = row;
-                    const selectedUser = selected.indexOf(cust_account_id) !== -1;
+                    const selectedUser = selected.indexOf(INVOICE_NO) !== -1;
 
                     return (
-                      <TableRow hover key={cust_account_id} tabIndex={-1} role="checkbox">
-                        <TableCell align="left">{order_date}</TableCell>
-                        <TableCell align="left">{order_number}</TableCell>
-                        <TableCell align="left">{cust_account_id}</TableCell>
-                        <TableCell align="left">{cust_group_id}</TableCell>
-                        <TableCell align="left">{inventory_item_id}</TableCell>
-                        <TableCell align="left">{quantity}</TableCell>
-                        <TableCell align="left">{amount}</TableCell>
+                      <TableRow hover key={INVOICE_NO} tabIndex={-1} role="checkbox">
+                        <TableCell align="left">{CUSTOMER_NAME}</TableCell>
+                        <TableCell align="left">{DISC_AMT}</TableCell>
+                        <TableCell align="left">{INVOICE_DT}</TableCell>
+                        <TableCell align="left">{INVOICE_NO}</TableCell>
+                        <TableCell align="left">{MOBILE_NO}</TableCell>
+                        <TableCell align="left">{MRP}</TableCell>
+                        <TableCell align="left">{NET_AMT}</TableCell>
+                        <TableCell align="left">{SQTY}</TableCell>
+                        <TableCell align="left">{STYLE_CODE}</TableCell>
+                        <TableCell align="left">{TIME}</TableCell>
 
                         <Popover
                           open={Boolean(open)}
@@ -767,7 +991,7 @@ export default function ViewSalesDetails() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={salesDetailsData.length}
+            count={filteredUsers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
