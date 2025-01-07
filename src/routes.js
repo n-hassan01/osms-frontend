@@ -62,6 +62,7 @@ import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
 import AddIncentiveRecipientSlab from './pages/BA Incentive Module/SalesTarget/AddIncentiveAchievementSlab';
+import AddIncentiveConditions from './pages/BA Incentive Module/SalesTarget/AddIncentiveConditions';
 import AddIncentiveDistribution from './pages/BA Incentive Module/SalesTarget/AddIncentiveDistribution';
 import AddPageIncentiveFormula from './pages/BA Incentive Module/SalesTarget/AddIncentiveForm';
 import AddIncentiveRecipients from './pages/BA Incentive Module/SalesTarget/AddIncentiveRecipientGroups';
@@ -70,6 +71,7 @@ import AddSalesDetails from './pages/BA Incentive Module/SalesTarget/AddSalesDet
 import AddSalesTarget from './pages/BA Incentive Module/SalesTarget/AddSalesTargets';
 import AddSalesTargetsSKUAll from './pages/BA Incentive Module/SalesTarget/AddSalesTargetsSKUAll';
 import ViewIncentiveAchievementSlabAll from './pages/BA Incentive Module/SalesTarget/ViewIncentiveAchievementSlabAll';
+import ViewIncentiveConditions from './pages/BA Incentive Module/SalesTarget/ViewIncentiveConditions';
 import ViewIncentiveDistributionAll from './pages/BA Incentive Module/SalesTarget/ViewIncentiveDistributionAll';
 import ViewIncentiveFormula from './pages/BA Incentive Module/SalesTarget/ViewIncentiveFormula';
 import ViewIncentiveRecipient from './pages/BA Incentive Module/SalesTarget/ViewIncentiveRecipientGroups';
@@ -245,6 +247,8 @@ export default function Router() {
         { path: 'viewincentiveachievementslaball', element: <ViewIncentiveAchievementSlabAll /> },
         { path: 'addIncentiveTypes', element: <AddIncentiveTypes /> },
         { path: 'addIncentiveRecipientSlab', element: <AddIncentiveRecipientSlab /> },
+        { path: 'viewIncentiveConditions', element: <ViewIncentiveConditions /> },
+        { path: 'addIncentiveConditions', element: <AddIncentiveConditions /> },
       ],
     },
 
