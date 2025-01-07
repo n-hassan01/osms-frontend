@@ -2761,7 +2761,7 @@ export const getAllSalesDetails = async () => {
 export const postSalesDetailsService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
-    return await axios.post(`${usersUrl}salesDetailsAll/add`, bodyInfo);
+    return await axios.post(`${usersUrl}salesDetailsAll/add/all`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 

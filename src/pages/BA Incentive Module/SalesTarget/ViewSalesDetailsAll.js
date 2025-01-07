@@ -195,38 +195,9 @@ export default function ViewSalesDetails() {
     fetchData();
   }, [account]);
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const usersDetails = await getFndUserService();
-
-  //       if (usersDetails) setSalesDetailsData(usersDetails.data);
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-  // const [salesDetailsData, setSalesDetailsData] = useState([]);
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const response = await getAllSalesDetails();
-  //       console.log(response.data);
-
-  //       if (response) setSalesDetailsData(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching account details:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-  // console.log(salesDetailsData);
   const [baSalesDetailsService, setBaSalesDetailsService] = useState([]);
   const [baTokenService, setBaTokenService] = useState([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -249,25 +220,26 @@ export default function ViewSalesDetails() {
   }, []);
   console.log(baTokenService);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const tokenDetails = await getSalesDetailsBATokenService();
-        console.log(tokenDetails);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const tokenDetails = await getSalesDetailsBATokenService();
+  //       console.log(tokenDetails);
 
-        if (tokenDetails) {
-          console.log('Okendetails', tokenDetails?.data?.token);
-          const salesDetails = await getBASalesDetailsTokenDateService(tokenDetails?.data?.token);
-          console.log(salesDetails);
-          setBaSalesDetailsService(salesDetails);
-        }
-      } catch (error) {
-        console.error('Error fetching account details:', error);
-      }
-    }
+  //       if (tokenDetails) {
+  //         console.log('Okendetails', tokenDetails?.data?.token);
+  //         const salesDetails = await getBASalesDetailsTokenDateService(tokenDetails?.data?.token);
+  //         console.log(salesDetails);
+  //         setBaSalesDetailsService(salesDetails);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching account details:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
+
   const formatToSQLDate = (dateStr) => {
     const [day, month, year] = dateStr.split('.'); // Split "03.01.2025" into [day, month, year]
     console.log(`${year}-${month}-${day}`);
@@ -275,7 +247,7 @@ export default function ViewSalesDetails() {
     return `${year}-${month}-${day}`; // Return "2025-01-03"
   };
   const handleSaveData = async (event, name) => {
-    console.log(baSalesDetailsService);
+    // console.log(baSalesDetailsService);
 
     // Ensure baSalesDetailsService.data exists and has the 'lists' property
     if (baSalesDetailsService && baSalesDetailsService.data && Array.isArray(baSalesDetailsService.data.lists)) {
@@ -287,7 +259,7 @@ export default function ViewSalesDetails() {
         const formattedSalesList = salesList.map((row) => ({
           order_date: formatToSQLDate(row.INVOICE_DT), // Convert date to the SQL-compatible format
           order_number: row.INVOICE_NO, // Integer
-          cust_account_id: 3100000001, // Default value for cust_account_id (bigint)
+          cust_account_id: 0, // Default value for cust_account_id (bigint)
           cust_group_id: 19, // Default value for cust_group_id (Integer)
           inventory_item_id: row.STYLE_CODE, // Ensure STYLE_CODE is a valid number or convert if necessary
           quantity: row.SQTY, // Quantity (Integer)
@@ -307,6 +279,7 @@ export default function ViewSalesDetails() {
           styleCode: row.STYLE_CODE || '', // Style code, default to empty string if not available
           netAmt: row.NET_AMT || 0, // Net amount, default to 0 if not available
           discAmt: row.DISC_AMT || 0, // Discount amount, default to 0 if not available
+          data_source: 'ECOM',
         }));
         console.log(formattedSalesList);
 
@@ -835,7 +808,7 @@ export default function ViewSalesDetails() {
               startIcon={<Iconify icon="mingcute:send-fill" />}
               onClick={handleSaveData}
             >
-              Submit
+              Pls Save Data
             </Button>
             <Button
               style={{ backgroundColor: 'lightgray', color: 'black', marginLeft: '12px' }}
@@ -894,6 +867,7 @@ export default function ViewSalesDetails() {
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
+
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const {
