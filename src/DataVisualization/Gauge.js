@@ -7,55 +7,60 @@ import { getSoSalesTargetIncentiveService, getUserProfileDetails } from '../Serv
 const SalesGauge = () => {
   const { user } = useUser();
   const [account, setAccount] = useState({});
-  const [standardBarList, setStandardBarList] = useState([]);
+  const [salesData, setSalesData] = useState({});
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    async function fetchData() {
+    const fetchUserData = async () => {
       try {
         if (user) {
-          const accountDetails = await getUserProfileDetails(user); // Call your async function here
-          if (accountDetails.status === 200) setAccount(accountDetails.data); // Set the account details in the component's state
+          const accountDetails = await getUserProfileDetails(user);
+          if (accountDetails.status === 200) setAccount(accountDetails.data);
         }
       } catch (error) {
-        // Handle any errors that might occur during the async operation
         console.error('Error fetching account details:', error);
       }
-    }
+    };
 
-    fetchData(); // Call the async function when the component mounts
+    fetchUserData();
   }, [user]);
-  console.log(account);
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchSalesData = async () => {
       try {
         if (account) {
-          const response = await getSoSalesTargetIncentiveService(user); // Assuming this function is defined
-
+          const response = await getSoSalesTargetIncentiveService(user);
           if (response.status === 200) {
-            setStandardBarList(response.data);
+            setSalesData(response.data);
           }
-          console.log(response.data);
         }
       } catch (error) {
-        console.error('Error fetching account details:', error);
+        console.error('Error fetching sales data:', error);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData();
-  }, [account]);
-  console.log(standardBarList);
+    fetchSalesData();
+  }, [account, user]);
 
-  const salesTarget = standardBarList[0].sales_target;
-  const collectedSales = standardBarList[0].sum;
-  const currentDay = 15;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const salesTarget = salesData.sales_target_amount || 0;
+  const collectedSales = salesData.sale_amount || 0;
+  const currentDay = salesData.current_day || 15; // Assuming default day 15 if not provided
+  const daysInMonth = 30; // Assuming 30 days for simplicity
+
   // Calculate percentage of the sales target achieved
-  const percentage = Math.min((collectedSales / salesTarget) * 100, 100);
+  const percentage = salesTarget ? Math.min((collectedSales / salesTarget) * 100, 100) : 0;
 
   // Calculate the rotation for the day indicator (0 to 360 degrees)
-  const dayPercentage = (currentDay / 30) * 100;
+  const dayPercentage = (currentDay / daysInMonth) * 100;
 
   return (
-    <div style={{ width: '200px', margin: 'auto', position: 'relative' }}>
+    <div style={{ width: '250px', margin: 'auto', position: 'relative', textAlign: 'center' }}>
       <CircularProgressbar
         value={percentage}
         text={`${Math.round(percentage)}%`}
@@ -63,7 +68,7 @@ const SalesGauge = () => {
           pathColor: '#4caf50', // Green path for progress
           textColor: '#333', // Dark text color
           trailColor: '#d6d6d6', // Light gray trail
-          backgroundColor: '#f3f3f3', // Optional background color
+          backgroundColor: '#f3f3f3',
         })}
       />
       {/* Dot indicator for days */}
@@ -72,20 +77,22 @@ const SalesGauge = () => {
           position: 'absolute',
           top: '50%',
           left: '50%',
-          transform: `rotate(${(dayPercentage / 100) * 360}deg) translate(-50%, -110px)`,
+          transform: `rotate(${(dayPercentage / 100) * 360}deg) translate(-50%, -130px)`,
           width: '12px',
           height: '12px',
           backgroundColor: '#ff5722', // Orange dot
           borderRadius: '50%',
-          zIndex: 1, // Ensures the dot appears above the gauge
+          zIndex: 1,
         }}
       />
-      {/* <div style={{ textAlign: 'center', marginTop: '10px' }}>
-        <p style={{ margin: 0, fontSize: '14px' }}>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <p style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>
           Collected: {collectedSales.toLocaleString()} / Target: {salesTarget.toLocaleString()}
         </p>
-        <p style={{ margin: 0, fontSize: '12px', color: '#777' }}>Day: {currentDay} / 30</p>
-      </div> */}
+        <p style={{ margin: 0, fontSize: '14px', color: '#555' }}>
+          Day: {currentDay} / {daysInMonth}
+        </p>
+      </div>
     </div>
   );
 };
