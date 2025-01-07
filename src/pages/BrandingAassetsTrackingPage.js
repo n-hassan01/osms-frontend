@@ -138,13 +138,29 @@ export default function ItemsDashBoard() {
   const handleNext = () => {
     setActivateIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
+  const [itemPage, setItemPage] = useState(0);
+  const [childPage, setChildPage] = useState(0);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+  const handleChangeItemPage = (event, newPage) => {
+    setItemPage(newPage);
+  };
+  const handleChangeChildPage = (event, newPage) => {
+    setChildPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // Reset to first page when rows per page changes
+  };
+  const handleChangeItemRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setItemPage(0); // Reset to first page when rows per page changes
+  };
+  const handleChangeChildRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setChildPage(0); // Reset to first page when rows per page changes
   };
 
   useEffect(() => {
@@ -1028,7 +1044,7 @@ export default function ItemsDashBoard() {
                 />
                 <TableBody>
                   {showItems ? (
-                    filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    filteredItems.slice(itemPage * rowsPerPage, itemPage * rowsPerPage + rowsPerPage).map((row) => {
                       const { inventory_item_id, item_name } = row;
                       const isSelected = selectedItem.includes(inventory_item_id);
 
@@ -1090,9 +1106,9 @@ export default function ItemsDashBoard() {
               component="div"
               count={items.length}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              itemPage={itemPage}
+              onPageChange={handleChangeItemPage}
+              onRowsPerPageChange={handleChangeItemRowsPerPage}
             />
             {/* <Button onClick={showChildsList}>Show Shops</Button> */}
           </div>
@@ -1259,7 +1275,7 @@ export default function ItemsDashBoard() {
                 />
                 <TableBody>
                   {showChilds ? (
-                    filteredChilds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    filteredChilds.slice(childPage * rowsPerPage, childPage * rowsPerPage + rowsPerPage).map((row) => {
                       const { inventory_item_id, description, inventory_item_code } = row;
 
                       const selectedUser = selected.indexOf(inventory_item_id) !== -1;
@@ -1320,11 +1336,11 @@ export default function ItemsDashBoard() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={items.length}
+              count={childItems.length}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              childPage={childPage}
+              onPageChange={handleChangeChildPage}
+              onRowsPerPageChange={handleChangeChildRowsPerPage}
             />
           </div>
         </div>
@@ -1405,65 +1421,77 @@ export default function ItemsDashBoard() {
                         <span className="visually-hidden">Next</span>
                       </button>
                     </div>
-                    {imageSrc.map((image, index) => {
-                      const record = images[index];
+                    {imageSrc.map((src, index) => {
+                      const record = images[index]; // Get the metadata from the images array
+                      console.log(record);
 
                       return (
                         <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
                           <div style={carouselContentStyle}>
-                            <div className="carousel-item active">
-                              <div>
-                                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                  <div style={{ width: '50%' }}>
-                                    {/* Reviews Table */}
-                                    <table>
-                                      <thead>
-                                        <tr>
-                                          <td style={tdStyling} colSpan={2}>
-                                            Reviews
-                                          </td>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                          <td style={tdStyling}>Review Status: </td>
-                                          <td style={tdStyling}>
-                                            {record?.review_status ? record.review_status : 'N/A'}
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td style={tdStyling}>Created By: </td>
-                                          <td style={tdStyling}>{record?.created_by ? record.created_by : 'N/A'}</td>
-                                        </tr>
-                                        <tr>
-                                          <td style={tdStyling}>Created On: </td>
-                                          <td style={tdStyling}>
-                                            {record?.creation_date
-                                              ? new Date(record.creation_date).toLocaleDateString()
-                                              : 'N/A'}
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td style={tdStyling}>Remarks: </td>
-                                          <td style={tdStyling}>{record?.remarks || 'N/A'}</td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
+                            <div>
+                              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                <div style={{ width: '50%' }}>
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th style={tdStyling} colSpan={2}>
+                                          Reviews
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td style={tdStyling}>Review Status:</td>
+                                        <td style={tdStyling}>{record?.review_status ?? 'N/A'}</td>{' '}
+                                        {/* Use record here */}
+                                      </tr>
+                                      <tr>
+                                        <td style={tdStyling}>Created By:</td>
+                                        <td style={tdStyling}>{record?.created_by ?? 'N/A'}</td> {/* Use record here */}
+                                      </tr>
+                                      <tr>
+                                        <td style={tdStyling}>Created On:</td>
+                                        <td style={tdStyling}>
+                                          {record?.creation_date
+                                            ? new Date(record.creation_date).toLocaleDateString()
+                                            : 'N/A'}
+                                        </td>{' '}
+                                        {/* Use record here */}
+                                      </tr>
+                                      <tr>
+                                        <td style={tdStyling}>Remarks:</td>
+                                        <td style={tdStyling}>{record?.remarks ?? 'N/A'}</td> {/* Use record here */}
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
 
-                                  {/* Image Rendering */}
-                                  <div style={{ width: '50%' }}>
-                                    {image ? (
-                                      <img
-                                        src={image}
-                                        className="card-img-top"
-                                        alt={`Slide ${index + 1}`}
-                                        style={{ height: '494px' }}
-                                      />
-                                    ) : (
-                                      <p>Image not available</p> // Display fallback message if image is not available
-                                    )}
-                                  </div>
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={handleOpen}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      handleOpen();
+                                    }
+                                  }}
+                                  style={{
+                                    display: 'inline-block',
+                                    cursor: 'pointer',
+                                    width: '50%',
+                                    height: '50%',
+                                  }}
+                                >
+                                  {src ? (
+                                    <img
+                                      src={src}
+                                      className="card-img-top"
+                                      alt={`Slide ${index + 1}`}
+                                      style={{ height: '195px' }}
+                                    />
+                                  ) : (
+                                    <p>Image not available</p>
+                                  )}
                                 </div>
                               </div>
                             </div>
