@@ -3000,6 +3000,7 @@ export const getSalesDetailsBATokenService = async () => {
     return err.message;
   }
 };
+
 export const getBASalesDetailsTokenDateService = async (loginToken) => {
   try {
     // Ensure usersUrl ends with a trailing slash to avoid concatenation issues
@@ -3012,5 +3013,26 @@ export const getBASalesDetailsTokenDateService = async (loginToken) => {
   } catch (err) {
     console.error('Error in getBASalesDetailsTokenDateService:', err.message);
     throw err; // Re-throw the error for the caller to handle
+  }
+};
+
+// pos integration
+export const getSalesDetailsFromPosService = async (date) => {
+  try {
+    return await axios.get(`${usersUrl}salesDetailsAll/pos/${date}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
+
+export const addSalesDetailsFromPosService = async (requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salesDetailsAll/pos/add/all`, requestBody);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
   }
 };

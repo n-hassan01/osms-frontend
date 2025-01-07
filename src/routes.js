@@ -61,6 +61,7 @@ import AccountFormPage from './pages/AccountFormPage';
 import AddCustomerFromSapPage from './pages/AddCustomerFromSapPage';
 import AddShopItems from './pages/AddShopItems';
 import AddShopRoutesPage from './pages/AddShopRoutesPage';
+import SalesDetailsFromPosPage from './pages/BA Incentive Module/SalesDetailsFromPosPage';
 import AddIncentiveRecipientSlab from './pages/BA Incentive Module/SalesTarget/AddIncentiveAchievementSlab';
 import AddIncentiveConditions from './pages/BA Incentive Module/SalesTarget/AddIncentiveConditions';
 import AddIncentiveDistribution from './pages/BA Incentive Module/SalesTarget/AddIncentiveDistribution';
@@ -249,6 +250,7 @@ export default function Router() {
         { path: 'addIncentiveRecipientSlab', element: <AddIncentiveRecipientSlab /> },
         { path: 'viewIncentiveConditions', element: <ViewIncentiveConditions /> },
         { path: 'addIncentiveConditions', element: <AddIncentiveConditions /> },
+        { path: 'salesDetails/pos', element: <SalesDetailsFromPosPage /> },
       ],
     },
 
