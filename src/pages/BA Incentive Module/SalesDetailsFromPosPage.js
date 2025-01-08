@@ -11,9 +11,10 @@ import { useUser } from '../../context/UserContext';
 
 // services
 import {
-    addSalesDetailsFromPosService,
-    getSalesDetailsFromPosService,
-    getUserProfileDetails,
+  addSalesDetailsFromPosService,
+  getSalesCountFromPosService,
+  getSalesDetailsFromPosMediasoftService,
+  getUserProfileDetails,
 } from '../../Services/ApiServices';
 // css
 import '../../_css/Utils.css';
@@ -63,31 +64,53 @@ export default function TestSapApiPage() {
   const integratePos = async () => {
     setOpen(true);
 
-    const salesDate = getFormattedDate(selectedDate);
-    const salesDetailsResponse = await getSalesDetailsFromPosService(salesDate);
+    try {
+      const salesDate = getFormattedDate(selectedDate);
 
-    if (salesDetailsResponse.status === 200) {
-      const salesList = salesDetailsResponse.data.salesDetails || [];
+      const salesCount = await getSalesCountFromPosService(salesDate);
+      const pageNo = Math.ceil(salesCount / 500);
 
-      try {
+      let allItems = [];
+
+      const fetchPromises = [];
+      for (let i = 1; i <= pageNo; i += 1) {
+        fetchPromises.push(getSalesDetailsFromPosMediasoftService(salesDate, i));
+      }
+
+      const responses = await Promise.all(fetchPromises);
+
+      responses.forEach((response, index) => {
+        if (response.status === 200) {
+          const sales = response.data.Data || [];
+          allItems = allItems.concat(sales);
+        } else {
+          console.error(`Failed to fetch sales details for page ${index + 1}`);
+          throw new Error('Error fetching sales details. Please check the console for details.');
+        }
+      });
+
+      if (allItems.length > 0) {
         const requestBody = {
-          content: salesList,
+          content: allItems,
           userId: account.user_id,
         };
+
         const response = await addSalesDetailsFromPosService(requestBody);
 
-        if (response.status !== 200) {
-          alert('Error adding customers. Please check the console for details.');
-          console.log(response.data);
+        if (response.status === 200) {
+          alert('Sales details added successfully.');
+        } else {
+          console.error('Error adding sales details:', response.data);
+          alert('Error adding sales details. Please check the console for details.');
         }
-      } catch (error) {
-        console.error('Error adding customers:', error);
-        alert('Error adding customers. Please check the console for details.');
-      } finally {
-        handleClose();
+      } else {
+        alert('No sales data found to process.');
       }
-    } else {
-      alert('Process failed! Try again.');
+    } catch (error) {
+      console.error('An error occurred during the process:', error);
+      alert('An error occurred. Please check the console for details.');
+    } finally {
+      handleClose();
     }
   };
 

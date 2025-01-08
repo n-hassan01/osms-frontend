@@ -3036,3 +3036,29 @@ export const addSalesDetailsFromPosService = async (requestBody) => {
     return err.message;
   }
 };
+
+export const getSalesCountFromPosService = async (date) => {
+  try {
+    const response = await axios.get(`http://182.160.114.100:9011/demo/api/app/GetSaleExportData/1/1/${date}`, {
+      headers: { Authorization: 'Mahatab:/gMaJikNGIw9vf6tO46emg==' },
+    });
+
+    return response.data.COUNT;
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
+
+export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
+  try {
+    return await axios.get(`http://182.160.114.100:9011/demo/api/app/GetSaleExportData/${pageNo}/500/${date}`, {
+      headers: { Authorization: 'Mahatab:/gMaJikNGIw9vf6tO46emg==' },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
