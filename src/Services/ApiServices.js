@@ -1499,6 +1499,7 @@ export const getItemsListService = async (loginToken) => {
     return err.message;
   }
 };
+
 export const getDivisionListsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}get-bd-area-lists/division`, {
@@ -1701,6 +1702,26 @@ export const getRegionService = async (loginToken) => {
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetsReportService = async (groupId) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/byGroup/${groupId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemsListByChannelService = async (groupId) => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/${groupId}`);
   } catch (err) {
     console.log(err.message);
 
