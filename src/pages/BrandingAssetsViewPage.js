@@ -35,10 +35,11 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import {
   getBrandingAssetSumReport,
+  getBrandingAssetsReportService,
   getBrandingAssetsViewData,
-  getItemsListService,
+  getItemsListByChannelService,
   getShopsListService,
-  getUserProfileDetails,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 // import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -169,8 +170,8 @@ export default function UserPage() {
     async function fetchData() {
       try {
         if (account) {
-          console.log(account.user_id);
-          const response = await getBrandingAssetsViewData(user);
+          console.log(account.cust_group_id);
+          const response = await getBrandingAssetsReportService(account.cust_group_id);
 
           if (response.status === 200) {
             // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
@@ -194,8 +195,9 @@ export default function UserPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (user) {
-          const response = await getItemsListService(user); // Call your async function here
+        if (account) {
+          console.log(account);
+          const response = await getItemsListByChannelService(account.cust_group_id); // Call your async function here
           if (response.status === 200) {
             setItems(response.data);
           } // Set the account details in the component's state
@@ -207,7 +209,7 @@ export default function UserPage() {
     }
 
     fetchData(); // Call the async function when the component mounts
-  }, [user]);
+  }, [account]);
   console.log(items);
 
   const [shopDetails, setShopDetails] = useState([]);
@@ -604,6 +606,7 @@ export default function UserPage() {
                 </Dialog>
 
                 <Dialog
+                  fullScreen
                   open={openFilterDialog}
                   onClose={handleCloseFilterDialog}
                   sx={{ '& .MuiDialog-paper': { maxWidth: '100%', height: '250px' } }}
