@@ -4,6 +4,7 @@
 /* eslint-disable camelcase */
 // import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import { filter } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
@@ -13,31 +14,32 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 // @mui
 import {
-    Button,
-    Card,
-    CircularProgress,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableRow,
-    Typography,
+  Button,
+  Card,
+  CircularProgress,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Typography,
 } from '@mui/material';
 import { useUser } from '../context/UserContext';
 // components
 import Scrollbar from '../components/scrollbar';
 // sections
 import {
-    dowloadBrandingAssetService,
-    getBrandingAssetById,
-    getBrandingAssetSumReport,
-    getBrandingAssetsReportService,
-    getBrandingAssetsViewData,
-    getItemsListByChannelService,
-    getShopsListService,
-    getUserProfileDetails,
+  addReplaceAssetsService,
+  dowloadBrandingAssetService,
+  getBrandingAssetById,
+  getBrandingAssetSumReport,
+  getBrandingAssetsReportService,
+  getBrandingAssetsViewData,
+  getItemsListByChannelService,
+  getShopsListService,
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 // import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -237,9 +239,14 @@ export default function UserPage() {
   const handleClose = () => {
     setOpen(false);
   };
+  const handleCloseDialog = () => {
+    setShowChild(false);
+  };
 
   const [imageSrc, setImageSrc] = useState(null);
   const viewAttachment = async (value) => {
+    console.log(value);
+
     try {
       const filename = value;
       const requestBody = {
@@ -261,6 +268,47 @@ export default function UserPage() {
       console.error('Error during image download:', error);
     } finally {
       setOpen(true); // This will be executed regardless of success or failure
+    }
+  };
+
+  const viewReplace = async (value) => {
+    console.log(value);
+
+    try {
+      const filename = value;
+      const requestBody = {
+        fileName: filename,
+      };
+      const response = await dowloadBrandingAssetService(user, requestBody);
+
+      if (response.status === 200) {
+        const base64String = btoa(
+          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        const dataURL = `data:image/jpeg;base64,${base64String}`;
+        setImageSrc(dataURL);
+      } else {
+        console.log('Image download failed. Server returned status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
+    }
+  };
+
+  const addReplaceItem = async (value) => {
+    console.log(value);
+
+    try {
+      const response = await addReplaceAssetsService(user, value);
+
+      if (response.status === 200) {
+        alert('Successfully Call procedure');
+      } else {
+        console.log('Failed. Server returned status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
     }
   };
 
@@ -366,11 +414,17 @@ export default function UserPage() {
   const [child, setChild] = useState({});
   const [showChild, setShowChild] = useState(false);
   const viewChild = async (data) => {
+    if (!data) {
+      alert('Parent data is not available!');
+      return; // Exit the function early if data is not provided
+    }
     try {
       setShowChild(true);
       const response = await getBrandingAssetById(data);
       if (response.status === 200) {
         setChild(response.data);
+        console.log(response.data[0].uploaded_filename);
+        await viewReplace(response.data[0].uploaded_filename);
       } else {
         alert('Process failed! Try again');
       }
@@ -379,6 +433,7 @@ export default function UserPage() {
       console.log(error);
     }
   };
+  console.log(child);
 
   const handleClearFilter = async () => {
     try {
@@ -601,7 +656,6 @@ export default function UserPage() {
                     </TableRow>
                   )}
                 </TableBody>
-
                 {isNotFound && (
                   <TableBody>
                     <TableRow>
@@ -625,7 +679,6 @@ export default function UserPage() {
                     </TableRow>
                   </TableBody>
                 )}
-
                 <Dialog open={open} onClose={handleClose} fullScreen>
                   <Stack />
                   <DialogContent>
@@ -645,68 +698,95 @@ export default function UserPage() {
                 </Dialog>
 
                 <Dialog open={showChild} fullScreen>
-                  <Stack />
                   <DialogContent style={{ display: 'flex', flexDirection: 'row' }}>
+                    {/* Left Side: Item Information */}
                     <Stack style={{ width: '50%' }}>
                       <table>
                         <tr>
                           <td>Item Name:</td>
-                          <td>abc</td>
+                          <td>{child[0]?.item_name ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>item_category</td>
-                          <td>{child.item_category}</td>
+                          <td>Item Category:</td>
+                          <td>{child[0]?.item_category ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>inventory_item_id</td>
-                          <td>inventory_item_id</td>
+                          <td>Inventory Item ID:</td>
+                          <td>{child[0]?.inventory_item_id ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>brand_code</td>
-                          <td>brand_code</td>
+                          <td>Brand Code:</td>
+                          <td>{child[0]?.brand_code ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>asset_cost</td>
-                          <td>asset_cost</td>
+                          <td>Asset Cost:</td>
+                          <td>{child[0]?.asset_cost ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>review_status</td>
-                          <td>review_status</td>
+                          <td>Review Status:</td>
+                          <td>{child[0]?.review_status ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>Item Name:</td>
-                          <td>layout_name</td>
+                          <td>Layout Name:</td>
+                          <td>{child[0]?.layout_name ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>Item Name:</td>
-                          <td>shop_name</td>
+                          <td>Shop Name:</td>
+                          <td>{child[0]?.shop_name ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>Item Name:</td>
-                          <td>shop_code</td>
+                          <td>Shop Code:</td>
+                          <td>{child[0]?.shop_code ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>Item Name:</td>
-                          <td>address</td>
+                          <td>Address:</td>
+                          <td>{child[0]?.address ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>Item Name:</td>
-                          <td>region_name</td>
+                          <td>Region Name:</td>
+                          <td>{child[0]?.region_name ?? 'null'}</td>
                         </tr>
                         <tr>
-                          <td>Item Name:</td>
-                          <td>area_name</td>
+                          <td>Area Name:</td>
+                          <td>{child[0]?.area_name ?? 'null'}</td>
                         </tr>
                       </table>
                     </Stack>
-                    <Stack spacing={1.5} direction="row" style={{ width: '50%' }}>
+
+                    {/* Right Side: Image */}
+                    <Stack spacing={1.5} direction="row" style={{ width: '50%', paddingLeft: '20px' }}>
                       {imageSrc ? (
-                        <img src={imageSrc} alt="Preview" style={{ width: '100%' }} loading="lazy" />
+                        <img
+                          src={imageSrc}
+                          alt="Preview"
+                          style={{ width: '100%', maxHeight: '400px', objectFit: 'contain' }}
+                          loading="lazy"
+                        />
                       ) : (
                         <CircularProgress />
                       )}
                     </Stack>
                   </DialogContent>
+
+                  {/* Dialog Actions (Buttons at the bottom) */}
+                  <DialogActions style={{ justifyContent: 'center' }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      style={{ padding: '5px 15px', fontSize: '12px' }} // Smaller size
+                      onClick={() => addReplaceItem(child[0]?.parent_distribution_id)} // Access parent_distribution_id from child object
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      style={{ padding: '5px 15px', fontSize: '12px' }} // Smaller size
+                      onClick={handleCloseDialog} // Event handler for Cancel button
+                    >
+                      Cancel
+                    </Button>
+                  </DialogActions>
                 </Dialog>
               </Table>
             </TableContainer>

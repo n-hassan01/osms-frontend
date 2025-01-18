@@ -3091,3 +3091,21 @@ export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
     return err;
   }
 };
+
+export const addReplaceAssetsService = async (loginToken, bodyInfo) => {
+  try {
+    // Ensure the bodyInfo contains the parentDistributionId correctly
+    console.log('Request Body:', bodyInfo);
+
+    const response = await axios.post(`${usersUrl}branding-assets/replace`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`, // Authorization token
+      },
+    });
+
+    return response; // return response to handle in the component
+  } catch (err) {
+    console.error('Error:', err.message);
+    return { error: err.message }; // return error in case of failure
+  }
+};
