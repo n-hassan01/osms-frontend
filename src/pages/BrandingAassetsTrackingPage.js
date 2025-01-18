@@ -138,13 +138,29 @@ export default function ItemsDashBoard() {
   const handleNext = () => {
     setActivateIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
   };
+  const [itemPage, setItemPage] = useState(0);
+  const [childPage, setChildPage] = useState(0);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+  const handleChangeItemPage = (event, newPage) => {
+    setItemPage(newPage);
+  };
+  const handleChangeChildPage = (event, newPage) => {
+    setChildPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // Reset to first page when rows per page changes
+  };
+  const handleChangeItemRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setItemPage(0); // Reset to first page when rows per page changes
+  };
+  const handleChangeChildRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setChildPage(0); // Reset to first page when rows per page changes
   };
 
   useEffect(() => {
@@ -1028,7 +1044,7 @@ export default function ItemsDashBoard() {
                 />
                 <TableBody>
                   {showItems ? (
-                    filteredItems.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    filteredItems.slice(itemPage * rowsPerPage, itemPage * rowsPerPage + rowsPerPage).map((row) => {
                       const { inventory_item_id, item_name } = row;
                       const isSelected = selectedItem.includes(inventory_item_id);
 
@@ -1090,9 +1106,9 @@ export default function ItemsDashBoard() {
               component="div"
               count={items.length}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              itemPage={itemPage}
+              onPageChange={handleChangeItemPage}
+              onRowsPerPageChange={handleChangeItemRowsPerPage}
             />
             {/* <Button onClick={showChildsList}>Show Shops</Button> */}
           </div>
@@ -1259,7 +1275,7 @@ export default function ItemsDashBoard() {
                 />
                 <TableBody>
                   {showChilds ? (
-                    filteredChilds.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    filteredChilds.slice(childPage * rowsPerPage, childPage * rowsPerPage + rowsPerPage).map((row) => {
                       const { inventory_item_id, description, inventory_item_code } = row;
 
                       const selectedUser = selected.indexOf(inventory_item_id) !== -1;
@@ -1320,11 +1336,11 @@ export default function ItemsDashBoard() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={items.length}
+              count={childItems.length}
               rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
+              childPage={childPage}
+              onPageChange={handleChangeChildPage}
+              onRowsPerPageChange={handleChangeChildRowsPerPage}
             />
           </div>
         </div>

@@ -144,8 +144,6 @@ export const getAccountDetails = async (emailAddress) => {
 };
 
 export const getUserProfileDetails = async (loginToken) => {
-  console.log(loginToken);
-
   try {
     return await axios.get(`${usersUrl}profile/`, {
       headers: {
@@ -1499,6 +1497,7 @@ export const getItemsListService = async (loginToken) => {
     return err.message;
   }
 };
+
 export const getDivisionListsService = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}get-bd-area-lists/division`, {
@@ -1701,6 +1700,26 @@ export const getRegionService = async (loginToken) => {
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetsReportService = async (groupId) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/byGroup/${groupId}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getItemsListByChannelService = async (groupId) => {
+  try {
+    return await axios.get(`${usersUrl}get-item-master/${groupId}`);
   } catch (err) {
     console.log(err.message);
 
@@ -2434,6 +2453,16 @@ export const getBrandingAssetsViewData = async (loginToken) => {
   }
 };
 
+export const getBrandingAssetById = async (id) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/get/${id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const dowloadBrandingAssetService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}branding-assets/image/download`, bodyInfo, {
@@ -2761,7 +2790,7 @@ export const getAllSalesDetails = async () => {
 export const postSalesDetailsService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
-    return await axios.post(`${usersUrl}salesDetailsAll/add`, bodyInfo);
+    return await axios.post(`${usersUrl}salesDetailsAll/add/all`, bodyInfo);
   } catch (err) {
     console.log(err.message);
 
@@ -2916,6 +2945,27 @@ export const getAllIncentiveTypesService = async () => {
   }
 };
 
+export const getAllIncentiveConditionsService = async () => {
+  try {
+    return await axios.get(`${usersUrl}incentiveConditions/getAll`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const postIncentiveConditionService = async (bodyInfo) => {
+  console.log(bodyInfo);
+  try {
+    return await axios.post(`${usersUrl}incentiveConditions/add`, bodyInfo);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const postIncentiveTypesService = async (bodyInfo) => {
   console.log(bodyInfo);
   try {
@@ -2966,5 +3016,78 @@ export const postIncentiveAchievementSlabService = async (bodyInfo) => {
     console.log(err.message);
 
     return err.message;
+  }
+};
+
+// BA testing
+export const getSalesDetailsBATokenService = async () => {
+  try {
+    return await axios.post(`${usersUrl}baSalesAllData/token`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBASalesDetailsTokenDateService = async (loginToken) => {
+  try {
+    // Ensure usersUrl ends with a trailing slash to avoid concatenation issues
+    const response = await axios.get(`${usersUrl}baSalesAllData`, {
+      params: { loginToken }, // Query parameters
+    });
+    console.log(response);
+
+    return response; // Return the data portion of the response
+  } catch (err) {
+    console.error('Error in getBASalesDetailsTokenDateService:', err.message);
+    throw err; // Re-throw the error for the caller to handle
+  }
+};
+
+// pos integration
+export const getSalesDetailsFromPosService = async (date) => {
+  try {
+    return await axios.get(`${usersUrl}salesDetailsAll/pos/${date}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
+
+export const addSalesDetailsFromPosService = async (requestBody) => {
+  try {
+    return await axios.post(`${usersUrl}salesDetailsAll/pos/add/all`, requestBody);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getSalesCountFromPosService = async (date) => {
+  try {
+    const response = await axios.get(`http://182.160.114.100:9011/demo/api/app/GetSaleExportData/1/1/${date}`, {
+      headers: { Authorization: 'Mahatab:/gMaJikNGIw9vf6tO46emg==' },
+    });
+
+    return response.data.COUNT;
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
+  }
+};
+
+export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
+  try {
+    return await axios.get(`http://182.160.114.100:9011/demo/api/app/GetSaleExportData/${pageNo}/500/${date}`, {
+      headers: { Authorization: 'Mahatab:/gMaJikNGIw9vf6tO46emg==' },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err;
   }
 };
