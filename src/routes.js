@@ -84,6 +84,7 @@ import ViewSoSalesTargetIncentive from './pages/BA Incentive Module/SalesTarget/
 import BankFormPage from './pages/BankFormPage';
 import BrandingAssetsTrackingPage from './pages/BrandingAassetsTrackingPage';
 import BrandingAssetsViewPage from './pages/BrandingAssetsReportPage';
+import BrandingAssetsViewPageForHerlan from './pages/BrandingAssetsViewPageForHerlan';
 import CustomerManagementPage from './pages/CustomerManagementPage';
 import DepositEntryForm from './pages/DepositEntryForm';
 import ItemsDashBoard from './pages/ItemsDashBoard';
@@ -251,6 +252,7 @@ export default function Router() {
         { path: 'viewIncentiveConditions', element: <ViewIncentiveConditions /> },
         { path: 'addIncentiveConditions', element: <AddIncentiveConditions /> },
         { path: 'salesDetails/pos', element: <SalesDetailsFromPosPage /> },
+        { path: 'brandingAssets/herlan', element: <BrandingAssetsViewPageForHerlan /> },
       ],
     },
 
