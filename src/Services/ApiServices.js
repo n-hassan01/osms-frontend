@@ -144,8 +144,6 @@ export const getAccountDetails = async (emailAddress) => {
 };
 
 export const getUserProfileDetails = async (loginToken) => {
-  console.log(loginToken);
-
   try {
     return await axios.get(`${usersUrl}profile/`, {
       headers: {
@@ -2448,6 +2446,16 @@ export const getBrandingAssetsViewData = async (loginToken) => {
         Authorization: `Bearer ${loginToken}`,
       },
     });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetById = async (id) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/get/${id}`);
   } catch (err) {
     console.log(err.message);
 
