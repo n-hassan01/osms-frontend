@@ -309,9 +309,10 @@ export default function UserPage() {
       if (response.status === 200) {
         alert('Successfully Call procedure');
       } else {
-        console.log('Failed. Server returned status:', response.status);
+        alert('Process failed! Please try again');
       }
     } catch (error) {
+      alert('Process failed! Please try again');
       console.error('Error during image download:', error);
     }
   };
@@ -784,7 +785,7 @@ export default function UserPage() {
                       variant="contained"
                       color="primary"
                       style={{ padding: '5px 15px', fontSize: '12px' }} // Smaller size
-                      onClick={() => addReplaceItem(child[0]?.parent_distribution_id)} // Access parent_distribution_id from child object
+                      onClick={() => addReplaceItem(child[0]?.distribution_id)} // Access parent_distribution_id from child object
                     >
                       Approve
                     </Button>
