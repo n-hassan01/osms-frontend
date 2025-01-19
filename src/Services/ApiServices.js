@@ -144,8 +144,6 @@ export const getAccountDetails = async (emailAddress) => {
 };
 
 export const getUserProfileDetails = async (loginToken) => {
-  console.log(loginToken);
-
   try {
     return await axios.get(`${usersUrl}profile/`, {
       headers: {
@@ -2455,6 +2453,16 @@ export const getBrandingAssetsViewData = async (loginToken) => {
   }
 };
 
+export const getBrandingAssetById = async (id) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/get/${id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const dowloadBrandingAssetService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}branding-assets/image/download`, bodyInfo, {
@@ -3081,5 +3089,23 @@ export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
     console.log(err.message);
 
     return err;
+  }
+};
+
+export const addReplaceAssetsService = async (loginToken, bodyInfo) => {
+  try {
+    // Ensure the bodyInfo contains the parentDistributionId correctly
+    console.log('Request Body:', bodyInfo);
+
+    const response = await axios.post(`${usersUrl}branding-assets/replace`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`, // Authorization token
+      },
+    });
+
+    return response; // return response to handle in the component
+  } catch (err) {
+    console.error('Error:', err.message);
+    return { error: err.message }; // return error in case of failure
   }
 };
