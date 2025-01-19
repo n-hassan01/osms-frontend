@@ -3094,9 +3094,6 @@ export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
 
 export const addReplaceAssetsService = async (loginToken, bodyInfo) => {
   try {
-    // Ensure the bodyInfo contains the parentDistributionId correctly
-    console.log('Request Body:', bodyInfo);
-
     const response = await axios.post(`${usersUrl}branding-assets/replace`, bodyInfo, {
       headers: {
         Authorization: `Bearer ${loginToken}`, // Authorization token
