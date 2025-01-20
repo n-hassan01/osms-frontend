@@ -2453,6 +2453,20 @@ export const getBrandingAssetsViewData = async (loginToken) => {
   }
 };
 
+export const getBrandingAssetsAllViewData = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/all`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBrandingAssetById = async (id) => {
   try {
     return await axios.get(`${usersUrl}branding-assets/get/${id}`);
