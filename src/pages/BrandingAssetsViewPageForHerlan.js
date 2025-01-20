@@ -37,10 +37,9 @@ import {
   getBrandingAssetSumReport,
   getBrandingAssetsAllViewData,
   getBrandingAssetsReportService,
-  getBrandingAssetsViewData,
   getItemsListByChannelService,
   getShopsListService,
-  getUserProfileDetails,
+  getUserProfileDetails
 } from '../Services/ApiServices';
 // import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -462,7 +461,7 @@ export default function UserPage() {
     try {
       setUserList([]);
 
-      const response = await getBrandingAssetsViewData(user);
+      const response = await getBrandingAssetsAllViewData(user);
       if (response) {
         let filteredData = response.data;
 
