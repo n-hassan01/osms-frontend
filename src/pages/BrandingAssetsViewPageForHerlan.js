@@ -163,7 +163,6 @@ export default function UserPage() {
           const response = await getBrandingAssetsReportService(account.cust_group_id);
 
           if (response.status === 200) {
-            // const filteredList = response.data.filter((item) => item.status === 'RECONCILED');
             setUserList(response.data);
             const customerGroupList = [...new Set(response.data.map((obj) => obj.shop_name))];
             const customerList = [...new Set(response.data.map((obj) => obj.item_name))];
@@ -273,6 +272,10 @@ export default function UserPage() {
 
   const viewReplace = async (value) => {
     console.log(value);
+    if (value === '') {
+      alert('No image for display');
+      return;
+    }
 
     try {
       const filename = value;
@@ -297,17 +300,19 @@ export default function UserPage() {
   };
 
   const addReplaceItem = async (value) => {
-    console.log(value);
-
     try {
-      const response = await addReplaceAssetsService(user, value);
+      const requestBody = {
+        parentDistributionId: value,
+      };
+      const response = await addReplaceAssetsService(user, requestBody);
 
       if (response.status === 200) {
         alert('Successfully Call procedure');
       } else {
-        console.log('Failed. Server returned status:', response.status);
+        alert('Process failed! Please try again');
       }
     } catch (error) {
+      alert('Process failed! Please try again');
       console.error('Error during image download:', error);
     }
   };
@@ -373,6 +378,7 @@ export default function UserPage() {
   };
 
   const reviewStatusOptions = [
+    { value: 'To Be Replaced', label: 'To Be Replaced' },
     { value: 'New', label: 'New' },
     { value: 'Excellent', label: 'Excellent' },
     { value: 'Good', label: 'Good' },
@@ -411,20 +417,26 @@ export default function UserPage() {
     setInputValue(inputValue);
   };
 
-  const [child, setChild] = useState({});
+  const [child, setChild] = useState([]);
   const [showChild, setShowChild] = useState(false);
   const viewChild = async (data) => {
     if (!data) {
       alert('Parent data is not available!');
-      return; // Exit the function early if data is not provided
+      setShowChild(false);
+      return;
     }
     try {
       setShowChild(true);
       const response = await getBrandingAssetById(data);
       if (response.status === 200) {
+        if (response.data.length === 0) {
+          alert('Parent data is not available!');
+          setShowChild(false);
+          return;
+        }
+
         setChild(response.data);
-        console.log(response.data[0].uploaded_filename);
-        await viewReplace(response.data[0].uploaded_filename);
+        await viewReplace(response.data[0].uploaded_filename || '');
       } else {
         alert('Process failed! Try again');
       }
@@ -433,7 +445,6 @@ export default function UserPage() {
       console.log(error);
     }
   };
-  console.log(child);
 
   const handleClearFilter = async () => {
     try {
@@ -493,7 +504,7 @@ export default function UserPage() {
           <div className="col-auto" style={{ marginRight: '20px', display: 'flex' }}>
             <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
               <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Shop Name</span>
-              <div style={{ width: 'auto' }}>
+              <div style={{ width: '250px' }}>
                 <Select
                   value={filterInfo.shop ? { value: filterInfo.shop, label: filterInfo.shop } : null}
                   onChange={handleShopNameChange}
@@ -506,7 +517,7 @@ export default function UserPage() {
             </div>
             <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
               <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Item Name</span>
-              <div style={{ width: '180px' }}>
+              <div style={{ width: '250px' }}>
                 <Select
                   value={filterInfo.itemName ? { value: filterInfo.itemName, label: filterInfo.itemName } : null}
                   onChange={handleItemNameChange}
@@ -519,7 +530,7 @@ export default function UserPage() {
             </div>
             <div className="col-auto" style={{ display: 'flex', marginRight: '10px', width: 'auto' }}>
               <span style={{ marginRight: '5px', whiteSpace: 'nowrap' }}>Review Status</span>
-              <div style={{ width: '180px' }}>
+              <div style={{ width: '240px' }}>
                 <Select
                   value={filterInfo.status ? { value: filterInfo.status, label: filterInfo.status } : null}
                   onChange={handleReviewStatusChange}
@@ -679,7 +690,7 @@ export default function UserPage() {
                     </TableRow>
                   </TableBody>
                 )}
-                <Dialog open={open} onClose={handleClose} fullScreen>
+                <Dialog open={open} onClose={handleClose}>
                   <Stack />
                   <DialogContent>
                     <Stack spacing={1.5} direction="row">
@@ -774,7 +785,7 @@ export default function UserPage() {
                       variant="contained"
                       color="primary"
                       style={{ padding: '5px 15px', fontSize: '12px' }} // Smaller size
-                      onClick={() => addReplaceItem(child[0]?.parent_distribution_id)} // Access parent_distribution_id from child object
+                      onClick={() => addReplaceItem(child[0]?.distribution_id)} // Access parent_distribution_id from child object
                     >
                       Approve
                     </Button>
