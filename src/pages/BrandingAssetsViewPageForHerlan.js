@@ -781,7 +781,7 @@ export default function UserPage() {
                       variant="contained"
                       color="primary"
                       style={{ padding: '5px 15px', fontSize: '12px' }} // Smaller size
-                      onClick={() => addReplaceItem(child[0]?.distribution_id)} // Access parent_distribution_id from child object
+                      onClick={() => addReplaceItem(child[0]?.parent_distribution_id)} // Access parent_distribution_id from child object
                     >
                       Approve
                     </Button>
