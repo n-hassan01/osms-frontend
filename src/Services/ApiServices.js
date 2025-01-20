@@ -2477,6 +2477,16 @@ export const getBrandingAssetById = async (id) => {
   }
 };
 
+export const getBrandingAssetByParentId = async (id) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/getParent/${id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const dowloadBrandingAssetService = async (loginToken, bodyInfo) => {
   try {
     return await axios.post(`${usersUrl}branding-assets/image/download`, bodyInfo, {
