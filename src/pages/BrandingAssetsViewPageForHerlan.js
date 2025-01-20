@@ -33,14 +33,14 @@ import Scrollbar from '../components/scrollbar';
 import {
   addReplaceAssetsService,
   dowloadBrandingAssetService,
-  getBrandingAssetById,
+  getBrandingAssetByParentId,
   getBrandingAssetSumReport,
   getBrandingAssetsAllViewData,
   getBrandingAssetsReportService,
   getBrandingAssetsViewData,
   getItemsListByChannelService,
   getShopsListService,
-  getUserProfileDetails
+  getUserProfileDetails,
 } from '../Services/ApiServices';
 // import DepositListToolbar from '../sections/@dashboard/deposits/depositListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -421,17 +421,12 @@ export default function UserPage() {
   const [child, setChild] = useState([]);
   const [showChild, setShowChild] = useState(false);
   const viewChild = async (data) => {
-    if (!data) {
-      alert('Parent data is not available!');
-      setShowChild(false);
-      return;
-    }
     try {
       setShowChild(true);
-      const response = await getBrandingAssetById(data);
+      const response = await getBrandingAssetByParentId(data);
       if (response.status === 200) {
         if (response.data.length === 0) {
-          alert('Parent data is not available!');
+          alert('Data is not available!');
           setShowChild(false);
           return;
         }
@@ -646,7 +641,7 @@ export default function UserPage() {
                           </button>
                         </TableCell>
                         <TableCell style={{ whiteSpace: 'nowrap', margin: '10px', padding: '10px' }}>
-                          <button style={{ width: '100%' }} onClick={(e) => viewChild(parent_distribution_id)}>
+                          <button style={{ width: '100%' }} onClick={(e) => viewChild(distribution_id)}>
                             Show
                           </button>
                         </TableCell>
@@ -786,7 +781,7 @@ export default function UserPage() {
                       variant="contained"
                       color="primary"
                       style={{ padding: '5px 15px', fontSize: '12px' }} // Smaller size
-                      onClick={() => addReplaceItem(child[0]?.distribution_id)} // Access parent_distribution_id from child object
+                      onClick={() => addReplaceItem(child[0]?.parent_distribution_id)} // Access parent_distribution_id from child object
                     >
                       Approve
                     </Button>
