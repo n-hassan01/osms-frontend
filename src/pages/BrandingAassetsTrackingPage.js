@@ -449,6 +449,40 @@ export default function ItemsDashBoard() {
     }
   };
 
+  // This function fetches the image using the filename and converts it to Base64
+  // eslint-disable-next-line consistent-return
+  const viewAttachment = async (value) => {
+    try {
+      const filename = value;
+      const requestBody = { fileName: filename };
+      const response = await dowloadBrandingAssetService(user, requestBody);
+
+      if (response.status === 200) {
+        console.log('Response Data:', response.data);
+        console.log('Response Type:', typeof response.data);
+
+        // Check if response.data is an ArrayBuffer
+        if (response.data instanceof ArrayBuffer) {
+          // Convert the ArrayBuffer data to Base64
+          const base64String = arrayBufferToBase64(response.data);
+          return `data:image/jpeg;base64,${base64String}`; // Return the image data URL
+        }
+        throw new Error('Response data is not an ArrayBuffer');
+      } else {
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
+      throw error; // Optionally rethrow the error for higher-level handling
+    }
+  };
+
+  // Helper function to convert ArrayBuffer to Base64
+  const arrayBufferToBase64 = (buffer) => {
+    const binary = new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+    return window.btoa(binary);
+  };
+
   const [images, setImages] = useState([]); // This holds the image data (or any metadata about the images)
   const [imageSrc, setImageSrc] = useState([]); // This will hold the actual image URLs or Base64 data
 
@@ -492,33 +526,6 @@ export default function ItemsDashBoard() {
       setLoading(false); // Stop loading
     }
   };
-
-  // This function fetches the image using the filename and converts it to Base64
-  // eslint-disable-next-line consistent-return
-  const viewAttachment = async (value) => {
-    try {
-      const filename = value;
-      const requestBody = { fileName: filename };
-      const response = await dowloadBrandingAssetService(user, requestBody);
-      console.log(response.data);
-
-      if (response.status === 200) {
-        // Convert the ArrayBuffer data to Base64
-        const base64String = arrayBufferToBase64(response.data);
-        return `data:image/jpeg;base64,${base64String}`; // Return the image data URL
-      }
-    } catch (error) {
-      console.error('Error during image download:', error);
-    }
-  };
-
-  // Helper function to convert ArrayBuffer to Base64
-  const arrayBufferToBase64 = (buffer) => {
-    const binary = String.fromCharCode.apply(null, new Uint8Array(buffer)); // Convert ArrayBuffer to binary string
-    return window.btoa(binary); // Convert binary string to Base64
-  };
-
-  console.log(imageSrc);
 
   const handleClick = (event, name) => {
     console.log(name);
@@ -1421,65 +1428,77 @@ export default function ItemsDashBoard() {
                         <span className="visually-hidden">Next</span>
                       </button>
                     </div>
-                    {imageSrc.map((image, index) => {
-                      const record = images[index];
+                    {imageSrc.map((src, index) => {
+                      const record = images[index]; // Get the metadata from the images array
+                      console.log(record);
 
                       return (
                         <div key={index} className={`carousel-item${index === activateIndex ? ' active' : ''}`}>
                           <div style={carouselContentStyle}>
-                            <div className="carousel-item active">
-                              <div>
-                                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                                  <div style={{ width: '50%' }}>
-                                    {/* Reviews Table */}
-                                    <table>
-                                      <thead>
-                                        <tr>
-                                          <td style={tdStyling} colSpan={2}>
-                                            Reviews
-                                          </td>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        <tr>
-                                          <td style={tdStyling}>Review Status: </td>
-                                          <td style={tdStyling}>
-                                            {record?.review_status ? record.review_status : 'N/A'}
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td style={tdStyling}>Created By: </td>
-                                          <td style={tdStyling}>{record?.created_by ? record.created_by : 'N/A'}</td>
-                                        </tr>
-                                        <tr>
-                                          <td style={tdStyling}>Created On: </td>
-                                          <td style={tdStyling}>
-                                            {record?.creation_date
-                                              ? new Date(record.creation_date).toLocaleDateString()
-                                              : 'N/A'}
-                                          </td>
-                                        </tr>
-                                        <tr>
-                                          <td style={tdStyling}>Remarks: </td>
-                                          <td style={tdStyling}>{record?.remarks || 'N/A'}</td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
-                                  </div>
+                            <div>
+                              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                <div style={{ width: '50%' }}>
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th style={tdStyling} colSpan={2}>
+                                          Reviews
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td style={tdStyling}>Review Status:</td>
+                                        <td style={tdStyling}>{record?.review_status ?? 'N/A'}</td>{' '}
+                                        {/* Use record here */}
+                                      </tr>
+                                      <tr>
+                                        <td style={tdStyling}>Created By:</td>
+                                        <td style={tdStyling}>{record?.created_by ?? 'N/A'}</td> {/* Use record here */}
+                                      </tr>
+                                      <tr>
+                                        <td style={tdStyling}>Created On:</td>
+                                        <td style={tdStyling}>
+                                          {record?.creation_date
+                                            ? new Date(record.creation_date).toLocaleDateString()
+                                            : 'N/A'}
+                                        </td>{' '}
+                                        {/* Use record here */}
+                                      </tr>
+                                      <tr>
+                                        <td style={tdStyling}>Remarks:</td>
+                                        <td style={tdStyling}>{record?.remarks ?? 'N/A'}</td> {/* Use record here */}
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
 
-                                  {/* Image Rendering */}
-                                  <div style={{ width: '50%' }}>
-                                    {image ? (
-                                      <img
-                                        src={image}
-                                        className="card-img-top"
-                                        alt={`Slide ${index + 1}`}
-                                        style={{ height: '494px' }}
-                                      />
-                                    ) : (
-                                      <p>Image not available</p> // Display fallback message if image is not available
-                                    )}
-                                  </div>
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={handleOpen}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                      handleOpen();
+                                    }
+                                  }}
+                                  style={{
+                                    display: 'inline-block',
+                                    cursor: 'pointer',
+                                    width: '50%',
+                                    height: '50%',
+                                  }}
+                                >
+                                  {src ? (
+                                    <img
+                                      src={src}
+                                      className="card-img-top"
+                                      alt={`Slide ${index + 1}`}
+                                      style={{ height: '195px' }}
+                                    />
+                                  ) : (
+                                    <p>Image not available</p>
+                                  )}
                                 </div>
                               </div>
                             </div>
