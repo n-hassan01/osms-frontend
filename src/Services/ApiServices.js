@@ -2971,7 +2971,7 @@ export const getAllIncentiveTypesService = async () => {
 
 export const getAllIncentiveConditionsService = async () => {
   try {
-    return await axios.get(`${usersUrl}incentiveConditions/getAll`);
+    return await axios.get(`${usersUrl}incentiveConditions/`);
   } catch (err) {
     console.log(err.message);
 
