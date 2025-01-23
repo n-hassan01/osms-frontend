@@ -2453,9 +2453,33 @@ export const getBrandingAssetsViewData = async (loginToken) => {
   }
 };
 
+export const getBrandingAssetsAllViewData = async (loginToken) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/all`, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getBrandingAssetById = async (id) => {
   try {
     return await axios.get(`${usersUrl}branding-assets/get/${id}`);
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const getBrandingAssetByParentId = async (id) => {
+  try {
+    return await axios.get(`${usersUrl}branding-assets/getParent/${id}`);
   } catch (err) {
     console.log(err.message);
 
@@ -3068,8 +3092,8 @@ export const addSalesDetailsFromPosService = async (requestBody) => {
 
 export const getSalesCountFromPosService = async (date) => {
   try {
-    const response = await axios.get(`http://182.160.114.100:9011/demo/api/app/GetSaleExportData/1/1/${date}`, {
-      headers: { Authorization: 'Mahatab:/gMaJikNGIw9vf6tO46emg==' },
+    const response = await axios.get(`http://182.160.114.100:9010/Herlan/api/app/GetSaleExportData/1/1/${date}`, {
+      headers: { Authorization: 'Amdadul:nv6Q6mddJIimkJEIv4Wvtw==' },
     });
 
     return response.data.COUNT;
@@ -3082,12 +3106,27 @@ export const getSalesCountFromPosService = async (date) => {
 
 export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
   try {
-    return await axios.get(`http://182.160.114.100:9011/demo/api/app/GetSaleExportData/${pageNo}/500/${date}`, {
-      headers: { Authorization: 'Mahatab:/gMaJikNGIw9vf6tO46emg==' },
+    return await axios.get(`http://182.160.114.100:9010/Herlan/api/app/GetSaleExportData/${pageNo}/500/${date}`, {
+      headers: { Authorization: 'Amdadul:nv6Q6mddJIimkJEIv4Wvtw==' },
     });
   } catch (err) {
     console.log(err.message);
 
     return err;
+  }
+};
+
+export const addReplaceAssetsService = async (loginToken, bodyInfo) => {
+  try {
+    const response = await axios.post(`${usersUrl}branding-assets/replace`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`, // Authorization token
+      },
+    });
+
+    return response; // return response to handle in the component
+  } catch (err) {
+    console.error('Error:', err.message);
+    return { error: err.message }; // return error in case of failure
   }
 };
