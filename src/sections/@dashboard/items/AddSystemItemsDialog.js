@@ -7,7 +7,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {
   addSystemItemsChildDetails,
   addSystemItemsProcedureService,
-  getItemCategoriesService
+  getItemCategoriesService,
+  updateSystemItemService,
+  uploadItemMasterImageService,
 } from '../../../Services/ApiServices';
 import { useUser } from '../../../context/UserContext';
 
@@ -127,13 +129,38 @@ export default function ResponsiveDialog() {
     setRows(updatedRows);
   };
 
-  const [parentItem, setParentItem] = useState({});
+  const [parentItem, setParentItem] = useState(rowValue);
   const handleParentInputChange = (event) => {
     setParentItem({ ...parentItem, [event.target.name]: event.target.value });
   };
 
   const onSubmitParent = () => {
     console.log(parentItem);
+  };
+
+  const uplodPhoto = async (event, index) => {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile) {
+      console.log('Selected file:', selectedFile);
+
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      console.log(formData);
+
+      const response = await uploadItemMasterImageService(user, formData);
+
+      const imageFilename = response.data.value;
+      console.log(event.target.name);
+      if (event.target.name === 'parent') {
+        const name = 'uploaded_filename';
+        setParentItem({ ...parentItem, [name]: imageFilename });
+      } else {
+        const name = 'uploadedFilename';
+        handleInputChange(index, name, imageFilename);
+      }
+    }
   };
 
   const newEntry = () => {
@@ -160,89 +187,98 @@ export default function ResponsiveDialog() {
 
   const handleClick = async () => {
     const filteredArray = rows.filter((item) => Object.values(item).some((value) => value !== '' && value !== null));
-    console.log(filteredArray);
     const currentDay = new Date().toJSON();
 
     try {
-      // const requestBody = {
-      //   inventoryItemCode: parentItem.inventoryItemCode || '',
-      //   description: parentItem.description || '',
-      //   primaryUomCode: parentItem.primaryUomCode || '',
-      //   lastUpdateDate: currentDay,
-      //   lastUpdatedBy: 1,
-      //   creationDate: currentDay,
-      //   createdBy: 1,
-      //   enabledFlag: parentItem.enabledFlag || 'N',
-      //   purchasingItemFlag: 'Y',
-      //   serviceItemFlag: 'Y',
-      //   inventoryItemFlag: 'Y',
-      //   startDateActive: parentItem.startDateActive || null,
-      //   endDateActive: parentItem.endDateActive || null,
-      //   categoryId: parentItem.categoryId || null,
-      // };
-      const requestBody = {
-        inventoryItemCode: parentItem.inventoryItemCode || '',
-        description: parentItem.description || '',
-        primaryUomCode: parentItem.primaryUomCode || '',
-        startDateActive: parentItem.startDateActive || null,
-        categoryId: parentItem.categoryId || null,
-      };
-      const response = await addSystemItemsProcedureService(user, requestBody);
+      if (parentItem.inventory_item_id) {
+        const requestBody = {
+          inventoryItemId: parentItem.inventory_item_id,
+          inventoryItemCode: parentItem.inventory_item_code,
+          description: parentItem.description,
+          primaryUomCode: parentItem.primary_uom_code,
+          startDateActive: parentItem.start_date_active,
+          endDateActive: parentItem.end_date_active,
+          categoryId: parentItem.category_id,
+          pUploadedFilename: parentItem.uploaded_filename,
+        };
+        const response = await updateSystemItemService(user, requestBody);
 
-      if (response.status === 200) {
-        const remainingItems = [];
-
-        for (const lineInfo of filteredArray) {
-          if (!lineInfo.inventoryItemCode) break;
-
-          try {
-            const itemDetails = lineInfo;
-            const lineRequestBody = {
-              organizationId: response.data.headerInfo[0].organization_id,
-              parentInventoryItemId: response.data.headerInfo[0].inventory_item_id,
-              inventoryItemCode: itemDetails.inventoryItemCode,
-              description: itemDetails.description,
-              primaryUomCode: response.data.headerInfo[0].primary_uom_code,
-              lastUpdateDate: currentDay,
-              lastUpdatedBy: 1,
-              creationDate: currentDay,
-              createdBy: 1,
-              enabledFlag: itemDetails.enabledFlag || 'N',
-              purchasingItemFlag: 'Y',
-              serviceItemFlag: 'Y',
-              inventoryItemFlag: 'Y',
-              startDateActive: itemDetails.startDateActive || null,
-              endDateActive: itemDetails.endDateActive || null,
-              categoryId: response.data.headerInfo[0].category_id || null,
-            };
-            const lineResponse = await addSystemItemsChildDetails(user, lineRequestBody);
-
-            if (lineResponse.status !== 200) {
-              remainingItems.push(lineInfo);
-              console.log(lineResponse);
-              // alert('Process failed! Try again later');
-            }
-          } catch (err) {
-            remainingItems.push(lineInfo);
-            console.log(err.message);
-            // alert('Process failed! Try again later');
-          }
-        }
-
-        if (remainingItems.length === 0) {
-          console.log(remainingItems);
-          // navigate('/dashboard/items', { replace: true });
-          // window.location.reload();
-          alert('Successfully added!');
+        if (response.status === 200) {
+          alert('Successfully updated!');
+          navigate('/dashboard/items', { replace: true });
         } else {
-          setRows(remainingItems);
-          alert('Process failed for some items! Try again later');
-          // window.location.reload();
+          alert('Process failed! Try again');
         }
       } else {
-        console.log(response);
+        const requestBody = {
+          inventoryItemCode: parentItem.inventory_item_code,
+          description: parentItem.description,
+          primaryUomCode: parentItem.primary_uom_code || '',
+          startDateActive: parentItem.start_date_active || null,
+          categoryId: parentItem.category_id,
+          pUploadedFilename: parentItem.uploaded_filename || '',
+        };
+        const response = await addSystemItemsProcedureService(user, requestBody);
 
-        alert('Process failed! Try again later');
+        if (response.status === 200) {
+          const remainingItems = [];
+
+          for (const lineInfo of filteredArray) {
+            if (!lineInfo.inventoryItemCode) break;
+
+            try {
+              const itemDetails = lineInfo;
+              console.log(itemDetails);
+
+              const lineRequestBody = {
+                organizationId: response.data.headerInfo[0].organization_id,
+                parentInventoryItemId: response.data.headerInfo[0].inventory_item_id,
+                inventoryItemCode: itemDetails.inventoryItemCode,
+                description: itemDetails.description,
+                primaryUomCode: response.data.headerInfo[0].primary_uom_code,
+                lastUpdateDate: currentDay,
+                lastUpdatedBy: 1,
+                creationDate: currentDay,
+                createdBy: 1,
+                enabledFlag: itemDetails.enabledFlag || 'N',
+                purchasingItemFlag: 'Y',
+                serviceItemFlag: 'Y',
+                inventoryItemFlag: 'Y',
+                startDateActive: itemDetails.startDateActive || null,
+                endDateActive: itemDetails.endDateActive || null,
+                categoryId: response.data.headerInfo[0].category_id || null,
+                uploadedFilename: itemDetails.uploadedFilename || '',
+              };
+              const lineResponse = await addSystemItemsChildDetails(user, lineRequestBody);
+
+              if (lineResponse.status !== 200) {
+                remainingItems.push(lineInfo);
+                console.log(lineResponse);
+                // alert('Process failed! Try again later');
+              }
+            } catch (err) {
+              remainingItems.push(lineInfo);
+              console.log(err.message);
+              // alert('Process failed! Try again later');
+            }
+          }
+
+          if (remainingItems.length === 0) {
+            console.log(remainingItems);
+            // navigate('/dashboard/items', { replace: true });
+            // window.location.reload();
+            alert('Successfully added!');
+          } else {
+            setRows(remainingItems);
+            // alert('Process failed for some items! Try again later');
+            // window.location.reload();
+          }
+          navigate('/dashboard/items', { replace: true });
+        } else {
+          console.log(response);
+
+          alert('Process failed! Try again later');
+        }
       }
     } catch (err) {
       console.log(err.message);
@@ -268,28 +304,31 @@ export default function ResponsiveDialog() {
             <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Inventory Item Code*</span>
             <input
               required
-              name="inventoryItemCode"
+              name="inventory_item_code"
+              defaultValue={parentItem.inventory_item_code}
               className="form-control"
               title="Maximum 40 characters are allowed."
-              style={{ backgroundColor: 'white', width: '150px' }}
+              style={{ backgroundColor: 'white', width: '150px', height: '38px' }}
               onChange={(e) => handleParentInputChange(e)}
             />
           </div>
           <div style={{ display: 'flex', marginRight: '15px' }}>
-            <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Description</span>
+            <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Description*</span>
             <textarea
               name="description"
               className="form-control"
+              defaultValue={parentItem.description}
               title="Maximum 240 characters are allowed."
-              style={{ height: '30px', width: '250px' }}
+              style={{ height: 'auto', width: 'auto' }}
               onChange={(e) => handleParentInputChange(e)}
             />
           </div>
           <div style={{ display: 'flex', marginRight: '15px' }}>
-            <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Category</span>
+            <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Category*</span>
             <Select
               id="demo-simple-select"
-              name="categoryId"
+              name="category_id"
+              defaultValue={parentItem.category_id}
               style={{ marginLeft: '7px', height: '38px', width: '200px', backgroundColor: 'white' }}
               onChange={(e) => handleParentInputChange(e)}
             >
@@ -305,20 +344,10 @@ export default function ResponsiveDialog() {
           <div style={{ display: 'flex', marginRight: '15px' }}>
             <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>UOM</span>
             <input
-              name="primaryUomCode"
+              name="primary_uom_code"
               className="form-control"
+              defaultValue={parentItem.primary_uom_code}
               title="Maximum 3 characters are allowed."
-              style={{ backgroundColor: 'white', width: '75px' }}
-              onChange={(e) => handleParentInputChange(e)}
-            />
-          </div>
-          <div style={{ display: 'flex', marginRight: '15px' }}>
-            <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Enabled Flag*</span>
-            <input
-              required
-              name="enabledFlag"
-              className="form-control"
-              title="Maximum 1 character is allowed."
               style={{ backgroundColor: 'white', width: '75px' }}
               onChange={(e) => handleParentInputChange(e)}
             />
@@ -327,7 +356,8 @@ export default function ResponsiveDialog() {
             <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Start Date Active</span>
             <input
               type="date"
-              name="startDateActive"
+              name="start_date_active"
+              defaultValue={parentItem.start_date_active}
               className="form-control"
               style={{ backgroundColor: 'white' }}
               onChange={(e) => handleParentInputChange(e)}
@@ -337,10 +367,22 @@ export default function ResponsiveDialog() {
             <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>End Date Active</span>
             <input
               type="date"
-              name="endDateActive"
+              name="end_date_active"
+              defaultValue={parentItem.end_date_active}
               className="form-control"
               style={{ backgroundColor: 'white' }}
               onChange={(e) => handleParentInputChange(e)}
+            />
+          </div>
+          <div style={{ display: 'flex', marginRight: '15px' }}>
+            <span style={{ fontSize: '15px', whiteSpace: 'nowrap', marginRight: '5px' }}>Upload image</span>
+            <input
+              type="file"
+              name="parent"
+              className="form-control"
+              // defaultValue={parentItem.description}
+              style={{ backgroundColor: 'white' }}
+              onChange={(e) => uplodPhoto(e)}
             />
           </div>
         </Stack>
@@ -404,6 +446,7 @@ export default function ResponsiveDialog() {
                 </th>
                 <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('start_date_active')}</th>
                 <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('end_date_active')}</th>
+                <th style={{ whiteSpace: 'nowrap' }}>{sentenceCase('upload_image')}</th>
               </tr>
             </thead>
             <tbody>
@@ -493,6 +536,15 @@ export default function ResponsiveDialog() {
                         className="form-control"
                         style={{ backgroundColor: 'white' }}
                         onChange={(e) => handleInputChange(index, e.target.name, e.target.value)}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="file"
+                        name="child"
+                        className="form-control"
+                        style={{ backgroundColor: 'white' }}
+                        onChange={(e) => uplodPhoto(e, index)}
                       />
                     </td>
                   </tr>
