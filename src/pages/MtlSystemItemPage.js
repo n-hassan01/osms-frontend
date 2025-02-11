@@ -325,12 +325,13 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const [imageSrc, setImageSrc] = useState(null);
   const [view, setView] = useState(false);
   const handleViewClose = () => {
+    setImageSrc(null);
     setView(false);
   };
 
-  const [imageSrc, setImageSrc] = useState(null);
   const [noImageFound, setNoImageFound] = useState(false);
   const viewAttachment = async (value) => {
     try {
