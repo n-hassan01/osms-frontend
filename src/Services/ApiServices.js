@@ -3,9 +3,7 @@
 import axios from 'axios';
 import getCookieService from './GetCookieService';
 
-// const usersUrl = 'http://182.160.114.100:5001/';
-const usersUrl = 'http://182.160.114.100:5003/';
-// const usersUrl = 'http://localhost:5001/';
+const usersUrl = process.env.REACT_APP_API_URL;
 
 const sapTokenUrl =
   'https://my407415-api.s4hana.cloud.sap/sap/opu/odata/sap/API_SALES_ORDER_SRV/A_SalesOrder?$top=1&$format=json';
@@ -63,6 +61,7 @@ export const getUserEmailAddress = async (userInfo) => {
 };
 
 export const login = async (user) => {
+  console.log(usersUrl);
   try {
     return await axios.post(`${usersUrl}login/`, user);
   } catch (err) {
@@ -791,6 +790,35 @@ export const addSystemItemsProcedureService = async (loginToken, bodyInfo) => {
       headers: {
         Authorization: `Bearer ${loginToken}`,
       },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const updateSystemItemService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.put(`${usersUrl}add-item-master/update/parent`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
+export const dowloadProductImageService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-item-master/download`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+      responseType: 'arraybuffer',
     });
   } catch (err) {
     console.log(err.message);
@@ -2596,6 +2624,20 @@ export const getItemCategoriesService = async (loginToken) => {
   }
 };
 
+export const uploadItemMasterImageService = async (loginToken, bodyInfo) => {
+  try {
+    return await axios.post(`${usersUrl}add-item-master/upload`, bodyInfo, {
+      headers: {
+        Authorization: `Bearer ${loginToken}`,
+      },
+    });
+  } catch (err) {
+    console.log(err.message);
+
+    return err.message;
+  }
+};
+
 export const getDrillDownCustomerDepositAnalytic = async (loginToken) => {
   try {
     return await axios.get(`${usersUrl}drill-down/view/customerDepositAnalytic`, {
@@ -3092,8 +3134,10 @@ export const addSalesDetailsFromPosService = async (requestBody) => {
 
 export const getSalesCountFromPosService = async (date) => {
   try {
+    const authToken = process.env.REACT_APP_MEDIASOFT_POS_AUTHORIZATION_TOKEN;
+
     const response = await axios.get(`http://182.160.114.100:9010/Herlan/api/app/GetSaleExportData/1/1/${date}`, {
-      headers: { Authorization: 'Amdadul:nv6Q6mddJIimkJEIv4Wvtw==' },
+      headers: { Authorization: authToken },
     });
 
     return response.data.COUNT;
@@ -3106,8 +3150,10 @@ export const getSalesCountFromPosService = async (date) => {
 
 export const getSalesDetailsFromPosMediasoftService = async (date, pageNo) => {
   try {
+    const authToken = process.env.REACT_APP_MEDIASOFT_POS_AUTHORIZATION_TOKEN;
+
     return await axios.get(`http://182.160.114.100:9010/Herlan/api/app/GetSaleExportData/${pageNo}/500/${date}`, {
-      headers: { Authorization: 'Amdadul:nv6Q6mddJIimkJEIv4Wvtw==' },
+      headers: { Authorization: authToken },
     });
   } catch (err) {
     console.log(err.message);
