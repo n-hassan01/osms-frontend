@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Checkbox,
+  CircularProgress,
   Container,
   DialogTitle,
   Grid,
@@ -31,8 +32,9 @@ import {
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
+import { useUser } from '../context/UserContext';
 // sections
-import { getSytemItems, updateSystemItems } from '../Services/ApiServices';
+import { dowloadProductImageService, getSytemItems, updateSystemItems } from '../Services/ApiServices';
 // import AddSystemItemsDialog from '../sections/@dashboard/items/AddSystemItemsDialog';
 import SystemItemListToolbar from '../sections/@dashboard/items/SystemItemListToolbar';
 import { UserListHead } from '../sections/@dashboard/user';
@@ -75,6 +77,7 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
@@ -236,7 +239,9 @@ export default function UserPage() {
   // TABLE_HEAD.push({id: ''})
   const TABLE_HEAD = [
     // { id: 'inventory_item_id', label: sentenceCase('inventory_item_id'), alignRight: false },
-    { id: 'organization_id', label: 'Org ID', alignRight: false },
+    // { id: 'organization_id', label: 'Org ID', alignRight: false },
+    { id: 'edit', label: sentenceCase('edit'), alignRight: false },
+    { id: 'display', label: sentenceCase('Display Image'), alignRight: false },
     { id: 'inventory_item_code', label: sentenceCase('item_code'), alignRight: false },
     { id: 'description', label: sentenceCase('description'), alignRight: false },
     { id: 'primary_uom_code', label: 'UOM', alignRight: false },
@@ -245,11 +250,10 @@ export default function UserPage() {
     { id: 'start_date_active', label: sentenceCase('start_date_active'), alignRight: false },
     { id: 'end_date_active', label: sentenceCase('end_date_active'), alignRight: false },
     // { id: 'buyer_id', label: sentenceCase('buyer_id'), alignRight: false },
-    { id: 'min_minmax_quantity', label: sentenceCase('min_minmax_quantity'), alignRight: false },
-    { id: 'max_minmax_quantity', label: sentenceCase('max_minmax_quantity'), alignRight: false },
-    { id: 'minimum_order_quantity', label: sentenceCase('minimum_order_quantity'), alignRight: false },
-    { id: 'maximum_order_quantity', label: sentenceCase('maximum_order_quantity'), alignRight: false },
-    { id: '' },
+    // { id: 'min_minmax_quantity', label: sentenceCase('min_minmax_quantity'), alignRight: false },
+    // { id: 'max_minmax_quantity', label: sentenceCase('max_minmax_quantity'), alignRight: false },
+    // { id: 'minimum_order_quantity', label: sentenceCase('minimum_order_quantity'), alignRight: false },
+    // { id: 'maximum_order_quantity', label: sentenceCase('maximum_order_quantity'), alignRight: false },
   ];
 
   const handleRequestSort = (event, property) => {
@@ -321,6 +325,40 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const [imageSrc, setImageSrc] = useState(null);
+  const [view, setView] = useState(false);
+  const handleViewClose = () => {
+    setImageSrc(null);
+    setView(false);
+  };
+
+  const [noImageFound, setNoImageFound] = useState(false);
+  const viewAttachment = async (value) => {
+    try {
+      const filename = value;
+      const requestBody = {
+        fileName: filename || '',
+      };
+      const response = await dowloadProductImageService(user, requestBody);
+
+      if (response.status === 200) {
+        const base64String = btoa(
+          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+
+        const dataURL = `data:image/jpeg;base64,${base64String}`;
+        setImageSrc(dataURL);
+      } else {
+        setNoImageFound(true);
+        console.log('Image download failed. Server returned status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error during image download:', error);
+    } finally {
+      setView(true); // This will be executed regardless of success or failure
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -381,6 +419,7 @@ export default function UserPage() {
                       max_minmax_quantity,
                       minimum_order_quantity,
                       maximum_order_quantity,
+                      uploaded_filename,
                     } = row;
 
                     const rowValues = [
@@ -398,6 +437,7 @@ export default function UserPage() {
                       max_minmax_quantity,
                       minimum_order_quantity,
                       maximum_order_quantity,
+                      uploaded_filename,
                     ];
                     // const selectedUser = selected.indexOf(inventory_item_id) !== -1;
                     // const selectedUser = selected.indexOf(inventory_item_id) !== -1 && selected.indexOf(organization_id) !== -1;
@@ -420,9 +460,20 @@ export default function UserPage() {
                           {/* <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, inventory_item_id)} /> */}
                         </TableCell>
 
-                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
-                          {organization_id}
+                        <TableCell padding="checkbox">
+                          <IconButton size="large" color="primary" onClick={() => handleClickOpen(row)}>
+                            <Iconify icon={'tabler:edit'} />
+                          </IconButton>
                         </TableCell>
+                        <TableCell align="left" className="viewTable">
+                          <button style={{ width: '100%' }} onClick={() => viewAttachment(uploaded_filename)}>
+                            view
+                          </button>
+                        </TableCell>
+
+                        {/* <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                          {organization_id}
+                        </TableCell> */}
                         <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
                           {inventory_item_code}
                         </TableCell>
@@ -441,7 +492,7 @@ export default function UserPage() {
                         <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
                           {getFormattedDateWithTime(end_date_active)}
                         </TableCell>
-                        <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
+                        {/* <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
                           {min_minmax_quantity}
                         </TableCell>
                         <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
@@ -452,19 +503,13 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
                           {maximum_order_quantity}
-                        </TableCell>
+                        </TableCell> */}
 
                         {/* {rowValues.map((value) => (
                           <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
                             {value}
                           </TableCell>
                         ))} */}
-
-                        <TableCell padding="checkbox">
-                          <IconButton size="large" color="primary" onClick={() => handleClickOpen(row)}>
-                            <Iconify icon={'tabler:edit'} />
-                          </IconButton>
-                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -498,6 +543,26 @@ export default function UserPage() {
                     </TableRow>
                   </TableBody>
                 )}
+
+                <Dialog open={view} onClose={handleViewClose}>
+                  <Stack />
+                  <DialogContent>
+                    <Stack spacing={1.5} direction="row">
+                      {imageSrc ? (
+                        <img
+                          src={imageSrc}
+                          alt="Preview"
+                          style={{ maxWidth: '100%', maxHeight: '400px' }}
+                          loading="lazy"
+                        />
+                      ) : noImageFound ? (
+                        <p>No image available</p>
+                      ) : (
+                        <CircularProgress />
+                      )}
+                    </Stack>
+                  </DialogContent>
+                </Dialog>
 
                 {rowData && (
                   <Dialog fullScreen open={open} onClose={handleClose}>
